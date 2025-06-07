@@ -23,43 +23,36 @@
                             </div>
                         @endif
 
-                        <div class="mb-3">
+
+                        <div class="flex flex-col mb-3 max-w-sm">
                             <label for="student_id" class="form-label">Student ID</label>
-                            <input type="text" class="form-control @error('student_id') is-invalid @enderror" id="student_id" name="student_id" value="{{ old('student_id') }}" required>
-                            @error('student_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                            <x-text-input  id="student_id" type="text" name="student_id" :value="old('student_id')" required />
+                                @error('student_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="first_name" class="form-label">First Name</label>
-                            <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="first_name" name="first_name" value="{{ old('first_name') }}" required>
+                            <x-text-input id="first_name" type="text" name="first_name" :value="old('first_name')" required />
                             @error('first_name')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="last_name" class="form-label">Last Name</label>
-                            <input type="text" class="form-control @error('last_name') is-invalid @enderror" id="last_name" name="last_name" value="{{ old('last_name') }}" required>
+                            <x-text-input id="last_name" type="text" name="last_name" :value="old('last_name')" required />
                             @error('last_name')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="age" class="form-label">Age</label>
-                            <input type="number" class="form-control @error('age') is-invalid @enderror" id="age" name="age" value="{{ old('age') }}">
+                            <x-text-input id="age" type="text" name="age" :value="old('age')" required />
                             @error('age')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
