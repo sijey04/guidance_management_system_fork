@@ -36,7 +36,7 @@
                                     <td class="px-6 py-4">{{ $student->last_name }}</td>
                                     {{-- <td>{{ $student->age ?? 'N/A' }}</td>  Handle null values --}}
                                     <td class="px-6 py-4">{{ $student->gender ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4">{{ $student->enrollment_status ?? 'N/A' }}</td>
+                                    <td class="px-6 py-4 ">{{ $student->enrollment_status ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">{{ $student->course_year ?? 'N/A' }}</td>
                                     <td class="px-6 py-4"> Action</td>
                                     {{-- <td>{{ $student->home_address ?? 'N/A' }}</td>
