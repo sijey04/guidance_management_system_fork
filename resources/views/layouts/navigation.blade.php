@@ -20,9 +20,12 @@
                     {{ __('Students') }}
                 </x-nav-link> --}}
 
-                <x-nav-link :href="route('student.index')" :active="request()->routeIs('student.*')">
+                <x-nav-link 
+                    :href="route('student.index')" 
+                    :active="request()->routeIs('student.*') || request()->routeIs('students.*')">
                     {{ __('Student') }}
                 </x-nav-link>
+
 
                 <x-nav-link :href="route('contract')" :active="request()->routeIs('contract')">
                     {{ __('Contract') }}
@@ -40,7 +43,7 @@
                     {{ __('Report') }}
                 </x-nav-link>
 
-                <x-nav-link :href="route('setup')" :active="request()->routeIs('setup')">
+                <x-nav-link :href="route('semester.index')" :active="request()->routeIs('semester.*')">
                     {{ __('Setup') }}
                 </x-nav-link>
             </div>

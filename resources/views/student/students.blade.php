@@ -13,10 +13,11 @@
                     <div class="flex items-center justify-between">
                         <h1 class="font-xl">Student List</h1>
                           <a href="{{ route('student.create') }}" class="btn btn-primary mb-4"> <x-secondary-button >Add New Student</x-navigation-button></a>
-                    </div>
-                    
+                   
+                        </div>
+                 
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">  {{-- Added styling class --}}
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">  
                         <thead>
                             <tr>
                                 <th scope="col" class="px-6 py-3">Student ID</th>
@@ -36,9 +37,23 @@
                                     <td class="px-6 py-4">{{ $student->last_name }}</td>
                                     {{-- <td>{{ $student->age ?? 'N/A' }}</td>  Handle null values --}}
                                     <td class="px-6 py-4">{{ $student->gender ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4 ">{{ $student->enrollment_status ?? 'N/A' }}</td>
+                                    <td>
+                                        @php
+                                            $currentEnrollment = $student->currentEnrollment();
+                                        @endphp
+
+                                        @if ($currentEnrollment)
+                                            {{ $currentEnrollment->is_enrolled ? 'Enrolled' : 'Not Enrolled' }}
+                                        @else
+                                            No enrollment record 
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4">{{ $student->course_year ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4"> Action</td>
+                                    <td>
+                                        <a href="{{ route('student.show', $student->id) }}" class="btn btn-primary btn-sm">
+                                            View
+                                        </a>
+                                    </td>
                                     {{-- <td>{{ $student->home_address ?? 'N/A' }}</td>
                                     <td>{{ $student->father_occupation ?? 'N/A' }}</td>
                                     <td>{{ $student->mother_occupation ?? 'N/A' }}</td>
@@ -59,3 +74,5 @@
         </div>
     </div>
 </x-app-layout>
+
+
