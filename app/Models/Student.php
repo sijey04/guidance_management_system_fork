@@ -32,4 +32,27 @@ class Student extends Model
     //Optional: Add this to make the model work with the EnrollmentDate field if it is a Carbon instance
     protected $dates = ['enrollment_date'];
 
+    public function enrollments()
+{
+    return $this->hasMany(StudentSemesterEnrollment::class);
 }
+
+public function semesters()
+{
+    return $this->belongsToMany(Semester::class, 'student_semester_enrollments')
+                ->withPivot('is_enrolled', 'remarks')
+                ->withTimestamps();
+}
+public function currentEnrollment()
+{
+    $currentSemester = Semester::where('is_current', true)->first();
+
+    if (!$currentSemester) {
+        return null; // No active semester set
+    }
+
+    return $this->enrollments()->where('semester_id', $currentSemester->id)->first();
+}
+
+}
+

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Add New Student') }}
+            {{ __('Student Management') }}
         </h2>
     </x-slot>
 
@@ -71,13 +71,14 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="enrollment_status" class="form-label">Status</label>
-                            <select class="form-select @error('enrollment_status') is-invalid @enderror" id="enrollment_status" name="enrollment_status">
-                                <option value="Enrolled">Enrolled</option>
-                                <option value="Not Enrolled">Not Enrolled</option>
-                               
+                            <label for="is_enrolled" class="form-label">Status</label>
+                            <select name="is_enrolled" required>
+                                <option value="1">Yes, Enrolled in Current Semester</option>
+                                <option value="0">No, Not Enrolled</option>
                             </select>
-                            @error('enrollment_status')
+
+
+                            @error('is_enrolled')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

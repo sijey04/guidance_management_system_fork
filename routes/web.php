@@ -1,7 +1,9 @@
 
 <?php
 
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,7 +18,18 @@ Route::get('/dashboard', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/student', StudentController::class); // Correct usage of Route::resource
-    // ... rest of your routes ...
+    Route::resource('/semester', SemesterController::class);
+  // Tabs for the Student Detail Page
+    Route::get('/students/{id}/profile', [StudentController::class, 'profile'])->name('students.profile');
+    Route::get('/students/{id}/enrollment', [StudentController::class, 'showEnrollmentHistory'])->name('students.enrollment');
+    Route::get('/students/{id}/counseling', [StudentController::class, 'profile'])->name('students.counseling');
+    Route::get('/students/{id}/referral', [StudentController::class, 'showEnrollmentHistory'])->name('students.referral');
+
+    // Enrollment and Unenrollment routes
+    Route::post('/students/{student}/enroll/{semester}', [StudentController::class, 'enroll'])->name('students.enroll');
+    Route::post('/students/{student}/unenroll/{semester}', [StudentController::class, 'unenroll'])->name('students.unenroll');
+
+
 });
 // // Student List,Create,edit
 // Route::resource('/student',[StudentController::class, 'index'])
