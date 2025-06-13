@@ -15,7 +15,7 @@
 
                     <div class="border rounded flex flex-col py-6 p-5">
                         <div class=" p-3 pb-10 py-5 flex justify-between ">
-                            <span class="text-2xl font-bold"> {{$student->first_name}} {{$student->last_name}}</span>
+                            <span class="text-2xl font-bold"> {{$student->first_name}} {{$student->middle_name}} {{$student->last_name}} {{$student->suffx}}</span>
                             <x-secondary-button >Edit Profile</x-navigation-button>
                         </div>
 
@@ -23,8 +23,10 @@
                             <div class="py-5 p-3 flex ">
                                  <div class="flex flex-col py-5">
                                     <span class="text-base text-gray-400 dark:text-gray-300 font-bold"> Age</span>
-                                    <span class="text-base font-bold"> {{ $student->age}}</span>
+                                    <span class="text-base font-bold"> {{ $student->age}} </span>
                                 </div>
+
+                                
 
                                  <div class="flex flex-col px-10 py-5">
                                     <span class="text-base text-gray-400 dark:text-gray-300 font-bold"> Gender</span>
@@ -69,6 +71,18 @@
                                 <div class="flex flex-col px-8 py-5">
                                     <span class="text-base text-gray-400 dark:text-gray-300 font-bold"> Ordinal Position</span>
                                     <span class="text-base font-bold"> {{ $student->ordinal_position}}</span>
+                                </div>
+                            </div>
+
+                            <div class="py-6 p-3 flex">
+                                <div class="flex flex-col py-5">
+                                    <span class="text-base text-gray-400 dark:text-gray-300 font-bold"> Contract</span>
+                                    <span class="text-base font-bold"> {{ $student->contracts->count() }}</span>
+                                </div>
+
+                                <div class="flex flex-col px-10 py-5">
+                                    <span class="text-base text-gray-400 dark:text-gray-300 font-bold"> Referral</span>
+                                    <span class="text-base font-bold"> 0</span>
                                 </div>
                             </div>
                         </div>
