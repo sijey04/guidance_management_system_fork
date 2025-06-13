@@ -15,12 +15,14 @@ class StudentController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-         $students = Student::with(['enrollments.semester'])->paginate(15);
-        // $students = Student::paginate(15); //Fetch all students.  Consider pagination for large datasets.
-        return view('student.students', compact('students')); //Pass the data to the view.
-   
+    { 
+        $students = Student::withCount('contracts')
+                        ->with(['enrollments.semester'])
+                        ->paginate(15);
+
+        return view('student.students', compact('students'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -37,8 +39,10 @@ class StudentController extends Controller
     public function store(Request $request)
     {$validated = $request->validate([
         'student_id' => ['required', 'string', 'max:50', 'unique:students'], // Add student_id validation
-            'first_name' => ['required', 'string', 'max:255'], // Changed to snake_case
+            'first_name' => ['required', 'string', 'max:255'], 
+            'middle_name' => ['nullable', 'string', 'max:255'], // NEW
             'last_name' => ['required', 'string', 'max:255'],
+            'suffix' => ['nullable', 'string', 'max:10'], // NEW
             'age' => ['nullable', 'integer', 'min:0'],
             'gender' => ['nullable', 'string', 'max:10'],
             'enrollment_status' => ['nullable', 'string', 'max:50'],
@@ -83,10 +87,11 @@ StudentSemesterEnrollment::create([
      */
    public function show($id)
     {
-       $student = Student::findOrFail($id);
-       $contracts = contract::where('student_id', $id)->with('semester')->get();
+        $student = Student::with('contracts')->findOrFail($id);
 
-    return view('student.profile', compact('student', 'contracts'));
+        $contracts = Contract::where('student_id', $id)->with('semester')->get();
+
+        return view('student.profile', compact('student', 'contracts'));
     }
 
 

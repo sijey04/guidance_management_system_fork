@@ -14,7 +14,9 @@ class Student extends Model
     protected $fillable = [
         'student_id', // Add this field
         'first_name',
+        'middle_name', // NEW
         'last_name',
+        'suffix', // NEW
         'age',
         'gender',
         'enrollment_status',
