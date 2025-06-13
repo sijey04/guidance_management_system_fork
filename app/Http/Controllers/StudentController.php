@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\contract;
 use App\Models\Post;
 use App\Models\semester;
 use App\Models\Student;
@@ -80,11 +81,14 @@ StudentSemesterEnrollment::create([
     /**
      * Display the specified resource.
      */
-    public function show($id)
+   public function show($id)
     {
        $student = Student::findOrFail($id);
-        return view('student.profile', compact('student'));
+       $contracts = contract::where('student_id', $id)->with('semester')->get();
+
+    return view('student.profile', compact('student', 'contracts'));
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -121,7 +125,7 @@ public function profile($id)
     public function enrollment($id)
 {
     $student = Student::findOrFail($id);
-    $semesters = Semester::all(); // ADD THIS LINE
+    $semesters = Semester::all(); 
     return view('student.enrollment', compact('student', 'semesters'));
 }
 
@@ -161,6 +165,13 @@ public function unenroll($studentId, $semesterId)
     }
 
     return redirect()->back()->with('success', 'Student unenrolled successfully.');
+}
+
+public function contract($id)
+{
+    $student = Student::with('contracts.semester')->findOrFail($id);
+    $semesters = Semester::all(); 
+    return view('student.contract', compact('student', 'semesters'));
 }
 
 }

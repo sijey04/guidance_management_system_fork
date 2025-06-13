@@ -54,5 +54,12 @@ public function currentEnrollment()
     return $this->enrollments()->where('semester_id', $currentSemester->id)->first();
 }
 
+public function contracts()
+{
+    return $this->hasMany(Contract::class);
+}
+
+
+
 }
 

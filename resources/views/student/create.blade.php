@@ -1,181 +1,133 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Student Management') }}
-        </h2>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+<div x-show="openStudentModal"
+     x-transition
+     class="fixed inset-0 bg-gray-800 bg-opacity-50 z-50 flex items-center justify-center"
+     style="display: none;">
+     
+    <div class="bg-white rounded-xl shadow-lg w-70 p-6 relative overflow-y-auto max-h-[90vh]">
 
-                    <form action="{{ route('student.store') }}" method="POST">
-                        @csrf
+     
+        <button @click="openStudentModal = false" 
+                class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-xl">
+            &times;
+        </button>
 
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
+        <h2 class="text-lg font-semibold mb-4 text-center">Add New Student</h2>
 
+        <form action="{{ route('student.store') }}" method="POST" class="space-y-3">
+            @csrf
 
-                        <div class="flex flex-col mb-3 max-w-sm">
-                            <label for="student_id" class="form-label">Student ID</label>
-                            <x-text-input  id="student_id" type="text" name="student_id" :value="old('student_id')" required />
-                                @error('student_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                        </div>
+            @if ($errors->any())
+                <div class="bg-red-100 text-red-700 p-2 rounded text-sm">
+                    <ul class="list-disc pl-5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-                        <div class="mb-3">
-                            <label for="first_name" class="form-label">First Name</label>
-                            <x-text-input id="first_name" type="text" name="first_name" :value="old('first_name')" required />
-                            @error('first_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+           <div class="flex gap-2 justify-center">
+                <!-- Student ID -->
+                <div>
+                    <label for="student_id" class="text-sm">Student ID</label>
+                    <x-text-input id="student_id" type="text" name="student_id" :value="old('student_id')" required class="w-full mt-1 border-gray-300 rounded" />
+                </div>
 
-                        <div class="mb-3">
-                            <label for="last_name" class="form-label">Last Name</label>
-                            <x-text-input id="last_name" type="text" name="last_name" :value="old('last_name')" required />
-                            @error('last_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                <!-- First Name -->
+                <div>
+                    <label for="first_name" class="text-sm">First Name</label>
+                    <x-text-input id="first_name" type="text" name="first_name" :value="old('first_name')" required class="w-full mt-1 border-gray-300 rounded" />
+                </div>
 
-                        <div class="mb-3">
-                            <label for="age" class="form-label">Age</label>
-                            <x-text-input id="age" type="text" name="age" :value="old('age')" required />
-                            @error('age')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                <!-- Last Name -->
+                <div>
+                    <label for="last_name" class="text-sm">Last Name</label>
+                    <x-text-input id="last_name" type="text" name="last_name" :value="old('last_name')" required class="w-full mt-1 border-gray-300 rounded" />
+                </div>
+           </div>
 
-                        <div class="mb-3">
-                            <label for="gender" class="form-label">Gender</label>
-                            <select class="form-select @error('gender') is-invalid @enderror" id="gender" name="gender">
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                            @error('gender')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+           <div class="flex gap-3">
+                        <!-- Age -->
+                <div>
+                    <label for="age" class="text-sm">Age</label>
+                    <x-text-input id="age" type="number" name="age" :value="old('age')" required class="w-full mt-1 border-gray-300 rounded" />
+                </div>
 
-                        <div class="mb-3">
-                            <label for="is_enrolled" class="form-label">Status</label>
-                            <select name="is_enrolled" required>
-                                <option value="1">Yes, Enrolled in Current Semester</option>
-                                <option value="0">No, Not Enrolled</option>
-                            </select>
+                <!-- Gender -->
+                <div>
+                    <label for="gender" class="text-sm">Gender</label>
+                    <select name="gender" id="gender" required class="w-full mt-1 border-gray-300 rounded">
+                        <option value="">--Select Gender--</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
 
+                <!-- Is Enrolled -->
+                <div>
+                    <label for="is_enrolled" class="text-sm">Enrollment Status</label>
+                    <select name="is_enrolled" id="is_enrolled" required class="w-full mt-1 border-gray-300 rounded">
+                        <option value="">--Select Status--</option>
+                        <option value="1">Yes, Enrolled</option>
+                        <option value="0">No, Not Enrolled</option>
+                    </select>
+                </div>
+           </div>
 
-                            @error('is_enrolled')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+            <div class="flex gap-3">
+                    <!-- Course & Year -->
+                <div>
+                    <label for="course_year" class="text-sm">Course & Year</label>
+                    <input type="text" id="course_year" name="course_year" value="{{ old('course_year') }}" required class="w-full mt-1 border-gray-300 rounded">
+                </div>
 
-                        <div class="mb-3">
-                            <label for="course_year" class="form-label"> Course & yr</label>
-                            <input type="text" class="form-control @error('course_year') is-invalid @enderror" id="course_year" name="course_year" value="{{ old('course_year') }}" required>
-                            @error('course_year')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+                <!-- Home Address -->
+                <div>
+                    <label for="home_address" class="text-sm">Home Address</label>
+                    <input type="text" id="home_address" name="home_address" value="{{ old('home_address') }}" required class="w-full mt-1 border-gray-300 rounded">
+                </div>
 
-
-                        <div class="mb-3">
-                            <label for="home_address" class="form-label"> Home Address</label>
-                            <input type="text" class="form-control @error('home_address') is-invalid @enderror" id="home_address" name="home_address" value="{{ old('home_address') }}" required>
-                            @error('home_address')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                         <div class="mb-3">
-                            <label for="father_occupation" class="form-label"> Father's Occupation</label>
-                            <input type="text" class="form-control @error('father_occupation') is-invalid @enderror" id="father_occupation" name="father_occupation" value="{{ old('father_occupation') }}" required>
-                            @error('father_occupation')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="mother_occupation" class="form-label"> Mother's Occupation</label>
-                            <input type="text" class="form-control @error('mother_occupation') is-invalid @enderror" id="mother_occupation" name="mother_occupation" value="{{ old('mother_occupation') }}" required>
-                            @error('mother_occupation')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="number_of_sisters" class="form-label">Number of Sisters</label>
-                            <input type="number" class="form-control @error('number_of_sisters') is-invalid @enderror" id="number_of_sisters" name="number_of_sisters" value="{{ old('number_of_sisters') }}">
-                            @error('number_of_sisters')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="number_of_brothers" class="form-label">Number of Brothers</label>
-                            <input type="number" class="form-control @error('number_of_brothers') is-invalid @enderror" id="number_of_brothers" name="number_of_brothers" value="{{ old('number_of_brothers') }}">
-                            @error('number_of_sisters')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="ordinal_position" class="form-label">Ordinal Position</label>
-                            <input type="number" class="form-control @error('ordinal_position') is-invalid @enderror" id="ordinal_position" name="ordinal_position" value="{{ old('ordinal_position') }}">
-                            @error('number_of_sisters')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        
-
-
-
-                        {{-- <div class="mb-3">
-                            <label for="enrollment_date" class="form-label">Enrollment Date</label>
-                            <input type="date" class="form-control @error('enrollment_date') is-invalid @enderror" id="enrollment_date" name="enrollment_date" value="{{ old('enrollment_date') }}">
-                            @error('enrollment_date')
-                                <span class="invalid-feedback">{{ $message }}</span>
-                            @enderror
-                        </div> --}}
-
-
-                        
-
-                        {{-- ... Add other fields similarly with select boxes where appropriate and error handling ... --}}
-                        <button type="submit" class="btn btn-primary">Add Student</button>
-                    </form>
+                <!-- Father's Occupation -->
+                <div>
+                    <label for="father_occupation" class="text-sm">Father's Occupation</label>
+                    <input type="text" id="father_occupation" name="father_occupation" value="{{ old('father_occupation') }}" required class="w-full mt-1 border-gray-300 rounded">
                 </div>
             </div>
-        </div>
+
+           <div class="flex gap-3">
+                    <!-- Mother's Occupation -->
+                <div>
+                    <label for="mother_occupation" class="text-sm">Mother's Occupation</label>
+                    <input type="text" id="mother_occupation" name="mother_occupation" value="{{ old('mother_occupation') }}" required class="w-full mt-1 border-gray-300 rounded">
+                </div>
+
+                <!-- Number of Sisters -->
+                <div>
+                    <label for="number_of_sisters" class="text-sm">Number of Sisters</label>
+                    <input type="number" id="number_of_sisters" name="number_of_sisters" value="{{ old('number_of_sisters') }}" class="w-full mt-1 border-gray-300 rounded">
+                </div>
+
+                <!-- Number of Brothers -->
+                <div>
+                    <label for="number_of_brothers" class="text-sm">Number of Brothers</label>
+                    <input type="number" id="number_of_brothers" name="number_of_brothers" value="{{ old('number_of_brothers') }}" class="w-full mt-1 border-gray-300 rounded">
+                </div>
+           </div>
+
+                 <!-- Ordinal Position -->
+                <div>
+                    <label for="ordinal_position" class="text-sm">Ordinal Position</label>
+                    <input type="number" id="ordinal_position" name="ordinal_position" value="{{ old('ordinal_position') }}" class="w-full mt-1 border-gray-300 rounded">
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" @click="openStudentModal = false" class="px-3 py-1 bg-gray-400 text-white rounded hover:bg-gray-500">Cancel</button>
+                    <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Save</button>
+                </div>
+           
+        </form>
     </div>
-</x-app-layout>
+</div>

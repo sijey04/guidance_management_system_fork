@@ -41,7 +41,7 @@ class SemesterController extends Controller
 
     Semester::create($request->all());
 
-    return redirect()->route('semesters.index')->with('success', 'Semester created successfully.');
+    return redirect()->route('semester.index')->with('success', 'Semester created successfully.');
 
     }
 

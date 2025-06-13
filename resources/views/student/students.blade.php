@@ -5,16 +5,21 @@
         </h2>
     </x-slot>
 
+                    
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                      
-                    <div class="flex items-center justify-between">
-                        <h1 class="font-xl">Student List</h1>
-                          <a href="{{ route('student.create') }}" class="btn btn-primary mb-4"> <x-secondary-button >Add New Student</x-navigation-button></a>
-                   
-                        </div>
+                    <div x-data="{ openStudentModal: false }" class="flex justify-between content-center">
+                        <h1> Student List</h1>
+                        <x-secondary-button @click="openStudentModal = true">
+                            Add New Student
+                        </x-secondary-button>
+
+                        @include('student.create') <!-- Your create modal is here -->
+                    </div>
+
                  
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">  
