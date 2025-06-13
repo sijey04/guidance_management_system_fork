@@ -16,4 +16,9 @@ class semester extends Model
     return $this->hasMany(StudentSemesterEnrollment::class);
 }
 
+public function contracts()
+{
+    return $this->hasMany(Contract::class);
+}
+
 }

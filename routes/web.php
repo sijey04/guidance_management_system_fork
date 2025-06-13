@@ -1,6 +1,7 @@
 
 <?php
 
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SemesterController;
@@ -22,13 +23,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
   // Tabs for the Student Detail Page
     Route::get('/students/{id}/profile', [StudentController::class, 'profile'])->name('students.profile');
     Route::get('/students/{id}/enrollment', [StudentController::class, 'showEnrollmentHistory'])->name('students.enrollment');
-    Route::get('/students/{id}/counseling', [StudentController::class, 'profile'])->name('students.counseling');
+    Route::get('/students/{id}/contract', [StudentController::class, 'contract'])->name('students.contract');
     Route::get('/students/{id}/referral', [StudentController::class, 'showEnrollmentHistory'])->name('students.referral');
+//Route::get('/students/{id}/contracts', [StudentController::class, 'show']);
+Route::get('/students/{student}/contracts/create', [ContractController::class, 'createForStudent'])->name('student.createContract');
+
 
     // Enrollment and Unenrollment routes
     Route::post('/students/{student}/enroll/{semester}', [StudentController::class, 'enroll'])->name('students.enroll');
     Route::post('/students/{student}/unenroll/{semester}', [StudentController::class, 'unenroll'])->name('students.unenroll');
-
+    // Contract creation specific to student
+Route::post('/contracts', [ContractController::class, 'store'])->name('contracts.store');
 
 });
 // // Student List,Create,edit
