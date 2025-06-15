@@ -12,18 +12,18 @@ class ContractController extends Controller
     /**
      * Display a listing of the resource.
      */
-   public function index($studentId)
-{
-    $student = Student::with(['contracts.semester'])->findOrFail($studentId);
+   public function index(Request $request){
+        $contracts = Contract::with('student', 'semester')->paginate(10); // adjust as needed
+        $students = Student::all(); // For modal dropdown
+        $semesters = Semester::all(); // For modal dropdown
 
-    return view('students.index', compact('student'));
-}
+        return view('contracts.contract', compact('contracts', 'students', 'semesters'));
+    }
 
-public function create(Request $request)
-{
-    $studentId = $request->student_id;
-    $semesters = Semester::all(); // dropdown for semester selection
-    return view('students.createContract', compact('studentId', 'semesters'));
+public function create(){
+    $students = Student::all(); // To select which student the contract is for
+    $semesters = Semester::all(); // To select the semester
+    return view('contracts.createContract', compact('students', 'semesters'));
 }
 
 
@@ -83,5 +83,38 @@ public function create(Request $request)
     $semesters = Semester::all(); // For semester dropdown
     return view('student.createContract', compact('student', 'semesters'));
 }
+
+public function allContracts(Request $request)
+{
+    $query = Contract::with(['student', 'semester']);
+
+    // Search by student name
+    if ($request->has('search') && $request->search != '') {
+        $query->whereHas('student', function ($q) use ($request) {
+            $q->where('student_id', 'like', '%' . $request->search . '%')
+              ->orwhere('first_name', 'like', '%' . $request->search . '%')
+              ->orWhere('last_name', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    // Sort by field
+    if ($request->has('sort_by') && $request->sort_by != '') {
+        $sortField = $request->sort_by;
+        $sortDirection = $request->get('sort_direction', 'asc'); // default to ascending
+
+        if (in_array($sortField, ['contract_date', 'status', 'total_days'])) {
+            $query->orderBy($sortField, $sortDirection);
+        }
+    }
+
+    $contracts = $query->paginate(10);
+    $students = Student::all(); // Required by createContract.blade.php
+    $semesters = Semester::all(); // Required by createContract.blade.php
+
+    return view('contracts.contract', compact('contracts', 'students', 'semesters'));
+}
+
+
+
 
 }

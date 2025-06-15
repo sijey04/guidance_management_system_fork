@@ -4,7 +4,7 @@
      class="fixed inset-0 bg-gray-800 bg-opacity-50 z-40 flex items-center justify-center"
      style="display: none;">
 
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-4 z-50 relative">
+    <div class="bg-white rounded-xl shadow-lg w-96 p-6 relative overflow-y-auto max-h-[90vh]">
 
        
         <button @click="open = false" 

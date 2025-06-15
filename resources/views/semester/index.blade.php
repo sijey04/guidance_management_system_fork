@@ -29,24 +29,35 @@
                     </div>
                  
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <tr>
-                            <th>School Year</th>
-                            <th>Semester</th>
-                            <th>Current</th>
-                            <th>Actions</th>
-                        </tr>
-                        @foreach($semesters as $sem)
-                            <tr>
-                                <td>{{ $sem->school_year }}</td>
-                                <td>{{ $sem->semester }}</td>
-                                <td>{{ $sem->is_current ? '✅' : '❌' }}</td>
-                                <td>
-                                    <a href="{{ route('semester.edit', $sem->id) }}">Edit</a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </table>
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead>
+                                <tr>
+                                    <th>School Year</th>
+                                    <th>Semester</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($semesters as $sem)
+                                    <tr>
+                                        <td>{{ $sem->school_year }}</td>
+                                        <td>{{ $sem->semester }}</td>
+                                        <td>
+                                            @if($sem->is_current)
+                                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Active</span>
+                                            @else
+                                                <span class="text-gray-400 text-xs">Inactive</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('semester.edit', $sem->id) }}" class="text-blue-600 hover:underline">Edit</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+
                 </div>
                     {{-- {{ $semesters->links() }} Add pagination --}}
                 </div>

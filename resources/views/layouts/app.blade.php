@@ -24,7 +24,7 @@
             <div class="flex flex-col w-full ">
                     <!-- Page Heading -->
                     @isset($header)
-                        <header class=" bg-white dark:bg-gray-800 shadow">
+                        <header class=" bg-white shadow bg-white dark:bg-gray-800 shadow">
                             <div class="flex justify-between items-center mx-auto py-3 px-10 sm:px-6 lg:px-8">
                                 {{ $header }}
 
@@ -66,7 +66,7 @@
                     @endisset
 
                 <!-- Page Content -->
-                <main>
+                <main >
                     {{ $slot }}
                 </main>
             </div>
