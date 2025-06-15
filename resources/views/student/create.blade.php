@@ -4,11 +4,11 @@
      class="fixed inset-0 bg-gray-500 bg-opacity-50 z-50 flex items-center justify-center"
      style="display: none;">
      
-    <div class="bg-white rounded-xl shadow-lg w-60 p-6 relative overflow-y-auto max-h-[90vh]">
+    <div class="bg-white rounded-xl shadow-lg w-md p-6 relative overflow-y-auto max-h-[90vh]">
 
      
         <button @click="openStudentModal = false" 
-                class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-xl">
+                class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-xl p-5">
             &times;
         </button>
 

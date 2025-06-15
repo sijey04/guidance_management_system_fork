@@ -33,7 +33,10 @@ Route::get('/students/{student}/contracts/create', [ContractController::class, '
     Route::post('/students/{student}/enroll/{semester}', [StudentController::class, 'enroll'])->name('students.enroll');
     Route::post('/students/{student}/unenroll/{semester}', [StudentController::class, 'unenroll'])->name('students.unenroll');
     // Contract creation specific to student
-Route::post('/contracts', [ContractController::class, 'store'])->name('contracts.store');
+    Route::post('/contracts', [ContractController::class, 'store'])->name('contracts.store');
+
+    Route::get('/contracts', [ContractController::class, 'allContracts'])->name('contracts.index');
+Route::get('/contracts/create', [ContractController::class, 'create'])->name('contracts.create');
 
 });
 // // Student List,Create,edit

@@ -27,9 +27,10 @@
                 </x-nav-link>
 
 
-                <x-nav-link :href="route('contract')" :active="request()->routeIs('contract')">
-                    {{ __('Contract') }}
+                <x-nav-link :href="route('contracts.index')" :active="request()->routeIs('contracts.index')">
+                    {{ __('Contracts') }}
                 </x-nav-link>
+
 
                 <x-nav-link :href="route('referral')" :active="request()->routeIs('referral')">
                     {{ __('Referral') }}
