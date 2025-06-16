@@ -66,7 +66,8 @@ class StudentController extends Controller
             'age' => ['nullable', 'integer', 'min:0'],
             'gender' => ['nullable', 'string', 'max:10'],
             'enrollment_status' => ['nullable', 'string', 'max:50'],
-            'course_year' => ['nullable', 'string', 'max:100'],
+            'course_year' => ['required', 'in:' . implode(',', config('student.course_years'))], 
+            'section' => ['required', 'in:' . implode(',', config('student.sections'))],
             'year' => ['nullable', 'integer', 'min:1'],
             'home_address' => ['nullable', 'string', 'max:255'],
             'father_occupation' => ['nullable', 'string', 'max:100'],
@@ -133,7 +134,8 @@ StudentSemesterEnrollment::create([
             'age' => ['nullable', 'integer', 'min:0'],
             'gender' => ['nullable', 'string', 'max:10'],
             'enrollment_status' => ['nullable', 'string', 'max:50'],
-            'course_year' => ['nullable', 'string', 'max:100'],
+            'course_year' => ['required', 'in:' . implode(',', config('student.course_years'))], 
+            'section' => ['required', 'in:' . implode(',', config('student.sections'))], 
             'year' => ['nullable', 'integer', 'min:1'],
             'home_address' => ['nullable', 'string', 'max:255'],
             'father_occupation' => ['nullable', 'string', 'max:100'],
@@ -148,7 +150,7 @@ StudentSemesterEnrollment::create([
 
         $student->update($validatedStudent);
 
-        return redirect()->route('student.index')->with('success', 'Student updated successfully.');
+       return redirect()->route('students.profile', ['id' => $student->id])->with('success', 'Student updated successfully!');
 
     }
 
@@ -165,18 +167,26 @@ StudentSemesterEnrollment::create([
 
     // app/Http/Controllers/StudentController.php
 
-public function profile($id)
-    {
+public function profile($id){
         $student = Student::findOrFail($id);
         return view('student.profile', compact('student'));
     }
 
-    public function enrollment($id)
+    public function enrollment($id){
+        $student = Student::findOrFail($id);
+        $semesters = Semester::all(); 
+        return view('student.enrollment', compact('student', 'semesters'));
+    }
+public function counseling($studentId)
 {
-    $student = Student::findOrFail($id);
-    $semesters = Semester::all(); 
-    return view('student.enrollment', compact('student', 'semesters'));
+    $student = Student::with('counselings')->findOrFail($studentId);
+    $counselings = $student->counselings;
+
+    return view('student.counseling', compact('student', 'counselings'));
 }
+
+
+
 
 
    public function showEnrollmentHistory($studentId){
@@ -235,6 +245,56 @@ public function contract($id)
     $student = Student::with('contracts.semester')->findOrFail($id);
     $semesters = Semester::all(); 
     return view('student.contract', compact('student', 'semesters'));
+}
+
+public function enrollAll()
+{
+    $activeSemester = Semester::where('is_current', true)->first();
+
+    if (!$activeSemester) {
+        return redirect()->back()->with('error', 'No active semester set.');
+    }
+
+    $students = Student::all();
+
+    foreach ($students as $student) {
+        // Check if already enrolled for this semester
+        $existing = StudentSemesterEnrollment::where('student_id', $student->id)
+                    ->where('semester_id', $activeSemester->id)
+                    ->first();
+
+        if (!$existing) {
+            StudentSemesterEnrollment::create([
+                'student_id' => $student->id,
+                'semester_id' => $activeSemester->id,
+                'is_enrolled' => true,
+            ]);
+        } else {
+            $existing->update(['is_enrolled' => true]);
+        }
+    }
+
+    return redirect()->back()->with('success', 'All students enrolled for the active semester.');
+}
+
+public function unenrollAll()
+{
+    $activeSemester = Semester::where('is_current', true)->first();
+
+    if (!$activeSemester) {
+        return redirect()->back()->with('error', 'No active semester set.');
+    }
+
+    StudentSemesterEnrollment::where('semester_id', $activeSemester->id)
+        ->update(['is_enrolled' => false]);
+
+    return redirect()->back()->with('success', 'All students unenrolled for the active semester.');
+}
+public function deleteAll()
+{
+    Student::query()->delete(); // This will hard-delete all students
+
+    return redirect()->route('students.index')->with('success', 'All students deleted successfully.');
 }
 
 }

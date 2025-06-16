@@ -36,9 +36,11 @@
                     {{ __('Referral') }}
                 </x-nav-link>
 
-                <x-nav-link :href="route('counseling')" :active="request()->routeIs('counseling')">
-                    {{ __('Counseling') }}
+                <!-- resources/views/layouts/navigation.blade.php (or wherever your nav links are) -->
+                <x-nav-link :href="route('counselings.index')" :active="request()->routeIs('counselings.index')">
+                    {{ __('Counseling Records') }}
                 </x-nav-link>
+
 
                 <x-nav-link :href="route('report')" :active="request()->routeIs('report')">
                     {{ __('Report') }}

@@ -23,11 +23,8 @@
                         <p class="text-red-500">No active semester set.</p>
                     @endforelse
                 </div>
-<p class="text-sm text-gray-500 mt-1 py-2 px-5">Manage and configure the academic years and semesters. You can set which semester is currently active for the system.</p>
+                <p class="text-sm text-gray-500 mt-1 py-2 px-5">Manage and configure the academic years and semesters. You can set which semester is currently active for the system.</p>
                     
-               
-
-                <!-- SEMESTER LIST TABLE -->
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                      <div x-data="{ openSemesterModal: {{ $errors->any() ? 'true' : 'false' }} }" class=" mb-3 flex justify-between items-center">
                         <h3 class="text-md font-semibold mb-4">List of Academic Years & Semesters</h3>

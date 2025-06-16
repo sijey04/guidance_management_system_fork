@@ -42,8 +42,14 @@ public function create(){
 
     Contract::create($request->all());
 
-    return redirect()->route('students.contract', $request->student_id)
-                     ->with('success', 'Contract added successfully!');
+    // Check where the request came from (hidden input named 'redirect_to')
+    if ($request->has('redirect_to') && $request->redirect_to == 'student_contract') {
+        return redirect()->route('students.contract', $request->student_id)
+                         ->with('success', 'Contract added successfully!');
+    }
+
+    return redirect()->route('contracts.index')->with('success', 'Contract added successfully!');
+
 }
 
     /**
@@ -100,7 +106,7 @@ public function allContracts(Request $request)
     // Sort by field
     if ($request->has('sort_by') && $request->sort_by != '') {
         $sortField = $request->sort_by;
-        $sortDirection = $request->get('sort_direction', 'asc'); // default to ascending
+        $sortDirection = $request->get('sort_direction', 'asc'); 
 
         if (in_array($sortField, ['contract_date', 'status', 'total_days'])) {
             $query->orderBy($sortField, $sortDirection);
@@ -108,8 +114,8 @@ public function allContracts(Request $request)
     }
 
     $contracts = $query->paginate(10);
-    $students = Student::all(); // Required by createContract.blade.php
-    $semesters = Semester::all(); // Required by createContract.blade.php
+    $students = Student::all();
+    $semesters = Semester::all(); 
 
     return view('contracts.contract', compact('contracts', 'students', 'semesters'));
 }
