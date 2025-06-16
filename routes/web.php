@@ -2,6 +2,7 @@
 <?php
 
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\CounselingController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SemesterController;
@@ -20,24 +21,37 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/student', StudentController::class); // Correct usage of Route::resource
     Route::resource('/semester', SemesterController::class);
-  // Tabs for the Student Detail Page
+// Tabs for the Student Detail Page
     Route::get('/students/{id}/profile', [StudentController::class, 'profile'])->name('students.profile');
     Route::get('/students/{id}/enrollment', [StudentController::class, 'showEnrollmentHistory'])->name('students.enrollment');
+    Route::get('/students/{id}/counseling', [StudentController::class, 'counseling'])->name('students.counseling');
     Route::get('/students/{id}/contract', [StudentController::class, 'contract'])->name('students.contract');
     Route::get('/students/{id}/referral', [StudentController::class, 'showEnrollmentHistory'])->name('students.referral');
 //Route::get('/students/{id}/contracts', [StudentController::class, 'show']);
-Route::get('/students/{student}/contracts/create', [ContractController::class, 'createForStudent'])->name('student.createContract');
+    Route::get('/students/{student}/contracts/create', [ContractController::class, 'createForStudent'])->name('student.createContract');
 
+// enroll-unenroll-delete all
+    Route::post('/students/enroll-all', [StudentController::class, 'enrollAll'])->name('students.enrollAll');
+    Route::post('/students/unenroll-all', [StudentController::class, 'unenrollAll'])->name('students.unenrollAll');
+    Route::delete('/students/delete-all', [StudentController::class, 'deleteAll'])->name('students.deleteAll');
 
-    // Enrollment and Unenrollment routes
+// Enrollment and Unenrollment routes
     Route::post('/students/{student}/enroll/{semester}', [StudentController::class, 'enroll'])->name('students.enroll');
     Route::post('/students/{student}/unenroll/{semester}', [StudentController::class, 'unenroll'])->name('students.unenroll');
-    // Contract creation specific to student
+// Contract creation specific to student
     Route::post('/contracts', [ContractController::class, 'store'])->name('contracts.store');
+    Route::get('/contracts', [ContractController::class, 'index'])->name('contracts.contract');
 
     Route::get('/contracts', [ContractController::class, 'allContracts'])->name('contracts.index');
-Route::get('/contracts/create', [ContractController::class, 'create'])->name('contracts.create');
+    Route::get('/contracts/create', [ContractController::class, 'create'])->name('contracts.create');
 
+    Route::get('/students/{student}/counseling/create', [CounselingController::class, 'create'])
+    ->name('students.createCounseling');
+    Route::post('/store', [CounselingController::class, 'store'])->name('counseling.store');
+
+
+   
+Route::get('/counseling', [CounselingController::class, 'index'])->name('counselings.index');
 });
 // // Student List,Create,edit
 // Route::resource('/student',[StudentController::class, 'index'])
@@ -58,9 +72,8 @@ Route::get('/referral', function () {
     return view('referrals.referral');
 })->middleware(['auth', 'verified'])->name('referral');
 
-Route::get('/counseling', function () {
-    return view('counseling.counseling');
-})->middleware(['auth', 'verified'])->name('counseling');
+
+
 
 Route::get('/report', function () {
     return view('reports.report');

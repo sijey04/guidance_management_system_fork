@@ -21,7 +21,7 @@
         </a>
     </li>
     <li class="me-2">
-        <a href=""
+        <a href="{{ route('students.counseling', $student->id) }}"
            class="inline-block p-4 rounded-t-lg 
                   {{ request()->routeIs('students.counseling') ? 'text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-500' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300' }}">
             Counseling

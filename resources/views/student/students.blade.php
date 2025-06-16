@@ -13,7 +13,6 @@
                     <h1 class="text-2xl font-bold mb-2">Student List</h1>
                     <p class="text-sm text-gray-500 mb-4">
                         Below is the list of students. You can sort, search, add, view or delete records easily.
-                        Use the controls to filter students based on your needs.
                     </p>
 
                     <!-- Filter & Search Section -->
@@ -51,6 +50,8 @@
                                 </x-secondary-button>
                                 @include('student.create')
                             </div>
+
+                           
                         </div>
 
                         <!-- Student Table -->
@@ -62,7 +63,20 @@
                                     <th class="px-5 py-3">Course & Year</th>
                                     <th class="px-5 py-3">Contracts</th>
                                     <th class="px-5 py-3">Enrollment Status</th>
-                                    <th class="px-5 py-3">Actions</th>
+                                    <th class="px-5 py-3 text-end ">
+                                        {{-- enroll/unenroll/delete --}}
+                                        <div x-data="{ open: false }" class="">
+                                            <!-- Options Button -->
+                                            <button @click="open = !open" type="button" 
+                                                class="">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
+                                                </svg>
+                                            </button>
+
+                                            @include('student.allActions')
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -72,7 +86,7 @@
                                         <td class="px-1 py-4">
                                             {{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffx }}
                                         </td>
-                                        <td class="px-6 py-4">{{ $student->course_year ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4">{{ $student->course_year ?? 'N/A' }} {{ $student->section ?? 'N/A' }}</td>
                                         <td class="px-6 py-4">{{ $student->contracts_count }}</td>
                                         <td class="px-6 py-4">
                                             @php $currentEnrollment = $student->currentEnrollment(); @endphp

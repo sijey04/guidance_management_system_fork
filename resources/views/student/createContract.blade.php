@@ -16,7 +16,8 @@
 
         <form action="{{ route('contracts.store') }}" method="POST" class="space-y-3">
             @csrf
-            <input type="hidden" name="student_id" value="{{ $student->id }}">
+           <input type="hidden" name="redirect_to" value="student_contract">
+    <input type="hidden" name="student_id" value="{{ $student->id }}">
 
             <!-- Semester -->
             <div>
