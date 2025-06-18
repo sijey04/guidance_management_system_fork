@@ -40,8 +40,8 @@
 
             <div class="grid grid-cols-3 gap-4">
                 <div>
-                    <label class="block font-medium mb-1">Age</label>
-                    <input type="text" disabled value="{{ $student->age }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                    <label class="block font-medium mb-1">Birthday</label>
+                    <input type="text" disabled value="{{ $student->birthday ? $student->birthday->format('Y-m-d') : '' }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
                 </div>
                 <div>
                     <label class="block font-medium mb-1">Gender</label>

@@ -77,9 +77,9 @@
                     </div>
 
                     <div>
-                        <label for="age" class="text-sm font-medium text-gray-700">Age</label>
-                        <x-text-input id="age" type="number" name="age" 
-                                      :value="old('age', $student->age)" required 
+                        <label for="birthday" class="text-sm font-medium text-gray-700">Birthday</label>
+                        <x-text-input id="birthday" type="date" name="birthday"
+                                      :value="old('birthday', isset($student->birthday) ? $student->birthday->format('Y-m-d') : '')" required
                                       class="w-full mt-1 border-gray-300 rounded-lg" />
                     </div>
 
@@ -178,6 +178,24 @@
                         <input type="number" id="ordinal_position" name="ordinal_position" 
                                value="{{ old('ordinal_position', $student->ordinal_position) }}" 
                                class="w-full mt-1 border-gray-300 rounded-lg">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parent/Guardian Info -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3">Parent/Guardian Information</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="parent_guardian_name" class="text-sm font-medium text-gray-700">Parent/Guardian Name</label>
+                        <x-text-input id="parent_guardian_name" type="text" name="parent_guardian_name"
+                            :value="old('parent_guardian_name', $student->parent_guardian_name)" required class="w-full mt-1 border-gray-300 rounded-lg" />
+                    </div>
+
+                    <div>
+                        <label for="parent_guardian_contact" class="text-sm font-medium text-gray-700">Parent/Guardian Contact</label>
+                        <x-text-input id="parent_guardian_contact" type="text" name="parent_guardian_contact"
+                            :value="old('parent_guardian_contact', $student->parent_guardian_contact)" required class="w-full mt-1 border-gray-300 rounded-lg" />
                     </div>
                 </div>
             </div>
