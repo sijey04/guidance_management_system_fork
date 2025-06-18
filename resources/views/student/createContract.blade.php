@@ -23,8 +23,11 @@
             <div>
                 <label class="text-sm">Semester:</label>
                 <select name="semester_id" required class="w-full mt-1 border-gray-300 rounded">
-                    @foreach($semesters as $semester)
-                        <option value="{{ $semester->id }}">{{ $semester->school_year }} - {{ $semester->semester }}</option>
+                     @foreach ($semesters as $semester)
+                        <option value="{{ $semester->id }}">
+                            A.Y {{ $semester->school_year }} {{ $semester->semester }} Semester
+                            @if($semester->is_current) — Active @endif
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -65,7 +68,7 @@
             <!-- Buttons -->
             <div class="flex justify-end space-x-2 pt-2">
                 <x-secondary-button type="button" @click="open = false">Cancel</x-secondary-button>
-                <x-secondary-button type="submit" >Save</x-secondary-button>
+                <x-primary-button type="submit" >Save</x-primary-button>
             </div>
         </form>
     </div>

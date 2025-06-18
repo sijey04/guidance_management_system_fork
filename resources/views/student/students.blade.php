@@ -64,7 +64,7 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 flex gap-2">
-                                            <a href="{{ route('student.show', $student->id) }}" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323; border-radius:6px; padding:7px 14px; font-weight:600;">View</a>
+                                            <a href="{{ route('student.show', $student->id) }}" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323; border-radius:6px; padding:7px 14px; font-weight:600;">View </a>
                                             <form action="{{ route('student.destroy', $student->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this student?')">
                                                 @csrf
                                                 @method('DELETE')

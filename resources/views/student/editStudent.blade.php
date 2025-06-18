@@ -79,8 +79,8 @@
                     <div>
                         <label for="birthday" class="text-sm font-medium text-gray-700">Birthday</label>
                         <x-text-input id="birthday" type="date" name="birthday"
-                                      :value="old('birthday', isset($student->birthday) ? $student->birthday->format('Y-m-d') : '')" required
-                                      class="w-full mt-1 border-gray-300 rounded-lg" />
+                            :value="old('birthday', isset($student->birthday) ? $student->birthday->format('Y-m-d') : '')" required
+                            class="w-full mt-1 border-gray-300 rounded-lg" />
                     </div>
 
                     <div>
@@ -93,38 +93,7 @@
                         </select>
                     </div>
 
-                    <div>
-                        <label for="is_enrolled" class="text-sm font-medium text-gray-700">Enrollment Status</label>
-                        <select name="is_enrolled" id="is_enrolled" required class="w-full mt-1 border-gray-300 rounded-lg">
-                            <option value="">--Select Status--</option>
-                            <option value="1" {{ $student->is_enrolled == 1 ? 'selected' : '' }}>Enrolled</option>
-                            <option value="0" {{ $student->is_enrolled == 0 ? 'selected' : '' }}>Not Enrolled</option>
-                        </select>
-                    </div>
-
-                     <div>
-                        <label class="block text-sm font-medium mb-1">Course & Year</label>
-                        <select name="course_year" class="w-full mt-1 border-gray-300 rounded-lg" required>
-                            <option value="">Select </option>
-                           @foreach(config('student.course_years') as $course)
-                                <option value="{{ $course }}" {{ (old('course_year', $student->course_year) == $course) ? 'selected' : '' }}>
-                                    {{ $course }}
-                                </option>
-                            @endforeach
-                        </select>
-                   </div>
-
-                   <div>
-                         <label for="section" class="block mb-1 mt-4">Section</label>
-                        <select name="section" id="section" class="w-full mt-1 border-gray-300 rounded-lg" required>
-                            <option value="">Select Section</option>
-                            @foreach(config('student.sections') as $section)
-                                <option value="{{ $section }}" {{ (old('section', $student->section) == $section) ? 'selected' : '' }}>
-                                    {{ $section }}
-                                </option>
-                            @endforeach
-                        </select>
-                   </div>
+                    
                 </div>
             </div>
 
@@ -189,13 +158,13 @@
                     <div>
                         <label for="parent_guardian_name" class="text-sm font-medium text-gray-700">Parent/Guardian Name</label>
                         <x-text-input id="parent_guardian_name" type="text" name="parent_guardian_name"
-                            :value="old('parent_guardian_name', $student->parent_guardian_name)" required class="w-full mt-1 border-gray-300 rounded-lg" />
+                            :value="old('parent_guardian_name', $student->parent_guardian_name)" class="w-full mt-1 border-gray-300 rounded-lg" />
                     </div>
 
                     <div>
                         <label for="parent_guardian_contact" class="text-sm font-medium text-gray-700">Parent/Guardian Contact</label>
                         <x-text-input id="parent_guardian_contact" type="text" name="parent_guardian_contact"
-                            :value="old('parent_guardian_contact', $student->parent_guardian_contact)" required class="w-full mt-1 border-gray-300 rounded-lg" />
+                            :value="old('parent_guardian_contact', $student->parent_guardian_contact)"  class="w-full mt-1 border-gray-300 rounded-lg" />
                     </div>
                 </div>
             </div>

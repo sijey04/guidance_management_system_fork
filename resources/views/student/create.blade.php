@@ -38,11 +38,11 @@
                     </div>
                     <div>
                         <label for="first_name" class="text-sm text-gray-600">First Name <span class="text-red-500">*</span></label>
-                        <x-text-input id="first_name" name="first_name" type="text" :value="old('first_name')" placeholder="e.g. John" required class="mt-1 w-full border-gray-300 rounded"/>
+                        <x-text-input id="first_name" name="first_name" type="text" :value="old('first_name')" placeholder="" required class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
                     <div>
                         <label for="last_name" class="text-sm text-gray-600">Last Name <span class="text-red-500">*</span></label>
-                        <x-text-input id="last_name" name="last_name" type="text" :value="old('last_name')" placeholder="e.g. Doe" required class="mt-1 w-full border-gray-300 rounded"/>
+                        <x-text-input id="last_name" name="last_name" type="text" :value="old('last_name')" placeholder="" required class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
                     <div>
                         <label for="middle_name" class="text-sm text-gray-600">Middle Name</label>
@@ -78,6 +78,7 @@
             <div>
                 <h3 class="font-semibold text-gray-600 mb-2">Enrollment Information</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
                     <div>
                         <label for="is_enrolled" class="text-sm text-gray-600">Enrollment Status <span class="text-red-500">*</span></label>
                         <select name="is_enrolled" id="is_enrolled" required class="w-full mt-1 border-gray-300 rounded">
@@ -131,11 +132,11 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                         <label for="parent_guardian_name" class="text-sm text-gray-600">Parent/Guardian Name <span class="text-red-500">*</span></label>
-                        <x-text-input id="parent_guardian_name" name="parent_guardian_name" type="text" :value="old('parent_guardian_name')" required class="mt-1 w-full border-gray-300 rounded"/>
+                        <x-text-input id="parent_guardian_name" name="parent_guardian_name" type="text" :value="old('parent_guardian_name')"  class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
                     <div>
                         <label for="parent_guardian_contact" class="text-sm text-gray-600">Parent/Guardian Contact <span class="text-red-500">*</span></label>
-                        <x-text-input id="parent_guardian_contact" name="parent_guardian_contact" type="text" :value="old('parent_guardian_contact')" required class="mt-1 w-full border-gray-300 rounded"/>
+                        <x-text-input id="parent_guardian_contact" name="parent_guardian_contact" type="text" :value="old('parent_guardian_contact')"  class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
                 </div>
             </div>

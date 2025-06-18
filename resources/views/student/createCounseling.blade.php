@@ -35,52 +35,54 @@
 
             <div>
                 <label class="block font-medium mb-1">Name</label>
-                <input type="text" disabled value="{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                <input type="text"  value="{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
             </div>
 
             <div class="grid grid-cols-3 gap-4">
                 <div>
+
                     <label class="block font-medium mb-1">Birthday</label>
                     <input type="text" disabled value="{{ $student->birthday ? $student->birthday->format('Y-m-d') : '' }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+
                 </div>
                 <div>
                     <label class="block font-medium mb-1">Gender</label>
-                    <input type="text" disabled value="{{ $student->gender }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                    <input type="text"  value="{{ $student->gender }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
                 </div>
                 <div>
                     <label class="block font-medium mb-1">Course & Year</label>
-                    <input type="text" disabled value="{{ $student->course_year }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                    <input type="text"  value="{{ $student->course_year }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
                 </div>
             </div>
 
             <div>
                 <label class="block font-medium mb-1">Home Address</label>
-                <input type="text" disabled value="{{ $student->home_address }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                <input type="text"  value="{{ $student->home_address }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block font-medium mb-1">Father's Occupation</label>
-                    <input type="text" disabled value="{{ $student->father_occupation }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                    <input type="text"  value="{{ $student->father_occupation }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
                 </div>
                 <div>
                     <label class="block font-medium mb-1">Mother's Occupation</label>
-                    <input type="text" disabled value="{{ $student->mother_occupation }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                    <input type="text"  value="{{ $student->mother_occupation }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
                 </div>
             </div>
 
             <div class="grid grid-cols-3 gap-4">
                 <div>
                     <label class="block font-medium mb-1">No. of Sisters</label>
-                    <input type="text" disabled value="{{ $student->number_of_sisters }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                    <input type="text"  value="{{ $student->number_of_sisters }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
                 </div>
                 <div>
                     <label class="block font-medium mb-1">No. of Brothers</label>
-                    <input type="text" disabled value="{{ $student->number_of_brothers }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                    <input type="text"  value="{{ $student->number_of_brothers }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
                 </div>
                 <div>
                     <label class="block font-medium mb-1">Ordinal Position</label>
-                    <input type="text" disabled value="{{ $student->ordinal_position }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                    <input type="text"  value="{{ $student->ordinal_position }}" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
                 </div>
             </div>
 
@@ -121,9 +123,9 @@
             </div>
 
             <div class="flex justify-end pt-4">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded shadow">
+                <x-primary-button type="submit" >
                     Save Counseling Record
-                </button>
+                </x-primary-button>
             </div>
         </form>
     </div>

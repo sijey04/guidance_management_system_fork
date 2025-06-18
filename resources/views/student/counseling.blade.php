@@ -13,6 +13,7 @@
                         @include('layouts.view-tab')
                     </div>
                     <!-- Page Description Box -->
+
                     <div class="bg-[#f8eaea] p-5 rounded border border-[#a82323]">
                         <h2 class="text-xl font-semibold" style="color:#a82323;">Counseling Records</h2>
                         <p class="text-sm text-gray-500">
@@ -24,6 +25,7 @@
                     <!-- Add Counseling Button -->
                     <div class="flex justify-end">
                         <button @click="openAddModal = true" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:7px 16px; font-weight:600;">+ New Counseling Record</button>
+
                     </div>
                     <!-- Counseling Records Table -->
                     <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-md bg-white">

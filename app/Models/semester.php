@@ -21,4 +21,9 @@ public function contracts()
     return $this->hasMany(Contract::class);
 }
 
+public static function getActiveSemester()
+{
+    return self::where('is_active', true)->first();
+}
+
 }

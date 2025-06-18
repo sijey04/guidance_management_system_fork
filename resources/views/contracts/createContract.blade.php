@@ -48,6 +48,17 @@
 
             <!-- Semester -->
             <div>
+
+                <label for="semester_id" class="block text-sm mb-1">Semester</label>
+                <select name="semester_id" required class="w-full border-gray-300 rounded mt-1 p-2">
+                    @foreach ($semesters as $semester)
+                        <option value="{{ $semester->id }}">
+                            A.Y {{ $semester->school_year }} {{ $semester->semester }} Semester
+                            @if($semester->is_current) — Active @endif
+                        </option>
+                    @endforeach
+                </select>
+
                 <label for="semester_id" class="block text-sm mb-1" style="color:#a82323;">Semester</label>
                 <select name="semester_id" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
     @foreach ($semesters as $semester)
