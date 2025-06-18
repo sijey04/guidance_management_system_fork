@@ -14,6 +14,8 @@ class contract extends Model
     'total_days',
     'completed_days',
     'status',
+    'contract_image',
+    'contract_count',
 ];
 
 

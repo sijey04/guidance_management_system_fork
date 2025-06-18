@@ -5,126 +5,83 @@
         </h2>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-
-                    <h1 class="text-2xl font-bold mb-2">Student List</h1>
+    <div class="">
+        <div class="max-w-7xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="main-content" style="margin-top: 16px; margin-bottom: 24px; padding-top: 18px;">
+                <div class="p-6 text-gray-900">
+                    <h1 class="text-2xl font-bold mb-2" style="color:#a82323;">Student List</h1>
                     <p class="text-sm text-gray-500 mb-4">
                         Below is the list of students. You can sort, search, add, view or delete records easily.
                     </p>
-
                     <!-- Filter & Search Section -->
-                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 p-3">
-                        <div class="flex justify-between items-center mb-4">
-                            <form method="GET" action="{{ route('student.index') }}" x-data class="flex gap-3">
-                                <!-- Sort By -->
-                                <div>
-                                    <label class="block text-sm mb-1 text-gray-700 dark:text-gray-300">Sort By:</label>
-                                    <select name="sort_by" class="border-gray-300 rounded p-2 text-sm" @change="$root.submit()">
-                                        <option value="">Select</option>
-                                        <option value="student_id" {{ request('sort_by') == 'student_id' ? 'selected' : '' }}>Student ID</option>
-                                        <option value="first_name" {{ request('sort_by') == 'first_name' ? 'selected' : '' }}>First Name</option>
-                                        <option value="last_name" {{ request('sort_by') == 'last_name' ? 'selected' : '' }}>Last Name</option>
-                                        <option value="course_year" {{ request('sort_by') == 'course_year' ? 'selected' : '' }}>Course & Year</option>
-                                        <option value="enrollment_status" {{ request('sort_by') == 'enrollment_status' ? 'selected' : '' }}>Enrollment Status</option>
-                                    </select>
-                                </div>
-
-                                <!-- Search Input -->
-                                <div>
-                                    <label class="block text-sm mb-1 text-gray-700 dark:text-gray-300 ">   </label>
-                                    <x-text-input type="text" name="search" value="{{ request('search') }}"
-                                        placeholder="Search by ID or Name"
-                                        class="border-gray-300 rounded p-2 text-sm w-80 mt-5"
-                                        @input.debounce.500ms="$root.submit()" />
-                                </div>
-                            </form>
-
-                            <!-- Add Student Button -->
-                            <div x-data="{ openStudentModal: {{ $errors->any() ? 'true' : 'false' }} }">
-                                <p class="text-xs text-gray-400 mt-1">Click to register a new student.</p>
-                                <x-secondary-button @click="openStudentModal = true">
-                                     Add New Student
-                                </x-secondary-button>
-                                @include('student.create')
+                    <div class="flex flex-wrap items-end gap-4 mb-6">
+                        <form method="GET" action="" class="flex gap-3 items-end">
+                            <div>
+                                <label class="block text-sm mb-1 text-gray-700">Sort By:</label>
+                                <select name="sort" class="border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                    <option value="">Select</option>
+                                    <!-- Add sort options here -->
+                                </select>
                             </div>
-
-                           
+                            <div>
+                                <label class="block text-sm mb-1 text-gray-700"> </label>
+                                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by ID or Name" class="border-gray-300 rounded-lg px-3 py-2 text-sm w-80" />
+                            </div>
+                        </form>
+                        <!-- Add Student Button -->
+                        <div x-data="{ openStudentModal: {{ $errors->any() ? 'true' : 'false' }} }">
+                            <p class="text-xs text-gray-400 mt-1">Click to register a new student.</p>
+                            <button @click="openStudentModal = true" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">Add New Student</button>
+                            @include('student.create')
                         </div>
-
-                        <!-- Student Table -->
-                        <table class="w-full border text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                            <thead class="text-white bg-gray-600 dark:bg-gray-500">
+                    </div>
+                    <!-- Student Table -->
+                    <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-md bg-white">
+                        <table class="w-full border text-sm text-left text-gray-700">
+                            <thead style="background:#a82323; color:#fff;">
                                 <tr>
                                     <th class="px-5 py-3">Student ID</th>
                                     <th class="px-1 py-3">Name</th>
                                     <th class="px-5 py-3">Course & Year</th>
                                     <th class="px-5 py-3">Contracts</th>
                                     <th class="px-5 py-3">Enrollment Status</th>
-                                    <th class="px-5 py-3 text-end ">
-                                        {{-- enroll/unenroll/delete --}}
-                                        <div x-data="{ open: false }" class="">
-                                            <!-- Options Button -->
-                                            <button @click="open = !open" type="button" 
-                                                class="">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
-                                                </svg>
-                                            </button>
-
-                                            @include('student.allActions')
-                                        </div>
-                                    </th>
+                                    <th class="px-5 py-3 text-end "></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($students as $student)
-                                    <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <tr class="hover:bg-[#f8eaea] transition">
                                         <td class="px-6 py-4">{{ $student->student_id }}</td>
-                                        <td class="px-1 py-4">
-                                            {{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffx }}
-                                        </td>
+                                        <td class="px-1 py-4">{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffx }}</td>
                                         <td class="px-6 py-4">{{ $student->course_year ?? 'N/A' }} {{ $student->section ?? 'N/A' }}</td>
                                         <td class="px-6 py-4">{{ $student->contracts_count }}</td>
                                         <td class="px-6 py-4">
                                             @php $currentEnrollment = $student->currentEnrollment(); @endphp
                                             @if($currentEnrollment && $currentEnrollment->is_enrolled)
-                                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Enrolled</span>
+                                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Enrolled</span>
                                             @else
-                                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Not Enrolled</span>
+                                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Not Enrolled</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 flex gap-2">
-                                            <!-- View Button -->
-                                            <x-secondary-button title="View Student Details">
-                                                <a href="{{ route('student.show', $student->id) }}" class="btn btn-primary btn-sm">View</a>
-                                            </x-secondary-button>
-
-                                            <!-- Delete Button -->
+                                            <a href="{{ route('student.show', $student->id) }}" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323; border-radius:6px; padding:7px 14px; font-weight:600;">View</a>
                                             <form action="{{ route('student.destroy', $student->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this student?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <x-secondary-button type="submit" class="bg-red-500 text-white hover:bg-red-600" title="Delete Student">
-                                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="">
-                                                            <path fill-rule="evenodd" d="M6 2a1 1 0 011-1h6a1 1 0 011 1v1h3a1 1 0 110 2h-1v11a2 2 0 01-2 2H5a2 2 0 01-2-2V5H2a1 1 0 110-2h3V2zm2 3a1 1 0 112 0v9a1 1 0 11-2 0V5zm4 0a1 1 0 112 0v9a1 1 0 11-2 0V5z" clip-rule="evenodd" />
-                                                        </svg>
-                                                </x-secondary-button>
+                                                <button type="submit" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323; border-radius:6px; padding:7px 14px; font-weight:600;">Delete</button>
                                             </form>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center py-4 text-gray-500 dark:text-gray-300">No students found.</td>
+                                        <td colspan="6" class="text-center py-4 text-gray-500">No students found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
-
                     <!-- Pagination -->
-                    <div class="mt-4">
+                    <div class="mt-2 flex justify-center">
                         {{ $students->links() }}
                     </div>
                 </div>

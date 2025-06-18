@@ -19,7 +19,7 @@ class Student extends Model
         'middle_name', // NEW
         'last_name',
         'suffix', // NEW
-        'age',
+        'birthday',
         'gender',
         'enrollment_status',
         'course_year',
@@ -27,6 +27,8 @@ class Student extends Model
         'home_address',
         'father_occupation',
         'mother_occupation',
+        'parent_guardian_name',
+        'parent_guardian_contact',
         'number_of_sisters',
         'number_of_brothers',
         'ordinal_position',
@@ -34,7 +36,7 @@ class Student extends Model
         'enrollment_date',
     ];
 
-    protected $dates = ['enrollment_date'];
+    protected $dates = ['enrollment_date', 'birthday'];
 
     public function enrollments(){
         return $this->hasMany(StudentSemesterEnrollment::class);

@@ -1,0 +1,277 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f8f8f8;
+}
+
+.login-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.login-left {
+    flex: 1;
+    background: linear-gradient(135deg, #a82323 0%, #c0392b 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    position: relative;
+}
+
+.logo-container {
+    margin-bottom: 30px;
+}
+
+.wmsu-logo {
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+.university-name {
+    font-size: 1.7rem;
+    font-weight: bold;
+    margin: 10px 0 0 0;
+    text-align: center;
+}
+
+.system-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 10px 0 0 0;
+    text-align: center;
+}
+
+.description {
+    margin: 30px 0 0 0;
+    font-size: 1rem;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.footer {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #f3dede;
+}
+
+.login-right {
+    flex: 1;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.login-form-container {
+    width: 100%;
+    max-width: 370px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+    padding: 40px 30px 30px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.welcome-title {
+    color: #b71c1c;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.welcome-desc {
+    color: #888;
+    font-size: 1rem;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-size: 1rem;
+    color: #b71c1c;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.form-input {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.2s;
+    background: #f5f8ff;
+}
+
+.form-input:focus {
+    border: 1.5px solid #b71c1c;
+    background: #fff;
+}
+
+.input-error {
+    color: #d32f2f;
+    font-size: 0.95rem;
+    margin-top: 3px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    font-size: 0.98rem;
+    color: #555;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 7px;
+    accent-color: #b71c1c;
+}
+
+.sign-in-btn {
+    width: 100%;
+    background: #d32f2f;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: background 0.2s;
+}
+
+.sign-in-btn:hover {
+    background: #b71c1c;
+}
+
+.forgot-password {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.forgot-password a {
+    color: #b71c1c;
+    text-decoration: none;
+    font-size: 0.98rem;
+    font-weight: 500;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+    .login-container {
+        flex-direction: column;
+    }
+    .login-left, .login-right {
+        flex: none;
+        width: 100%;
+        min-height: 320px;
+    }
+    .login-form-container {
+        max-width: 100%;
+        padding: 30px 10px 20px 10px;
+    }
+    .footer {
+        position: static;
+        margin-top: 30px;
+    }
+}
+
+.logo-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #fff;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.6s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.logo-overlay.fade-in {
+    opacity: 1;
+    pointer-events: all;
+    transition: opacity 1.6s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.logo-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.6s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.overlay-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+}
+
+.overlay-logo {
+    width: 220px;
+    height: 220px;
+    object-fit: contain;
+    background: none;
+    border-radius: 50%;
+    animation: pop-in 1.6s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.left-logo {
+    margin-right: 24px;
+}
+
+.right-logo {
+    margin-left: 24px;
+}
+
+.overlay-x {
+    font-size: 5rem;
+    font-weight: 700;
+    color: #000;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0 12px;
+    user-select: none;
+    letter-spacing: 0.1em;
+    opacity: 0.95;
+    line-height: 1;
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.7); opacity: 0; }
+    60% { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+} 
