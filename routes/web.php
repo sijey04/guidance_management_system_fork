@@ -5,6 +5,7 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\CounselingController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
@@ -49,8 +50,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ->name('students.createCounseling');
     Route::post('/store', [CounselingController::class, 'store'])->name('counseling.store');
 
+Route::put('/student/profile/{student}', [StudentController::class, 'updateProfile'])->name('student.profile.update');
 
-   
+Route::get('/report', [ReportController::class, 'index'])->middleware(['auth', 'verified'])->name('report');
+
+  Route::get('/reports/student-list', [ReportController::class, 'studentList'])->name('reports.studentList');
+Route::get('/reports/student-history/{student}', [ReportController::class, 'studentHistory'])->name('reports.studentHistory');
+Route::get('/reports/view-profile/{studentId}/{semesterId}', [ReportController::class, 'viewProfile'])->name('reports.viewProfile');
+
+  
 Route::get('/counseling', [CounselingController::class, 'index'])->name('counselings.index');
 });
 // // Student List,Create,edit
@@ -75,9 +83,9 @@ Route::get('/referral', function () {
 
 
 
-Route::get('/report', function () {
-    return view('reports.report');
-})->middleware(['auth', 'verified'])->name('report');
+// Route::get('/report', function () {
+//     return view('reports.report');
+// })->middleware(['auth', 'verified'])->name('report');
 
 Route::get('/setup', function () {
     return view('setting.setup');

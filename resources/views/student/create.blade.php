@@ -132,11 +132,11 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                         <label for="parent_guardian_name" class="text-sm text-gray-600">Parent/Guardian Name <span class="text-red-500">*</span></label>
-                        <x-text-input id="parent_guardian_name" name="parent_guardian_name" type="text" :value="old('parent_guardian_name')" required class="mt-1 w-full border-gray-300 rounded"/>
+                        <x-text-input id="parent_guardian_name" name="parent_guardian_name" type="text" :value="old('parent_guardian_name')"  class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
                     <div>
                         <label for="parent_guardian_contact" class="text-sm text-gray-600">Parent/Guardian Contact <span class="text-red-500">*</span></label>
-                        <x-text-input id="parent_guardian_contact" name="parent_guardian_contact" type="text" :value="old('parent_guardian_contact')" required class="mt-1 w-full border-gray-300 rounded"/>
+                        <x-text-input id="parent_guardian_contact" name="parent_guardian_contact" type="text" :value="old('parent_guardian_contact')"  class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
                 </div>
             </div>

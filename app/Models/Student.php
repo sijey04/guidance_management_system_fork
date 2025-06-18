@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Pest\Plugins\Profile;
 
 class Student extends Model
 {
@@ -36,6 +37,10 @@ class Student extends Model
         'enrollment_date',
     ];
 
+    protected $casts = [
+    'birthday' => 'date',
+];
+
     protected $dates = ['enrollment_date', 'birthday'];
 
     public function enrollments(){
@@ -64,6 +69,15 @@ public function counselings()
     return $this->hasMany(Counseling::class);
 }
 
+public function profiles()
+{
+    return $this->hasMany(StudentProfile::class);
+}
+
+public function profileForSemester($semesterId)
+{
+    return $this->profiles()->where('semester_id', $semesterId)->first();
+}
 
 
 }
