@@ -16,20 +16,22 @@
                     </div>
 
                     <!-- Page Description Box -->
-                    <div class="bg-gray-50 dark:bg-gray-700 p-5 rounded border border-gray-300 dark:border-gray-600">
-                        <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Counseling Records</h2>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">
-                            Below are the counseling records for 
-                            <span class="font-semibold">{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}</span>. 
-                            You may view details or add new counseling records.
-                        </p>
-                    </div>
+                    <div class=" flex items-center justify-between bg-gray-50 dark:bg-gray-700 p-5 rounded border border-gray-300 dark:border-gray-600">
+                        <div class="flex flex-col">
+                            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Counseling Records</h2>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                Below are the counseling records for 
+                                <span class="font-semibold">{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}</span>. 
+                                You may view details or add new counseling records.
+                            </p>
+                        </div>
 
-                    <!-- Add Counseling Button -->
-                    <div class="flex justify-end">
-                        <x-secondary-button @click="openAddModal = true" class="bg-blue-600 text-white hover:bg-blue-700">
-                            + New Counseling Record
-                        </x-secondary-button>
+                        <!-- Add Counseling Button -->
+                        <div class="">
+                            <x-secondary-button @click="openAddModal = true" >
+                            New Counseling Record
+                            </x-secondary-button>
+                        </div>
                     </div>
 
                     <!-- Counseling Records Table -->
@@ -54,7 +56,7 @@
                                         <td class="px-5 py-4 text-center">
                                             <x-secondary-button 
                                                 @click="selectedCounseling = {{ $counseling }}, openViewModal = true"
-                                                class="text-xs bg-blue-500 text-white hover:bg-blue-600">
+                                                >
                                                 View
                                             </x-secondary-button>
                                         </td>

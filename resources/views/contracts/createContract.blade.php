@@ -52,13 +52,13 @@
             <div>
                 <label for="semester_id" class="block text-sm mb-1">Semester</label>
                 <select name="semester_id" required class="w-full border-gray-300 rounded mt-1 p-2">
-    @foreach ($semesters as $semester)
-        <option value="{{ $semester->id }}">
-            A.Y {{ $semester->school_year }} {{ $semester->semester }} Semester
-            @if($semester->is_current) — Active @endif
-        </option>
-    @endforeach
-</select>
+                    @foreach ($semesters as $semester)
+                        <option value="{{ $semester->id }}">
+                            A.Y {{ $semester->school_year }} {{ $semester->semester }} Semester
+                            @if($semester->is_current) — Active @endif
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             <!-- Contract Date -->

@@ -47,10 +47,9 @@
         </div>
 
         <div class="flex justify-end mt-4">
-            <button @click="openViewModal = false" 
-                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+            <x-primary-button @click="openViewModal = false" >
                 Close
-            </button>
+            </x-primary-button>
         </div>
 
     </div>

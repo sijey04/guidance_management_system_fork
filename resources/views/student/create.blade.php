@@ -40,12 +40,12 @@
 
                     <div>
                         <label for="first_name" class="text-sm text-gray-600">First Name <span class="text-red-500">*</span></label>
-                        <x-text-input id="first_name" name="first_name" type="text" :value="old('first_name')" placeholder="e.g. John" required class="mt-1 w-full border-gray-300 rounded"/>
+                        <x-text-input id="first_name" name="first_name" type="text" :value="old('first_name')" placeholder="" required class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
 
                     <div>
                         <label for="last_name" class="text-sm text-gray-600">Last Name <span class="text-red-500">*</span></label>
-                        <x-text-input id="last_name" name="last_name" type="text" :value="old('last_name')" placeholder="e.g. Doe" required class="mt-1 w-full border-gray-300 rounded"/>
+                        <x-text-input id="last_name" name="last_name" type="text" :value="old('last_name')" placeholder="" required class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
 
                     <div>
@@ -73,7 +73,7 @@
 
                     <div>
                         <label for="age" class="text-sm text-gray-600">Age <span class="text-red-500">*</span></label>
-                        <x-text-input id="age" name="age" type="number" :value="old('age')" placeholder="e.g. 20" required class="mt-1 w-full border-gray-300 rounded"/>
+                        <x-text-input id="age" name="age" type="number" :value="old('age')" placeholder="" required class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
 
                     <div>
