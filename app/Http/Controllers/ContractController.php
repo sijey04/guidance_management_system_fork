@@ -38,9 +38,18 @@ public function create(){
         'total_days' => 'nullable|integer|min:1',
         'completed_days' => 'nullable|integer|min:0',
         'status' => 'required|in:In Progress,Completed',
+        'contract_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'contract_count' => 'required|integer|min:1',
     ]);
 
-    Contract::create($request->all());
+    $data = $request->all();
+
+    if ($request->hasFile('contract_image')) {
+        $imagePath = $request->file('contract_image')->store('contracts', 'public');
+        $data['contract_image'] = $imagePath;
+    }
+
+    Contract::create($data);
 
     // Check where the request came from (hidden input named 'redirect_to')
     if ($request->has('redirect_to') && $request->redirect_to == 'student_contract') {

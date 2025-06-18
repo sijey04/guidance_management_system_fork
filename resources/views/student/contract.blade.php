@@ -7,19 +7,16 @@
 
     <div class="py-5">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 shadow-md sm:rounded-lg overflow-hidden">
+            <div class="main-content">
                 <div class="p-6 space-y-4">
-                    
-                    <!-- Navigation Tabs -->
                     <div>
                         @include('layouts.view-tab')
                     </div>
-
                     <!-- Page Description Box -->
-                    <div class="flex items center justify-between bg-gray-50 dark:bg-gray-700 p-5 rounded border border-gray-300 dark:border-gray-600">
+                    <div class="flex items-center justify-between bg-[#f8eaea] p-5 rounded border border-[#a82323]">
                         <div class="flex flex-col">
-                            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Contract History</h2>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                            <h2 class="text-xl font-semibold" style="color:#a82323;">Contract History</h2>
+                            <p class="text-sm text-gray-500">
                                 Below is the contract history for 
                                 <span class="font-semibold">{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}</span>. 
                                 You can add new contracts or review past ones.
@@ -28,20 +25,15 @@
                          <!-- Add Contract Button -->
                         <div class="flex items-center justify-end">
                             <div x-data="{ open: false }">
-                                <x-secondary-button @click="open = true" >
-                                    New Contract
-                                </x-secondary-button>
+                                <button @click="open = true" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:7px 16px; font-weight:600;">New Contract</button>
                                 @include('student.createContract')
                             </div>
                         </div>
                     </div>
-
-                   
-
                     <!-- Contract Records Table -->
-                    <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-600 shadow-md">
-                        <table class="w-full text-sm text-left text-gray-600 dark:text-gray-300">
-                            <thead class="bg-gray-600 dark:bg-gray-500 text-white uppercase text-xs sticky top-0">
+                    <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-md bg-white">
+                        <table class="w-full text-sm text-left text-gray-700">
+                            <thead style="background:#a82323; color:#fff;">
                                 <tr>
                                     <th class="px-5 py-3">School Year</th>
                                     <th class="px-5 py-3">Semester</th>
@@ -51,9 +43,9 @@
                                     <th class="px-5 py-3 text-center">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                            <tbody>
                                 @forelse($student->contracts as $contract)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                    <tr class="hover:bg-[#f8eaea] transition">
                                         <td class="px-5 py-4">{{ $contract->semester->school_year }}</td>
                                         <td class="px-5 py-4">{{ $contract->semester->semester }}</td>
                                         <td class="px-5 py-4">{{ \Carbon\Carbon::parse($contract->contract_date)->format('M d, Y') }}</td>
@@ -74,18 +66,11 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center py-5 text-gray-400 dark:text-gray-500">
-                                            No contract history found.
-                                        </td>
+                                        <td colspan="6" class="text-center py-4 text-gray-500">No contracts found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
-                    </div>
-
-                    <!-- Note Section -->
-                    <div class="bg-yellow-50 dark:bg-yellow-900 border-l-4 border-yellow-400 p-4 mt-4 text-sm text-yellow-700 dark:text-yellow-200 rounded">
-                        <p><strong>Note:</strong> You can view detailed contract information by clicking "View." Use the "+ Add New Contract" button to create a new entry.</p>
                     </div>
                 </div>
             </div>
