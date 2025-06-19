@@ -38,32 +38,27 @@
                     </thead>
                     <tbody class="text-gray-800 dark:text-gray-200 divide-y divide-gray-200 dark:divide-gray-600">
                         @forelse($students as $student)
-                            @php
-                                $profile = $student->profiles->first();
-                            @endphp
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td class="px-4 py-3">{{ $student->student_id }}</td>
-                                <td class="px-4 py-3">{{ $student->first_name }} {{ $student->last_name }}</td>
-                                <td class="px-4 py-3">{{ $profile->course_year ?? 'N/A' }}</td>
-                                <td class="px-4 py-3">{{ $profile->section ?? 'N/A' }}</td>
-                                @php
-                                    $contractCount = $student->contracts->where('semester_id', $selectedSemester)->count();
-                                @endphp
-                                <td class="px-4 py-3">{{ $contractCount }}</td>
+    @php
+        $profile = $student->profiles->first(); // profile filtered by semester in the controller
+        $contractCount = $student->contracts->count(); // filtered already in the controller
+    @endphp
+    <tr>
+        <td>{{ $student->student_id }}</td>
+        <td>{{ $student->first_name }} {{ $student->last_name }}</td>
+        <td>{{ $profile->course_year ?? 'N/A' }}</td>
+        <td>{{ $profile->section ?? 'N/A' }}</td>
+        <td>{{ $contractCount }}</td>
+        <td>
+            <a href="{{ route('reports.student-history', ['student_id' => $student->id]) }}" 
+               class="text-blue-600 hover:underline font-medium">View History</a>
+        </td>
+    </tr>
+@empty
+    <tr>
+        <td colspan="6" class="text-center">No records found.</td>
+    </tr>
+@endforelse
 
-                                
-                                <td class="px-4 py-3">
-                                    <a href="{{ route('reports.student-history', ['student_id' => $student->id]) }}" 
-                                       class="text-blue-600 hover:underline font-medium">
-                                        View History
-                                    </a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center py-4 text-gray-500 dark:text-gray-400">No students found for this semester.</td>
-                            </tr>
-                        @endforelse
                     </tbody>
                 </table>
             </div>

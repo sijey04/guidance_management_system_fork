@@ -28,38 +28,35 @@ public function create(){
 
 
     // Store new contract
- public function store(Request $request)
+public function store(Request $request)
 {
-    $request->validate([
-       'student_id' => 'required|exists:students,id',
-        'semester_id' => 'required|exists:semesters,id',
+    $validated = $request->validate([
+        'student_id' => 'required|exists:students,id',
         'contract_date' => 'required|date',
-        'content' => 'required|string',
-        'total_days' => 'nullable|integer|min:1',
-        'completed_days' => 'nullable|integer|min:0',
-        'status' => 'required|in:In Progress,Completed',
-        'contract_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'contract_count' => 'required|integer|min:1',
+        'contract_type' => 'required|string|max:255',
+        'total_days' => 'required|integer|min:1',
+        'completed_days' => 'required|integer|min:0',
+        'contract_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
-    $data = $request->all();
+    $activeSemester = Semester::where('is_current', true)->first();
+    if (!$activeSemester) {
+        return back()->with('error', 'No active semester is set.');
+    }
 
+    // Save file if exists
     if ($request->hasFile('contract_image')) {
-        $imagePath = $request->file('contract_image')->store('contracts', 'public');
-        $data['contract_image'] = $imagePath;
+        $path = $request->file('contract_image')->store('contract_images', 'public');
+        $validated['contract_image'] = $path;
     }
 
-    Contract::create($data);
+    $validated['semester_id'] = $activeSemester->id;
 
-    // Check where the request came from (hidden input named 'redirect_to')
-    if ($request->has('redirect_to') && $request->redirect_to == 'student_contract') {
-        return redirect()->route('students.contract', $request->student_id)
-                         ->with('success', 'Contract added successfully!');
-    }
+    Contract::create($validated);
 
-    return redirect()->route('contracts.index')->with('success', 'Contract added successfully!');
-
+    return redirect()->back()->with('success', 'Contract created successfully.');
 }
+
 
     /**
      * Display the specified resource.
@@ -130,6 +127,11 @@ public function allContracts(Request $request)
 }
 
 
+public function view($id)
+{
+    $contract = Contract::with('student')->findOrFail($id);
+    return view('contracts.viewContract', compact('contract'));
+}
 
 
 }

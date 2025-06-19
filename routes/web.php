@@ -61,6 +61,7 @@ Route::get('/reports/view-profile/{studentId}/{semesterId}', [ReportController::
 Route::get('/reports/student-history/{studentId}', [ReportController::class, 'studentFullHistory'])->name('reports.studentFullHistory');
 Route::get('/reports', [ReportController::class, 'report'])->name('reports.report');
 Route::get('/reports/student-history/{student_id}', [ReportController::class, 'studentHistory'])->name('reports.student-history');
+Route::get('/contracts/{contract}/view', [ContractController::class, 'view'])->name('contracts.view');
 
 Route::get('/student/{studentId}/profile/{profileId}', [StudentController::class, 'viewProfile'])
      ->name('student.viewProfile');

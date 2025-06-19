@@ -47,6 +47,19 @@ public function viewProfile($studentId, $semesterId)
 
     return view('reports.view_profile', compact('student', 'semester', 'profile'));
 }
+public function report(Request $request)
+{
+    $semesters = Semester::all();
+    $selectedSemester = $request->input('semester_id');
+
+    $students = Student::with(['profiles' => function($query) use ($selectedSemester) {
+        $query->where('semester_id', $selectedSemester);
+    }, 'contracts' => function($query) use ($selectedSemester) {
+        $query->where('semester_id', $selectedSemester);
+    }])->get();
+
+    return view('reports.report', compact('students', 'semesters', 'selectedSemester'));
+}
 
 
 }
