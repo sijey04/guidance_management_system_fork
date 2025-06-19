@@ -66,9 +66,9 @@ class StudentController extends Controller
     'birthday' => ['required', 'date'],
     'suffix' => ['nullable', 'string', 'max:10'],
     'gender' => ['nullable', 'string', 'max:10'],
-    'enrollment_status' => ['nullable', 'string', 'max:50'],
-    'course_year' => ['required', 'in:' . implode(',', config('student.course_years'))],
-    'section' => ['required', 'in:' . implode(',', config('student.sections'))],
+    // 'enrollment_status' => ['nullable', 'string', 'max:50'],
+    // 'course_year' => ['required', 'in:' . implode(',', config('student.course_years'))],
+    // 'section' => ['required', 'in:' . implode(',', config('student.sections'))],
     'year' => ['nullable', 'integer', 'min:1'],
     'home_address' => ['nullable', 'string', 'max:255'],
     'father_occupation' => ['nullable', 'string', 'max:100'],
@@ -163,36 +163,31 @@ $profile = $student->profiles()->where('semester_id', $currentSemester->id)->fir
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
-    {
-        $student = Student::findOrFail($id);
-        $validatedStudent = $request->validate([
-            'student_id' => 'required|unique:students,student_id,' . $student->id,
-            'first_name' => ['required', 'string', 'max:255'], 
-            'middle_name' => ['nullable', 'string', 'max:255'], // NEW
-            'last_name' => ['required', 'string', 'max:255'],
-           'birthday' => ['required', 'date'],
-            'suffix' => ['nullable', 'string', 'max:10'], // NEW
-            'gender' => ['nullable', 'string', 'max:10'],
-            'enrollment_status' => ['nullable', 'string', 'max:50'], 
-            'year' => ['nullable', 'integer', 'min:1'],
-            'home_address' => ['nullable', 'string', 'max:255'],
-            'father_occupation' => ['nullable', 'string', 'max:100'],
-            'parent_guardian_name' => ['required', 'string', 'max:255'],
-            'parent_guardian_contact' => ['required', 'string', 'max:255'],
-            'mother_occupation' => ['nullable', 'string', 'max:100'],
-            'number_of_sisters' => ['nullable', 'integer', 'min:0'],
-            'number_of_brothers' => ['nullable', 'integer', 'min:0'],
-            'ordinal_position' => ['nullable', 'integer', 'min:1'],
-            'enrolled_semester' => ['nullable', 'string', 'max:50'],
-            'enrollment_date' => ['nullable', 'date'],
-        ]);
+{
+    $student = Student::findOrFail($id);
 
-        $student->update($validatedStudent);
+    $validated = $request->validate([
+        'student_id' => 'required|unique:students,student_id,' . $student->id,
+        'first_name' => 'required|string|max:255',
+        'middle_name' => 'nullable|string|max:255',
+        'last_name' => 'required|string|max:255',
+        'suffix' => 'nullable|string|max:10',
+        'birthday' => 'required|date',
+        'gender' => 'nullable|string|max:10',
+        'home_address' => 'nullable|string|max:255',
+        'father_occupation' => 'nullable|string|max:100',
+        'mother_occupation' => 'nullable|string|max:100',
+        'parent_guardian_name' => 'required|string|max:255',
+        'parent_guardian_contact' => 'required|string|max:255',
+        'number_of_sisters' => 'nullable|integer|min:0',
+        'number_of_brothers' => 'nullable|integer|min:0',
+        'ordinal_position' => 'nullable|integer|min:1',
+    ]);
 
-        
-       return redirect()->route('students.profile', ['id' => $student->id])->with('success', 'Student updated successfully!');
+    $student->update($validated);
 
-    }
+    return redirect()->route('students.profile', ['id' => $student->id])->with('success', 'Student info updated!');
+}
 
     /**
      * Remove the specified resource from storage.
@@ -373,8 +368,19 @@ public function updateProfile(Request $request, Student $student)
         ]
     );
 
-    return redirect()->back()->with('success', 'Course Year and Section updated successfully.');
+    return redirect()->back()->with('success', 'Profile updated for current semester only.');
 }
+
+
+public function viewProfile($studentId, $profileId)
+{
+    $student = Student::findOrFail($studentId);
+    $profile = StudentProfile::with('semester')->findOrFail($profileId);
+
+    return view('student.view_profile', compact('student', 'profile'));
+}
+
+
 
 
 }

@@ -52,15 +52,29 @@ class StudentProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Student $student)
-    {
-        $semester = semester::where('is_active', true)->first();
-        $profile = $student->profileForSemester($semester->id);
+  public function update(Request $request, Student $student)
+{
+    $semester = Semester::where('is_current', true)->first();
+    $profile = $student->profileForSemester($semester->id);
 
-        $profile->update($request->only(['course_year', 'section']));
-        
-        return redirect()->back()->with('success', 'Profile updated.');
-    }
+    $semester = Semester::where('is_active', true)->first();
+$profile = $student->profiles()->where('semester_id', $semester->id)->first();
+
+$profile->update($request->only([
+    'home_address', 'father_occupation', 'mother_occupation', 
+    'parent_guardian_name', 'parent_guardian_contact',
+    'number_of_sisters', 'number_of_brothers', 'ordinal_position'
+]));
+
+
+    return redirect()->back()->with('success', 'Profile updated for the current semester only.');
+}
+public function showProfile(Student $student, StudentProfile $profile)
+{
+    return view('student.view_profile', compact('student', 'profile'));
+}
+
+
 
 
     /**

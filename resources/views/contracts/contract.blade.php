@@ -51,9 +51,17 @@
                                         <td class="px-6 py-4">{{ $contract->student->first_name }} {{ $contract->student->last_name }}</td>
                                         <td class="px-6 py-4">{{ $contract->status }}</td>
                                         <td class="px-6 py-4">{{ $contract->contract_date }}</td>
+                                        <td class="px-6 py-4 text-center">
+                                            <a href="{{ route('contracts.view', $contract->id) }}" 
+                                            class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">
+                                            View
+                                            </a>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
+
+
                         </table>
                     </div>
                     <!-- Pagination -->

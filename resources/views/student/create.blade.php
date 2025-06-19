@@ -27,6 +27,7 @@
                     </ul>
                 </div>
             @endif
+<input type="hidden" name="is_enrolled" value="1">
 
             <!-- Personal Information -->
             <div>
@@ -75,45 +76,9 @@
             </div>
 
             <!-- Enrollment Information -->
-            <div>
-                <h3 class="font-semibold text-gray-600 mb-2">Enrollment Information</h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-                    <div>
-                        <label for="is_enrolled" class="text-sm text-gray-600">Enrollment Status <span class="text-red-500">*</span></label>
-                        <select name="is_enrolled" id="is_enrolled" required class="w-full mt-1 border-gray-300 rounded">
-                            <option value="">Select</option>
-                            <option value="1">Enrolled</option>
-                            <option value="0">Not Enrolled</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
+            
             <!-- Academic Information -->
-            <div>
-                <h3 class="font-semibold text-gray-600 mb-2">Academic Information</h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div>
-                        <label class="text-sm text-gray-600">Course & Year</label>
-                        <select name="course_year" class="w-full mt-1 border-gray-300 rounded-lg" required>
-                            <option value="">Select </option>
-                            @foreach(config('student.course_years') as $courseYear)
-                                <option value="{{ $courseYear }}" {{ (old('course_year', $student->course_year ?? '') == $courseYear) ? 'selected' : '' }}>{{ $courseYear }}</option>
-                            @endforeach
-                        </select>
-                   </div>
-                   <div>
-                         <label class="text-sm text-gray-600">Section</label>
-                        <select name="section" class="w-full mt-1 border-gray-300 rounded-lg" required>
-                            <option value="">Select Section</option>
-                            @foreach(config('student.sections') as $section)
-                                <option value="{{ $section }}" {{ (old('section', $student->section ?? '') == $section) ? 'selected' : '' }}>{{ $section }}</option>
-                            @endforeach
-                        </select>
-                   </div>
-                </div>
-            </div>
+            
 
             <!-- Address -->
             <div>

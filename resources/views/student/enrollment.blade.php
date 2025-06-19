@@ -51,6 +51,11 @@
                                             @else 
                                             @endif
                                         </td>
+                                        <td>
+                                            {{-- <a href="{{ route('student.enrollment') }}" class="text-blue-500 underline">View Full Profile</a>
+                                                View Profile
+                                            </a> --}}
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>

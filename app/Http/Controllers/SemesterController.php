@@ -2,138 +2,98 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\semester;
+use App\Models\Semester;
 use App\Models\Student;
 use App\Models\StudentProfile;
 use Illuminate\Http\Request;
 
 class SemesterController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
+        $semesters = Semester::orderByDesc('is_current')
+                             ->orderBy('school_year', 'desc')
+                             ->orderBy('semester', 'asc')
+                             ->get();
 
-         $semesters = Semester::orderByDesc('is_current') // Current semester first (is_current = 1)
-                         ->orderBy('school_year', 'desc') // Latest year next
-                         ->orderBy('semester', 'asc')    // 1st semester before 2nd or Summer
-                         ->get();
-
-    return view('semester.index', compact('semesters'));
+        return view('semester.index', compact('semesters'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $lastSemester = Semester::latest('id')->first();
-        $newSemester = Semester::create([
-            'school_year' => '2025-2026',
-            'semester' => '1st',
-            'is_active' => true,
-        ]);
-
-        $students = Student::all();
-
-        foreach ($students as $student) {
-            $lastProfile = $student->profileForSemester($lastSemester->id);
-            
-            if ($lastProfile) {
-                StudentProfile::create([
-                    'student_id' => $student->id,
-                    'semester_id' => $newSemester->id,
-                    'year_level' => $lastProfile->year_level, // allow counselor to update this later
-                    'section' => $lastProfile->section,
-                ]);
-            }
-        }
-
+        return view('semester.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        if ($request->is_current) {
-        Semester::where('is_current', true)->update(['is_current' => false]);
-        Semester::where('is_active', true)->update(['is_active' => false]); 
-    }
-
-    Semester::create($request->all());
-
-    return redirect()->route('semester.index')->with('success', 'Semester created successfully.');
-
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(semester $semester)
-    {
-        
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(semester $semester)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, semester $semester)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(semester $semester)
-    {
-        //
-    }
-
-public function activateSemester($id)
+   public function store(Request $request)
 {
-    // Deactivate all semesters first
-    Semester::where('id', '!=', $id)->update(['is_active' => false]);
+    // Validate
+    $validated = $request->validate([
+        'school_year' => 'required|string',
+        'semester'    => 'required|string',
+        'is_current'  => 'nullable|boolean',
+        'is_active'   => 'nullable|boolean',
+    ]);
 
-    // Activate the selected semester
-    $semester = Semester::findOrFail($id);
-    $semester->update(['is_active' => true]);
-
-    // Carry over profiles from previous semester (latest active or created one)
-    $previousSemester = Semester::where('id', '!=', $id)->latest('id')->first();
-
-    if ($previousSemester) {
-        $students = Student::all();
-        foreach ($students as $student) {
-            $previousProfile = $student->profiles()->where('semester_id', $previousSemester->id)->first();
-
-            if ($previousProfile) {
-                $existingProfile = $student->profiles()->where('semester_id', $semester->id)->first();
-                if (!$existingProfile) { // Prevent duplicates
-                    $student->profiles()->create([
-                        'semester_id'      => $semester->id,
-                        'year_level'       => $previousProfile->year_level,
-                        'section'          => $previousProfile->section,
-                        'additional_info'  => $previousProfile->additional_info,
-                        // Other profile fields if necessary
-                    ]);
-                }
-            }
-        }
+    // If new semester is set to current, unset others
+    if ($request->is_current) {
+        Semester::where('is_current', true)->update(['is_current' => false]);
+    }
+    if ($request->is_active) {
+        Semester::where('is_active', true)->update(['is_active' => false]);
     }
 
-    return redirect()->back()->with('success', 'Semester activated, profiles carried over.');
+    // Create new Semester
+    $newSemester = Semester::create($validated);
+
+    // Carry over profiles
+    $this->carryOverProfilesToNewSemester($newSemester);
+
+    return redirect()->route('semester.index')->with('success', 'Semester created and profiles carried over.');
 }
 
+    public function activateSemester($id)
+    {
+        // Deactivate all
+        Semester::where('id', '!=', $id)->update(['is_active' => false]);
+
+        // Activate new semester
+        $semester = Semester::findOrFail($id);
+        $semester->update(['is_active' => true]);
+
+        // Carry-over logic if needed (usually done in store)
+        // Optional here - to avoid double-carry
+
+        return redirect()->back()->with('success', 'Semester activated.');
+    }
+
+    public function carryOverProfilesToNewSemester(Semester $newSemester)
+{
+    $students = Student::all();
+
+    foreach ($students as $student) {
+        $latestProfile = $student->profiles()->latest('semester_id')->first();
+
+        // Check if profile already exists for this semester
+        $exists = $student->profiles()->where('semester_id', $newSemester->id)->exists();
+
+        if (!$exists && $latestProfile) {
+            $student->profiles()->create([
+                'semester_id' => $newSemester->id,
+                'course_year' => $latestProfile->course_year,
+                'section' => $latestProfile->section,
+                // also copy personal info
+                'home_address' => $latestProfile->home_address,
+                'father_occupation' => $latestProfile->father_occupation,
+                'mother_occupation' => $latestProfile->mother_occupation,
+                'parent_guardian_name' => $latestProfile->parent_guardian_name,
+                'parent_guardian_contact' => $latestProfile->parent_guardian_contact,
+                'number_of_sisters' => $latestProfile->number_of_sisters,
+                'number_of_brothers' => $latestProfile->number_of_brothers,
+                'ordinal_position' => $latestProfile->ordinal_position,
+                // etc.
+            ]);
+        }
+    }
+}
 
 }

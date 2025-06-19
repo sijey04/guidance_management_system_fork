@@ -46,73 +46,34 @@
                 <input type="hidden" name="student_id" x-model="selectedStudentId" required>
             </div>
 
-            <!-- Semester -->
-            <div>
-
-                <label for="semester_id" class="block text-sm mb-1">Semester</label>
-                <select name="semester_id" required class="w-full border-gray-300 rounded mt-1 p-2">
-                    @foreach ($semesters as $semester)
-                        <option value="{{ $semester->id }}">
-                            A.Y {{ $semester->school_year }} {{ $semester->semester }} Semester
-                            @if($semester->is_current) — Active @endif
-                        </option>
-                    @endforeach
-                </select>
-
-                <label for="semester_id" class="block text-sm mb-1" style="color:#a82323;">Semester</label>
-                <select name="semester_id" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
-    @foreach ($semesters as $semester)
-        <option value="{{ $semester->id }}">
-            A.Y {{ $semester->school_year }} {{ $semester->semester }} Semester
-            @if($semester->is_current) — Active @endif
-        </option>
-    @endforeach
-</select>
-            </div>
-
             <!-- Contract Date -->
             <div>
                 <label for="contract_date" class="block text-sm mb-1" style="color:#a82323;">Contract Date</label>
                 <input type="date" name="contract_date" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
             </div>
 
-            <!-- Content -->
+            <!-- Contract Type -->
             <div>
-                <label for="content" class="block text-sm mb-1" style="color:#a82323;">Content</label>
-                <textarea name="content" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900"></textarea>
+                <label for="contract_type" class="block text-sm mb-1" style="color:#a82323;">Contract Type</label>
+                <input type="text" name="contract_type" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
             </div>
 
-            <!-- Total Days (Optional) -->
+            <!-- Total Days -->
             <div>
-                <label for="total_days" class="block text-sm mb-1" style="color:#a82323;">Total Days (Optional)</label>
-                <input type="number" name="total_days" min="1" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
+                <label for="total_days" class="block text-sm mb-1" style="color:#a82323;">Total Days</label>
+                <input type="number" name="total_days" min="1" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
             </div>
 
-            <!-- Completed Days (Optional) -->
+            <!-- Completed Days -->
             <div>
-                <label for="completed_days" class="block text-sm mb-1" style="color:#a82323;">Completed Days (Optional)</label>
-                <input type="number" name="completed_days" min="0" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
-            </div>
-
-            <!-- Status -->
-            <div>
-                <label for="status" class="block text-sm mb-1" style="color:#a82323;">Status</label>
-                <select name="status" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                </select>
+                <label for="completed_days" class="block text-sm mb-1" style="color:#a82323;">Completed Days</label>
+                <input type="number" name="completed_days" min="0" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
             </div>
 
             <!-- Contract Image -->
             <div>
-                <label for="contract_image" class="block text-sm mb-1" style="color:#a82323;">Contract Image</label>
+                <label for="contract_image" class="block text-sm mb-1" style="color:#a82323;">Attach Contract Image</label>
                 <input type="file" name="contract_image" accept="image/*" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
-            </div>
-
-            <!-- Contract Count -->
-            <div>
-                <label for="contract_count" class="block text-sm mb-1" style="color:#a82323;">Number of Times This Contract is For</label>
-                <input type="number" name="contract_count" min="1" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
             </div>
 
             <!-- Buttons -->

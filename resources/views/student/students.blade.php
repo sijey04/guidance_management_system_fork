@@ -44,7 +44,6 @@
                                     <th class="px-1 py-3">Name</th>
                                     <th class="px-5 py-3">Course & Year</th>
                                     <th class="px-5 py-3">Contracts</th>
-                                    <th class="px-5 py-3">Enrollment Status</th>
                                     <th class="px-5 py-3 text-end "></th>
                                 </tr>
                             </thead>
@@ -53,16 +52,13 @@
                                     <tr class="hover:bg-[#f8eaea] transition">
                                         <td class="px-6 py-4">{{ $student->student_id }}</td>
                                         <td class="px-1 py-4">{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffx }}</td>
-                                        <td class="px-6 py-4">{{ $student->course_year ?? 'N/A' }} {{ $student->section ?? 'N/A' }}</td>
+                                     
+                                     @php
+                                            $profile = $student->profiles->first(); // the loaded profile for active semester
+                                        @endphp
+                                        <td class="px-6 py-4">{{ $profile?->course_year ?? 'N/A' }} - {{  $profile?->section ?? 'N/A' }}</td>
                                         <td class="px-6 py-4">{{ $student->contracts_count }}</td>
-                                        <td class="px-6 py-4">
-                                            @php $currentEnrollment = $student->currentEnrollment(); @endphp
-                                            @if($currentEnrollment && $currentEnrollment->is_enrolled)
-                                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Enrolled</span>
-                                            @else
-                                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Not Enrolled</span>
-                                            @endif
-                                        </td>
+                                        
                                         <td class="px-6 py-4 flex gap-2">
                                             <a href="{{ route('student.show', $student->id) }}" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323; border-radius:6px; padding:7px 14px; font-weight:600;">View </a>
                                             <form action="{{ route('student.destroy', $student->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this student?')">
