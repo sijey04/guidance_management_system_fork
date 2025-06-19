@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -57,8 +58,16 @@ Route::get('/report', [ReportController::class, 'index'])->middleware(['auth', '
   Route::get('/reports/student-list', [ReportController::class, 'studentList'])->name('reports.studentList');
 Route::get('/reports/student-history/{student}', [ReportController::class, 'studentHistory'])->name('reports.studentHistory');
 Route::get('/reports/view-profile/{studentId}/{semesterId}', [ReportController::class, 'viewProfile'])->name('reports.viewProfile');
+Route::get('/reports/student-history/{studentId}', [ReportController::class, 'studentFullHistory'])->name('reports.studentFullHistory');
+Route::get('/reports', [ReportController::class, 'report'])->name('reports.report');
+Route::get('/reports/student-history/{student_id}', [ReportController::class, 'studentHistory'])->name('reports.student-history');
 
-  
+Route::get('/student/{studentId}/profile/{profileId}', [StudentController::class, 'viewProfile'])
+     ->name('student.viewProfile');
+Route::get('/student/{id}/enrollment', [StudentController::class, 'enrollmentHistory'])->name('student.enrollment');
+Route::get('/student/{student}/profile/{semester}', [StudentController::class, 'viewHistoricalProfile'])->name('student.viewHistoricalProfile');
+Route::get('/student/{student}/profile/{profile}', [StudentController::class, 'viewProfile'])->name('student.profile.view');
+
 Route::get('/counseling', [CounselingController::class, 'index'])->name('counselings.index');
 });
 // // Student List,Create,edit

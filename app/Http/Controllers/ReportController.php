@@ -23,14 +23,17 @@ class ReportController extends Controller
         return view('reports.report', compact('semesters', 'students', 'selectedSemester'));
     }
 
-    // Individual Student History (Profile + Enrollment + Contracts + Referrals)
-    public function studentHistory($studentId)
-    {
-        $student = Student::with(['profiles.semester'])
-                          ->findOrFail($studentId);
+   public function studentHistory($studentId, Request $request)
+{
+    $student = Student::with(['profiles.semester', 'contracts.semester'])->findOrFail($studentId);
 
-        return view('reports.student_history', compact('student'));
-    }
+    // Optional: Filter by selected semester if passed
+    $selectedSemesterId = $request->input('semester_id');
+    
+    $semesters = Semester::orderBy('school_year', 'desc')->get();
+
+    return view('reports.student_history', compact('student', 'semesters', 'selectedSemesterId'));
+}
 public function viewProfile($studentId, $semesterId)
 {
     $student = Student::findOrFail($studentId);

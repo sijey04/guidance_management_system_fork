@@ -113,6 +113,7 @@
                             </div>
                         </div>
 
+                        
                         <!-- Basic Information -->
                         <h3 class="text-lg font-semibold" style="color:#a82323; border-bottom:1.5px solid #f8eaea; padding-bottom:6px;">Basic Information</h3>
                         <p class="text-sm text-gray-500 mb-3">Personal and enrollment details of the student.</p>

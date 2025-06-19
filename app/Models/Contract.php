@@ -10,12 +10,10 @@ class contract extends Model
     'student_id',
     'semester_id',
     'contract_date',
-    'content',
     'total_days',
     'completed_days',
     'status',
     'contract_image',
-    'contract_count',
 ];
 
 
