@@ -21,7 +21,7 @@
             Counseling Records
         </a>
         <a href="{{ route('report') }}" class="sidebar-nav-link{{ request()->routeIs('report') ? ' active' : '' }}">
-            Report
+            Report & History
         </a>
         <a href="{{ route('semester.index') }}" class="sidebar-nav-link{{ request()->routeIs('semester.*') ? ' active' : '' }}">
             Setup
