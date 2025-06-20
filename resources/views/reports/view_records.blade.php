@@ -1,41 +1,36 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 leading-tight">
-            Records for {{ $student->first_name }} {{ $student->last_name }} - {{ $semester->school_year }} {{ $semester->semester }}
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
+            {{ $student->first_name }} {{ $student->last_name }} - {{ $semester->school_year }} {{ $semester->semester }} Records
         </h2>
     </x-slot>
 
-    <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="p-6 bg-white rounded shadow">
+        <h3 class="font-semibold text-lg">Contracts</h3>
+        @forelse($contracts as $contract)
+            <p>Contract Date: {{ $contract->contract_date }}</p>
+            <p>Status: {{ $contract->status }}</p>
+            <hr class="my-2">
+        @empty
+            <p>No Contracts for this semester.</p>
+        @endforelse
 
-        <!-- Contracts -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
-            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Contracts</h3>
-            @forelse($contracts as $contract)
-                <p>Date: {{ $contract->contract_date }} | Status: {{ $contract->status }}</p>
-            @empty
-                <p class="text-gray-500">No contracts for this semester.</p>
-            @endforelse
-        </div>
+        {{-- <h3 class="font-semibold text-lg mt-4">Counseling Records</h3>
+        @forelse($counselings as $counseling)
+            <p>Date: {{ $counseling->session_date }}</p>
+            <p>Problem: {{ $counseling->statement_of_problem }}</p>
+            <hr class="my-2">
+        @empty
+            <p>No Counseling Records for this semester.</p>
+        @endforelse
 
-        {{-- <!-- Counseling Records -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
-            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Counseling Records</h3>
-            @forelse($counselings as $counseling)
-                <p>Date: {{ $counseling->session_date }} | Problem: {{ $counseling->statement_of_problem }}</p>
-            @empty
-                <p class="text-gray-500">No counseling records for this semester.</p>
-            @endforelse
-        </div>
-
-        <!-- Referrals -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
-            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Referral Forms</h3>
-            @forelse($referrals as $referral)
-                <p>Referred by: {{ $referral->referred_by }} | Reason: {{ $referral->reason }}</p>
-            @empty
-                <p class="text-gray-500">No referral forms for this semester.</p>
-            @endforelse
-        </div> --}}
-
+        <h3 class="font-semibold text-lg mt-4">Referrals</h3>
+        @forelse($referrals as $referral)
+            <p>Referred By: {{ $referral->referred_by }}</p>
+            <p>Reason: {{ $referral->reason }}</p>
+            <hr class="my-2">
+        @empty
+            <p>No Referral Records for this semester.</p>
+        @endforelse --}}
     </div>
 </x-app-layout>

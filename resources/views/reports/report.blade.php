@@ -62,10 +62,12 @@
                                        class="text-blue-600 hover:text-blue-800 font-medium underline">
                                         View History
                                     </a>
-                                    <a href="{{ route('reports.view-records', ['student_id' => $student->id, 'semester_id' => $selectedSemester]) }}" 
-                                        class="text-blue-600 hover:text-blue-800 font-medium underline">
-                                        View Records
-                                        </a>
+                                   <a href="{{ route('reports.view-records', ['studentId' => $student->id]) }}?semester_id={{ $selectedSemester }}" 
+   class="text-blue-500 underline">
+   View Records
+</a>
+
+
 
                                 </td>
                             </tr>

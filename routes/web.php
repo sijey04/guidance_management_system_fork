@@ -69,7 +69,7 @@ Route::get('/student/{id}/enrollment', [StudentController::class, 'enrollmentHis
 Route::get('/student/{student}/profile/{semester}', [StudentController::class, 'viewHistoricalProfile'])->name('student.viewHistoricalProfile');
 Route::get('/student/{student}/profile/{profile}', [StudentController::class, 'viewProfile'])->name('student.profile.view');
 
-Route::get('/reports/view-records/{student_id}', [ReportController::class, 'viewRecords'])->name('reports.view-records');
+Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])->name('reports.view-records');
 Route::get('/counseling', [CounselingController::class, 'index'])->name('counselings.index');
 });
 // // Student List,Create,edit

@@ -92,9 +92,9 @@ public function viewRecords($studentId, Request $request)
     $student = Student::findOrFail($studentId);
     $semester = Semester::findOrFail($semesterId);
 
+    // Data fetched only for this semester
     $contracts = $student->contracts()->where('semester_id', $semesterId)->get();
-    //$counselings = $student->counselings()->where('semester_id', $semesterId)->get();
-    //$referrals = $student->referrals()->where('semester_id', $semesterId)->get(); // If you have referrals
+   // $referrals = $student->referrals()->where('semester_id', $semesterId)->get(); // if referrals exist
 
     return view('reports.view_records', compact('student', 'semester', 'contracts'));
 }
