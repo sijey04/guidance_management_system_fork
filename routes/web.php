@@ -68,8 +68,30 @@ Route::get('/student/{studentId}/profile/{profileId}', [StudentController::class
 Route::get('/student/{id}/enrollment', [StudentController::class, 'enrollmentHistory'])->name('student.enrollment');
 Route::get('/student/{student}/profile/{semester}', [StudentController::class, 'viewHistoricalProfile'])->name('student.viewHistoricalProfile');
 Route::get('/student/{student}/profile/{profile}', [StudentController::class, 'viewProfile'])->name('student.profile.view');
+Route::post('/semesters/{newSemesterId}/carry-over', [SemesterController::class, 'carryOverFromPrevious'])
+    ->name('semesters.carryOver');
+// For showing the Validation Modal data
+Route::get('/semester/{semester}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
+Route::get('/semester/{id}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
+Route::post('/semester/{id}/validate', [SemesterController::class, 'processValidation'])->name('semester.processValidation');
 
+// For handling the post-validation process
+Route::post('/semester/{semester}/validate', [SemesterController::class, 'processValidation'])->name('semester.validate.process');
+
+Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])->name('reports.view-records');
 Route::get('/counseling', [CounselingController::class, 'index'])->name('counselings.index');
+
+
+
+// Show the validation form modal
+Route::get('/semester/{id}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
+
+Route::get('/semester/{semester}/validate', [SemesterController::class, 'showValidationForm'])
+    ->name('semester.showValidationForm');
+
+Route::post('/semester/{semester}/validate', [SemesterController::class, 'processValidation'])
+    ->name('semester.processValidation');
+
 });
 // // Student List,Create,edit
 // Route::resource('/student',[StudentController::class, 'index'])

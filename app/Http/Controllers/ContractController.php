@@ -37,6 +37,7 @@ public function store(Request $request)
         'total_days' => 'required|integer|min:1',
         'completed_days' => 'required|integer|min:0',
         'contract_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'status' => 'required|string',
     ]);
 
     $activeSemester = Semester::where('is_current', true)->first();

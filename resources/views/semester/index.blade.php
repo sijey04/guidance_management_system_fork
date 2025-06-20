@@ -31,6 +31,19 @@
                         @include('semester.create')
                     </div>
                     <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-md bg-white">
+
+                        @php
+    $activeSemester = $semesters->where('is_current', true)->first();
+    $studentCount = \App\Models\StudentProfile::where('semester_id', $activeSemester->id)->count();
+@endphp
+
+@if($activeSemester && $studentCount == 0)
+    <a href="{{ route('semester.validate', $activeSemester->id) }}"
+       class="bg-blue-500 text-white px-4 py-2 rounded inline-block mb-4">
+        Validate Students
+    </a>
+@endif
+
                         <table class="w-full border text-sm text-left text-gray-700">
                             <thead style="background:#a82323; color:#fff;">
                                 <tr>
@@ -52,7 +65,9 @@
                                                 <span class="text-gray-400 text-xs">Inactive</span>
                                             @endif
                                         </td>
-                                        <td class="p-3"> <!-- Actions here if needed --> </td>
+                                         <td>
+                                          
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
