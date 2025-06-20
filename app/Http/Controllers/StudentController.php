@@ -19,6 +19,7 @@ class StudentController extends Controller
         $query = Student::withCount('contracts')
                         ->with(['enrollments.semester']);
 
+
         // Search (by ID, First Name, Last Name)
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -37,7 +38,11 @@ class StudentController extends Controller
             $query->orderBy($sortField, $sortDirection);
         }
 
-        $students = $query->paginate(15)->appends($request->all());
+       $activeSemester = Semester::where('is_current', true)->first();
+
+$students = Student::whereHas('profiles', function ($query) use ($activeSemester) {
+    $query->where('semester_id', $activeSemester->id);
+})->paginate(15);
 
         return view('student.students', compact('students'));
     }
@@ -58,50 +63,59 @@ class StudentController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {   $validated = $request->validate([
-    'student_id' => ['required', 'string', 'max:50', 'unique:students'],
-    'first_name' => ['required', 'string', 'max:255'],
-    'middle_name' => ['nullable', 'string', 'max:255'],
-    'last_name' => ['required', 'string', 'max:255'],
-    'birthday' => ['required', 'date'],
-    'suffix' => ['nullable', 'string', 'max:10'],
-    'gender' => ['nullable', 'string', 'max:10'],
-    // 'enrollment_status' => ['nullable', 'string', 'max:50'],
-    // 'course_year' => ['required', 'in:' . implode(',', config('student.course_years'))],
-    // 'section' => ['required', 'in:' . implode(',', config('student.sections'))],
-    'year' => ['nullable', 'integer', 'min:1'],
-    'home_address' => ['nullable', 'string', 'max:255'],
-    'father_occupation' => ['nullable', 'string', 'max:100'],
-    'mother_occupation' => ['nullable', 'string', 'max:100'],
-    'parent_guardian_name' => ['required', 'string', 'max:255'],
-    'parent_guardian_contact' => ['required', 'string', 'max:255'],
-    'number_of_sisters' => ['nullable', 'integer', 'min:0'],
-    'number_of_brothers' => ['nullable', 'integer', 'min:0'],
-    'ordinal_position' => ['nullable', 'integer', 'min:1'],
-    'enrolled_semester' => ['nullable', 'string', 'max:50'],
-    'enrollment_date' => ['nullable', 'date'],
-    'is_enrolled' => ['required', 'boolean'],
-]);
-
+{
+    $validated = $request->validate([
+        'student_id' => ['required', 'string', 'max:50', 'unique:students'],
+        'first_name' => ['required', 'string', 'max:255'],
+        'middle_name' => ['nullable', 'string', 'max:255'],
+        'last_name' => ['required', 'string', 'max:255'],
+        'birthday' => ['required', 'date'],
+        'suffix' => ['nullable', 'string', 'max:10'],
+        'gender' => ['nullable', 'string', 'max:10'],
+        'home_address' => ['nullable', 'string', 'max:255'],
+        'father_occupation' => ['nullable', 'string', 'max:100'],
+        'mother_occupation' => ['nullable', 'string', 'max:100'],
+        'parent_guardian_name' => ['required', 'string', 'max:255'],
+        'parent_guardian_contact' => ['required', 'string', 'max:255'],
+        'number_of_sisters' => ['nullable', 'integer', 'min:0'],
+        'number_of_brothers' => ['nullable', 'integer', 'min:0'],
+        'ordinal_position' => ['nullable', 'integer', 'min:1'],
+        'is_enrolled' => ['required', 'boolean'],
+    ]);
 
     $student = Student::create($validated);
 
-$activeSemester = Semester::where('is_current', true)->first(); 
+    $activeSemester = Semester::where('is_current', true)->first();
 
-if (!$activeSemester) {
-    return redirect()->back()->with('error', 'No active semester set. Please set an active academic year and semester first.');
+    if (!$activeSemester) {
+        return redirect()->back()->with('error', 'No active semester set. Please set an active academic year and semester first.');
+    }
+
+    // Enroll the student in the active semester
+    StudentSemesterEnrollment::create([
+        'student_id' => $student->id,
+        'semester_id' => $activeSemester->id,
+        'is_enrolled' => $request->is_enrolled,
+    ]);
+
+    // Create student profile for the active semester
+    $student->profiles()->create([
+        'semester_id' => $activeSemester->id,
+        'course_year' => $request->input('course_year', 'BSCS 1'), // default fallback if course_year not present
+        'section' => $request->input('section', 'A'), // default fallback if section not present
+        'home_address' => $validated['home_address'] ?? null,
+        'father_occupation' => $validated['father_occupation'] ?? null,
+        'mother_occupation' => $validated['mother_occupation'] ?? null,
+        'parent_guardian_name' => $validated['parent_guardian_name'],
+        'parent_guardian_contact' => $validated['parent_guardian_contact'],
+        'number_of_sisters' => $validated['number_of_sisters'] ?? null,
+        'number_of_brothers' => $validated['number_of_brothers'] ?? null,
+        'ordinal_position' => $validated['ordinal_position'] ?? null,
+    ]);
+
+    return redirect()->route('student.index')->with('success', 'Student created and enrolled in the active semester.');
 }
 
-StudentSemesterEnrollment::create([
-    'student_id' => $student->id,
-    'semester_id' => $activeSemester->id,
-    'is_enrolled' => $request->is_enrolled,
-]);
-
-
-  
-    return redirect()->route('student.index')->with('success', 'Student created and enrolled in the active semester.');
-    }
 
     /**
      * Display the specified resource.

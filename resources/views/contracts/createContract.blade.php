@@ -76,6 +76,14 @@
                 <input type="file" name="contract_image" accept="image/*" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
             </div>
 
+            <div>
+                <label class="text-sm">Status:</label>
+                <select name="status" required class="w-full mt-1 border-gray-300 rounded">
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+            
             <!-- Buttons -->
             <div class="flex justify-end gap-3 mt-4">
                 <button type="button" @click="openCreateContractModal = false" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323; border-radius:6px; padding:7px 16px; font-weight:600;">Cancel</button>
