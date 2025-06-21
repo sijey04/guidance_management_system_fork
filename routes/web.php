@@ -3,12 +3,16 @@
 
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\CounselingController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\CourseYearSectionController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\YearController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -81,8 +85,6 @@ Route::post('/semester/{semester}/validate', [SemesterController::class, 'proces
 Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])->name('reports.view-records');
 Route::get('/counseling', [CounselingController::class, 'index'])->name('counselings.index');
 
-
-
 // Show the validation form modal
 Route::get('/semester/{id}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
 
@@ -91,6 +93,12 @@ Route::get('/semester/{semester}/validate', [SemesterController::class, 'showVal
 
 Route::post('/semester/{semester}/validate', [SemesterController::class, 'processValidation'])
     ->name('semester.processValidation');
+
+Route::get('/manage-course-year-section', [CourseYearSectionController::class, 'index'])->name('course_year_section.index');
+Route::post('/manage-course', [CourseYearSectionController::class, 'storeCourse'])->name('course.store');
+Route::post('/manage-year', [CourseYearSectionController::class, 'storeYear'])->name('year.store');
+Route::post('/manage-section', [CourseYearSectionController::class, 'storeSection'])->name('section.store');
+
 
 });
 // // Student List,Create,edit

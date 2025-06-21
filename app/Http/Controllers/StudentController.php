@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\contract;
+use App\Models\Course;
 use App\Models\Post;
+use App\Models\Section;
 use App\Models\semester;
 use App\Models\Student;
 use App\Models\StudentProfile;
 use App\Models\StudentSemesterEnrollment;
+use App\Models\Year;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
@@ -16,36 +19,39 @@ class StudentController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request){
-        $query = Student::withCount('contracts')
-                        ->with(['enrollments.semester']);
+    $query = Student::withCount('contracts')
+                    ->with(['enrollments.semester']);
 
-
-        // Search (by ID, First Name, Last Name)
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('student_id', 'like', "%{$search}%")
-                ->orWhere('first_name', 'like', "%{$search}%")
-                ->orWhere('last_name', 'like', "%{$search}%");
-            });
-        }
-
-        // Sort (by selected field)
-        if ($request->filled('sort_by')) {
-            $sortField = $request->input('sort_by');
-            $sortDirection = $request->input('sort_direction', 'asc'); // default to 'asc'
-
-            $query->orderBy($sortField, $sortDirection);
-        }
-
-       $activeSemester = Semester::where('is_current', true)->first();
-
-$students = Student::whereHas('profiles', function ($query) use ($activeSemester) {
-    $query->where('semester_id', $activeSemester->id);
-})->paginate(15);
-
-        return view('student.students', compact('students'));
+    if ($request->filled('search')) {
+        $search = $request->input('search');
+        $query->where(function ($q) use ($search) {
+            $q->where('student_id', 'like', "%{$search}%")
+              ->orWhere('first_name', 'like', "%{$search}%")
+              ->orWhere('last_name', 'like', "%{$search}%");
+        });
     }
+
+    if ($request->filled('sort_by')) {
+        $sortField = $request->input('sort_by');
+        $sortDirection = $request->input('sort_direction', 'asc');
+        $query->orderBy($sortField, $sortDirection);
+    }
+
+    $activeSemester = Semester::where('is_current', true)->first();
+
+    $students = Student::whereHas('profiles', function ($query) use ($activeSemester) {
+        $query->where('semester_id', $activeSemester->id);
+    })->paginate(15);
+
+    // ADD THIS:
+    $courses = Course::all();
+    $years = Year::all();
+    $sections = Section::all();
+    $semesters = Semester::all();
+
+    return view('student.students', compact('students', 'courses', 'years', 'sections', 'semesters'));
+}
+
 
 
 
@@ -54,10 +60,14 @@ $students = Student::whereHas('profiles', function ($query) use ($activeSemester
      */
     public function create()
     {
-        
-        $semesters = semester::all();
-        return view('student.create', compact('semesters'));
+        $courses = Course::all();
+        $years = Year::all();
+        $sections = Section::all();
+        $semesters = Semester::all();
+
+        return view('student.create', compact('semesters', 'courses', 'years', 'sections'));
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -81,6 +91,9 @@ $students = Student::whereHas('profiles', function ($query) use ($activeSemester
         'number_of_brothers' => ['nullable', 'integer', 'min:0'],
         'ordinal_position' => ['nullable', 'integer', 'min:1'],
         'is_enrolled' => ['required', 'boolean'],
+        'fathers_name' => ['nullable', 'string', 'max:255'],
+        'mothers_name' => ['nullable', 'string', 'max:255'],
+        'student_contact' => ['nullable', 'string', 'max:255'],
     ]);
 
     $student = Student::create($validated);
@@ -101,8 +114,9 @@ $students = Student::whereHas('profiles', function ($query) use ($activeSemester
     // Create student profile for the active semester
     $student->profiles()->create([
         'semester_id' => $activeSemester->id,
-        'course_year' => $request->input('course_year', 'BSCS 1'), // default fallback if course_year not present
-        'section' => $request->input('section', 'A'), // default fallback if section not present
+        'course' => $request->input('course') ?? null, // default fallback if course_year not present
+        'section' => $request->input('section') ?? null, // default fallback if section not present
+        'year_level' => $request->input('year_level') ?? null, // default fallback if section not present
         'home_address' => $validated['home_address'] ?? null,
         'father_occupation' => $validated['father_occupation'] ?? null,
         'mother_occupation' => $validated['mother_occupation'] ?? null,
@@ -111,7 +125,16 @@ $students = Student::whereHas('profiles', function ($query) use ($activeSemester
         'number_of_sisters' => $validated['number_of_sisters'] ?? null,
         'number_of_brothers' => $validated['number_of_brothers'] ?? null,
         'ordinal_position' => $validated['ordinal_position'] ?? null,
+        'fathers_name' => $validated['fathers_name'] ?? null,
+        'mothers_name' => $validated['mothers_name'] ?? null,
+        'student_contact' => $validated['student_contact'] ?? null,
     ]);
+
+    $request->validate([
+    'course' => 'required|exists:courses,course',
+    'year_level' => 'required|exists:years,year_level',
+    'section' => 'required|exists:sections,section',
+]);
 
     return redirect()->route('student.index')->with('success', 'Student created and enrolled in the active semester.');
 }
@@ -191,11 +214,14 @@ $profile = $student->profiles()->where('semester_id', $currentSemester->id)->fir
         'home_address' => 'nullable|string|max:255',
         'father_occupation' => 'nullable|string|max:100',
         'mother_occupation' => 'nullable|string|max:100',
-        'parent_guardian_name' => 'required|string|max:255',
-        'parent_guardian_contact' => 'required|string|max:255',
+        'parent_guardian_name' => 'nullable|string|max:255',
+        'parent_guardian_contact' => 'nullable|string|max:255',
         'number_of_sisters' => 'nullable|integer|min:0',
         'number_of_brothers' => 'nullable|integer|min:0',
         'ordinal_position' => 'nullable|integer|min:1',
+        'fathers_name' => 'nullable|string|max:255',
+        'mothers_name' => 'nullable|string|max:255',
+        'student_contact' => 'nullable|string|max:255',
     ]);
 
     $student->update($validated);

@@ -14,7 +14,7 @@
         <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">Add New Student</h2>
         <p class="text-sm text-gray-500 mb-6 text-center">Please fill out the form below to add a new student. All required fields are marked with <span class="text-red-500">*</span>.</p>
 
-        <form action="{{ route('student.store') }}" method="POST" class="space-y-6">
+        <form x-ref="addStudentForm" action="{{ route('student.store') }}" method="POST" class="space-y-6">
             @csrf
 
             <!-- Error Display -->
@@ -27,7 +27,7 @@
                     </ul>
                 </div>
             @endif
-<input type="hidden" name="is_enrolled" value="1">
+           <input type="hidden" name="is_enrolled" value="1">
 
             <!-- Personal Information -->
             <div>
@@ -75,44 +75,97 @@
                 </div>
             </div>
 
-            <!-- Enrollment Information -->
-            
-            <!-- Academic Information -->
-            
+                <div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="home_address" class="text-sm text-gray-600">Home Address <span class="text-red-500"></span></label>
+                            <x-text-input id="home_address" name="home_address" type="text" :value="old('home_address')" placeholder="e.g. 123 Purok St."  class="mt-1 w-full border-gray-300 rounded"/>
+                        </div>
 
-            <!-- Address -->
-            <div>
-                <h3 class="font-semibold text-gray-600 mb-2">Address</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="home_address" class="text-sm text-gray-600">Home Address <span class="text-red-500">*</span></label>
-                        <x-text-input id="home_address" name="home_address" type="text" :value="old('home_address')" placeholder="e.g. 123 Purok St." required class="mt-1 w-full border-gray-300 rounded"/>
+                        <div>
+                            <label for="student_contact" class="text-sm text-gray-600">Contact no. <span class="text-red-500"></span></label>
+                            <input id="student_contact" name="student_contact" type="tel" :value="old('student_contact')" placeholder=""  class="mt-1 w-full border-gray-300 rounded"/>
+                        </div>
                     </div>
                 </div>
+
+                
+            <div>
+                <h3 class="font-semibold text-gray-600 mb-2">Course & Year</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4" >
+                        <!-- Course & Year Dropdown -->
+                        <div>
+                            <label class="text-sm text-gray-600">Course & Year <span class="text-red-500">*</span></label>
+                            <select name="course" class="w-full mt-1 border-gray-300 rounded">
+                                <option value="">Select Course</option>
+                                @foreach($courses as $course)
+                                    <option value="{{ $course->course }}" {{ old('course') == $course->course ? 'selected' : '' }}>
+                                        {{ $course->course }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+
+                        </div>
+
+                        <div>
+                            <label class="text-sm text-gray-600">Year Level <span class="text-red-500">*</span></label>
+                          <select name="year_level" class="w-full mt-1 border-gray-300 rounded" required>
+                                <option value="">Select Year Level</option>
+                                @foreach($years as $year)
+                                    <option value="{{ $year->year_level }}" {{ old('year_level') == $year->year_level ? 'selected' : '' }}>
+                                        {{ $year->year_level }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                        </div>
+                        
+                        <!-- Section Dropdown -->
+                        <div>
+                            <label class="text-sm text-gray-600">Section<span class="text-red-500">*</span></label>
+                            <select name="section" class="w-full mt-1 border-gray-300 rounded">
+                                <option value="">Select Section</option>
+                                @foreach($sections as $section)
+                                    <option value="{{ $section->section }}" {{ old('section') == $section->section ? 'selected' : '' }}>
+                                        {{ $section->section }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
             </div>
 
             <!-- Parent/Guardian Information -->
             <div>
                 <h3 class="font-semibold text-gray-600 mb-2">Parent/Guardian Information</h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="parent_guardian_name" class="text-sm text-gray-600">Parent/Guardian Name <span class="text-red-500">*</span></label>
-                        <x-text-input id="parent_guardian_name" name="parent_guardian_name" type="text" :value="old('parent_guardian_name')"  class="mt-1 w-full border-gray-300 rounded"/>
+                        <x-text-input id="parent_guardian_name" name="parent_guardian_name" type="text" :value="old('parent_guardian_name')" required class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
                     <div>
                         <label for="parent_guardian_contact" class="text-sm text-gray-600">Parent/Guardian Contact <span class="text-red-500">*</span></label>
-                        <x-text-input id="parent_guardian_contact" name="parent_guardian_contact" type="text" :value="old('parent_guardian_contact')"  class="mt-1 w-full border-gray-300 rounded"/>
+                        <input id="parent_guardian_contact" name="parent_guardian_contact" type="tel" :value="old('parent_guardian_contact')" required class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
                 </div>
             </div>
 
-            <!-- Family Information -->
+                <!-- Family Information -->
             <div>
                 <h3 class="font-semibold text-gray-600 mb-2">Family Information</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
+                        <label for="fathers_name" class="text-sm text-gray-600">Father's Name <span class="text-red-500"></span></label>
+                        <x-text-input id="fathers_name" name="fathers_name" type="text" :value="old('fathers_name')" class="mt-1 w-full border-gray-300 rounded"/>
+                    </div>
+                    <div>
                         <label for="father_occupation" class="text-sm text-gray-600">Father's Occupation</label>
                         <x-text-input id="father_occupation" name="father_occupation" type="text" :value="old('father_occupation')" placeholder="e.g. Farmer" class="mt-1 w-full border-gray-300 rounded"/>
+                    </div>
+                    <div>
+                        <label for="mothers_name" class="text-sm text-gray-600">Mother's Name <span class="text-red-500"></span></label>
+                        <x-text-input id="mothers_name" name="mothers_name" type="text" :value="old('mothers_name')" class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
                     <div>
                         <label for="mother_occupation" class="text-sm text-gray-600">Mother's Occupation</label>
@@ -120,6 +173,8 @@
                     </div>
                 </div>
             </div>
+                   
+
 
             <!-- Siblings Information -->
             <div>

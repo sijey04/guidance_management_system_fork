@@ -35,6 +35,9 @@ class Student extends Model
         'ordinal_position',
         'enrolled_semester',
         'enrollment_date',
+        'fathers_name',
+        'mothers_name',
+        'student_contact',
     ];
 
     protected $casts = [

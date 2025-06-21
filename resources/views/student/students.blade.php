@@ -34,6 +34,15 @@
                             <button @click="openStudentModal = true" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">Add New Student</button>
                             @include('student.create')
                         </div>
+
+                        <a href="{{ route('course_year_section.index') }}" 
+   class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">
+   Manage Course/Year/Section
+</a>
+
+
+
+
                     </div>
                     <!-- Student Table -->
                     <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-md bg-white">
