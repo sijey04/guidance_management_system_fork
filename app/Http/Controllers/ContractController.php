@@ -13,7 +13,7 @@ class ContractController extends Controller
     /**
      * Display a listing of the resource.
      */
-   public function index(Request $request)
+  public function index(Request $request)
 {
     $contracts = Contract::with('student', 'semester')->paginate(5);
     $semesters = Semester::all();
@@ -21,31 +21,31 @@ class ContractController extends Controller
 
     $currentSemester = Semester::where('is_current', true)->first();
 
-    // ✅ Only students VALIDATED in the current semester
-    $students = Student::whereHas('enrollments', function ($query) use ($currentSemester) {
-        $query->where('semester_id', $currentSemester->id)
-              ->where('is_enrolled', true);
-    })->with('enrollments')->get();
+    if (!$currentSemester) {
+        $students = collect(); // return empty collection if no active semester
+    } else {
+        // Get students who have profile for current semester (either newly added or validated)
+        $students = Student::whereHas('profiles', function ($query) use ($currentSemester) {
+            $query->where('semester_id', $currentSemester->id);
+        })->with('profiles')->get();
+    }
 
     return view('contracts.contract', compact('contracts', 'students', 'semesters', 'contractTypes'));
 }
-
 
 
 public function create()
 {
     $currentSemester = Semester::where('is_current', true)->first();
 
-    // Students validated from ANY previous or current semester
-    $validatedStudents = Student::whereHas('enrollments', function ($query) {
-        $query->where('is_enrolled', true);
+    if (!$currentSemester) {
+        return redirect()->back()->with('error', 'No active semester set. Please create and activate a semester first.');
+    }
+
+    $students = Student::whereHas('enrollments', function ($query) use ($currentSemester) {
+        $query->where('semester_id', $currentSemester->id)
+              ->where('is_enrolled', true);
     })->with('enrollments')->get();
-
-    // Students without any enrollment yet (newly added)
-    $newStudents = Student::doesntHave('enrollments')->get();
-
-    // Merge both collections
-    $students = $validatedStudents->merge($newStudents);
 
     $semesters = Semester::all();
     $contractTypes = ContractType::all();

@@ -18,49 +18,45 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+   public function index(Request $request)
 {
     $activeSemester = Semester::where('is_current', true)->first();
 
-    // Make sure there's an active semester
     if (!$activeSemester) {
-        return redirect()->back()->with('error', 'No active semester set.');
+        // If no active semester, return an empty collection
+        $students = collect(); // empty collection
+    } else {
+        $query = Student::withCount('contracts')
+                        ->whereHas('profiles', function ($q) use ($activeSemester) {
+                            $q->where('semester_id', $activeSemester->id);
+                        });
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('student_id', 'like', "%{$search}%")
+                  ->orWhere('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('sort_by')) {
+            $sortField = $request->input('sort_by');
+            $sortDirection = $request->input('sort_direction', 'asc');
+            $query->orderBy($sortField, $sortDirection);
+        }
+
+        $students = $query->paginate(8);
     }
 
-    // Build query with contract count and profile condition for active semester
-    $query = Student::withCount('contracts')
-                    ->whereHas('profiles', function ($q) use ($activeSemester) {
-                        $q->where('semester_id', $activeSemester->id);
-                    });
-
-    // Apply search if provided
-    if ($request->filled('search')) {
-        $search = $request->input('search');
-        $query->where(function ($q) use ($search) {
-            $q->where('student_id', 'like', "%{$search}%")
-              ->orWhere('first_name', 'like', "%{$search}%")
-              ->orWhere('last_name', 'like', "%{$search}%");
-        });
-    }
-
-    // Apply sorting if provided
-    if ($request->filled('sort_by')) {
-        $sortField = $request->input('sort_by');
-        $sortDirection = $request->input('sort_direction', 'asc');
-        $query->orderBy($sortField, $sortDirection);
-    }
-
-    // Pagination
-    $students = $query->paginate(8);
-
-    // Other data needed by the view
     $courses = Course::all();
     $years = Year::all();
     $sections = Section::all();
     $semesters = Semester::all();
 
-    return view('student.students', compact('students', 'courses', 'years', 'sections', 'semesters'));
+    return view('student.students', compact('students', 'courses', 'years', 'sections', 'semesters', 'activeSemester'));
 }
+
 
 
 
