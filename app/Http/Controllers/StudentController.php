@@ -72,8 +72,9 @@ class StudentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+ public function store(Request $request)
 {
+    // Validate Student base info + course, year_level, section inputs
     $validated = $request->validate([
         'student_id' => ['required', 'string', 'max:50', 'unique:students'],
         'first_name' => ['required', 'string', 'max:255'],
@@ -94,29 +95,22 @@ class StudentController extends Controller
         'fathers_name' => ['nullable', 'string', 'max:255'],
         'mothers_name' => ['nullable', 'string', 'max:255'],
         'student_contact' => ['nullable', 'string', 'max:255'],
+        
+        // Validate for student_profiles table (course, year_level, section)
+        'course' => 'required|exists:courses,course',
+        'year_level' => 'required|exists:years,year_level',
+        'section' => 'required|exists:sections,section',
     ]);
 
-    $student = Student::create($validated);
-
-    $activeSemester = Semester::where('is_current', true)->first();
-
-    if (!$activeSemester) {
-        return redirect()->back()->with('error', 'No active semester set. Please set an active academic year and semester first.');
-    }
-
-    // Enroll the student in the active semester
-    StudentSemesterEnrollment::create([
-        'student_id' => $student->id,
-        'semester_id' => $activeSemester->id,
-        'is_enrolled' => $request->is_enrolled,
-    ]);
-
-    // Create student profile for the active semester
-    $student->profiles()->create([
-        'semester_id' => $activeSemester->id,
-        'course' => $request->input('course') ?? null, // default fallback if course_year not present
-        'section' => $request->input('section') ?? null, // default fallback if section not present
-        'year_level' => $request->input('year_level') ?? null, // default fallback if section not present
+    // Save the Student first (this goes to 'students' table)
+    $student = Student::create([
+        'student_id' => $validated['student_id'],
+        'first_name' => $validated['first_name'],
+        'middle_name' => $validated['middle_name'] ?? null,
+        'last_name' => $validated['last_name'],
+        'birthday' => $validated['birthday'],
+        'suffix' => $validated['suffix'] ?? null,
+        'gender' => $validated['gender'] ?? null,
         'home_address' => $validated['home_address'] ?? null,
         'father_occupation' => $validated['father_occupation'] ?? null,
         'mother_occupation' => $validated['mother_occupation'] ?? null,
@@ -130,16 +124,40 @@ class StudentController extends Controller
         'student_contact' => $validated['student_contact'] ?? null,
     ]);
 
-    $request->validate([
-    'course' => 'required|exists:courses,course',
-    'year_level' => 'required|exists:years,year_level',
-    'section' => 'required|exists:sections,section',
-]);
+    // Get the active semester
+    $activeSemester = Semester::where('is_current', true)->first();
 
-    return redirect()->route('student.index')->with('success', 'Student created and enrolled in the active semester.');
+    if (!$activeSemester) {
+        return redirect()->back()->with('error', 'No active semester set.');
+    }
+
+    // Insert into student_semester_enrollments table
+    StudentSemesterEnrollment::create([
+        'student_id' => $student->id,
+        'semester_id' => $activeSemester->id,
+        'is_enrolled' => $validated['is_enrolled'],
+    ]);
+
+    // Insert into student_profiles table (course, year_level, section + other profile info)
+    StudentProfile::create([
+        'student_id' => $student->id,
+        'semester_id' => $activeSemester->id,
+        'course' => $validated['course'],
+        'year_level' => $validated['year_level'],
+        'section' => $validated['section'],
+        'home_address' => $validated['home_address'] ?? null,
+        'father_occupation' => $validated['father_occupation'] ?? null,
+        'mother_occupation' => $validated['mother_occupation'] ?? null,
+        'parent_guardian_name' => $validated['parent_guardian_name'],
+        'parent_guardian_contact' => $validated['parent_guardian_contact'],
+        'number_of_sisters' => $validated['number_of_sisters'] ?? null,
+        'number_of_brothers' => $validated['number_of_brothers'] ?? null,
+        'ordinal_position' => $validated['ordinal_position'] ?? null,
+        'student_contact' => $validated['student_contact'] ?? null,
+    ]);
+
+    return redirect()->route('student.index')->with('success', 'Student created successfully with course, year level, and section.');
 }
-
-
     /**
      * Display the specified resource.
      */

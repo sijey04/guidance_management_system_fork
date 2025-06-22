@@ -70,7 +70,7 @@
                                 @include('student.updateYearSection')
                             </div> --}}
                                 </div>
-                                <span class="text-base font-bold text-gray-800 dark:text-gray-100">{{ $profile?->course_year ?? 'N/A' }} - {{  $profile?->section ?? 'N/A' }}</span>
+                                <span class="text-base font-bold text-gray-800 dark:text-gray-100">{{ $profile?->course ?? 'N/A' }} - {{  $profile?->year_level ?? 'N/A' }}{{  $profile?->section ?? 'N/A' }}</span>
                             </div>
                             <x-student-info label="Birthday" :value="$student->birthday ? $student->birthday->format(' F jS, Y') : ''" />
                             <x-student-info label="Gender" :value="$student->gender" />

@@ -96,7 +96,7 @@
                         <!-- Course & Year Dropdown -->
                         <div>
                             <label class="text-sm text-gray-600">Course & Year <span class="text-red-500">*</span></label>
-                            <select name="course" class="w-full mt-1 border-gray-300 rounded">
+                            <select name="course" required class="w-full mt-1 border-gray-300 rounded">
                                 <option value="">Select Course</option>
                                 @foreach($courses as $course)
                                     <option value="{{ $course->course }}" {{ old('course') == $course->course ? 'selected' : '' }}>
@@ -104,13 +104,11 @@
                                     </option>
                                 @endforeach
                             </select>
-
-
                         </div>
 
                         <div>
                             <label class="text-sm text-gray-600">Year Level <span class="text-red-500">*</span></label>
-                          <select name="year_level" class="w-full mt-1 border-gray-300 rounded" required>
+                          <select name="year_level" required class="w-full mt-1 border-gray-300 rounded">
                                 <option value="">Select Year Level</option>
                                 @foreach($years as $year)
                                     <option value="{{ $year->year_level }}" {{ old('year_level') == $year->year_level ? 'selected' : '' }}>
@@ -118,13 +116,12 @@
                                     </option>
                                 @endforeach
                             </select>
-
                         </div>
                         
                         <!-- Section Dropdown -->
                         <div>
                             <label class="text-sm text-gray-600">Section<span class="text-red-500">*</span></label>
-                            <select name="section" class="w-full mt-1 border-gray-300 rounded">
+                            <select name="section" required class="w-full mt-1 border-gray-300 rounded">
                                 <option value="">Select Section</option>
                                 @foreach($sections as $section)
                                     <option value="{{ $section->section }}" {{ old('section') == $section->section ? 'selected' : '' }}>
