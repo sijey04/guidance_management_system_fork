@@ -1,4 +1,4 @@
-<div x-show="openEditStudentModal"
+<div x-show="openEditFamilyModal"
      x-transition
      class="fixed inset-0 bg-gray-500 bg-opacity-50 z-50 flex items-center justify-center"
      style="display: none;">
@@ -6,7 +6,7 @@
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl p-8 relative overflow-y-auto max-h-[90vh]">
 
         <!-- Close Button -->
-        <button @click="openEditStudentModal = false" 
+        <button @click="openEditFamilyModal = false" 
                 class="absolute top-3 right-3 text-gray-500 hover:text-gray-900 text-2xl transition">
             &times;
         </button>
@@ -27,8 +27,85 @@
                 </div>
             @endif
 
-            <!-- Student Basic Info -->
+            <!-- Parent/Guardian Info -->
             <div>
+                <h3 class="text-lg font-semibold mb-3">Parent/Guardian Information</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="parent_guardian_name" class="text-sm font-medium text-gray-700">Parent/Guardian Name</label>
+                        <x-text-input id="parent_guardian_name" type="text" name="parent_guardian_name"
+                            :value="old('parent_guardian_name', $student->parent_guardian_name)" class="w-full mt-1 border-gray-300 rounded-lg" required />
+                    </div>
+
+                    <div>
+                        <label for="parent_guardian_contact" class="text-sm font-medium text-gray-700">Parent/Guardian Contact</label>
+                        <x-text-input id="parent_guardian_contact" type="text" name="parent_guardian_contact"
+                            :value="old('parent_guardian_contact', $student->parent_guardian_contact)"  class="w-full mt-1 border-gray-300 rounded-lg" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Family Information -->
+            <div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                    <div>
+                        <label for="fathers_name" class="text-sm font-medium text-gray-700">Father's Name</label>
+                        <input type="text" id="fathers_name" name="fathers_name" 
+                               value="{{ old('fathers_name', $student->fathers_name) }}"  
+                               class="w-full mt-1 border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label for="father_occupation" class="text-sm font-medium text-gray-700">Father's Occupation</label>
+                        <input type="text" id="father_occupation" name="father_occupation" 
+                               value="{{ old('father_occupation', $student->father_occupation) }}" 
+                               class="w-full mt-1 border-gray-300 rounded-lg">
+                    </div>
+
+                    <div>
+                        <label for="mothers_name" class="text-sm font-medium text-gray-700">Mother's Name</label>
+                        <input type="text" id="mothers_name" name="mothers_name" 
+                               value="{{ old('mothers_name', $student->mothers_name) }}" 
+                               class="w-full mt-1 border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label for="mother_occupation" class="text-sm font-medium text-gray-700">Mother's Occupation</label>
+                        <input type="text" id="mother_occupation" name="mother_occupation" 
+                               value="{{ old('mother_occupation', $student->mother_occupation) }}" 
+                               class="w-full mt-1 border-gray-300 rounded-lg">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sibling Info -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3">Sibling Information</h3>
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label for="number_of_sisters" class="text-sm font-medium text-gray-700">Number of Sisters</label>
+                        <input type="number" id="number_of_sisters" name="number_of_sisters" 
+                               value="{{ old('number_of_sisters', $student->number_of_sisters) }}" 
+                               class="w-full mt-1 border-gray-300 rounded-lg">
+                    </div>
+
+                    <div>
+                        <label for="number_of_brothers" class="text-sm font-medium text-gray-700">Number of Brothers</label>
+                        <input type="number" id="number_of_brothers" name="number_of_brothers" 
+                               value="{{ old('number_of_brothers', $student->number_of_brothers) }}" 
+                               class="w-full mt-1 border-gray-300 rounded-lg">
+                    </div>
+
+                    <div>
+                        <label for="ordinal_position" class="text-sm font-medium text-gray-700">Ordinal Position</label>
+                        <input type="number" id="ordinal_position" name="ordinal_position" 
+                               value="{{ old('ordinal_position', $student->ordinal_position) }}" 
+                               class="w-full mt-1 border-gray-300 rounded-lg">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Basic Info -->
+            <div hidden>
                 <h3 class="text-lg font-semibold mb-3">Basic Information</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
@@ -89,7 +166,7 @@
                 </div>
             </div>
 
-             <div>
+             <div hidden>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="home_address" class="text-sm text-gray-600">Home Address <span class="text-red-500"></span></label>
@@ -104,7 +181,6 @@
                 </div>
          
 
-           
 
             <!-- Action Buttons -->
             <div class="flex justify-end space-x-4 mt-8 border-t pt-4">
@@ -112,7 +188,7 @@
                     Cancel
                 </x-secondary-button>
                 <x-primary-button type="submit">
-                    Update
+                    Update Student
                 </x-primary-button>
             </div>
 

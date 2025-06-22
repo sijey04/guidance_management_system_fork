@@ -10,10 +10,20 @@
 
         <h2 class="text-2xl font-bold mb-6 text-center" style="color:#a82323;">Create New Contract</h2>
 
-        <form method="POST" action="{{ route('contracts.store') }}" class="space-y-4" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('contracts.store') }}" class="space-y-4" enctype="multipart/form-data" 
+              x-data="{ totalDays: '', startDate: '', endDate: '' }" 
+              @input.debounce.500ms="
+                    if(totalDays && startDate) {
+                        let d = new Date(startDate);
+                        d.setDate(d.getDate() + parseInt(totalDays));
+                        endDate = d.toISOString().split('T')[0];
+                    } else {
+                        endDate = '';
+                    }
+              ">
             @csrf
 
-            <!-- Searchable Select Student -->
+            <!-- Select Student (searchable) -->
             <div x-data='{
                     search: "",
                     students: @json($students),
@@ -27,13 +37,8 @@
                     }
                 }' class="relative">
                 <label for="student_id" class="block text-sm mb-1" style="color:#a82323;">Select Student</label>
-                <input type="text" 
-                       x-model="search" 
-                       placeholder="Type student name or ID..." 
-                       class="w-full border-gray-300 rounded-lg px-3 py-2 text-gray-900">
-
-                <div x-show="search.length > 0" 
-                     class="absolute z-10 bg-white border w-full mt-1 max-h-40 overflow-y-auto rounded shadow">
+                <input type="text" x-model="search" placeholder="Type student name or ID..." class="w-full border-gray-300 rounded-lg px-3 py-2 text-gray-900">
+                <div x-show="search.length > 0" class="absolute z-10 bg-white border w-full mt-1 max-h-40 overflow-y-auto rounded shadow">
                     <template x-for="student in filteredStudents" :key="student.id">
                         <div @click="selectedStudentId = student.id; search = student.first_name + ' ' + student.last_name + ' (ID: ' + student.student_id + ')'"
                              class="p-2 hover:bg-[#f8eaea] cursor-pointer">
@@ -41,41 +46,57 @@
                         </div>
                     </template>
                 </div>
-
-                <!-- Hidden input to submit the selected student ID -->
                 <input type="hidden" name="student_id" x-model="selectedStudentId" required>
             </div>
 
             <!-- Contract Date -->
             <div>
-                <label for="contract_date" class="block text-sm mb-1" style="color:#a82323;">Contract Date</label>
+                <label class="block text-sm mb-1" style="color:#a82323;">Contract Date</label>
                 <input type="date" name="contract_date" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
             </div>
 
             <!-- Contract Type -->
             <div>
-                <label for="contract_type" class="block text-sm mb-1" style="color:#a82323;">Contract Type</label>
-                <input type="text" name="contract_type" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
+                <label class="block text-sm mb-1" style="color:#a82323;">Contract Type</label>
+                <select name="contract_type" required class="w-full border-gray-300 rounded mt-1">
+                    <option value="">Select Contract Type</option>
+                    @foreach ($contractTypes as $type)
+                        <option value="{{ $type->type }}">{{ $type->type }}</option>
+                    @endforeach
+                </select>
             </div>
 
-            <!-- Total Days -->
+            <!-- Start Date (Optional) -->
             <div>
-                <label for="total_days" class="block text-sm mb-1" style="color:#a82323;">Total Days</label>
-                <input type="number" name="total_days" min="1" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
+                <label class="block text-sm mb-1" style="color:#a82323;">Start Date (Optional)</label>
+                <input type="date" name="start_date" x-model="startDate" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
             </div>
 
-            <!-- Completed Days -->
+            <!-- Total Days (Optional) -->
             <div>
-                <label for="completed_days" class="block text-sm mb-1" style="color:#a82323;">Completed Days</label>
-                <input type="number" name="completed_days" min="0" required class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
+                <label class="block text-sm mb-1" style="color:#a82323;">Total Days (Optional)</label>
+                <input type="number" name="total_days" x-model="totalDays" min="1" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
+            </div>
+
+            <!-- End Date (auto-calculated) -->
+            <div>
+                <label class="block text-sm mb-1" style="color:#a82323;">Suggested End Date</label>
+                <input type="text" name="end_date" x-model="endDate" readonly class="w-full border-gray-300 bg-gray-100 rounded-lg mt-1 px-3 py-2 text-gray-900">
+            </div>
+
+            <!-- Remarks (Optional) -->
+            <div>
+                <label class="block text-sm mb-1" style="color:#a82323;">Remarks (Optional)</label>
+                <textarea name="remarks" rows="3" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900"></textarea>
             </div>
 
             <!-- Contract Image -->
             <div>
-                <label for="contract_image" class="block text-sm mb-1" style="color:#a82323;">Attach Contract Image</label>
+                <label class="block text-sm mb-1" style="color:#a82323;">Attach Contract Image</label>
                 <input type="file" name="contract_image" accept="image/*" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
             </div>
 
+            <!-- Status -->
             <div>
                 <label class="text-sm">Status:</label>
                 <select name="status" required class="w-full mt-1 border-gray-300 rounded">
@@ -83,11 +104,11 @@
                     <option value="Completed">Completed</option>
                 </select>
             </div>
-            
+
             <!-- Buttons -->
             <div class="flex justify-end gap-3 mt-4">
-                <button type="button" @click="openCreateContractModal = false" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323; border-radius:6px; padding:7px 16px; font-weight:600;">Cancel</button>
-                <button type="submit" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:7px 16px; font-weight:600;">Save</button>
+                <button type="button" @click="openCreateContractModal = false" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323;">Cancel</button>
+                <button type="submit" class="sign-in-btn" style="background:#a82323; color:#fff;">Save</button>
             </div>
         </form>
     </div>
