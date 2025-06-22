@@ -36,7 +36,7 @@
                         <!-- Manage Contract Types Button -->
                         <a href="{{ route('contract-types.index') }}"
                             class="sign-in-btn"
-                            style="background:#374151; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">
+                             class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">
                             Manage Contract Types
                         </a>
                     </div>

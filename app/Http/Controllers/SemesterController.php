@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\Section;
 use App\Models\Semester;
 use App\Models\Student;
 use App\Models\StudentProfile;
+use App\Models\Year;
 use Illuminate\Http\Request;
 
 class SemesterController extends Controller
@@ -16,7 +19,10 @@ class SemesterController extends Controller
                              ->orderBy('semester', 'asc')
                              ->get();
 
-        return view('semester.index', compact('semesters'));
+    $courses = Course::all();
+    $years = Year::all();
+    $sections = Section::all();
+        return view('semester.index', compact('semesters','courses','years','sections'));
     }
 
     public function create()
@@ -90,7 +96,6 @@ class SemesterController extends Controller
     }
 }
 
-// SemesterController.php
 
 public function carryOverFromPrevious($newSemesterId)
 {
@@ -146,39 +151,46 @@ public function showValidationForm(Request $request, $semesterId)
     }
 
     $query = Student::whereHas('profiles', function($q) use ($lastSemester) {
-        $q->where('semester_id', $lastSemester->id);
-    })->with(['profiles' => function($q) use ($lastSemester) {
-        $q->where('semester_id', $lastSemester->id);
-    }]);
+    $q->where('semester_id', $lastSemester->id);
+})->with(['profiles' => function($q) use ($lastSemester) {
+    $q->where('semester_id', $lastSemester->id);
+}]);
 
-    // Filters from GET request
-    if ($request->filled('filter_course_year')) {
-        $query->whereHas('profiles', function($q) use ($lastSemester, $request) {
-            $q->where('semester_id', $lastSemester->id)
-              ->where('course_year', $request->filter_course_year);
-        });
-    }
+if ($request->filled('filter_course')) {
+    $query->whereHas('profiles', function($q) use ($lastSemester, $request) {
+        $q->where('semester_id', $lastSemester->id)
+          ->where('course', $request->filter_course);
+    });
+}
 
-    if ($request->filled('filter_section')) {
-        $query->whereHas('profiles', function($q) use ($lastSemester, $request) {
-            $q->where('semester_id', $lastSemester->id)
-              ->where('section', $request->filter_section);
-        });
-    }
+if ($request->filled('filter_year_level')) {
+    $query->whereHas('profiles', function($q) use ($lastSemester, $request) {
+        $q->where('semester_id', $lastSemester->id)
+          ->where('year_level', $request->filter_year_level);
+    });
+}
 
-    $students = $query->get();
+if ($request->filled('filter_section')) {
+    $query->whereHas('profiles', function($q) use ($lastSemester, $request) {
+        $q->where('semester_id', $lastSemester->id)
+          ->where('section', $request->filter_section);
+    });
+}
 
-    $courseYears = config('student.course_years');
-    $sections = config('student.sections');
+$students = $query->get();
 
-    return view('semester.validate_students', compact('newSemester', 'students', 'lastSemester', 'courseYears', 'sections'));
+    $courses = Course::all();
+    $years = Year::all();
+    $sections = Section::all();
+
+
+    return view('semester.validate_students', compact('newSemester', 'students', 'lastSemester', 'courses','years', 'sections'));
 }
 
 public function processValidation(Request $request, $semesterId)
 {
     $newSemester = Semester::findOrFail($semesterId);
 
-    // Validate that selected_students exists and is an array
     $request->validate([
         'selected_students' => 'required|array',
         'selected_students.*' => 'exists:students,id',
@@ -189,23 +201,23 @@ public function processValidation(Request $request, $semesterId)
 
     foreach ($selected as $studentId) {
         if (!isset($studentsInput[$studentId])) {
-            continue; // Skip if no data provided
+            continue; // Skip if no data
         }
 
         $studentData = $studentsInput[$studentId];
 
-        // Now validate manually because 'required' is removed from Blade
-        if (empty($studentData['course_year']) || empty($studentData['section'])) {
-            // You can skip or handle error here if fields are missing
-            continue;
+        // Now validate manually
+        if (empty($studentData['course']) || empty($studentData['year_level']) || empty($studentData['section'])) {
+            continue; // Skip incomplete
         }
 
         $student = Student::find($studentId);
 
         $student->profiles()->create([
             'semester_id' => $newSemester->id,
-            'course_year' => $studentData['course_year'],
-            'section' => $studentData['section'],
+            'course'      => $studentData['course'], // now 'course' instead of 'course_year'
+            'year_level'  => $studentData['year_level'],
+            'section'     => $studentData['section'],
         ]);
     }
 

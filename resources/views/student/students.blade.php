@@ -36,7 +36,7 @@
                         </div>
 
                         <a href="{{ route('course_year_section.index') }}" 
-                            class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">
+                            class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">
                             Manage Course/Year/Section
                         </a>
 
@@ -58,27 +58,31 @@
                                 </tr>
                             </thead>
                             <tbody>
+                               @php
+                                    $activeSemester = $activeSemester ?? App\Models\Semester::where('is_current', true)->first();
+                                @endphp
+
                                 @forelse ($students as $student)
                                     <tr class="hover:bg-[#f8eaea] transition">
                                         <td class="px-6 py-4">{{ $student->student_id }}</td>
                                         <td class="px-1 py-4">{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffx }}</td>
-                                     
+                                        
                                         @php
-                                            $activeSemester = App\Models\Semester::where('is_current', true)->first();
-                                            $profile = $student->profiles->where('semester_id', $activeSemester->id)->first();
+                                            $profile = $activeSemester 
+                                                ? $student->profiles->where('semester_id', $activeSemester->id)->first()
+                                                : null;
                                         @endphp
 
                                         <td class="px-6 py-4">{{ $profile?->course ?? 'N/A' }}</td>
                                         <td class="px-6 py-4">{{ $profile?->year_level ?? 'N/A' }} {{ $profile?->section ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4">{{ $student->contracts_count ?? 0 }}</td>
 
-                                        <td class="px-6 py-4">{{ $student->contracts_count }}</td>
-                                        
                                         <td class="px-6 py-4 flex gap-2">
-                                            <a href="{{ route('student.show', $student->id) }}" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323; border-radius:6px; padding:7px 14px; font-weight:600;">View </a>
+                                            <a href="{{ route('student.show', $student->id) }}" class="sign-in-btn" style="background:#fff; color:#a82323;">View</a>
                                             <form action="{{ route('student.destroy', $student->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this student?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323; border-radius:6px; padding:7px 14px; font-weight:600;">Delete</button>
+                                                <button type="submit" class="sign-in-btn" style="background:#fff; color:#a82323;">Delete</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -87,13 +91,17 @@
                                         <td colspan="6" class="text-center py-4 text-gray-500">No students found.</td>
                                     </tr>
                                 @endforelse
+
                             </tbody>
                         </table>
                     </div>
                     <!-- Pagination -->
-                    <div class="mt-2 flex justify-center">
-                        {{ $students->links() }}
-                    </div>
+                    @if($students instanceof \Illuminate\Pagination\LengthAwarePaginator)
+    <div class="mt-2 flex justify-center">
+        {{ $students->links() }}
+    </div>
+@endif
+
                 </div>
             </div>
         </div>

@@ -10,25 +10,40 @@
         <!-- Filter Form (GET) -->
         <form method="GET" action="{{ route('semester.showValidationForm', $newSemester->id) }}" class="mb-4">
             <div class="flex space-x-4">
+                <!-- Course Dropdown -->
                 <div>
-                    <label class="block font-medium">Filter by Course Year:</label>
-                    <select name="filter_course_year" class="border p-1 rounded">
-                        <option value="">All Years</option>
-                        @foreach($courseYears as $year)
-                            <option value="{{ $year }}" {{ request('filter_course_year') == $year ? 'selected' : '' }}>
-                                {{ $year }}
+                    <label class="block font-medium">Filter by Course:</label>
+                    <select name="filter_course" class="border p-1 rounded">
+                        <option value="">All Courses</option>
+                        @foreach($courses as $course)
+                            <option value="{{ $course->course }}" {{ request('filter_course') == $course->course ? 'selected' : '' }}>
+                                {{ $course->course }}
                             </option>
                         @endforeach
                     </select>
                 </div>
 
+                 <!-- Year Level Dropdown -->
+                <div>
+                    <label class="block font-medium">Filter by Year Level:</label>
+                    <select name="filter_year_level" class="border p-1 rounded">
+                        <option value="">All Year Levels</option>
+                        @foreach($years as $year)
+                            <option value="{{ $year->year_level }}" {{ request('filter_year_level') == $year->year_level ? 'selected' : '' }}>
+                                {{ $year->year_level }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Section Dropdown -->
                 <div>
                     <label class="block font-medium">Filter by Section:</label>
                     <select name="filter_section" class="border p-1 rounded">
                         <option value="">All Sections</option>
                         @foreach($sections as $section)
-                            <option value="{{ $section }}" {{ request('filter_section') == $section ? 'selected' : '' }}>
-                                {{ $section }}
+                            <option value="{{ $section->section }}" {{ request('filter_section') == $section->section ? 'selected' : '' }}>
+                                {{ $section->section }}
                             </option>
                         @endforeach
                     </select>
@@ -56,29 +71,67 @@
                         </label>
 
                         <input type="hidden" name="students[{{ $student->id }}][id]" value="{{ $student->id }}">
+                        <!-- Display Previous Course, Year Level, Section -->
+                        @php
+                            $previousProfile = $student->profiles->first(); // Since you loaded only last semester profile in controller
+                        @endphp
 
-                        <div class="flex space-x-4 mt-2">
+                        @if($previousProfile)
+                            <p class="text-sm text-gray-500 mt-1">
+                                Previous Course: <span class="font-semibold">{{ $previousProfile->course }}</span> |
+                                Year Level: <span class="font-semibold">{{ $previousProfile->year_level }}</span> |
+                                Section: <span class="font-semibold">{{ $previousProfile->section }}</span>
+                            </p>
+                        @else
+                            <p class="text-sm text-red-500 mt-1">No previous profile data available.</p>
+                        @endif
+                        
+                        <div>
+                      
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                            <!-- Course Dropdown -->
                             <div>
-                                <label class="block font-medium">Course Year:</label>
-                                <select name="students[{{ $student->id }}][course_year]" class="border p-1 rounded" >
-                                    <option value="">Select Year</option>
-                                    @foreach($courseYears as $year)
-                                        <option value="{{ $year }}">{{ $year }}</option>
+                                <label class="text-sm text-gray-600">Course <span class="text-red-500">*</span></label>
+                                <select name="students[{{ $student->id }}][course]" required class="w-full mt-1 border-gray-300 rounded">
+                                    <option value="">Select Course</option>
+                                    @foreach($courses as $course)
+                                        <option value="{{ $course->course }}" {{ old('students.'.$student->id.'.course') == $course->course ? 'selected' : '' }}>
+                                            {{ $course->course }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
 
+                            <!-- Year Level Dropdown -->
                             <div>
-                                <label class="block font-medium">Section:</label>
-                                <select name="students[{{ $student->id }}][section]" class="border p-1 rounded">
+                                <label class="text-sm text-gray-600">Year Level <span class="text-red-500">*</span></label>
+                                <select name="students[{{ $student->id }}][year_level]" required class="w-full mt-1 border-gray-300 rounded">
+                                    <option value="">Select Year Level</option>
+                                    @foreach($years as $year)
+                                        <option value="{{ $year->year_level }}" {{ old('students.'.$student->id.'.year_level') == $year->year_level ? 'selected' : '' }}>
+                                            {{ $year->year_level }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Section Dropdown -->
+                            <div>
+                                <label class="text-sm text-gray-600">Section <span class="text-red-500">*</span></label>
+                                <select name="students[{{ $student->id }}][section]" required class="w-full mt-1 border-gray-300 rounded">
                                     <option value="">Select Section</option>
                                     @foreach($sections as $section)
-                                        <option value="{{ $section }}">{{ $section }}</option>
+                                        <option value="{{ $section->section }}" {{ old('students.'.$student->id.'.section') == $section->section ? 'selected' : '' }}>
+                                            {{ $section->section }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-                    </div>
+
+                        
+                </div>
+
                 @empty
                     <p>No students found from previous semester.</p>
                 @endforelse
