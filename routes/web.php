@@ -8,6 +8,8 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseYearSectionController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\ReferralReasonController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SemesterController;
@@ -85,6 +87,9 @@ Route::post('/semester/{semester}/validate', [SemesterController::class, 'proces
 
 Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])->name('reports.view-records');
 Route::get('/counseling', [CounselingController::class, 'index'])->name('counselings.index');
+Route::post('/counseling/store', [CounselingController::class, 'store'])->name('counseling.store');
+Route::resource('counselings', CounselingController::class);
+Route::put('/counselings/{id}', [CounselingController::class, 'update'])->name('counselings.update');
 
 // Show the validation form modal
 Route::get('/semester/{id}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
@@ -108,6 +113,9 @@ Route::post('/contracts/{id}/mark-complete', [ContractController::class, 'markCo
 Route::post('/contracts/{id}/mark-inprogress', [ContractController::class, 'markInProgress'])->name('contracts.markInProgress');
 Route::put('/contracts/{id}', [ContractController::class, 'update'])->name('contracts.update');
 
+Route::resource('referrals', ReferralController::class);
+Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
+Route::resource('referral-reasons', ReferralReasonController::class);
 
 });
 // // Student List,Create,edit
@@ -125,9 +133,9 @@ Route::get('/contract', function () {
     return view('contracts.contract');
 })->middleware(['auth', 'verified'])->name('contract');
 
-Route::get('/referral', function () {
-    return view('referrals.referral');
-})->middleware(['auth', 'verified'])->name('referral');
+// Route::get('/referral', function () {
+//     return view('referrals.referral');
+// })->middleware(['auth', 'verified'])->name('referral');
 
 
 

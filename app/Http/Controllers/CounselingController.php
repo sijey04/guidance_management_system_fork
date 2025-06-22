@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\counseling;
+use App\Models\semester;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
@@ -13,43 +14,49 @@ class CounselingController extends Controller
      */
 public function index()
 {
-    $counselings = Counseling::with('student')->get(); // fetch counseling with related student data
-    return view('counselings.counseling', compact('counselings'));
+    $currentSemester = Semester::where('is_current', true)->first();
+    $lastSemester = Semester::where('id', '<>', $currentSemester->id)
+                            ->orderByDesc('id')
+                            ->first();
+
+    // ✅ Get students newly enrolled in current semester
+    $newStudents = Student::whereHas('enrollments', function ($query) use ($currentSemester) {
+        $query->where('semester_id', $currentSemester->id)
+              ->where('is_enrolled', true);
+    });
+
+    // ✅ Get validated students carried over from last semester
+    $validatedStudents = Student::whereHas('profiles', function ($query) use ($lastSemester, $currentSemester) {
+        $query->where('semester_id', $currentSemester->id);
+    });
+
+    // ✅ Union both queries
+    $students = $newStudents->union($validatedStudents)->get();
+
+    $counselings = Counseling::with('student')->paginate(10);
+
+    return view('counselings.counseling', compact('counselings', 'students'));
 }
 
 
+public function store(Request $request)
+{
+    $request->validate([
+        'student_id' => 'required|exists:students,id',
+        'counseling_date' => 'required|date',
+        'image_path' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+    ]);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create($studentId)
-    {
-        $student = Student::findOrFail($studentId);
-        return view('student.createCounseling', compact('student'));
+    $data = $request->all();
+
+    if ($request->hasFile('image_path')) {
+        $data['image_path'] = $request->file('image_path')->store('image_path', 'public');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'session_date' => 'required|date', 
-            'referred_by' => 'nullable|string',
-            'statement_of_problem' => 'required|string',
-            'tests_administered' => 'nullable|string',
-            'evaluation' => 'nullable|string',
-            'recommendation_action_taken' => 'nullable|string',
-            'follow_up' => 'nullable|string',
-            'guidance_counselor' => 'required|string',
-        ]);
+    Counseling::create($data);
 
-        Counseling::create($validated);
-
-        return redirect()->route('students.counseling', $request->student_id)
-                        ->with('success', 'Counseling record added successfully.');
-    }
+    return redirect()->back()->with('success', 'Counseling record added.');
+}
 
 
     /**
@@ -57,7 +64,8 @@ public function index()
      */
     public function show(counseling $counseling)
     {
-        //
+            return view('counselings.view', compact('counseling'));
+
     }
 
     /**
@@ -65,16 +73,26 @@ public function index()
      */
     public function edit(counseling $counseling)
     {
-        //
+        return view('counselings.edit', compact('counseling'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, counseling $counseling)
-    {
-        //
+   public function update(Request $request, Counseling $counseling)
+{
+    $validated = $request->validate([
+        'counseling_date' => 'required|date',
+        'image_path' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+    ]);
+
+    if ($request->hasFile('image_path')) {
+        $validated['image_path'] = $request->file('image_path')->store('counseling_images', 'public');
     }
+
+    $counseling->update($validated);
+    return redirect()->route('counselings.index')->with('success', 'Updated successfully.');
+}
 
     /**
      * Remove the specified resource from storage.

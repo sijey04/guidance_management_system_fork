@@ -73,7 +73,7 @@
                         <input type="hidden" name="students[{{ $student->id }}][id]" value="{{ $student->id }}">
                         <!-- Display Previous Course, Year Level, Section -->
                         @php
-                            $previousProfile = $student->profiles->first(); // Since you loaded only last semester profile in controller
+                            $previousProfile = $student->profiles->first(); 
                         @endphp
 
                         @if($previousProfile)
@@ -92,7 +92,7 @@
                             <!-- Course Dropdown -->
                             <div>
                                 <label class="text-sm text-gray-600">Course <span class="text-red-500">*</span></label>
-                                <select name="students[{{ $student->id }}][course]" required class="w-full mt-1 border-gray-300 rounded">
+                                <select name="students[{{ $student->id }}][course]" class="w-full mt-1 border-gray-300 rounded">
                                     <option value="">Select Course</option>
                                     @foreach($courses as $course)
                                         <option value="{{ $course->course }}" {{ old('students.'.$student->id.'.course') == $course->course ? 'selected' : '' }}>
@@ -105,7 +105,7 @@
                             <!-- Year Level Dropdown -->
                             <div>
                                 <label class="text-sm text-gray-600">Year Level <span class="text-red-500">*</span></label>
-                                <select name="students[{{ $student->id }}][year_level]" required class="w-full mt-1 border-gray-300 rounded">
+                                <select name="students[{{ $student->id }}][year_level]" class="w-full mt-1 border-gray-300 rounded">
                                     <option value="">Select Year Level</option>
                                     @foreach($years as $year)
                                         <option value="{{ $year->year_level }}" {{ old('students.'.$student->id.'.year_level') == $year->year_level ? 'selected' : '' }}>
@@ -118,7 +118,7 @@
                             <!-- Section Dropdown -->
                             <div>
                                 <label class="text-sm text-gray-600">Section <span class="text-red-500">*</span></label>
-                                <select name="students[{{ $student->id }}][section]" required class="w-full mt-1 border-gray-300 rounded">
+                                <select name="students[{{ $student->id }}][section]" class="w-full mt-1 border-gray-300 rounded">
                                     <option value="">Select Section</option>
                                     @foreach($sections as $section)
                                         <option value="{{ $section->section }}" {{ old('students.'.$student->id.'.section') == $section->section ? 'selected' : '' }}>
