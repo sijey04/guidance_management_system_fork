@@ -13,7 +13,11 @@ class contract extends Model
     'total_days',
     'completed_days',
     'status',
+    'contract_type',
     'contract_image',
+    'start_date',
+    'end_date',
+    'remarks',
 ];
 
 
@@ -27,6 +31,11 @@ public function student()
     return $this->belongsTo(Student::class);
 }
 
+// Contract.php (Model)
+public function contractType()
+{
+    return $this->belongsTo(ContractType::class, 'contract_type_id');
+}
 
 
 

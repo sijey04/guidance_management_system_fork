@@ -18,10 +18,22 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request){
-    $query = Student::withCount('contracts')
-                    ->with(['enrollments.semester']);
+    public function index(Request $request)
+{
+    $activeSemester = Semester::where('is_current', true)->first();
 
+    // Make sure there's an active semester
+    if (!$activeSemester) {
+        return redirect()->back()->with('error', 'No active semester set.');
+    }
+
+    // Build query with contract count and profile condition for active semester
+    $query = Student::withCount('contracts')
+                    ->whereHas('profiles', function ($q) use ($activeSemester) {
+                        $q->where('semester_id', $activeSemester->id);
+                    });
+
+    // Apply search if provided
     if ($request->filled('search')) {
         $search = $request->input('search');
         $query->where(function ($q) use ($search) {
@@ -31,19 +43,17 @@ class StudentController extends Controller
         });
     }
 
+    // Apply sorting if provided
     if ($request->filled('sort_by')) {
         $sortField = $request->input('sort_by');
         $sortDirection = $request->input('sort_direction', 'asc');
         $query->orderBy($sortField, $sortDirection);
     }
 
-    $activeSemester = Semester::where('is_current', true)->first();
+    // Pagination
+    $students = $query->paginate(8);
 
-    $students = Student::whereHas('profiles', function ($query) use ($activeSemester) {
-        $query->where('semester_id', $activeSemester->id);
-    })->paginate(15);
-
-    // ADD THIS:
+    // Other data needed by the view
     $courses = Course::all();
     $years = Year::all();
     $sections = Section::all();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\contract;
+use App\Models\ContractType;
 use App\Models\semester;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -12,19 +13,47 @@ class ContractController extends Controller
     /**
      * Display a listing of the resource.
      */
-   public function index(Request $request){
-        $contracts = Contract::with('student', 'semester')->paginate(10); // adjust as needed
-        $students = Student::all(); // For modal dropdown
-        $semesters = Semester::all(); // For modal dropdown
+   public function index(Request $request)
+{
+    $contracts = Contract::with('student', 'semester')->paginate(5);
+    $semesters = Semester::all();
+    $contractTypes = ContractType::all();
 
-        return view('contracts.contract', compact('contracts', 'students', 'semesters'));
-    }
+    $currentSemester = Semester::where('is_current', true)->first();
 
-public function create(){
-    $students = Student::all(); // To select which student the contract is for
-    $semesters = Semester::all(); // To select the semester
-    return view('contracts.createContract', compact('students', 'semesters'));
+    // ✅ Only students VALIDATED in the current semester
+    $students = Student::whereHas('enrollments', function ($query) use ($currentSemester) {
+        $query->where('semester_id', $currentSemester->id)
+              ->where('is_enrolled', true);
+    })->with('enrollments')->get();
+
+    return view('contracts.contract', compact('contracts', 'students', 'semesters', 'contractTypes'));
 }
+
+
+
+public function create()
+{
+    $currentSemester = Semester::where('is_current', true)->first();
+
+    // Students validated from ANY previous or current semester
+    $validatedStudents = Student::whereHas('enrollments', function ($query) {
+        $query->where('is_enrolled', true);
+    })->with('enrollments')->get();
+
+    // Students without any enrollment yet (newly added)
+    $newStudents = Student::doesntHave('enrollments')->get();
+
+    // Merge both collections
+    $students = $validatedStudents->merge($newStudents);
+
+    $semesters = Semester::all();
+    $contractTypes = ContractType::all();
+
+    return view('contracts.createContract', compact('students', 'semesters', 'contractTypes'));
+}
+
+
 
 
     // Store new contract
@@ -33,9 +62,11 @@ public function store(Request $request)
     $validated = $request->validate([
         'student_id' => 'required|exists:students,id',
         'contract_date' => 'required|date',
-        'contract_type' => 'required|string|max:255',
-        'total_days' => 'required|integer|min:1',
-        'completed_days' => 'required|integer|min:0',
+        'contract_type' => 'required|exists:contract_types,type',
+        'total_days' => 'nullable|integer|min:1',
+        'start_date' => 'nullable|date',
+        'end_date' => 'nullable|date', // ← added
+        'remarks' => 'nullable|string|max:1000', // ← added
         'contract_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'status' => 'required|string',
     ]);
@@ -45,10 +76,8 @@ public function store(Request $request)
         return back()->with('error', 'No active semester is set.');
     }
 
-    // Save file if exists
     if ($request->hasFile('contract_image')) {
-        $path = $request->file('contract_image')->store('contract_images', 'public');
-        $validated['contract_image'] = $path;
+        $validated['contract_image'] = $request->file('contract_image')->store('contract_images', 'public');
     }
 
     $validated['semester_id'] = $activeSemester->id;
@@ -78,17 +107,33 @@ public function store(Request $request)
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, contract $contract)
-    {
-        //
-    }
+   public function update(Request $request, $id)
+{
+    $validated = $request->validate([
+        'contract_type' => 'required|string|max:255',
+        'contract_date' => 'required|date',
+        'total_days' => 'required|integer|min:1',
+        'completed_days' => 'required|integer|min:0',
+        'status' => 'required|string',
+    ]);
+
+    $contract = Contract::findOrFail($id);
+    $contract->update($validated);
+
+    return redirect()->back()->with('success', 'Contract updated successfully.');
+}
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(contract $contract)
+    public function destroy($id)
     {
-        //
+         $contract = Contract::findOrFail($id);
+        $contract->delete();
+
+        return redirect()->route('contracts.index')->with('success', 'Contract deleted successfully.');
+
     }
 
     public function createForStudent(Student $student)
@@ -121,10 +166,19 @@ public function allContracts(Request $request)
     }
 
     $contracts = $query->paginate(10);
-    $students = Student::all();
-    $semesters = Semester::all(); 
+   
+    $semesters = Semester::all();
+    $contractTypes = ContractType::all(); 
 
-    return view('contracts.contract', compact('contracts', 'students', 'semesters'));
+    $currentSemester = Semester::where('is_current', true)->first();
+
+    // ✅ Only validated students for the current semester
+    $students = Student::whereHas('enrollments', function ($query) use ($currentSemester) {
+        $query->where('semester_id', $currentSemester->id)
+              ->where('is_enrolled', true); // assuming 'is_enrolled' indicates validated students
+    })->with('enrollments')->get();
+
+    return view('contracts.contract', compact('contracts', 'students', 'semesters', 'contractTypes'));
 }
 
 
@@ -133,6 +187,25 @@ public function view($id)
     $contract = Contract::with('student')->findOrFail($id);
     return view('contracts.viewContract', compact('contract'));
 }
+
+
+public function markComplete($id)
+{
+    $contract = Contract::findOrFail($id);
+    $contract->update(['status' => 'Completed']);
+
+    return back()->with('success', 'Contract marked as Completed.');
+}
+
+public function markInProgress($id)
+{
+    $contract = Contract::findOrFail($id);
+    $contract->update(['status' => 'In Progress']);
+
+    return back()->with('success', 'Contract marked as In Progress.');
+}
+
+
 
 
 }

@@ -2,6 +2,7 @@
 <?php
 
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\ContractTypeController;
 use App\Http\Controllers\CounselingController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseYearSectionController;
@@ -98,6 +99,14 @@ Route::get('/manage-course-year-section', [CourseYearSectionController::class, '
 Route::post('/manage-course', [CourseYearSectionController::class, 'storeCourse'])->name('course.store');
 Route::post('/manage-year', [CourseYearSectionController::class, 'storeYear'])->name('year.store');
 Route::post('/manage-section', [CourseYearSectionController::class, 'storeSection'])->name('section.store');
+Route::get('/contract-types', [ContractTypeController::class, 'index'])->name('contract-types.index');
+Route::post('/contract-types', [ContractTypeController::class, 'store'])->name('contract-types.store');
+Route::delete('/contract-types/{id}', [ContractTypeController::class, 'destroy'])->name('contract-types.destroy');
+Route::resource('contracts', ContractController::class);
+
+Route::post('/contracts/{id}/mark-complete', [ContractController::class, 'markComplete'])->name('contracts.markComplete');
+Route::post('/contracts/{id}/mark-inprogress', [ContractController::class, 'markInProgress'])->name('contracts.markInProgress');
+Route::put('/contracts/{id}', [ContractController::class, 'update'])->name('contracts.update');
 
 
 });

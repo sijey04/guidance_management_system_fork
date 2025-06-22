@@ -36,9 +36,9 @@
                         </div>
 
                         <a href="{{ route('course_year_section.index') }}" 
-   class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">
-   Manage Course/Year/Section
-</a>
+                            class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">
+                            Manage Course/Year/Section
+                        </a>
 
 
 
@@ -51,7 +51,8 @@
                                 <tr>
                                     <th class="px-5 py-3">Student ID</th>
                                     <th class="px-1 py-3">Name</th>
-                                    <th class="px-5 py-3">Course & Year</th>
+                                    <th class="px-5 py-3">Course </th>
+                                    <th class="px-5 py-3">Year & Section </th>
                                     <th class="px-5 py-3">Contracts</th>
                                     <th class="px-5 py-3 text-end "></th>
                                 </tr>
@@ -62,10 +63,14 @@
                                         <td class="px-6 py-4">{{ $student->student_id }}</td>
                                         <td class="px-1 py-4">{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffx }}</td>
                                      
-                                     @php
-                                            $profile = $student->profiles->first(); // the loaded profile for active semester
+                                        @php
+                                            $activeSemester = App\Models\Semester::where('is_current', true)->first();
+                                            $profile = $student->profiles->where('semester_id', $activeSemester->id)->first();
                                         @endphp
-                                        <td class="px-6 py-4">{{ $profile?->course_year ?? 'N/A' }} - {{  $profile?->section ?? 'N/A' }}</td>
+
+                                        <td class="px-6 py-4">{{ $profile?->course ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4">{{ $profile?->year_level ?? 'N/A' }} {{ $profile?->section ?? 'N/A' }}</td>
+
                                         <td class="px-6 py-4">{{ $student->contracts_count }}</td>
                                         
                                         <td class="px-6 py-4 flex gap-2">
