@@ -30,8 +30,23 @@ class ReportController extends Controller
     ->with(['enrollments.semester', 'profiles', 'contracts'])
     ->get();
 
-    return view('reports.report', compact('semesters', 'students', 'selectedSemester'));
+    // Compute total counts
+    $totalStudents = $students->count();
+    $totalContracts = \App\Models\Contract::where('semester_id', $selectedSemester)->count();
+    $totalReferrals = \App\Models\Referral::where('semester_id', $selectedSemester)->count();
+    $totalCounselings = \App\Models\Counseling::where('semester_id', $selectedSemester)->count();
+
+    return view('reports.report', compact(
+        'semesters', 
+        'students', 
+        'selectedSemester',
+        'totalStudents', 
+        'totalContracts', 
+        'totalReferrals', 
+        'totalCounselings'
+    ));
 }
+
 
 
    public function studentHistory($studentId, Request $request)
@@ -61,43 +76,99 @@ public function viewProfile($studentId, $semesterId)
 public function report(Request $request)
 {
     $semesters = Semester::all();
-    $selectedSemester = $request->input('semester_id');
-    $search = $request->input('search'); // Capture search input
+    $schoolYear = $request->input('school_year');
+    $semesterName = $request->input('semester_id'); // holds "1st"/"2nd"
 
-    $students = Student::where(function($query) use ($search) {
-        if ($search) {
-            $query->where('student_id', 'like', "%$search%")
-                  ->orWhere('first_name', 'like', "%$search%")
-                  ->orWhere('last_name', 'like', "%$search%");
-        }
+    // Find semester record based on school year and semester name
+    $semesterRecord = Semester::where('school_year', $schoolYear)
+                              ->where('semester', $semesterName)
+                              ->first();
+
+    $search = $request->input('search');
+
+    // Return ALL students with EITHER profile or enrollment in this semester
+    $students = Student::where(function($query) use ($semesterRecord) {
+        $query->whereHas('enrollments', function($q) use ($semesterRecord) {
+            if ($semesterRecord) {
+                $q->where('semester_id', $semesterRecord->id);
+            }
+        })->orWhereHas('profiles', function($q) use ($semesterRecord) {
+            if ($semesterRecord) {
+                $q->where('semester_id', $semesterRecord->id);
+            }
+        });
     })
-    ->with(['profiles' => function($query) use ($selectedSemester) {
-        if ($selectedSemester) {
-            $query->where('semester_id', $selectedSemester);
+    ->when($search, function ($query, $search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('student_id', 'like', "%$search%")
+              ->orWhere('first_name', 'like', "%$search%")
+              ->orWhere('last_name', 'like', "%$search%");
+        });
+    })
+    ->with(['profiles' => function($query) use ($semesterRecord) {
+        if ($semesterRecord) {
+            $query->where('semester_id', $semesterRecord->id);
         }
-    }, 'contracts' => function($query) use ($selectedSemester) {
-        if ($selectedSemester) {
-            $query->where('semester_id', $selectedSemester);
+    }, 'contracts' => function($query) use ($semesterRecord) {
+        if ($semesterRecord) {
+            $query->where('semester_id', $semesterRecord->id);
         }
     }])
     ->get();
 
-    return view('reports.report', compact('students', 'semesters', 'selectedSemester', 'search'));
+    // Summary cards
+    $totalStudents = $students->count();
+    $totalContracts = \App\Models\Contract::where('semester_id', $semesterRecord?->id)->count();
+    $totalReferrals = \App\Models\Referral::where('semester_id', $semesterRecord?->id)->count();
+    $totalCounselings = \App\Models\Counseling::where('semester_id', $semesterRecord?->id)->count();
+
+    return view('reports.report', [
+        'students' => $students,
+        'semesters' => $semesters,
+        'search' => $search,
+        'selectedSemester' => $semesterRecord ? $semesterRecord->id : null,
+        'schoolYear' => $schoolYear,
+        'semesterName' => $semesterName,
+        'totalStudents' => $totalStudents,
+        'totalContracts' => $totalContracts,
+        'totalReferrals' => $totalReferrals,
+        'totalCounselings' => $totalCounselings,
+    ]);
 }
 
-public function viewRecords($studentId, Request $request)
+public function viewRecords(Request $request, $studentId)
 {
-    $semesterId = $request->input('semester_id');
+     $schoolYear = $request->input('school_year');
+    $semester   = $request->input('semester');
 
-    $student = Student::findOrFail($studentId);
-    $semester = Semester::findOrFail($semesterId);
+$semesterRecord = Semester::where('school_year', $schoolYear)
+                          ->where('semester', $semester) // "1st" or "2nd" matches DB
+                          ->first();
 
-    // Data fetched only for this semester
-    $contracts = $student->contracts()->where('semester_id', $semesterId)->get();
-   // $referrals = $student->referrals()->where('semester_id', $semesterId)->get(); // if referrals exist
 
-    return view('reports.view_records', compact('student', 'semester', 'contracts'));
+    if (!$semesterRecord) {
+        return back()->with('error', 'Invalid School Year or Semester.');
+    }
+
+    $student = Student::with([
+        'profiles' => function($q) use ($semesterRecord) {
+            $q->where('semester_id', $semesterRecord->id);
+        },
+        'contracts' => function($q) use ($semesterRecord) {
+            $q->where('semester_id', $semesterRecord->id);
+        },
+        'referrals' => function($q) use ($semesterRecord) {
+            $q->where('semester_id', $semesterRecord->id);
+        },
+        'counselings' => function($q) use ($semesterRecord) {
+            $q->where('semester_id', $semesterRecord->id);
+        }
+    ])->findOrFail($studentId);
+
+    return view('reports.view_student_records', compact('student', 'semesterRecord'));
 }
+
+
 
 
 

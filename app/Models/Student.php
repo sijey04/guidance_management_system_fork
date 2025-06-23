@@ -83,5 +83,13 @@ public function profileForSemester($semesterId)
 }
 
 
+
+public function referrals() {
+    return $this->hasMany(Referral::class);
+}
+
+
+
+
 }
 

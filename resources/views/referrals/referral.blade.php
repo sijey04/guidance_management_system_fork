@@ -26,8 +26,10 @@
                     <th>Course</th>
                     <th>Year Level & Section</th>
                     <th>Reason</th>
-                    <th>Date</th>
-                    <th>Date</th>
+                    <th>Referral Date</th>
+                    <th>School Year</th> <!-- New Column -->
+                    <th>Semester</th>    <!-- New Column -->
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,34 +43,35 @@
                         <td>{{ $referral->student->student_id }}</td>
                         <td>{{ $referral->student->first_name }} {{ $referral->student->last_name }}</td>
                         <td>{{ $profile?->course ?? 'N/A' }}</td>
-                        <td>{{ $profile?->year_level ?? 'N/A' }}{{ $profile?->section ?? 'N/A' }}</td>
+                        <td>{{ $profile?->year_level ?? 'N/A' }} {{ $profile?->section ?? 'N/A' }}</td>
                         <td>{{ $referral->reason }}</td>
                         <td>{{ $referral->referral_date }}</td>
+                        <td>{{ $referral->semester?->school_year ?? 'N/A' }}</td> 
+                        <td>{{ $referral->semester?->semester ?? 'N/A' }}</td>    
                         <td class="relative text-center">
-                        <!-- 3 Dot Button with Alpine.js -->
-                        <div x-data="{ open: false }" class="inline-block text-left">
-                            <button @click="open = !open" class="text-gray-600 hover:text-gray-800">
-                                ⋮
-                            </button>
+                            <div x-data="{ open: false }" class="inline-block text-left">
+                                <button @click="open = !open" class="text-gray-600 hover:text-gray-800">
+                                    ⋮
+                                </button>
 
-                            <!-- Dropdown -->
-                            <div x-show="open" @click.away="open = false" x-transition 
-                                 class="absolute right-0 mt-2 w-32 bg-white border rounded shadow z-50">
-                                <a href="{{ route('referrals.show', $referral->id) }}" 
-                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">View</a>
-                                <a href="{{ route('referrals.edit', $referral->id) }}" 
-                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit</a>
-                                <form action="{{ route('referrals.destroy', $referral->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" 
-                                            class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                                        Delete
-                                    </button>
-                                </form>
+                                <!-- Dropdown -->
+                                <div x-show="open" @click.away="open = false" x-transition 
+                                     class="absolute right-0 mt-2 w-32 bg-white border rounded shadow z-50">
+                                    <a href="{{ route('referrals.show', $referral->id) }}" 
+                                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">View</a>
+                                    <a href="{{ route('referrals.edit', $referral->id) }}" 
+                                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit</a>
+                                    <form action="{{ route('referrals.destroy', $referral->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" 
+                                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    </td>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

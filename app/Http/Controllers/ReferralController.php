@@ -33,6 +33,7 @@ class ReferralController extends Controller
 
   
     $students = $validatedStudents->merge($newStudents)->unique('id')->values();
+$referrals = Referral::with(['student.profiles', 'semester'])->paginate(10);
 
     return view('referrals.referral', compact('referrals', 'students', 'reasons'));
 }
@@ -68,7 +69,16 @@ public function create()
             $validated['image_path'] = $request->file('image_path')->store('image_path', 'public');
         }
 
-        Referral::create($validated);
+       $activeSemester = Semester::where('is_current', true)->first();
+        Referral::create([
+            'student_id' => $request->student_id,
+            'semester_id' => $activeSemester->id, // important!
+            'reason' => $request->reason,
+            'referral_date' => $request->referral_date,
+            // other fields...
+        ]);
+
+
 
         return redirect()->route('referrals.index')->with('success', 'Referral added successfully.');
     }

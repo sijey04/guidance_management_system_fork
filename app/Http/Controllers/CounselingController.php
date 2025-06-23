@@ -53,7 +53,15 @@ public function store(Request $request)
         $data['image_path'] = $request->file('image_path')->store('image_path', 'public');
     }
 
-    Counseling::create($data);
+    $currentSemester = Semester::where('is_current', true)->first();
+
+        Counseling::create([
+            'student_id' => $request->student_id,
+            'counseling_date' => $request->counseling_date,
+            'remarks' => $request->remarks,
+            'semester_id' => $currentSemester->id, // Save the semester_id properly
+        ]);
+
 
     return redirect()->back()->with('success', 'Counseling record added.');
 }

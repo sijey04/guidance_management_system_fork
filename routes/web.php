@@ -85,7 +85,7 @@ Route::post('/semester/{id}/validate', [SemesterController::class, 'processValid
 // For handling the post-validation process
 Route::post('/semester/{semester}/validate', [SemesterController::class, 'processValidation'])->name('semester.validate.process');
 
-Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])->name('reports.view-records');
+//Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])->name('reports.view-records');
 Route::get('/counseling', [CounselingController::class, 'index'])->name('counselings.index');
 Route::post('/counseling/store', [CounselingController::class, 'store'])->name('counseling.store');
 Route::resource('counselings', CounselingController::class);
@@ -116,6 +116,9 @@ Route::put('/contracts/{id}', [ContractController::class, 'update'])->name('cont
 Route::resource('referrals', ReferralController::class);
 Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
 Route::resource('referral-reasons', ReferralReasonController::class);
+
+Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])
+    ->name('reports.view-records');
 
 });
 // // Student List,Create,edit
