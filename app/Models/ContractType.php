@@ -10,5 +10,11 @@ class ContractType extends Model
     use HasFactory;
 
     protected $fillable = ['type'];
+
+    public function semester()
+{
+    return $this->belongsTo(Semester::class, 'semester_id');
+}
+
 }
 

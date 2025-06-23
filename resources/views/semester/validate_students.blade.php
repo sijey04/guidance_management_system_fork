@@ -1,145 +1,161 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Validate Students for {{ $newSemester->school_year }} - {{ $newSemester->semester }}
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            Validate Students
         </h2>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-
-        <!-- Filter Form (GET) -->
-        <form method="GET" action="{{ route('semester.showValidationForm', $newSemester->id) }}" class="mb-4">
-            <div class="flex space-x-4">
-                <!-- Course Dropdown -->
-                <div>
-                    <label class="block font-medium">Filter by Course:</label>
-                    <select name="filter_course" class="border p-1 rounded">
-                        <option value="">All Courses</option>
-                        @foreach($courses as $course)
-                            <option value="{{ $course->course }}" {{ request('filter_course') == $course->course ? 'selected' : '' }}>
-                                {{ $course->course }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                 <!-- Year Level Dropdown -->
-                <div>
-                    <label class="block font-medium">Filter by Year Level:</label>
-                    <select name="filter_year_level" class="border p-1 rounded">
-                        <option value="">All Year Levels</option>
-                        @foreach($years as $year)
-                            <option value="{{ $year->year_level }}" {{ request('filter_year_level') == $year->year_level ? 'selected' : '' }}>
-                                {{ $year->year_level }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Section Dropdown -->
-                <div>
-                    <label class="block font-medium">Filter by Section:</label>
-                    <select name="filter_section" class="border p-1 rounded">
-                        <option value="">All Sections</option>
-                        @foreach($sections as $section)
-                            <option value="{{ $section->section }}" {{ request('filter_section') == $section->section ? 'selected' : '' }}>
-                                {{ $section->section }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="flex items-end">
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Apply Filters</button>
-                </div>
+    <div class="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
+        <div class="bg-white p-6 shadow rounded-lg">
+            
+            <!-- Back Button -->
+            <div class="mb-4">
+                <a href="{{ route('semester.index') }}" 
+                   class="inline-flex items-center text-blue-600 hover:text-blue-800 transition text-sm font-medium">
+                    ← Back to Academic Setup
+                </a>
             </div>
-        </form>
 
-        <!-- Student Validation Form (POST) -->
-        <form action="{{ route('semester.processValidation', $newSemester->id) }}" method="POST">
-            @csrf
-            <div class="overflow-x-auto bg-white shadow p-6 rounded">
-                <h3 class="text-lg font-semibold mb-4">
-                    Students from Previous Semester ({{ $lastSemester->school_year }} - {{ $lastSemester->semester }})
-                </h3>
+            <!-- Instructions -->
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">
+                Validate Students from Previous Semester
+            </h2>
+            <p class="text-gray-500 mb-6">
+                Select and validate students from 
+                <span class="font-bold">{{ $previousSemester->schoolYear->school_year }} - {{ $previousSemester->semester }}</span> 
+                into the new semester 
+                <span class="font-bold">{{ $newSemester->schoolYear->school_year }} - {{ $newSemester->semester }}</span>.
+                You can modify their Course, Year Level, and Section before validation.
+            </p>
 
-                @forelse($students as $student)
-                    <div class="p-3 mb-2 border rounded">
-                        <label class="block font-medium">
-                            <input type="checkbox" name="selected_students[]" value="{{ $student->id }}">
-                            {{ $student->first_name }} {{ $student->last_name }} ({{ $student->student_id }})
-                        </label>
+            <!-- Filter & Search -->
+            <form method="GET" action="{{ route('semester.validate', $newSemester->id) }}" class="mb-6 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-600">Filter by Course:</label>
+                        <select name="filter_course" class="w-full mt-1 border-gray-300 rounded">
+                            <option value="">All Courses</option>
+                            @foreach($courses as $course)
+                                <option value="{{ $course->course }}" {{ request('filter_course') == $course->course ? 'selected' : '' }}>
+                                    {{ $course->course }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                        <input type="hidden" name="students[{{ $student->id }}][id]" value="{{ $student->id }}">
-                        <!-- Display Previous Course, Year Level, Section -->
-                        @php
-                            $previousProfile = $student->profiles->first(); // Since you loaded only last semester profile in controller
-                        @endphp
+                    <div>
+                        <label class="text-sm font-medium text-gray-600">Filter by Year Level:</label>
+                        <select name="filter_year_level" class="w-full mt-1 border-gray-300 rounded">
+                            <option value="">All Years</option>
+                            @foreach($years as $year)
+                                <option value="{{ $year->year_level }}" {{ request('filter_year_level') == $year->year_level ? 'selected' : '' }}>
+                                    {{ $year->year_level }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                        @if($previousProfile)
-                            <p class="text-sm text-gray-500 mt-1">
-                                Previous Course: <span class="font-semibold">{{ $previousProfile->course }}</span> |
-                                Year Level: <span class="font-semibold">{{ $previousProfile->year_level }}</span> |
-                                Section: <span class="font-semibold">{{ $previousProfile->section }}</span>
-                            </p>
-                        @else
-                            <p class="text-sm text-red-500 mt-1">No previous profile data available.</p>
-                        @endif
-                        
-                        <div>
-                      
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                            <!-- Course Dropdown -->
-                            <div>
-                                <label class="text-sm text-gray-600">Course <span class="text-red-500">*</span></label>
-                                <select name="students[{{ $student->id }}][course]" required class="w-full mt-1 border-gray-300 rounded">
-                                    <option value="">Select Course</option>
-                                    @foreach($courses as $course)
-                                        <option value="{{ $course->course }}" {{ old('students.'.$student->id.'.course') == $course->course ? 'selected' : '' }}>
-                                            {{ $course->course }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-600">Filter by Section:</label>
+                        <select name="filter_section" class="w-full mt-1 border-gray-300 rounded">
+                            <option value="">All Sections</option>
+                            @foreach($sections as $section)
+                                <option value="{{ $section->section }}" {{ request('filter_section') == $section->section ? 'selected' : '' }}>
+                                    {{ $section->section }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                            <!-- Year Level Dropdown -->
-                            <div>
-                                <label class="text-sm text-gray-600">Year Level <span class="text-red-500">*</span></label>
-                                <select name="students[{{ $student->id }}][year_level]" required class="w-full mt-1 border-gray-300 rounded">
-                                    <option value="">Select Year Level</option>
-                                    @foreach($years as $year)
-                                        <option value="{{ $year->year_level }}" {{ old('students.'.$student->id.'.year_level') == $year->year_level ? 'selected' : '' }}>
-                                            {{ $year->year_level }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Section Dropdown -->
-                            <div>
-                                <label class="text-sm text-gray-600">Section <span class="text-red-500">*</span></label>
-                                <select name="students[{{ $student->id }}][section]" required class="w-full mt-1 border-gray-300 rounded">
-                                    <option value="">Select Section</option>
-                                    @foreach($sections as $section)
-                                        <option value="{{ $section->section }}" {{ old('students.'.$student->id.'.section') == $section->section ? 'selected' : '' }}>
-                                            {{ $section->section }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        
+                    <div class="col-span-2">
+                        <label class="text-sm font-medium text-gray-600">Search by Name or ID:</label>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Enter student ID or name..." class="w-full mt-1 border-gray-300 rounded">
+                    </div>
                 </div>
 
-                @empty
-                    <p>No students found from previous semester.</p>
-                @endforelse
-
-                <div class="mt-4 flex justify-end">
-                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Validate Selected Students</button>
+                <div class="flex justify-end mt-4">
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                        Apply Filters
+                    </button>
                 </div>
-            </div>
-        </form>
+            </form>
+
+            <!-- Validation Form -->
+            <form method="POST" action="{{ route('semester.processValidate', $newSemester->id) }}">
+                @csrf
+
+                @if($students->count() > 0)
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border text-sm text-gray-700">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="p-3">Select</th>
+                                    <th class="p-3">Student Info</th>
+                                    <th class="p-3">Previous Course (Year)</th>
+                                    <th class="p-3">New Course</th>
+                                    <th class="p-3">New Year</th>
+                                    <th class="p-3">New Section</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($students as $student)
+                                    @php $profile = $student->profiles->first(); @endphp
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="p-3 text-center">
+                                            <input type="checkbox" name="selected_students[]" value="{{ $student->id }}">
+                                        </td>
+                                        <td class="p-3">
+                                            <div class="font-medium">{{ $student->first_name }} {{ $student->last_name }}</div>
+                                            <div class="text-xs text-gray-500">ID: {{ $student->student_id }}</div>
+                                        </td>
+                                        <td class="p-3">{{ $profile->course }} ({{ $profile->year_level }})</td>
+                                        <td class="p-3">
+                                            <select name="students[{{ $student->id }}][course]" class="border-gray-300 rounded w-full">
+                                                @foreach($courses as $course)
+                                                    <option value="{{ $course->course }}" {{ $profile->course == $course->course ? 'selected' : '' }}>
+                                                        {{ $course->course }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td class="p-3">
+                                            <select name="students[{{ $student->id }}][year_level]" class="border-gray-300 rounded w-full">
+                                                @foreach($years as $year)
+                                                    <option value="{{ $year->year_level }}" {{ $profile->year_level == $year->year_level ? 'selected' : '' }}>
+                                                        {{ $year->year_level }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td class="p-3">
+                                            <select name="students[{{ $student->id }}][section]" class="border-gray-300 rounded w-full">
+                                                @foreach($sections as $section)
+                                                    <option value="{{ $section->section }}" {{ $profile->section == $section->section ? 'selected' : '' }}>
+                                                        {{ $section->section }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="mt-4">
+                        {{ $students->links() }}
+                    </div>
+
+                    <div class="mt-6 flex justify-end">
+                        <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition">
+                            Validate Selected Students
+                        </button>
+                    </div>
+                @else
+                    <p class="text-gray-500 text-center py-6">No students found for validation based on the selected filters or previous semester.</p>
+                @endif
+            </form>
+        </div>
     </div>
 </x-app-layout>

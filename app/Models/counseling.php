@@ -2,36 +2,30 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class counseling extends Model
 {
-   protected $fillable = [
-    'student_id',
-    'session_date',
-    'referred_by',
-    'statement_of_problem',
-    'tests_administered',
-    'evaluation',
-    'recommendation_action_taken',
-    'follow_up',
-    'guidance_counselor',
-];
+   use HasFactory;
 
-protected $casts = [
-    'session_date' => 'datetime',
-];
+    protected $fillable = [
+        'student_id',
+        'counseling_date',
+        'image_path',
+    ];
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
 
 
 
-public function student()
+public function semester()
 {
-    return $this->belongsTo(Student::class);
+    return $this->belongsTo(Semester::class, 'semester_id');
 }
-
-
-
-
 
 
 }

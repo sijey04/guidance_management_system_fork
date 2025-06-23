@@ -55,20 +55,29 @@ class StudentProfileController extends Controller
   public function update(Request $request, Student $student)
 {
     $semester = Semester::where('is_current', true)->first();
-    $profile = $student->profileForSemester($semester->id);
 
-    $semester = Semester::where('is_active', true)->first();
-$profile = $student->profiles()->where('semester_id', $semester->id)->first();
+    if (!$semester) {
+        return redirect()->back()->with('error', 'No active semester.');
+    }
 
-$profile->update($request->only([
-    'home_address', 'father_occupation', 'mother_occupation', 
-    'parent_guardian_name', 'parent_guardian_contact',
-    'number_of_sisters', 'number_of_brothers', 'ordinal_position'
-]));
+    $profile = $student->profiles()->where('semester_id', $semester->id)->first();
 
+    if (!$profile) {
+        // Create profile if none exists
+        $profile = $student->profiles()->create([
+            'semester_id' => $semester->id,
+        ]);
+    }
 
-    return redirect()->back()->with('success', 'Profile updated for the current semester only.');
+    $profile->update($request->only([
+        'home_address', 'father_occupation', 'mother_occupation', 
+        'parent_guardian_name', 'parent_guardian_contact',
+        'number_of_sisters', 'number_of_brothers', 'ordinal_position'
+    ]));
+
+    return redirect()->back()->with('success', 'Profile updated for current semester.');
 }
+
 public function showProfile(Student $student, StudentProfile $profile)
 {
     return view('student.view_profile', compact('student', 'profile'));

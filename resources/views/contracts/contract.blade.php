@@ -59,8 +59,8 @@
                                 @foreach ($contracts as $contract)
                                     <tr class="hover:bg-[#f8eaea] transition">
                                         
-                                        <td class="px-2 py-4">{{ $contract->semester->school_year }}</td>
-                                        <td class="py-4">{{ $contract->semester->semester }}</td>
+                                        <td class="px-2 py-4">{{ $contract->semester->schoolYear->school_year ?? 'N/A' }}</td>
+                                        <td class="py-4">{{ $contract->semester->semester ?? 'N/A' }}</td>
                                         <td class=" py-4">{{ $contract->student->student_id }}</td>
                                         <td class=" py-4">{{ $contract->student->first_name }} {{ $contract->student->last_name }}</td>
                                        <td class="px-6 py-4">{{ $contract->contract_type ?? 'N/A' }}</td>
