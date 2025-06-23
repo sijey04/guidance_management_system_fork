@@ -22,4 +22,10 @@ class counseling extends Model
 
 
 
+public function semester()
+{
+    return $this->belongsTo(Semester::class, 'semester_id');
+}
+
+
 }

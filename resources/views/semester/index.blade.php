@@ -1,100 +1,98 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Academic Setup') }}
-        </h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Academic Setup</h2>
     </x-slot>
 
-    <div class="" style="padding-top:0;">
-        <div class="max-w-7xl px-4 mx-auto sm:px-6 lg:px-8">
-            <div class="main-content" style="margin-top: 16px; margin-bottom: 24px; padding-top: 18px;">
-                <div class="p-6 text-gray-900">
-                    <h1 class="text-2xl font-bold mb-2" style="color:#a82323;">Academic Setup</h1>
-                    
-                    <div class="bg-[#f8eaea] rounded-md p-4 mb-4">
-                        <h3 class="text-lg font-semibold mb-2" style="color:#a82323;">Current Academic Year & Semester</h3>
-                        @php
-                            $activeSemester = $semesters->where('is_current', true)->first();
-                        @endphp
-                        @if($activeSemester)
-                            <p>
-                                <span class="font-semibold">Academic Year:</span> {{ $activeSemester->school_year }} |
-                                <span class="font-semibold">Semester:</span> {{ $activeSemester->semester }}
-                                <span class="ml-2 bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Active</span>
-                            </p>
-                        @else
-                            <p class="text-red-500">No active semester set.</p>
-                        @endif
-                    </div>
+    <div class="max-w-7xl mx-auto py-10" x-data="{ openSemesterModal: false, openSchoolYearModal: false }">
+        <div class="p-6 bg-white rounded shadow">
 
-                    <p class="text-sm text-gray-500 mt-1 py-2 px-2">
-                        Manage and configure the academic years and semesters. You can set which semester is currently active for the system.
-                    </p>
+            <h1 class="text-2xl font-bold mb-4 text-red-600">Academic Setup</h1>
 
-                    <div x-data="{ openSemesterModal: {{ $errors->any() ? 'true' : 'false' }} }" class="mb-3 flex justify-between items-center">
-                        <h3 class="text-md font-semibold mb-4">List of Academic Years & Semesters</h3>
-                        <button @click="openSemesterModal = true" 
-                                class="sign-in-btn" 
-                                style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">
-                            Add New Semester
-                        </button>
-                        @include('semester.create')
-                    </div>
+            {{-- Display Active School Year & Semester --}}
+            @if($activeSchoolYear && $activeSemester)
+                <p class="mb-4">
+                    <strong>Academic Year:</strong> {{ $activeSchoolYear->school_year }} |
+                    <strong>Semester:</strong> {{ $activeSemester->semester }}
+                    <span class="ml-2 bg-green-200 text-green-800 px-2 py-1 rounded text-xs">Active</span>
+                </p>
+            @else
+                <p class="text-red-500 mb-4">No active School Year or Semester set.</p>
+            @endif
 
-                    <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-md bg-white">
-                        @php
-                            $studentCount = ($activeSemester) 
-                                ? \App\Models\StudentProfile::where('semester_id', $activeSemester->id)->count() 
-                                : 0;
-                        @endphp
-
-                        @if($activeSemester && $studentCount == 0)
-                            <a href="{{ route('semester.validate', $activeSemester->id) }}"
-                               class="bg-blue-500 text-white px-4 py-2 rounded inline-block mb-4">
-                                Validate Students
-                            </a>
-                        @elseif(!$activeSemester)
-                            <div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded mb-4">
-                                No active semester set. Please add and set an active semester first.
-                            </div>
-                        @endif
-
-                        <table class="w-full border text-sm text-left text-gray-700">
-                            <thead style="background:#a82323; color:#fff;">
-                                <tr>
-                                    <th class="p-3">School Year</th>
-                                    <th class="p-3">Semester</th>
-                                    <th class="p-3">Status</th>
-                                    <th class="p-3">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($semesters as $sem)
-                                    <tr class="border-b hover:bg-[#f8eaea] transition">
-                                        <td class="p-3">{{ $sem->school_year }}</td>
-                                        <td class="p-3">{{ $sem->semester }}</td>
-                                        <td class="p-3">
-                                            @if($sem->is_current)
-                                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Active</span>
-                                            @else
-                                                <span class="text-gray-400 text-xs">Inactive</span>
-                                            @endif
-                                        </td>
-                                        <td class="p-3">
-                                            <!-- Action buttons here (Edit/Delete etc.) -->
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center text-gray-400 p-3">No semester records found.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    
+            {{-- Buttons to Create School Year & Semester --}}
+            <div class="flex justify-between mb-4">
+                <h3 class="text-lg font-semibold">Academic Setup Management</h3>
+                <div>
+                    <button @click="openSchoolYearModal = true" 
+                        class="bg-red-600 text-white px-4 py-2 rounded">Add New School Year</button>
+                    <button @click="openSemesterModal = true" 
+                        class="bg-red-600 text-white px-4 py-2 rounded ml-2">Add New Semester</button>
                 </div>
+
+                  {{-- Include Modals --}}
+            @include('semester.createSchoolYear')
+            @include('semester.create')
             </div>
+
+          
+
+           @if($activeSemester && !$hasStudents)
+                <a href="{{ route('semester.validate', $activeSemester->id) }}"
+                class="bg-blue-500 text-white px-4 py-2 rounded inline-block mb-4">
+                Validate Students from Previous Semester
+                </a>
+            @endif
+
+
+
+
+
+            {{-- Table: School Years and Their Semesters --}}
+            <h3 class="text-lg font-semibold mt-6 mb-2">School Years & Their Semesters</h3>
+            <table class="w-full text-left border">
+                <thead class="bg-blue-600 text-white">
+                    <tr>
+                        <th class="p-3">School Year</th>
+                        <th class="p-3">Start Date</th>
+                        <th class="p-3">End Date</th>
+                        <th class="p-3">Semesters</th>
+                        <th class="p-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($schoolYears as $sy)
+                        <tr class="border-b">
+                            <td class="p-3">{{ $sy->school_year }}</td>
+                            <td class="p-3">{{ \Carbon\Carbon::parse($sy->start_date)->format('Y-m-d') }}</td>
+                            <td class="p-3">{{ \Carbon\Carbon::parse($sy->end_date)->format('Y-m-d') }}</td>
+                            <td class="p-3">
+                                @forelse($sy->semesters as $sem)
+                                    <div>
+                                        {{ $sem->semester }}
+                                        @if($sem->is_current)
+                                            <span class="ml-1 bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Active</span>
+                                        @endif
+                                    </div>
+                                @empty
+                                    <span class="text-gray-400 text-xs">No Semesters</span>
+                                @endforelse
+                            </td>
+                            <td class="p-3">
+                                @if($sy->is_active)
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Active</span>
+                                @else
+                                    <span class="text-gray-400 text-xs">Inactive</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="p-3 text-center text-gray-500">No School Years found.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
         </div>
     </div>
 </x-app-layout>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\SchoolYear;
 use App\Models\Section;
 use App\Models\Semester;
 use App\Models\Student;
@@ -13,214 +14,191 @@ use Illuminate\Http\Request;
 class SemesterController extends Controller
 {
     public function index()
-    {
-        $semesters = Semester::orderByDesc('is_current')
-                             ->orderBy('school_year', 'desc')
-                             ->orderBy('semester', 'asc')
-                             ->get();
+{
+    $schoolYears = SchoolYear::with('semesters')->orderByDesc('is_active')->orderByDesc('id')->get();
+    $activeSchoolYear = SchoolYear::where('is_active', true)->with('semesters')->first();
+    $activeSemester = Semester::where('is_current', true)->first();
 
-    $courses = Course::all();
-    $years = Year::all();
-    $sections = Section::all();
-        return view('semester.index', compact('semesters','courses','years','sections'));
+    // Check if StudentProfile exists for the new active semester
+    $hasStudents = $activeSemester ? StudentProfile::where('semester_id', $activeSemester->id)->exists() : false;
+
+    return view('semester.index', compact('schoolYears', 'activeSchoolYear', 'activeSemester', 'hasStudents'));
+}
+
+
+
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'semester' => 'required|string|in:1st,2nd,Summer',
+        ]);
+
+        $activeSchoolYear = SchoolYear::where('is_active', true)->first();
+
+        if (!$activeSchoolYear) {
+            return redirect()->back()->withErrors(['Please create an active School Year first.']);
+        }
+
+        if (Semester::where('school_year_id', $activeSchoolYear->id)
+                    ->where('semester', $validated['semester'])->exists()) {
+            return back()->withErrors(['This semester already exists for the active School Year.']);
+        }
+
+        $isCurrent = !Semester::where('school_year_id', $activeSchoolYear->id)
+                              ->where('is_current', true)->exists();
+
+        Semester::create([
+            'school_year_id' => $activeSchoolYear->id,
+            'semester' => $validated['semester'],
+            'is_current' => $isCurrent,
+        ]);
+
+        return redirect()->route('semester.index')->with('success', 'Semester created under active School Year.');
     }
 
-    public function create()
-    {
-        return view('semester.create');
-    }
-
- public function store(Request $request)
+    public function storeSchoolYear(Request $request)
 {
     $validated = $request->validate([
-        'school_year' => 'required|string',
-        'semester'    => 'required|string',
-        'is_current'  => 'nullable|boolean',
-        'is_active'   => 'nullable|boolean',
+        'start_date' => 'required|date',
+        'end_date'   => 'required|date|after:start_date',
     ]);
 
-    if ($request->is_current) {
-        Semester::where('is_current', true)->update(['is_current' => false]);
+    $startYear = date('Y', strtotime($validated['start_date']));
+    $endYear   = date('Y', strtotime($validated['end_date']));
+    $schoolYearStr = $startYear . '-' . $endYear;
+
+    if (SchoolYear::where('school_year', $schoolYearStr)->exists()) {
+        return back()->withErrors(['School Year already exists.']);
     }
 
-    $newSemester = Semester::create($validated);
-
-    // Do NOT copy students automatically.
-    // History of old semester is already saved.
-
-    return redirect()->route('semester.index')->with('success', 'New semester created. Student list is currently empty.');
-}
-
-    public function activateSemester($id)
-    {
-        // Deactivate all
-        Semester::where('id', '!=', $id)->update(['is_active' => false]);
-
-        // Activate new semester
-        $semester = Semester::findOrFail($id);
-        $semester->update(['is_active' => true]);
-
-        // Carry-over logic if needed (usually done in store)
-        // Optional here - to avoid double-carry
-
-        return redirect()->back()->with('success', 'Semester activated.');
+    // Deactivate previous School Year & Semesters
+    $previousActive = SchoolYear::where('is_active', true)->first();
+    if ($previousActive) {
+        $previousActive->update(['is_active' => false]);
+        Semester::where('school_year_id', $previousActive->id)->update(['is_current' => false]);
     }
 
-    public function carryOverProfilesToNewSemester(Semester $newSemester)
-{
-    $students = Student::all();
+    $newSchoolYear = SchoolYear::create([
+        'school_year' => $schoolYearStr,
+        'start_date'  => $validated['start_date'],
+        'end_date'    => $validated['end_date'],
+        'is_active'   => true,
+    ]);
 
-    foreach ($students as $student) {
-        $latestProfile = $student->profiles()->latest('semester_id')->first();
+    
+    Semester::where('is_current', true)->update(['is_current' => false]);
 
-        // Check if profile already exists for this semester
-        $exists = $student->profiles()->where('semester_id', $newSemester->id)->exists();
+    Semester::create([
+        'school_year_id' => $newSchoolYear->id,
+        'semester'       => '1st',
+        'is_current'     => true,
+    ]);
 
-        if (!$exists && $latestProfile) {
-            $student->profiles()->create([
-                'semester_id' => $newSemester->id,
-                'course_year' => $latestProfile->course_year,
-                'section' => $latestProfile->section,
-                // also copy personal info
-                'home_address' => $latestProfile->home_address,
-                'father_occupation' => $latestProfile->father_occupation,
-                'mother_occupation' => $latestProfile->mother_occupation,
-                'parent_guardian_name' => $latestProfile->parent_guardian_name,
-                'parent_guardian_contact' => $latestProfile->parent_guardian_contact,
-                'number_of_sisters' => $latestProfile->number_of_sisters,
-                'number_of_brothers' => $latestProfile->number_of_brothers,
-                'ordinal_position' => $latestProfile->ordinal_position,
-                // etc.
-            ]);
-        }
-    }
+    return redirect()->route('semester.index')->with('success', 'New School Year & 1st Semester created & set as active.');
 }
 
 
-public function carryOverFromPrevious($newSemesterId)
-{
-    $newSemester = Semester::findOrFail($newSemesterId);
-
-    // Get the last (most recent) semester that is not the new one
-    $lastSemester = Semester::where('id', '<>', $newSemesterId)
-                            ->orderByDesc('id')->first();
-
-    if (!$lastSemester) {
-        return redirect()->back()->with('error', 'No previous semester found.');
-    }
-
-    $students = Student::all();
-
-    foreach ($students as $student) {
-        $latestProfile = $student->profiles()->where('semester_id', $lastSemester->id)->first();
-
-        if ($latestProfile) {
-            // Check if profile already exists for the new semester
-            $exists = $student->profiles()->where('semester_id', $newSemester->id)->exists();
-
-            if (!$exists) {
-                $student->profiles()->create([
-                    'semester_id' => $newSemester->id,
-                    'course_year' => $latestProfile->course_year,
-                    'section' => $latestProfile->section,
-                    'home_address' => $latestProfile->home_address,
-                    'father_occupation' => $latestProfile->father_occupation,
-                    'mother_occupation' => $latestProfile->mother_occupation,
-                    'parent_guardian_name' => $latestProfile->parent_guardian_name,
-                    'parent_guardian_contact' => $latestProfile->parent_guardian_contact,
-                    'number_of_sisters' => $latestProfile->number_of_sisters,
-                    'number_of_brothers' => $latestProfile->number_of_brothers,
-                    'ordinal_position' => $latestProfile->ordinal_position,
-                ]);
-            }
-        }
-    }
-
-    return redirect()->back()->with('success', 'Profiles carried over to the new semester.');
-}
-public function showValidationForm(Request $request, $semesterId)
+    public function validateStudentsForm(Request $request, $semesterId)
 {
     $newSemester = Semester::findOrFail($semesterId);
 
-    $lastSemester = Semester::where('id', '<>', $semesterId)
-                            ->orderByDesc('id')
-                            ->first();
+    // Get previous semester from a different school year
+    $previousSemester = Semester::where('id', '<>', $semesterId)
+                                ->where('school_year_id', '<>', $newSemester->school_year_id)
+                                ->orderByDesc('id')
+                                ->first();
 
-    if (!$lastSemester) {
+    if (!$previousSemester) {
         return back()->with('error', 'No previous semester found.');
     }
 
-    $query = Student::whereHas('profiles', function($q) use ($lastSemester) {
-    $q->where('semester_id', $lastSemester->id);
-})->with(['profiles' => function($q) use ($lastSemester) {
-    $q->where('semester_id', $lastSemester->id);
-}]);
+    // Base query for students from previous semester
+    $query = Student::whereHas('profiles', function ($q) use ($previousSemester) {
+        $q->where('semester_id', $previousSemester->id);
+    })->with(['profiles' => function ($q) use ($previousSemester) {
+        $q->where('semester_id', $previousSemester->id);
+    }]);
 
-if ($request->filled('filter_course')) {
-    $query->whereHas('profiles', function($q) use ($lastSemester, $request) {
-        $q->where('semester_id', $lastSemester->id)
-          ->where('course', $request->filter_course);
-    });
-}
+    // Apply filters if present
+    if ($request->filled('filter_course')) {
+        $query->whereHas('profiles', function ($q) use ($previousSemester, $request) {
+            $q->where('semester_id', $previousSemester->id)
+              ->where('course', $request->filter_course);
+        });
+    }
 
-if ($request->filled('filter_year_level')) {
-    $query->whereHas('profiles', function($q) use ($lastSemester, $request) {
-        $q->where('semester_id', $lastSemester->id)
-          ->where('year_level', $request->filter_year_level);
-    });
-}
+    if ($request->filled('filter_year_level')) {
+        $query->whereHas('profiles', function ($q) use ($previousSemester, $request) {
+            $q->where('semester_id', $previousSemester->id)
+              ->where('year_level', $request->filter_year_level);
+        });
+    }
 
-if ($request->filled('filter_section')) {
-    $query->whereHas('profiles', function($q) use ($lastSemester, $request) {
-        $q->where('semester_id', $lastSemester->id)
-          ->where('section', $request->filter_section);
-    });
-}
+    if ($request->filled('filter_section')) {
+        $query->whereHas('profiles', function ($q) use ($previousSemester, $request) {
+            $q->where('semester_id', $previousSemester->id)
+              ->where('section', $request->filter_section);
+        });
+    }
 
-$students = $query->get();
+    if ($request->filled('search')) {
+        $query->where(function($q) use ($request) {
+            $q->where('student_id', 'like', '%' . $request->search . '%')
+              ->orWhere('first_name', 'like', '%' . $request->search . '%')
+              ->orWhere('last_name', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    $students = $query->paginate(10); // Pagination added
 
     $courses = Course::all();
     $years = Year::all();
     $sections = Section::all();
 
-
-    return view('semester.validate_students', compact('newSemester', 'students', 'lastSemester', 'courses','years', 'sections'));
+    return view('semester.validate_students', compact('students', 'newSemester', 'previousSemester', 'courses', 'years', 'sections'));
 }
 
-public function processValidation(Request $request, $semesterId)
+public function processValidateStudents(Request $request, $semesterId)
 {
-    $newSemester = Semester::findOrFail($semesterId);
-
-    $request->validate([
+    $validated = $request->validate([
         'selected_students' => 'required|array',
         'selected_students.*' => 'exists:students,id',
     ]);
 
-    $studentsInput = $request->input('students', []);
-    $selected = $request->input('selected_students', []);
+    $studentsData = $request->input('students', []);
+    $semester = Semester::findOrFail($semesterId);
 
-    foreach ($selected as $studentId) {
-        if (!isset($studentsInput[$studentId])) {
+    foreach ($validated['selected_students'] as $studentId) {
+        if (!isset($studentsData[$studentId])) {
             continue; // Skip if no data
         }
 
-        $studentData = $studentsInput[$studentId];
+        $data = $studentsData[$studentId];
 
-        // Now validate manually
-        if (empty($studentData['course']) || empty($studentData['year_level']) || empty($studentData['section'])) {
-            continue; // Skip incomplete
+        // Check all required fields are filled
+        if (empty($data['course']) || empty($data['year_level']) || empty($data['section'])) {
+            continue; // Skip incomplete input
         }
 
-        $student = Student::find($studentId);
+        // Prevent duplicate profiles in the new semester
+        $exists = StudentProfile::where('student_id', $studentId)
+                                ->where('semester_id', $semester->id)
+                                ->exists();
+        if ($exists) {
+            continue;
+        }
 
-        $student->profiles()->create([
-            'semester_id' => $newSemester->id,
-            'course'      => $studentData['course'], // now 'course' instead of 'course_year'
-            'year_level'  => $studentData['year_level'],
-            'section'     => $studentData['section'],
+        // Insert new validated profile
+        StudentProfile::create([
+            'student_id'  => $studentId,
+            'semester_id' => $semester->id,
+            'course'      => $data['course'],
+            'year_level'  => $data['year_level'],
+            'section'     => $data['section'],
         ]);
     }
 
-    return redirect()->route('semester.index')->with('success', 'Selected students validated successfully.');
+    return redirect()->route('semester.index')->with('success', 'Selected students successfully validated into the new semester.');
 }
 }

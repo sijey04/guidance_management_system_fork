@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReferralReasonController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\StudentController;
@@ -78,12 +79,12 @@ Route::get('/student/{student}/profile/{profile}', [StudentController::class, 'v
 Route::post('/semesters/{newSemesterId}/carry-over', [SemesterController::class, 'carryOverFromPrevious'])
     ->name('semesters.carryOver');
 // For showing the Validation Modal data
-Route::get('/semester/{semester}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
-Route::get('/semester/{id}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
-Route::post('/semester/{id}/validate', [SemesterController::class, 'processValidation'])->name('semester.processValidation');
+//Route::get('/semester/{semester}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
+//Route::get('/semester/{id}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
+//Route::post('/semester/{id}/validate', [SemesterController::class, 'processValidation'])->name('semester.processValidation');
 
 // For handling the post-validation process
-Route::post('/semester/{semester}/validate', [SemesterController::class, 'processValidation'])->name('semester.validate.process');
+//Route::post('/semester/{semester}/validate', [SemesterController::class, 'processValidation'])->name('semester.validate.process');
 
 //Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])->name('reports.view-records');
 Route::get('/counseling', [CounselingController::class, 'index'])->name('counselings.index');
@@ -92,13 +93,22 @@ Route::resource('counselings', CounselingController::class);
 Route::put('/counselings/{id}', [CounselingController::class, 'update'])->name('counselings.update');
 
 // Show the validation form modal
-Route::get('/semester/{id}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
+//Route::get('/semester/{id}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
+Route::get('/semester/{semesterId}/validate', [SemesterController::class, 'validateStudentsForm'])->name('semester.validate');
+Route::post('/semester/{semesterId}/validate', [SemesterController::class, 'processValidateStudents'])->name('semester.processValidate');
 
-Route::get('/semester/{semester}/validate', [SemesterController::class, 'showValidationForm'])
-    ->name('semester.showValidationForm');
+//Route::get('/semester/{semester}/validate', [SemesterController::class, 'showValidationForm'])
+    //->name('semester.showValidationForm');
 
-Route::post('/semester/{semester}/validate', [SemesterController::class, 'processValidation'])
-    ->name('semester.processValidation');
+//Route::post('/semester/{semester}/validate', [SemesterController::class, 'processValidation'])
+   // ->name('semester.processValidation');
+
+Route::post('/school-years/store', [SemesterController::class, 'storeSchoolYear'])->name('school-years.store');
+Route::resource('semesters', SemesterController::class)->only(['index', 'store']);
+//Route::get('/semesters/{id}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.showValidationForm');
+//Route::post('/semesters/{id}/validate', [SemesterController::class, 'processValidation'])->name('semester.processValidation');
+Route::post('/school-years/{id}/activate', [SchoolYearController::class, 'activate'])->name('school-years.activate');
+
 
 Route::get('/manage-course-year-section', [CourseYearSectionController::class, 'index'])->name('course_year_section.index');
 Route::post('/manage-course', [CourseYearSectionController::class, 'storeCourse'])->name('course.store');

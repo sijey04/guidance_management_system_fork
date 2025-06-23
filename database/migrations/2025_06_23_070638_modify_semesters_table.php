@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('school_years', function (Blueprint $table) {
-           $table->id();
-            $table->year('start_year');
-            $table->year('end_year');
-            $table->timestamps();
+        Schema::table('semesters', function (Blueprint $table) {
+            $table->foreignId('school_year_id')->constrained('school_years')->onDelete('cascade');
+            $table->dropColumn('school_year'); // remove the old string-based 'school_year'
         });
     }
 
@@ -24,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('school_years');
+        //
     }
 };

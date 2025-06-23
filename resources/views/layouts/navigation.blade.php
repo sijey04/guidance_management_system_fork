@@ -1,5 +1,8 @@
 @php
    $activeSemester = \App\Models\Semester::where('is_current', true)->first();
+   $schoolYears = \App\Models\SchoolYear::with('semesters')->orderByDesc('is_active')->orderByDesc('id')->get();
+   $activeSchoolYear = \App\Models\SchoolYear::where('is_active', true)->with('semesters')->first();
+   $activeSemester = \App\Models\Semester::where('is_current', true)->first();
 @endphp
 
 <nav class="sidebar">
@@ -10,13 +13,15 @@
 
         <!-- Display Active S.Y. and Semester -->
         <div class="mt-2 border-2 border-gray-300 rounded-lg py-1 px-2 bg-white shadow-sm">
-            @if($activeSemester)
+            @if($activeSchoolYear && $activeSemester)
                 <p class="text-base text-gray-800 font-semibold mb-1">Active Semester</p>
-                <p class="text-sm text-gray-700"><strong>S.Y:</strong> {{ $activeSemester->school_year }}</p>
+                <p class="text-sm text-gray-700"><strong>S.Y:</strong> {{ $activeSchoolYear->school_year }} </p>
                 <p class="text-sm text-gray-700"><strong>Semester:</strong> {{ $activeSemester->semester }}</p>
             @else
                 <p class="text-base text-red-600 font-semibold">No Active Semester</p>
             @endif
+
+           
         </div>
     </div>
 
