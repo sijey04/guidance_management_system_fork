@@ -78,8 +78,13 @@
                                                 <!-- Dropdown menu -->
                                                 <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg z-20">
                                                     <!-- View -->
-                                                    <a href="{{ route('contracts.view', $contract->id) }}" 
-                                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">View</a>
+                                                     <div x-data="{ openEditContractModal_{{ $contract->id }}: false }">
+                                                        <button @click="openMenu = false; openEditContractModal_{{ $contract->id }} = true"
+                                                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                            View
+                                                        </button>
+                                                        @include('contracts.viewContract', ['contract' => $contract])
+                                                    </div>
 
                                                     <!-- Edit -->
                                                     <div x-data="{ openEditContractModal_{{ $contract->id }}: false }">

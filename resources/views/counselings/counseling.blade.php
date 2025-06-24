@@ -50,11 +50,12 @@
             </thead>
             <tbody>
                 @foreach ($counselings as $counseling)
-                    @php
-                        $profile = $counseling->student->profiles
-                            ->where('semester_id', \App\Models\Semester::where('is_current', true)->first()?->id)
-                            ->first();
-                    @endphp
+                     @php
+                            $profile = $counseling->student->profiles->where('semester_id', $counseling->semester_id)->first();
+                            if(!$profile) {
+                                $profile = $counseling->student->profiles->sortByDesc('semester_id')->first();
+                            }
+                        @endphp
                     <tr>
                         <td class="px-2 py-4">{{ $counseling->student->student_id }}</td>
                         <td class="px-2 py-4">{{ $counseling->student->first_name }} {{ $counseling->student->last_name }}</td>

@@ -41,32 +41,28 @@ public function index()
 
 public function store(Request $request)
 {
-    $request->validate([
+    $validated = $request->validate([
         'student_id' => 'required|exists:students,id',
         'counseling_date' => 'required|date',
         'image_path' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
     ]);
 
-    // Find the current active semester
     $activeSemester = Semester::where('is_current', true)->first();
     if (!$activeSemester) {
         return back()->with('error', 'No active semester set. Please activate a semester first.');
     }
 
-    // Handle file upload if any
     if ($request->hasFile('image_path')) {
-        $validated['image_path'] = $request->file('image_path')->store('image_path', 'public');
+        $validated['image_path'] = $request->file('image_path')->store('counseling_images', 'public');
     }
 
-    // Add active semester ID to the data
     $validated['semester_id'] = $activeSemester->id;
 
-    // Create 
-    counseling::create($validated);
+   
+    Counseling::create($validated);
 
     return redirect()->back()->with('success', 'Counseling record added.');
 }
-
 
     /**
      * Display the specified resource.

@@ -62,7 +62,9 @@
                             <td class="px-4 py-2">{{ $profile?->course ?? 'N/A' }}</td>
                             <td class="px-4 py-2">{{ $profile?->year_level ?? 'N/A' }} {{ $profile?->section ?? 'N/A' }}</td>
                             <td class="px-4 py-2">{{ $referral->reason }}</td>
-                            <td class="px-4 py-2">{{ $referral->referral_date ?? 'N/A' }}</td> <!-- Fix this -->
+                            <td class="px-4 py-2">
+    {{ $referral->referral_date ? \Carbon\Carbon::parse($referral->referral_date)->format('l, F jS, Y') : 'N/A' }}
+</td>
                             <td class="px-4 py-2">{{ $referral->semester?->schoolYear?->school_year ?? 'N/A' }}
 </td>
                             <td class="px-4 py-2">{{ $referral->semester?->semester ?? 'N/A' }}</td>

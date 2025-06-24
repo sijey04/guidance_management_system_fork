@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('semesters', function (Blueprint $table) {
-            $table->foreignId('school_year_id')->constrained('school_years')->onDelete('cascade');
-            $table->dropColumn('school_year'); // remove the old string-based 'school_year'
+        Schema::create('contract_images', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('contract_id')->constrained()->onDelete('cascade');
+            $table->string('image_path');
+            $table->timestamps();
         });
+
     }
 
     /**
