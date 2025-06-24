@@ -69,7 +69,7 @@
                                         <td class="px-6 py-4 text-center relative">
                                             <div x-data="{ open: false }" class="relative inline-block text-left">
                                                 <button @click="open = !open" type="button" class="text-gray-600 hover:text-gray-900 focus:outline-none">
-                                                    <!-- Three Dots Icon -->
+                                                
                                                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"/>
                                                     </svg>

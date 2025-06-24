@@ -65,8 +65,8 @@ public function store(Request $request)
         'contract_type' => 'required|exists:contract_types,type',
         'total_days' => 'nullable|integer|min:1',
         'start_date' => 'nullable|date',
-        'end_date' => 'nullable|date', // ← added
-        'remarks' => 'nullable|string|max:1000', // ← added
+        'end_date' => 'nullable|date', 
+        'remarks' => 'nullable|string|max:1000',
         'contract_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'status' => 'required|string',
     ]);

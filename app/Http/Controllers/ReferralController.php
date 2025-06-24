@@ -106,9 +106,6 @@ public function create()
     return redirect()->route('referrals.index')->with('success', 'Referral added successfully under current semester.');
 }
 
-
-
-
     public function show($id)
 {
     $referral = Referral::with('student')->findOrFail($id);

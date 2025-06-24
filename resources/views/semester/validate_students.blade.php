@@ -29,11 +29,11 @@
             </p>
 
             <!-- Filter & Search -->
-            <form method="GET" action="{{ route('semester.validate', $newSemester->id) }}" class="mb-6 space-y-4">
+            <form method="GET" action="{{ route('semester.validate', $newSemester->id) }}" x-data>
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div>
                         <label class="text-sm font-medium text-gray-600">Filter by Course:</label>
-                        <select name="filter_course" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_course" onchange="this.form.submit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Courses</option>
                             @foreach($courses as $course)
                                 <option value="{{ $course->course }}" {{ request('filter_course') == $course->course ? 'selected' : '' }}>
@@ -45,7 +45,7 @@
 
                     <div>
                         <label class="text-sm font-medium text-gray-600">Filter by Year Level:</label>
-                        <select name="filter_year_level" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_year_level" onchange="this.form.submit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Years</option>
                             @foreach($years as $year)
                                 <option value="{{ $year->year_level }}" {{ request('filter_year_level') == $year->year_level ? 'selected' : '' }}>
@@ -57,7 +57,7 @@
 
                     <div>
                         <label class="text-sm font-medium text-gray-600">Filter by Section:</label>
-                        <select name="filter_section" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_section" onchange="this.form.submit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Sections</option>
                             @foreach($sections as $section)
                                 <option value="{{ $section->section }}" {{ request('filter_section') == $section->section ? 'selected' : '' }}>
@@ -69,20 +69,29 @@
 
                     <div class="col-span-2">
                         <label class="text-sm font-medium text-gray-600">Search by Name or ID:</label>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Enter student ID or name..." class="w-full mt-1 border-gray-300 rounded">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Enter student ID or name..."
+                            class="w-full mt-1 border-gray-300 rounded"
+                            @change="$el.form.submit()"
+                            @keydown.enter.prevent="$el.form.submit()">
                     </div>
                 </div>
-
-                <div class="flex justify-end mt-4">
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                        Apply Filters
-                    </button>
-                </div>
             </form>
+
 
             <!-- Validation Form -->
             <form method="POST" action="{{ route('semester.processValidate', $newSemester->id) }}">
                 @csrf
+
+                   <!-- Pagination -->
+                    <div class="mt-4">
+                        {{ $students->links() }}
+                    </div>
+
+                    <div class="mt-6 mb-3 flex justify-end">
+                        <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition">
+                            Validate Selected Students
+                        </button>
+                    </div>
 
                 @if($students->count() > 0)
                     <div class="overflow-x-auto">
@@ -140,17 +149,6 @@
                                 @endforeach
                             </tbody>
                         </table>
-                    </div>
-
-                    <!-- Pagination -->
-                    <div class="mt-4">
-                        {{ $students->links() }}
-                    </div>
-
-                    <div class="mt-6 flex justify-end">
-                        <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition">
-                            Validate Selected Students
-                        </button>
                     </div>
                 @else
                     <p class="text-gray-500 text-center py-6">No students found for validation based on the selected filters or previous semester.</p>

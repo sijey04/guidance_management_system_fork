@@ -13,6 +13,7 @@ class counseling extends Model
         'student_id',
         'counseling_date',
         'image_path',
+        'semester_id',
     ];
 
     public function student()

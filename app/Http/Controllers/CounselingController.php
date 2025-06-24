@@ -47,21 +47,22 @@ public function store(Request $request)
         'image_path' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
     ]);
 
-    $data = $request->all();
-
-    if ($request->hasFile('image_path')) {
-        $data['image_path'] = $request->file('image_path')->store('image_path', 'public');
+    // Find the current active semester
+    $activeSemester = Semester::where('is_current', true)->first();
+    if (!$activeSemester) {
+        return back()->with('error', 'No active semester set. Please activate a semester first.');
     }
 
-    $currentSemester = Semester::where('is_current', true)->first();
+    // Handle file upload if any
+    if ($request->hasFile('image_path')) {
+        $validated['image_path'] = $request->file('image_path')->store('image_path', 'public');
+    }
 
-        Counseling::create([
-            'student_id' => $request->student_id,
-            'counseling_date' => $request->counseling_date,
-            'remarks' => $request->remarks,
-            'semester_id' => $currentSemester->id, // Save the semester_id properly
-        ]);
+    // Add active semester ID to the data
+    $validated['semester_id'] = $activeSemester->id;
 
+    // Create 
+    counseling::create($validated);
 
     return redirect()->back()->with('success', 'Counseling record added.');
 }

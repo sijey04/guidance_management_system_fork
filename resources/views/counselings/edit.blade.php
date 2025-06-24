@@ -18,9 +18,9 @@
                 </div>
 
                 <!-- Image Upload -->
-                <div class="mt-4">
-                    <label class="block text-sm mb-1">Attach Image (Optional)</label>
-                    <input type="file" name="image_path" accept="image/*" class="w-full border p-2 rounded">
+                <div>
+                    <label class="block text-sm mb-1" style="color:#a82323;">Attach Contract Image</label>
+                    <input type="file" name="imahe_path" accept="image/*" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
                 </div>
 
                 <div class="mt-6 flex justify-end space-x-4">

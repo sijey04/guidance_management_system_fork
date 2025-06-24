@@ -14,7 +14,6 @@
                 @include('referrals.create', ['students' => $students, 'reasons' => $reasons])
             </div>
 
-            <!-- Filters -->
             <form method="GET" action="{{ route('referrals.index') }}" class="flex gap-4" id="filterForm">
                 <!-- Reason Filter -->
                 <select name="reason" onchange="document.getElementById('filterForm').submit()" class="border p-2 rounded">
@@ -52,11 +51,11 @@
                 <tbody>
                     @foreach ($referrals as $referral)
                         @php
-    $profile = $referral->student->profiles->where('semester_id', $referral->semester_id)->first();
-    if(!$profile) {
-        $profile = $referral->student->profiles->sortByDesc('semester_id')->first();
-    }
-@endphp
+                            $profile = $referral->student->profiles->where('semester_id', $referral->semester_id)->first();
+                            if(!$profile) {
+                                $profile = $referral->student->profiles->sortByDesc('semester_id')->first();
+                            }
+                        @endphp
                         <tr class="hover:bg-gray-100">
                             <td class="px-4 py-2">{{ $referral->student->student_id }}</td>
                             <td class="px-4 py-2">{{ $referral->student->first_name }} {{ $referral->student->last_name }}</td>

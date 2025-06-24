@@ -3,9 +3,31 @@
         <h2 class="font-semibold text-xl text-gray-800">All Counseling Records</h2>
     </x-slot>
 
+
+<div class="" style="padding-top:0;">
+        <div class="max-w-7xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="main-content" style="margin-top: 16px; margin-bottom: 24px; padding-top: 18px;">
+                <div class="p-6 text-gray-900">
     <div class="max-w-7xl mx-auto p-4" x-data="{ openModal: false }">
+
+        {{-- <form method="GET" action="{{ route('counselings.index') }}" class="flex gap-4" id="filterForm">
+                {{-- <!-- Reason Filter -->
+                <select name="reason" onchange="document.getElementById('filterForm').submit()" class="border p-2 rounded">
+                    <option value="">All Reasons</option>
+                    @foreach($reasons as $reason)
+                        <option value="{{ $reason->reason }}" {{ request('reason') == $reason->reason ? 'selected' : '' }}>
+                            {{ $reason->reason }}
+                        </option>
+                    @endforeach
+                </select> --}}
+
+                {{-- <!-- Search Field -->
+                <input type="text" name="search" placeholder="Search by ID or Name" value="{{ request('search') }}" 
+                    oninput="document.getElementById('filterForm').submit()" 
+                    class="border p-2 rounded w-64">
+            </form> --}} 
         <!-- Create Counseling Button -->
-        <button @click="openModal = true" class="bg-green-600 text-white px-4 py-2 rounded mb-4">
+        <button @click="openModal = true" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;" >
             Create Counseling
         </button>
 
@@ -13,16 +35,17 @@
         @include('counselings.create', ['students' => $students])
 
         <!-- Counseling Table -->
-        <table class="w-full mt-4 border-collapse border text-center text-sm">
-            <thead class="bg-gray-200">
-                <tr>
-                    <th class="border px-2 py-1">Student ID</th>
-                    <th class="border px-2 py-1">Name</th>
-                    <th class="border px-2 py-1">Course</th>
-                    <th class="border px-2 py-1">Year</th>
-                    <th class="border px-2 py-1">Section</th>
-                    <th class="border px-2 py-1">Counseling Date</th>
-                    <th class="border px-2 py-1"></th>
+    <div class=" rounded-lg border border-gray-200 shadow-md bg-white mt-3">
+                <table class="w-full border text-sm text-left text-gray-700">
+                    <thead style="background:#a82323; color:#fff;">
+                    <tr class="items-center">
+                    <th class="px-5 py-3">Student ID</th>
+                    <th class="px-5 py-3">Name</th>
+                    <th class="px-5 py-3">Course</th>
+                    <th class="px-5 py-3">Year</th>
+                    <th class="px-5 py-3">Section</th>
+                    <th class="px-5 py-3">Counseling Date</th>
+                    <th class="px-5 py-3"></th>
                 </tr>
             </thead>
             <tbody>
@@ -33,16 +56,16 @@
                             ->first();
                     @endphp
                     <tr>
-                        <td class="border px-2 py-1">{{ $counseling->student->student_id }}</td>
-                        <td class="border px-2 py-1">{{ $counseling->student->first_name }} {{ $counseling->student->last_name }}</td>
-                        <td class="border px-2 py-1">{{ $profile?->course ?? 'N/A' }}</td>
-                        <td class="border px-2 py-1">{{ $profile?->year_level ?? 'N/A' }}</td>
-                        <td class="border px-2 py-1">{{ $profile?->section ?? 'N/A' }}</td>
-                        <td class="border px-2 py-1">{{ $counseling->counseling_date }}</td>
+                        <td class="px-2 py-4">{{ $counseling->student->student_id }}</td>
+                        <td class="px-2 py-4">{{ $counseling->student->first_name }} {{ $counseling->student->last_name }}</td>
+                        <td class="px-2 py-4">{{ $profile?->course ?? 'N/A' }}</td>
+                        <td class="px-2 py-4">{{ $profile?->year_level ?? 'N/A' }}</td>
+                        <td class="px-2 py-4">{{ $profile?->section ?? 'N/A' }}</td>
+                        <td class="px-2 py-4">{{ $counseling->counseling_date }}</td>
                         <!-- Inside your <tbody> foreach loop -->
                         <td class="border px-2 py-1 relative">
                             <div x-data="{ openDropdown: false }" class="relative">
-                                <button @click="openDropdown = !openDropdown" class="px-2 py-1 text-gray-600 hover:text-gray-800">
+                                <button @click="openDropdown = !openDropdown" class="px-2 py-1 text-gray-600 hover:text-gray-800 font-bold">
                                     &#x22EE; <!-- Vertical 3 dots -->
                                 </button>
                                 <div x-show="openDropdown" @click.away="openDropdown = false"
@@ -75,7 +98,8 @@
                 @endforeach
             </tbody>
         </table>
-
+    </div>
         <div class="mt-4">{{ $counselings->links() }}</div>
     </div>
+    </div></div></div></div>
 </x-app-layout>

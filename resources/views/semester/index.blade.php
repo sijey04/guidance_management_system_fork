@@ -36,12 +36,13 @@
 
           
 
-           @if($activeSemester && !$hasStudents)
+          @if($activeSemester && !$hasStudents)
                 <a href="{{ route('semester.validate', $activeSemester->id) }}"
                 class="bg-blue-500 text-white px-4 py-2 rounded inline-block mb-4">
-                Validate Students from Previous Semester
+                    Validate Students from Previous Semester
                 </a>
             @endif
+
 
 
 
