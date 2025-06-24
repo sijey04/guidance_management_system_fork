@@ -1,4 +1,4 @@
-<div x-show="openEditContractModal_{{ $contract->id }}"
+<div x-show="openViewContractModal_{{ $contract->id }}"
      x-transition
      class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center"
      style="display: none;"
@@ -7,7 +7,7 @@
     <div class="bg-white rounded-xl shadow-lg max-w-5xl w-full p-6 relative overflow-y-auto max-h-[90vh] border border-gray-300">
 
         <!-- Close Button -->
-        <button @click="openEditContractModal_{{ $contract->id }} = false"
+        <button @click="openViewContractModal_{{ $contract->id }} = false"
                 class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-2xl font-bold transition">
             &times;
         </button>

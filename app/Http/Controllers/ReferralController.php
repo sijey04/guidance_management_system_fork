@@ -12,17 +12,26 @@ class ReferralController extends Controller
 {
    public function index(Request $request)
 {
-    
     $currentSemester = Semester::where('is_current', true)->first();
+    
+    if (!$currentSemester) {
+        return back()->with('error', 'No active semester set.');
+    }
+
     $lastSemester = Semester::where('id', '<>', $currentSemester->id)
                             ->orderByDesc('id')
                             ->first();
 
-    // Validated students: from last or current semester
-    $validatedStudents = Student::whereHas('profiles', function ($query) use ($lastSemester, $currentSemester) {
-        $query->where('semester_id', $lastSemester->id)
-              ->orWhere('semester_id', $currentSemester->id);
-    })->get();
+    $validatedStudents = collect();
+    $newStudents = collect();
+
+    if ($lastSemester) {
+        // Validated students: from last or current semester
+        $validatedStudents = Student::whereHas('profiles', function ($query) use ($lastSemester, $currentSemester) {
+            $query->where('semester_id', $lastSemester->id)
+                  ->orWhere('semester_id', $currentSemester->id);
+        })->get();
+    }
 
     // Newly enrolled students in the current semester
     $newStudents = Student::whereHas('enrollments', function ($query) use ($currentSemester) {
@@ -33,15 +42,13 @@ class ReferralController extends Controller
     $students = $validatedStudents->merge($newStudents)->unique('id')->values();
     $reasons = ReferralReason::all();
 
-    // Build referral query with eager loading
+    // Referrals
     $query = Referral::with(['student.profiles', 'semester.schoolYear']);
 
-    // Filter by reason (type)
     if ($request->filled('reason')) {
         $query->where('reason', $request->reason);
     }
 
-    // Search by student ID or name
     if ($request->filled('search')) {
         $search = $request->search;
         $query->whereHas('student', function ($q) use ($search) {
@@ -51,10 +58,9 @@ class ReferralController extends Controller
         });
     }
 
-    // Get final paginated result
     $referrals = $query->paginate(10);
 
-   return view('referrals.referral', compact('referrals', 'students', 'reasons', 'currentSemester'));
+    return view('referrals.referral', compact('referrals', 'students', 'reasons', 'currentSemester'));
 }
 
 
@@ -75,35 +81,39 @@ public function create()
 }
 
 
-    public function store(Request $request)
+   public function store(Request $request)
 {
-    // Validate only necessary inputs (no semester_id from form)
     $validated = $request->validate([
         'student_id'   => 'required|exists:students,id',
         'reason'       => 'required|string|max:255',
         'remarks'      => 'nullable|string',
         'referral_date'=> 'required|date',
-        'image_path'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'image_path.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // for multiple files
     ]);
 
-    // Find the current active semester
     $activeSemester = Semester::where('is_current', true)->first();
+
     if (!$activeSemester) {
-        return back()->with('error', 'No active semester set. Please activate a semester first.');
+        return back()->with('error', 'No active semester set.');
     }
 
-    // Handle file upload if any
-    if ($request->hasFile('image_path')) {
-        $validated['image_path'] = $request->file('image_path')->store('image_path', 'public');
+    $referral = Referral::create([
+        'student_id'   => $validated['student_id'],
+        'reason'       => $validated['reason'],
+        'remarks'      => $validated['remarks'] ?? null,
+        'referral_date'=> $validated['referral_date'],
+        'semester_id'  => $activeSemester->id,
+    ]);
+
+    // Handle multiple images
+    if($request->hasFile('image_path')) {
+        foreach ($request->file('image_path') as $file) {
+            $path = $file->store('referral_images', 'public');
+            $referral->images()->create(['image_path' => $path]);
+        }
     }
 
-    // Add active semester ID to the data
-    $validated['semester_id'] = $activeSemester->id;
-
-    // Create referral
-    Referral::create($validated);
-
-    return redirect()->route('referrals.index')->with('success', 'Referral added successfully under current semester.');
+    return redirect()->route('referrals.index')->with('success', 'Referral added with images.');
 }
 
     public function show($id)

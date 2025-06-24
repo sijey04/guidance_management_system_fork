@@ -69,6 +69,8 @@ class ReportController extends Controller
         $totalCounselings = Counseling::count();
     }
 
+    
+
     return view('reports.report', compact(
         'semesters',
         'schoolYears',

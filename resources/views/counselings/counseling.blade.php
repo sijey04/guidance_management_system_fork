@@ -72,8 +72,13 @@
                                 <div x-show="openDropdown" @click.away="openDropdown = false"
                                     class="absolute right-0 bg-white border shadow rounded mt-2 z-10 w-32">
                                     <!-- View Button -->
-                                    <a href="{{ route('counselings.show', $counseling->id) }}" 
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">View</a>
+                                    <div x-data="{ openViewCounselingModal_{{ $counseling->id }}: false }">
+                                        <button @click="openMenu = false; openViewCounselingModal_{{ $counseling->id }} = true"
+                                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            View
+                                        </button>
+                                        @include('counselings.view', ['counseling' => $counseling])
+                                    </div>
 
                                     <!-- Edit Button - triggers Edit Modal -->
                                     <button @click="$dispatch('open-edit-modal', { counseling: @json($counseling) })"

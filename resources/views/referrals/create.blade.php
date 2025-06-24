@@ -52,7 +52,7 @@
             <!-- Image Attachment -->
             <div class="mt-4">
                 <label class="block text-sm font-medium mb-1">Attach Image (Optional)</label>
-                <input type="file" name="image_path" accept="image/*" class="w-full border p-2 rounded">
+                <input type="file" name="image_path[]" multiple accept="image/*" class="w-full border p-2 rounded">
             </div>
 
             <!-- Remarks -->

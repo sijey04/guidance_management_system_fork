@@ -276,7 +276,6 @@ $profile = $student->profiles()->where('semester_id', $currentSemester->id)->fir
 }
 
 
-    // app/Http/Controllers/StudentController.php
 
 public function profile($id){
     $student = Student::findOrFail($id);

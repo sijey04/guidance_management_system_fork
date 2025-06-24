@@ -16,6 +16,11 @@ class counseling extends Model
         'semester_id',
     ];
 
+    public function images()
+{
+    return $this->hasMany(CounselingImage::class);
+}
+
     public function student()
     {
         return $this->belongsTo(Student::class);

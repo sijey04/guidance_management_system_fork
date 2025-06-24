@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\counseling;
+use App\Models\CounselingImage;
 use App\Models\semester;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -44,24 +45,32 @@ public function store(Request $request)
     $validated = $request->validate([
         'student_id' => 'required|exists:students,id',
         'counseling_date' => 'required|date',
-        'image_path' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+        'image_path.*' => 'nullable|image|mimes:jpg,png,jpeg|max:2048', // Multiple images
     ]);
 
     $activeSemester = Semester::where('is_current', true)->first();
     if (!$activeSemester) {
-        return back()->with('error', 'No active semester set. Please activate a semester first.');
+        return back()->with('error', 'No active semester set.');
     }
 
-    if ($request->hasFile('image_path')) {
-        $validated['image_path'] = $request->file('image_path')->store('counseling_images', 'public');
+    $counseling = Counseling::create([
+        'student_id' => $validated['student_id'],
+        'counseling_date' => $validated['counseling_date'],
+        'semester_id' => $activeSemester->id,
+    ]);
+
+    // Save images if any
+    if($request->hasFile('image_path')) {
+        foreach ($request->file('image_path') as $imageFile) {
+            $path = $imageFile->store('counseling_images', 'public');
+            CounselingImage::create([
+                'counseling_id' => $counseling->id,
+                'image_path' => $path,
+            ]);
+        }
     }
 
-    $validated['semester_id'] = $activeSemester->id;
-
-   
-    Counseling::create($validated);
-
-    return redirect()->back()->with('success', 'Counseling record added.');
+    return redirect()->back()->with('success', 'Counseling record added with images.');
 }
 
     /**

@@ -17,6 +17,12 @@ class Referral extends Model
         'image_path',
         'referral_date'
     ];
+public function images()
+{
+    return $this->hasMany(ReferralImage::class);
+}
+
+  
 
     public function student()
     {
