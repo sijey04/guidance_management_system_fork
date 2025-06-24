@@ -69,7 +69,7 @@
                                         <td class="px-6 py-4 text-center relative">
                                             <div x-data="{ open: false }" class="relative inline-block text-left">
                                                 <button @click="open = !open" type="button" class="text-gray-600 hover:text-gray-900 focus:outline-none">
-                                                    <!-- Three Dots Icon -->
+                                                
                                                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"/>
                                                     </svg>
@@ -78,8 +78,13 @@
                                                 <!-- Dropdown menu -->
                                                 <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg z-20">
                                                     <!-- View -->
-                                                    <a href="{{ route('contracts.view', $contract->id) }}" 
-                                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">View</a>
+                                                     <div x-data="{ openViewContractModal_{{ $contract->id }}: false }">
+                                                        <button @click="openMenu = false; openViewContractModal_{{ $contract->id }} = true"
+                                                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                            View
+                                                        </button>
+                                                        @include('contracts.viewContract', ['contract' => $contract])
+                                                    </div>
 
                                                     <!-- Edit -->
                                                     <div x-data="{ openEditContractModal_{{ $contract->id }}: false }">

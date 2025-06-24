@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\contract;
+use App\Models\ContractType;
 use App\Models\Course;
 use App\Models\Post;
 use App\Models\Section;
@@ -257,14 +258,24 @@ $profile = $student->profiles()->where('semester_id', $currentSemester->id)->fir
      * Remove the specified resource from storage.
      */
     public function destroy($id)
-    {
-        $student = Student::findOrFail($id);
-        $student->delete();
+{
+    $student = Student::findOrFail($id);
+    $activeSemester = Semester::where('is_current', true)->first();
 
-        return redirect()->route('student.index')->with('success', 'Student deleted successfully.');
+    if (!$activeSemester) {
+        return redirect()->back()->with('error', 'No active semester set.');
     }
 
-    // app/Http/Controllers/StudentController.php
+    // Delete ONLY the profile in the active semester
+    $student->profiles()->where('semester_id', $activeSemester->id)->delete();
+
+    // Delete ONLY the enrollment in the active semester
+    $student->enrollments()->where('semester_id', $activeSemester->id)->delete();
+
+    return redirect()->route('student.index')->with('success', 'Student data removed from the current semester only.');
+}
+
+
 
 public function profile($id){
     $student = Student::findOrFail($id);
@@ -360,9 +371,11 @@ public function unenroll($studentId, $semesterId)
 
 public function contract($id)
 {
+     $contractTypes = ContractType::all();
+    $contracts = Contract::with('student', 'semester')->paginate(5);
     $student = Student::with('contracts.semester')->findOrFail($id);
     $semesters = Semester::all(); 
-    return view('student.contract', compact('student', 'semesters'));
+    return view('student.contract', compact('student', 'semesters','contracts','contractTypes'));
 }
 
 public function enrollAll()

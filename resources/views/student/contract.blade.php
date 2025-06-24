@@ -26,7 +26,7 @@
                         <div class="flex items-center justify-end">
                             <div x-data="{ open: false }">
                                 <button @click="open = true" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:7px 16px; font-weight:600;">New Contract</button>
-                                @include('student.createContract')
+                                @include('contracts.createContract')
                             </div>
                         </div>
                     </div>
@@ -46,8 +46,8 @@
                             <tbody>
                                 @forelse($student->contracts as $contract)
                                     <tr class="hover:bg-[#f8eaea] transition">
-                                        <td class="px-5 py-4">{{ $contract->semester->school_year }}</td>
-                                        <td class="px-5 py-4">{{ $contract->semester->semester }}</td>
+                                       <td class="px-2 py-4">{{ $contract->semester->schoolYear->school_year ?? 'N/A' }}</td>
+                                        <td class="py-4">{{ $contract->semester->semester ?? 'N/A' }}</td>
                                         <td class="px-5 py-4">{{ \Carbon\Carbon::parse($contract->contract_date)->format('M d, Y') }}</td>
                                         <td class="px-5 py-4 text-center">{{ $contract->total_days ?? 'N/A' }}</td>
                                         <td class="px-5 py-4 text-center">

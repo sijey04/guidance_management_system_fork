@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\counseling;
+use App\Models\CounselingImage;
 use App\Models\semester;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -41,31 +42,36 @@ public function index()
 
 public function store(Request $request)
 {
-    $request->validate([
+    $validated = $request->validate([
         'student_id' => 'required|exists:students,id',
         'counseling_date' => 'required|date',
-        'image_path' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+        'image_path.*' => 'nullable|image|mimes:jpg,png,jpeg|max:2048', // Multiple images
     ]);
 
-    $data = $request->all();
-
-    if ($request->hasFile('image_path')) {
-        $data['image_path'] = $request->file('image_path')->store('image_path', 'public');
+    $activeSemester = Semester::where('is_current', true)->first();
+    if (!$activeSemester) {
+        return back()->with('error', 'No active semester set.');
     }
 
-    $currentSemester = Semester::where('is_current', true)->first();
+    $counseling = Counseling::create([
+        'student_id' => $validated['student_id'],
+        'counseling_date' => $validated['counseling_date'],
+        'semester_id' => $activeSemester->id,
+    ]);
 
-        Counseling::create([
-            'student_id' => $request->student_id,
-            'counseling_date' => $request->counseling_date,
-            'remarks' => $request->remarks,
-            'semester_id' => $currentSemester->id, // Save the semester_id properly
-        ]);
+    // Save images if any
+    if($request->hasFile('image_path')) {
+        foreach ($request->file('image_path') as $imageFile) {
+            $path = $imageFile->store('counseling_images', 'public');
+            CounselingImage::create([
+                'counseling_id' => $counseling->id,
+                'image_path' => $path,
+            ]);
+        }
+    }
 
-
-    return redirect()->back()->with('success', 'Counseling record added.');
+    return redirect()->back()->with('success', 'Counseling record added with images.');
 }
-
 
     /**
      * Display the specified resource.

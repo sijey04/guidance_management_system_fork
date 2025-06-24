@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\contract;
+use App\Models\ContractImage;
 use App\Models\ContractType;
 use App\Models\semester;
 use App\Models\Student;
@@ -56,7 +57,8 @@ public function create()
 
 
 
-    // Store new contract
+
+
 public function store(Request $request)
 {
     $validated = $request->validate([
@@ -65,9 +67,9 @@ public function store(Request $request)
         'contract_type' => 'required|exists:contract_types,type',
         'total_days' => 'nullable|integer|min:1',
         'start_date' => 'nullable|date',
-        'end_date' => 'nullable|date', // ← added
-        'remarks' => 'nullable|string|max:1000', // ← added
-        'contract_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'end_date' => 'nullable|date',
+        'remarks' => 'nullable|string|max:1000',
+        'contract_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // note the '.*'
         'status' => 'required|string',
     ]);
 
@@ -76,16 +78,23 @@ public function store(Request $request)
         return back()->with('error', 'No active semester is set.');
     }
 
-    if ($request->hasFile('contract_image')) {
-        $validated['contract_image'] = $request->file('contract_image')->store('contract_images', 'public');
-    }
-
     $validated['semester_id'] = $activeSemester->id;
 
-    Contract::create($validated);
+    $contract = Contract::create($validated);
+
+    if ($request->hasFile('contract_images')) {
+        foreach ($request->file('contract_images') as $image) {
+            $path = $image->store('contract_images', 'public');
+            ContractImage::create([
+                'contract_id' => $contract->id,
+                'image_path' => $path
+            ]);
+        }
+    }
 
     return redirect()->back()->with('success', 'Contract created successfully.');
 }
+
 
 
     /**
@@ -138,6 +147,7 @@ public function store(Request $request)
 
     public function createForStudent(Student $student)
 {
+    
     $semesters = Semester::all(); // For semester dropdown
     return view('student.createContract', compact('student', 'semesters'));
 }

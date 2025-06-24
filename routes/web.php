@@ -6,6 +6,7 @@ use App\Http\Controllers\ContractTypeController;
 use App\Http\Controllers\CounselingController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseYearSectionController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReferralController;
@@ -29,6 +30,7 @@ Route::get('/dashboard', function () {
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('/student', StudentController::class); // Correct usage of Route::resource
     Route::resource('/semester', SemesterController::class);
 // Tabs for the Student Detail Page

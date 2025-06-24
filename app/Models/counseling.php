@@ -13,7 +13,13 @@ class counseling extends Model
         'student_id',
         'counseling_date',
         'image_path',
+        'semester_id',
     ];
+
+    public function images()
+{
+    return $this->hasMany(CounselingImage::class);
+}
 
     public function student()
     {

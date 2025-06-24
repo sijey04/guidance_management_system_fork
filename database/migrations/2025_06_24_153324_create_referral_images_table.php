@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('semesters', function (Blueprint $table) {
-            $table->foreignId('school_year_id')->constrained('school_years')->onDelete('cascade');
-            $table->dropColumn('school_year'); // remove the old string-based 'school_year'
+        Schema::table('counseling_imag', function (Blueprint $table) {
+            //
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('counseling_imag', function (Blueprint $table) {
+            //
+        });
     }
 };

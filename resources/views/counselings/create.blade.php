@@ -44,7 +44,7 @@
             <!-- Image Upload -->
             <div class="mt-4">
                 <label class="block text-sm mb-1">Attach Image (Optional)</label>
-                <input type="file" name="image_path" accept="image/*" class="w-full border p-2 rounded">
+                <input type="file" name="image_path[]" accept="image/*" multiple class="w-full border p-2 rounded">
             </div>
 
             <div class="mt-6 flex justify-end space-x-4">

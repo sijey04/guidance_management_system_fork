@@ -20,6 +20,11 @@ class contract extends Model
     'remarks',
 ];
 
+public function images()
+{
+    return $this->hasMany(ContractImage::class);
+}
+
 
 public function semester()
 {

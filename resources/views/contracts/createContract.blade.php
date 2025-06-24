@@ -91,10 +91,23 @@
             </div>
 
             <!-- Contract Image -->
-            <div>
-                <label class="block text-sm mb-1" style="color:#a82323;">Attach Contract Image</label>
-                <input type="file" name="contract_image" accept="image/*" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900">
+            <div x-data="{ files: [] }">
+                <label class="block text-sm mb-1" style="color:#a82323;">Attach Contract Images</label>
+                <div class="flex flex-wrap gap-4">
+                    <label for="contract_images" class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
+                        <span class="text-4xl text-gray-400">+</span>
+                        <input type="file" id="contract_images" name="contract_images[]" multiple accept="image/*" class="hidden"
+                            @change="files = Array.from($event.target.files).map(file => URL.createObjectURL(file))">
+                    </label>
+
+                    <!-- Image Previews -->
+                    <template x-for="file in files" :key="file">
+                        <img :src="file" class="w-32 h-32 object-cover rounded-lg border">
+                    </template>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">You can select multiple images.</p>
             </div>
+
 
             <!-- Status -->
             <div>
