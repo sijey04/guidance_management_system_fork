@@ -11,6 +11,7 @@ class Referral extends Model
 
     protected $fillable = [
         'student_id',
+        'semester_id',
         'reason',
         'remarks',
         'image_path',
@@ -25,9 +26,13 @@ class Referral extends Model
 {
     return $this->belongsTo(ReferralReason::class, 'reason_id');
 }
+
 public function semester()
 {
     return $this->belongsTo(Semester::class);
 }
+
+
+
 
 }
