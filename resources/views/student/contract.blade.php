@@ -26,7 +26,7 @@
                         <div class="flex items-center justify-end">
                             <div x-data="{ open: false }">
                                 <button @click="open = true" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:7px 16px; font-weight:600;">New Contract</button>
-                                @include('contracts.createContract')
+                                @include('student.createContract')
                             </div>
                         </div>
                     </div>

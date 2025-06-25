@@ -88,7 +88,7 @@
                     </div>
 
                     <div class="mt-6 mb-3 flex justify-end">
-                        <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition">
+                        <button type="submit" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">
                             Validate Selected Students
                         </button>
                     </div>
@@ -100,7 +100,7 @@
                                 <tr>
                                     <th class="p-3">Select</th>
                                     <th class="p-3">Student Info</th>
-                                    <th class="p-3">Previous Course (Year)</th>
+                                    <th class="p-3">Previous Course (Year & Section)</th>
                                     <th class="p-3">New Course</th>
                                     <th class="p-3">New Year</th>
                                     <th class="p-3">New Section</th>
@@ -117,7 +117,7 @@
                                             <div class="font-medium">{{ $student->first_name }} {{ $student->last_name }}</div>
                                             <div class="text-xs text-gray-500">ID: {{ $student->student_id }}</div>
                                         </td>
-                                        <td class="p-3">{{ $profile->course }} ({{ $profile->year_level }})</td>
+                                        <td class="p-3">{{ $profile->course }} <br> {{ $profile->year_level }}{{ $profile->section }}</td>
                                         <td class="p-3">
                                             <select name="students[{{ $student->id }}][course]" class="border-gray-300 rounded w-full">
                                                 @foreach($courses as $course)

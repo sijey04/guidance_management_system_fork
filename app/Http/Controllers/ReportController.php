@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\contract;
+use App\Models\ContractType;
 use App\Models\counseling;
 use App\Models\Course;
 use App\Models\Referral;
@@ -28,7 +29,7 @@ class ReportController extends Controller
     $semester = $request->input('semester'); // "1st", "2nd", "Summer"
     $search = $request->input('search');
     $selectedSemesterId = null;
-
+$contractTypes = ContractType::all(); 
     // Resolve semester_id from school_year + semester
     if ($schoolYear && $semester) {
         $schoolYearRecord = SchoolYear::where('school_year', $schoolYear)->first();
@@ -75,6 +76,7 @@ class ReportController extends Controller
         'semesters',
         'schoolYears',
         'courses',
+        'contractTypes',
         'years',
         'sections',
         'students',
@@ -188,7 +190,7 @@ public function viewRecords(Request $request, $studentId)
     
     $schoolYear = $request->input('school_year'); // example: "2027-2028"
     $semester   = $request->input('semester');    // example: "1st"
-
+$contractTypes = ContractType::all(); 
     // First find the SchoolYear ID:
     $schoolYearRecord = SchoolYear::where('school_year', $schoolYear)->first();
 
@@ -220,7 +222,7 @@ public function viewRecords(Request $request, $studentId)
         }
     ])->findOrFail($studentId);
 
-    return view('reports.view_student_records', compact('student', 'semesterRecord'));
+    return view('reports.view_student_records', compact('student', 'semesterRecord','contractTypes'));
 }
 
 

@@ -8,7 +8,7 @@
     <div class="max-w-6xl mx-auto py-6 px-4 space-y-8">
 
         <!-- Back Button -->
-        <a href="{{ route('student.index') }}" class="inline-block bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition">
+        <a href="{{ route('student.index') }}" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">
             ← Back to Students List
         </a>
 
@@ -25,7 +25,7 @@
             <form method="POST" action="{{ route('course.store') }}" class="flex gap-3">
                 @csrf
                 <input type="text" name="course" placeholder="Enter Course Name" required class="flex-1 border-gray-300 rounded px-3 py-2 text-sm focus:ring-red-500 focus:border-red-500">
-                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-sm">
+                <button type="submit" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">
                     Add Course
                 </button>
             </form>
@@ -56,7 +56,7 @@
             <form method="POST" action="{{ route('year.store') }}" class="flex gap-3">
                 @csrf
                 <input type="text" name="year_level" placeholder="Enter Year Level" required class="flex-1 border-gray-300 rounded px-3 py-2 text-sm focus:ring-red-500 focus:border-red-500">
-                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-sm">
+                <button type="submit" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">
                     Add Year Level
                 </button>
             </form>
@@ -87,7 +87,7 @@
             <form method="POST" action="{{ route('section.store') }}" class="flex gap-3">
                 @csrf
                 <input type="text" name="section" placeholder="Enter Section" required class="flex-1 border-gray-300 rounded px-3 py-2 text-sm focus:ring-red-500 focus:border-red-500">
-                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-sm">
+                <button type="submit" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">
                     Add Section
                 </button>
             </form>

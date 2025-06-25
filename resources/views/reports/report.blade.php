@@ -71,7 +71,7 @@
                         <tr>
                             <th class="px-4 py-3 text-left">ID</th>
                             <th class="px-4 py-3 text-left">Name</th>
-                            <th class="px-4 py-3 text-left">Course & Year</th>
+                            <th class="px-4 py-3 text-left">Course </th>
                             <th class="px-4 py-3 text-left">Section</th>
                             <th class="px-4 py-3 text-left">Contracts Count</th>
                             <th class="px-4 py-3 text-left">Actions</th>
@@ -86,8 +86,8 @@
     <tr class="hover:bg-gray-50 dark:hover:bg-gray-600 transition">
         <td class="px-4 py-3">{{ $student->student_id }}</td>
         <td class="px-4 py-3">{{ $student->first_name }} {{ $student->last_name }}</td>
-        <td class="px-4 py-3">{{ $profile?->course ?? 'N/A' }} ({{ $profile?->year_level ?? 'N/A' }})</td>
-        <td class="px-4 py-3">{{ $profile?->section ?? 'N/A' }}</td>
+        <td class="px-4 py-3">{{ $profile?->course ?? 'N/A' }} </td>
+        <td class="px-4 py-3"> {{ $profile?->year_level ?? 'N/A' }}{{ $profile?->section ?? 'N/A' }}</td>
         <td class="px-4 py-3">{{ $contractCount }}</td>
         <td class="px-4 py-3">
             <a href="{{ route('reports.view-records', $student->id) }}?school_year={{ request('school_year') }}&semester={{ request('semester') }}"
