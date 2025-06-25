@@ -121,7 +121,7 @@
             <!-- Buttons -->
             <div class="flex justify-end gap-3 mt-4">
                 <button type="button" @click="openCreateContractModal = false" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323;">Cancel</button>
-                <button type="submit" class="sign-in-btn" style="background:#a82323; color:#fff;">Save</button>
+                <button class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">Save</button>
             </div>
         </form>
     </div>

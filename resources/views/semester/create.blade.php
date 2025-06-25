@@ -7,7 +7,7 @@
                 <label class="block text-red-600 mb-1">Semester:</label>
                 <select name="semester" required class="w-full border-gray-300 rounded px-3 py-2">
                     <option value="">Select Semester</option>
-                    <option value="1st">1st</option>
+                    <option value="1st" hidden>1st</option>
                     <option value="2nd">2nd</option>
                     <option value="Summer">Summer</option>
                 </select>

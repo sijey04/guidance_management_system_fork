@@ -33,19 +33,18 @@
         </div>
 
         <!-- Referrals Table -->
-        <div class="overflow-x-auto">
+        <div class="rounded-lg border border-gray-200 shadow-md bg-white mt-3">
             <table class="min-w-full border text-sm text-left text-gray-700">
                 <thead class="bg-red-700 text-white">
                     <tr>
+                        <th class="px-4 py-2">A.Y</th>
                         <th class="px-4 py-2">Student ID</th>
                         <th class="px-4 py-2">Name</th>
                         <th class="px-4 py-2">Course</th>
                         <th class="px-4 py-2">Year & Section</th>
                         <th class="px-4 py-2">Reason</th>
-                        <th class="px-4 py-2">Date</th>
-                        <th class="px-4 py-2">A.Y</th>
-                        <th class="px-4 py-2">Semester</th>
-                        <th class="px-4 py-2">Actions</th>
+                        <th class="px-4 py-2">Referral Date</th>
+                        <th class="px-4 py-2"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,17 +56,16 @@
                             }
                         @endphp
                         <tr class="hover:bg-gray-100">
+                            <td class="px-3 py-2">{{ $referral->semester?->schoolYear?->school_year ?? 'N/A' }} <br> {{ $referral->semester?->semester ?? 'N/A' }} Sem</td>
                             <td class="px-4 py-2">{{ $referral->student->student_id }}</td>
                             <td class="px-4 py-2">{{ $referral->student->first_name }} {{ $referral->student->last_name }}</td>
-                            <td class="px-4 py-2">{{ $profile?->course ?? 'N/A' }}</td>
+                            <td class="px-3 py-2">{{ $profile?->course ?? 'N/A' }}</td>
                             <td class="px-4 py-2">{{ $profile?->year_level ?? 'N/A' }} {{ $profile?->section ?? 'N/A' }}</td>
                             <td class="px-4 py-2">{{ $referral->reason }}</td>
                             <td class="px-4 py-2">
-    {{ $referral->referral_date ? \Carbon\Carbon::parse($referral->referral_date)->format('l, F jS, Y') : 'N/A' }}
-</td>
-                            <td class="px-4 py-2">{{ $referral->semester?->schoolYear?->school_year ?? 'N/A' }}
-</td>
-                            <td class="px-4 py-2">{{ $referral->semester?->semester ?? 'N/A' }}</td>
+                                {{ $referral->referral_date ? \Carbon\Carbon::parse($referral->referral_date)->format(' F jS, Y') : 'N/A' }}
+                            </td>
+                            
                             <td class="px-4 py-2">
                                 <div x-data="{ open: false }" class="relative">
                                     <button @click="open = !open">⋮</button>

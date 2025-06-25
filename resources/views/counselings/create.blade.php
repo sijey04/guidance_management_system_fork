@@ -49,7 +49,7 @@
 
             <div class="mt-6 flex justify-end space-x-4">
                 <button type="button" @click="openModal = false" class="bg-gray-300 px-4 py-2 rounded">Cancel</button>
-                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Save Counseling</button>
+                <button class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:7px 16px; font-weight:600;">Save Counseling</button>
             </div>
         </form>
     </div>

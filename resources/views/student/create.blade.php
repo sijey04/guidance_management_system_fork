@@ -195,7 +195,7 @@
             <!-- Action Buttons -->
             <div class="flex justify-end space-x-3 pt-4">
                 <x-secondary-button type="button" @click="openStudentModal = false">Cancel</x-secondary-button>
-                <x-primary-button type="submit">Save Student</x-primary-button>
+                <x-primary-button class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:7px 16px; font-weight:600;">Save Student</x-primary-button>
             </div>
         </form>
     </div>

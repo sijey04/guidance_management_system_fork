@@ -6,52 +6,53 @@
     <div class="max-w-7xl mx-auto py-10" x-data="{ openSemesterModal: false, openSchoolYearModal: false }">
         <div class="p-6 bg-white rounded shadow">
 
-            <h1 class="text-2xl font-bold mb-4 text-red-600">Academic Setup</h1>
-
-            {{-- Display Active School Year & Semester --}}
-            @if($activeSchoolYear && $activeSemester)
-                <p class="mb-4">
-                    <strong>Academic Year:</strong> {{ $activeSchoolYear->school_year }} |
-                    <strong>Semester:</strong> {{ $activeSemester->semester }}
-                    <span class="ml-2 bg-green-200 text-green-800 px-2 py-1 rounded text-xs">Active</span>
-                </p>
-            @else
-                <p class="text-red-500 mb-4">No active School Year or Semester set.</p>
-            @endif
-
-            {{-- Buttons to Create School Year & Semester --}}
-            <div class="flex justify-between mb-4">
-                <h3 class="text-lg font-semibold">Academic Setup Management</h3>
+            <div class="flex justify-between items-center">
                 <div>
-                    <button @click="openSchoolYearModal = true" 
-                        class="bg-red-600 text-white px-4 py-2 rounded">Add New School Year</button>
-                    <button @click="openSemesterModal = true" 
-                        class="bg-red-600 text-white px-4 py-2 rounded ml-2">Add New Semester</button>
+                    <h1 class="text-2xl font-bold mb-4 text-red-600">Academic Setup</h1>
+                    {{-- Display Active School Year & Semester --}}
+                    @if($activeSchoolYear && $activeSemester)
+                        <p class="mb-4">
+                            <strong>Academic Year:</strong> {{ $activeSchoolYear->school_year }} |
+                            <strong>Semester:</strong> {{ $activeSemester->semester }}
+                            <span class="ml-2 bg-green-200 text-green-800 px-2 py-1 rounded text-xs">Active</span>
+                        </p>
+                    @else
+                        <p class="text-red-500 mb-4">No active School Year or Semester set.</p>
+                    @endif
                 </div>
 
-                  {{-- Include Modals --}}
-            @include('semester.createSchoolYear')
-            @include('semester.create')
+                {{-- Buttons to Create School Year & Semester --}}
+                <div class="flex justify-between mb-4">
+                    <div>
+                        <button @click="openSchoolYearModal = true" 
+                            class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">Add New School Year</button>
+                        <button @click="openSemesterModal = true" 
+                            class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">Add New Semester</button>
+                    </div>
+
+                        {{-- Include Modals --}}
+                    @include('semester.createSchoolYear')
+                    @include('semester.create')
+                </div>
+
             </div>
 
           
 
-          @if($activeSemester && !$hasStudents)
+            @if($activeSemester && !$hasStudents)
                 <a href="{{ route('semester.validate', $activeSemester->id) }}"
-                class="bg-blue-500 text-white px-4 py-2 rounded inline-block mb-4">
+                class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">
                     Validate Students from Previous Semester
                 </a>
             @endif
 
 
-
-
-
-
             {{-- Table: School Years and Their Semesters --}}
-            <h3 class="text-lg font-semibold mt-6 mb-2">School Years & Their Semesters</h3>
-            <table class="w-full text-left border">
-                <thead class="bg-blue-600 text-white">
+            <h3 class="text-lg font-semibold mt-10 mb-2">School Years & Their Semesters</h3>
+            <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-md bg-white  ">
+ 
+            <table class="w-full border text-sm text-left text-gray-700">
+                <thead style="background:#a82323; color:#fff;">
                     <tr>
                         <th class="p-3">School Year</th>
                         <th class="p-3">Start Date</th>
@@ -93,7 +94,7 @@
                     @endforelse
                 </tbody>
             </table>
-
+        </div>
         </div>
     </div>
 </x-app-layout>

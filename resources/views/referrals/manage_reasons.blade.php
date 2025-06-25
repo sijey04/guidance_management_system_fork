@@ -7,7 +7,7 @@
         <form action="{{ route('referral-reasons.store') }}" method="POST" class="mb-4">
             @csrf
             <input type="text" name="reason" placeholder="New Reason" required class="border p-2 rounded">
-            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Add Reason</button>
+            <button type="submit" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">Add Reason</button>
         </form>
 
         <table class="w-full border-collapse border mt-4">
@@ -26,7 +26,7 @@
                         <td>
                             <form action="{{ route('referral-reasons.destroy', $reason->id) }}" method="POST" onsubmit="return confirm('Delete this reason?')">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded">Delete</button>
+                                <button type="submit" class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">Delete</button>
                             </form>
                         </td>
                     </tr>
