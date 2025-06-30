@@ -222,5 +222,20 @@ class SemesterController extends Controller
             ->route('semester.validate', $semester->id)
             ->with('success', 'Selected students validated to the new semester.');
     }
+// public function undoValidation(Request $request, $semesterId, $studentId)
+// {
+//     $semester = Semester::findOrFail($semesterId);
+
+//     $profile = StudentProfile::where('semester_id', $semester->id)
+//         ->where('student_id', $studentId)
+//         ->first();
+
+//     if ($profile) {
+//         $profile->delete();
+//         return back()->with('success', 'Validation undone for student.');
+//     }
+
+//     return back()->with('error', 'No validation found for this student in this semester.');
+// }
 
 }

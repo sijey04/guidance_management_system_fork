@@ -131,6 +131,7 @@ Route::resource('referral-reasons', ReferralReasonController::class);
 
 Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])
     ->name('reports.view-records');
+// Route::delete('/semester/{semester}/undo-validation/{student}', [SemesterController::class, 'undoValidation'])->name('semester.undoValidation');
 
 });
 // // Student List,Create,edit
