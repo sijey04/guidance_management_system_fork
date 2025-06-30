@@ -10,6 +10,7 @@ use App\Models\Student;
 use App\Models\StudentProfile;
 use App\Models\Year;
 use Illuminate\Http\Request;
+ use Illuminate\Pagination\LengthAwarePaginator;
 
 class SemesterController extends Controller
 {
@@ -103,74 +104,88 @@ class SemesterController extends Controller
         return redirect()->route('semester.index')->with('success', 'New School Year & 1st Semester created.');
     }
 
-    public function validateStudentsForm(Request $request, $semesterId)
-{
-    $newSemester = Semester::findOrFail($semesterId);
+  
 
-    // Find previous semester in the same School Year first
-    $previousSemester = Semester::where('id', '<', $semesterId)
-        ->where('school_year_id', $newSemester->school_year_id)
-        ->orderByDesc('id')
-        ->first();
+ public function validateStudentsForm(Request $request, $semesterId)
+    {
+        $newSemester = Semester::with('schoolYear')->findOrFail($semesterId);
 
-    // If not found in same SY, look at last semester of previous School Year
-    if (!$previousSemester) {
-        $previousSemester = Semester::where('school_year_id', '<>', $newSemester->school_year_id)
-            ->orderByDesc('id')
+        $allPreviousSemesterIds = Semester::where('id', '<', $semesterId)->pluck('id')->toArray();
+
+        $students = Student::whereHas('profiles', function ($q) use ($allPreviousSemesterIds) {
+            $q->whereIn('semester_id', $allPreviousSemesterIds);
+        })
+        ->with(['profiles' => function ($q) use ($allPreviousSemesterIds) {
+            $q->whereIn('semester_id', $allPreviousSemesterIds);
+        }])
+        ->get();
+
+        // Attach latest profile and validated flag
+        $students = $students->map(function ($student) use ($newSemester) {
+        $student->latestProfile = $student->profiles->sortByDesc('semester_id')->first();
+
+        $validatedProfile = StudentProfile::where('student_id', $student->id)
+            ->where('semester_id', $newSemester->id)
             ->first();
+
+        $student->validatedProfile = $validatedProfile; // assign if exists
+        $student->alreadyValidated = $validatedProfile !== null;
+
+        return $student;
+    });
+
+
+        // Apply filters
+        if ($request->filled('filter_course')) {
+            $students = $students->filter(function ($student) use ($request) {
+                return $student->latestProfile && $student->latestProfile->course === $request->filter_course;
+            });
+        }
+
+        if ($request->filled('filter_year_level')) {
+            $students = $students->filter(function ($student) use ($request) {
+                return $student->latestProfile && $student->latestProfile->year_level === $request->filter_year_level;
+            });
+        }
+
+        if ($request->filled('filter_section')) {
+            $students = $students->filter(function ($student) use ($request) {
+                return $student->latestProfile && $student->latestProfile->section === $request->filter_section;
+            });
+        }
+
+        if ($request->filled('search')) {
+            $search = strtolower($request->search);
+            $students = $students->filter(function ($student) use ($search) {
+                return str_contains(strtolower($student->student_id), $search) ||
+                       str_contains(strtolower($student->first_name), $search) ||
+                       str_contains(strtolower($student->last_name), $search);
+            });
+        }
+
+        // Paginate
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 10;
+        $paginated = new LengthAwarePaginator(
+            $students->forPage($currentPage, $perPage),
+            $students->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        $courses = Course::all();
+        $years = Year::all();
+        $sections = Section::all();
+
+        return view('semester.validate_students', [
+            'students' => $paginated,
+            'newSemester' => $newSemester,
+            'courses' => $courses,
+            'years' => $years,
+            'sections' => $sections
+        ]);
     }
-
-    if (!$previousSemester) {
-        return back()->with('error', 'No previous semester found.');
-    }
-
-    // Get students who have profile in the previous semester
-    $query = Student::whereHas('profiles', function ($q) use ($previousSemester) {
-        $q->where('semester_id', $previousSemester->id);
-    })->with(['profiles' => function ($q) use ($previousSemester) {
-        $q->where('semester_id', $previousSemester->id);
-    }]);
-
-    // Apply filters (optional)
-    if ($request->filled('filter_course')) {
-        $query->whereHas('profiles', function ($q) use ($previousSemester, $request) {
-            $q->where('semester_id', $previousSemester->id)
-              ->where('course', $request->filter_course);
-        });
-    }
-
-    if ($request->filled('filter_year_level')) {
-        $query->whereHas('profiles', function ($q) use ($previousSemester, $request) {
-            $q->where('semester_id', $previousSemester->id)
-              ->where('year_level', $request->filter_year_level);
-        });
-    }
-
-    if ($request->filled('filter_section')) {
-        $query->whereHas('profiles', function ($q) use ($previousSemester, $request) {
-            $q->where('semester_id', $previousSemester->id)
-              ->where('section', $request->filter_section);
-        });
-    }
-
-    if ($request->filled('search')) {
-        $query->where(function ($q) use ($request) {
-            $q->where('student_id', 'like', '%' . $request->search . '%')
-              ->orWhere('first_name', 'like', '%' . $request->search . '%')
-              ->orWhere('last_name', 'like', '%' . $request->search . '%');
-        });
-    }
-
-    $students = $query->paginate(10);
-    $courses = Course::all();
-    $years = Year::all();
-    $sections = Section::all();
-
-    
-    return view('semester.validate_students', compact(
-        'students', 'newSemester', 'previousSemester', 'courses', 'years', 'sections'
-    ));
-}
 
     public function processValidateStudents(Request $request, $semesterId)
     {
@@ -189,7 +204,6 @@ class SemesterController extends Controller
 
             if (empty($data['course']) || empty($data['year_level']) || empty($data['section'])) continue;
 
-            // Prevent duplicate profile creation
             $exists = StudentProfile::where('student_id', $studentId)
                                     ->where('semester_id', $semester->id)
                                     ->exists();
@@ -204,6 +218,24 @@ class SemesterController extends Controller
             ]);
         }
 
-        return redirect()->route('semester.index')->with('success', 'Students validated to the new semester.');
+        return redirect()
+            ->route('semester.validate', $semester->id)
+            ->with('success', 'Selected students validated to the new semester.');
     }
+// public function undoValidation(Request $request, $semesterId, $studentId)
+// {
+//     $semester = Semester::findOrFail($semesterId);
+
+//     $profile = StudentProfile::where('semester_id', $semester->id)
+//         ->where('student_id', $studentId)
+//         ->first();
+
+//     if ($profile) {
+//         $profile->delete();
+//         return back()->with('success', 'Validation undone for student.');
+//     }
+
+//     return back()->with('error', 'No validation found for this student in this semester.');
+// }
+
 }
