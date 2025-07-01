@@ -15,6 +15,36 @@
         <!-- Title -->
         <h3 class="text-2xl font-bold mb-6 text-center text-red-700 border-b pb-2">Counseling Record Details</h3>
 
+        <!-- Counseling Status -->
+        <form method="POST" action="{{ route('counseling.updateStatus', $counseling->id) }}" class="mb-6">
+            @csrf
+            @method('PATCH')
+            <div class="flex items-center justify-between border p-4 rounded-lg bg-gray-50">
+                <div>
+                    <span class="font-semibold text-sm text-gray-700">Current Status:</span>
+                    <span class="ml-2 px-3 py-1 rounded-full text-xs font-semibold
+                        {{ $counseling->status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                        {{ $counseling->status }}
+                    </span>
+                </div>
+                <div class="flex gap-2">
+                    @if($counseling->status !== 'In Progress')
+                        <button type="submit" name="status" value="In Progress"
+                            class="bg-yellow-600 text-white text-sm px-3 py-3 rounded hover:bg-yellow-700">
+                            Mark as In Progress
+                        </button>
+                    @endif
+                    @if($counseling->status !== 'Completed')
+                        <button type="submit" name="status" value="Completed"
+                            class="bg-green-600 text-white text-sm px-3 py-3 rounded hover:bg-green-700">
+                            Mark as Completed
+                        </button>
+                    @endif
+                </div>
+            </div>
+        </form>
+
+
         <!-- Student Info Section -->
         <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-800">
@@ -53,24 +83,53 @@
             </div>
         </div>
 
-        <!-- Images Gallery -->
-        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
-            <p class="font-semibold text-gray-700 mb-4 text-lg">Counseling Images:</p>
+       <!-- Counseling Form Pictures -->
+<div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+    <p class="font-semibold text-gray-700 mb-4 text-lg">Counseling Form Pictures:</p>
 
-            @if($counseling->images && $counseling->images->count() > 0)
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    @foreach ($counseling->images as $image)
-                        <div class="relative group">
-                            <img src="{{ asset('storage/' . $image->image_path) }}" 
-                                 @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
-                                 class="w-full h-36 object-cover rounded-lg border border-gray-300 shadow cursor-zoom-in group-hover:scale-105 transition-transform duration-200">
-                        </div>
-                    @endforeach
+    @php
+        $formImages = $counseling->images->where('type', 'form');
+    @endphp
+
+    @if($formImages->count())
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            @foreach ($formImages as $image)
+                <div class="relative group">
+                    <img src="{{ asset('storage/' . $image->image_path) }}"
+                         @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
+                         class="w-full h-36 object-cover rounded-lg border border-gray-300 shadow cursor-zoom-in group-hover:scale-105 transition-transform duration-200">
                 </div>
-            @else
-                <p class="text-gray-500 italic text-center mt-4">No images available.</p>
-            @endif
+            @endforeach
         </div>
+    @else
+        <p class="text-gray-500 italic text-center">No counseling form pictures available.</p>
+    @endif
+</div>
+
+<!-- Student ID Card Images -->
+<div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+    <p class="font-semibold text-gray-700 mb-4 text-lg">Student ID Card Images:</p>
+
+    @php
+        $idImages = $counseling->images->where('type', 'id_card');
+    @endphp
+
+    @if($idImages->count())
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            @foreach ($idImages as $image)
+                <div class="relative group">
+                    <img src="{{ asset('storage/' . $image->image_path) }}"
+                         @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
+                         class="w-full h-36 object-cover rounded-lg border border-gray-300 shadow cursor-zoom-in group-hover:scale-105 transition-transform duration-200">
+                </div>
+            @endforeach
+        </div>
+    @else
+        <p class="text-gray-500 italic text-center">No ID card pictures available.</p>
+    @endif
+</div>
+
+
     </div>
 
     <!-- Image Zoom Overlay -->

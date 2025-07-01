@@ -44,6 +44,7 @@
                     <th class="px-5 py-3">Course</th>
                     <th class="px-5 py-3">Year</th>
                     <th class="px-5 py-3">Section</th>
+                    <th class="px-5 py-3">Status</th>
                     <th class="px-5 py-3">Counseling Date</th>
                     <th class="px-5 py-3"></th>
                 </tr>
@@ -62,6 +63,13 @@
                         <td class="px-2 py-4">{{ $profile?->course ?? 'N/A' }}</td>
                         <td class="px-2 py-4">{{ $profile?->year_level ?? 'N/A' }}</td>
                         <td class="px-2 py-4">{{ $profile?->section ?? 'N/A' }}</td>
+                        <td>
+                            <span class="text-xs px-2 py-1 rounded-full font-semibold
+                                {{ $counseling->status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                {{ $counseling->status }}
+                            </span>
+                        </td>
+
                         <td class="px-2 py-4">{{ $counseling->counseling_date }}</td>
                         <!-- Inside your <tbody> foreach loop -->
                         <td class="border px-2 py-1 relative">

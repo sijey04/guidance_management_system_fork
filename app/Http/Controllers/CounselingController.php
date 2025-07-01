@@ -34,7 +34,7 @@ public function index()
     // ✅ Union both queries
     $students = $newStudents->union($validatedStudents)->get();
 
-    $counselings = Counseling::with('student')->paginate(10);
+   $counselings = Counseling::with(['student', 'images'])->paginate(10);
 
     return view('counselings.counseling', compact('counselings', 'students'));
 }
@@ -45,7 +45,8 @@ public function store(Request $request)
     $validated = $request->validate([
         'student_id' => 'required|exists:students,id',
         'counseling_date' => 'required|date',
-        'image_path.*' => 'nullable|image|mimes:jpg,png,jpeg|max:2048', // Multiple images
+        'form_images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'id_images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
     ]);
 
     $activeSemester = Semester::where('is_current', true)->first();
@@ -59,13 +60,26 @@ public function store(Request $request)
         'semester_id' => $activeSemester->id,
     ]);
 
-    // Save images if any
-    if($request->hasFile('image_path')) {
-        foreach ($request->file('image_path') as $imageFile) {
+    // Save Counseling Form Images
+    if ($request->hasFile('form_images')) {
+        foreach ($request->file('form_images') as $imageFile) {
             $path = $imageFile->store('counseling_images', 'public');
             CounselingImage::create([
                 'counseling_id' => $counseling->id,
                 'image_path' => $path,
+                'type' => 'form',
+            ]);
+        }
+    }
+
+    // Save ID Card Images
+    if ($request->hasFile('id_images')) {
+        foreach ($request->file('id_images') as $imageFile) {
+            $path = $imageFile->store('counseling_images', 'public');
+            CounselingImage::create([
+                'counseling_id' => $counseling->id,
+                'image_path' => $path,
+                'type' => 'id_card',
             ]);
         }
     }
@@ -76,11 +90,12 @@ public function store(Request $request)
     /**
      * Display the specified resource.
      */
-    public function show(counseling $counseling)
-    {
-            return view('counselings.view', compact('counseling'));
+   public function show(Counseling $counseling)
+{
+    $counseling->load(['student', 'images']); 
+    return view('counselings.view', compact('counseling'));
+}
 
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -117,5 +132,15 @@ public function store(Request $request)
     }
 
 
+public function updateStatus(Request $request, Counseling $counseling)
+{
+    $request->validate([
+        'status' => 'required|in:In Progress,Completed'
+    ]);
+
+    $counseling->update(['status' => $request->status]);
+
+    return redirect()->back()->with('success', 'Counseling status updated.');
+}
 
 }

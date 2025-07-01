@@ -94,6 +94,7 @@ Route::get('/counseling', [CounselingController::class, 'index'])->name('counsel
 Route::post('/counseling/store', [CounselingController::class, 'store'])->name('counseling.store');
 Route::resource('counselings', CounselingController::class);
 Route::put('/counselings/{id}', [CounselingController::class, 'update'])->name('counselings.update');
+Route::patch('/counseling/{counseling}/status', [App\Http\Controllers\CounselingController::class, 'updateStatus'])->name('counseling.updateStatus');
 
 // Show the validation form modal
 //Route::get('/semester/{id}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
