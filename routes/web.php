@@ -17,6 +17,7 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\StudentTransitionController;
 use App\Http\Controllers\YearController;
 use Illuminate\Support\Facades\Route;
 
@@ -93,6 +94,8 @@ Route::get('/counseling', [CounselingController::class, 'index'])->name('counsel
 Route::post('/counseling/store', [CounselingController::class, 'store'])->name('counseling.store');
 Route::resource('counselings', CounselingController::class);
 Route::put('/counselings/{id}', [CounselingController::class, 'update'])->name('counselings.update');
+Route::patch('/counseling/{counseling}/status', [App\Http\Controllers\CounselingController::class, 'updateStatus'])->name('counseling.updateStatus');
+Route::patch('/counselings/{counseling}/remarks', [CounselingController::class, 'updateRemarks'])->name('counseling.updateRemarks');
 
 // Show the validation form modal
 //Route::get('/semester/{id}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
@@ -132,6 +135,9 @@ Route::resource('referral-reasons', ReferralReasonController::class);
 Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])
     ->name('reports.view-records');
 // Route::delete('/semester/{semester}/undo-validation/{student}', [SemesterController::class, 'undoValidation'])->name('semester.undoValidation');
+Route::resource('transitions', StudentTransitionController::class);
+
+Route::get('/transitions/{transition}', [StudentTransitionController::class, 'show'])->name('transitions.show');
 
 });
 // // Student List,Create,edit

@@ -9,7 +9,7 @@ class CounselingImage extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['counseling_id', 'image_path'];
+    protected $fillable = ['counseling_id', 'image_path' , 'type',];
 
     public function counseling()
     {

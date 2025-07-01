@@ -41,11 +41,24 @@
                 <input type="date" name="counseling_date" required class="w-full border p-2 rounded">
             </div>
 
-            <!-- Image Upload -->
-            <div class="mt-4">
-                <label class="block text-sm mb-1">Attach Image (Optional)</label>
-                <input type="file" name="image_path[]" accept="image/*" multiple class="w-full border p-2 rounded">
+            <!-- Remarks (Optional) -->
+            <div>
+                <label class="block text-sm mb-1" >Remarks (Optional)</label>
+                <textarea name="remarks" rows="3" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900"></textarea>
             </div>
+
+            <!-- Counseling Form Images -->
+            <div class="mt-4">
+                <label class="block text-sm mb-1 font-medium">Counseling Form Pictures (Multiple)</label>
+                <input type="file" name="form_images[]" accept="image/*" multiple class="w-full border p-2 rounded">
+            </div>
+
+            <!-- Student ID Card Images -->
+            <div class="mt-4">
+                <label class="block text-sm mb-1 font-medium">Student ID Card (Front/Back)</label>
+                <input type="file" name="id_images[]" accept="image/*" multiple class="w-full border p-2 rounded">
+            </div>
+
 
             <div class="mt-6 flex justify-end space-x-4">
                 <button type="button" @click="openModal = false" class="bg-gray-300 px-4 py-2 rounded">Cancel</button>
