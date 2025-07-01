@@ -12,7 +12,7 @@
         </a>
 
         <!-- Display Active S.Y. and Semester -->
-        <div class="mt-2 border-2 border-gray-300 rounded-lg py-1 px-2 bg-white shadow-sm">
+        {{-- <div class="mt-2 border-2 border-gray-300 rounded-lg py-1 px-2 bg-white shadow-sm">
             @if($activeSchoolYear && $activeSemester)
                 <p class="text-base text-gray-800 font-semibold mb-1">Active Semester</p>
                 <p class="text-sm text-gray-700"><strong>S.Y:</strong> {{ $activeSchoolYear->school_year }} </p>
@@ -22,7 +22,7 @@
             @endif
 
            
-        </div>
+        </div> --}}
     </div>
 
     <div class="sidebar-nav mt-2">
@@ -41,9 +41,15 @@
         <a href="{{ route('counselings.index') }}" class="sidebar-nav-link{{ request()->routeIs('counselings.index') ? ' active' : '' }}">
             Counseling Records
         </a>
+        
+        <a href="{{ route('transitions.index') }}" class="sidebar-nav-link{{ request()->routeIs('transitions.*') ? ' active' : '' }}">
+             Student Transition Records
+        </a>
+
         <a href="{{ route('report') }}" class="sidebar-nav-link{{ request()->routeIs('report') ? ' active' : '' }}">
             Report & History
         </a>
+
         <a href="{{ route('semester.index') }}" class="sidebar-nav-link{{ request()->routeIs('semester.*') ? ' active' : '' }}">
             Setup
         </a>

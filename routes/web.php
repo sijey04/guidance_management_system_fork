@@ -17,6 +17,7 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\StudentTransitionController;
 use App\Http\Controllers\YearController;
 use Illuminate\Support\Facades\Route;
 
@@ -132,6 +133,9 @@ Route::resource('referral-reasons', ReferralReasonController::class);
 Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])
     ->name('reports.view-records');
 // Route::delete('/semester/{semester}/undo-validation/{student}', [SemesterController::class, 'undoValidation'])->name('semester.undoValidation');
+Route::resource('transitions', StudentTransitionController::class);
+
+Route::get('/transitions/{transition}', [StudentTransitionController::class, 'show'])->name('transitions.show');
 
 });
 // // Student List,Create,edit
