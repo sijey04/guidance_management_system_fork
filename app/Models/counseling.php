@@ -15,6 +15,7 @@ class counseling extends Model
         'image_path',
         'semester_id',
         'status',
+        'remarks',
     ];
 
     public function images()

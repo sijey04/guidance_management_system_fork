@@ -47,6 +47,7 @@ public function store(Request $request)
         'counseling_date' => 'required|date',
         'form_images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         'id_images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+         'remarks' => 'nullable|string|max:5000',
     ]);
 
     $activeSemester = Semester::where('is_current', true)->first();
@@ -54,11 +55,13 @@ public function store(Request $request)
         return back()->with('error', 'No active semester set.');
     }
 
-    $counseling = Counseling::create([
-        'student_id' => $validated['student_id'],
-        'counseling_date' => $validated['counseling_date'],
-        'semester_id' => $activeSemester->id,
-    ]);
+   $counseling = Counseling::create([
+    'student_id' => $validated['student_id'],
+    'counseling_date' => $validated['counseling_date'],
+    'semester_id' => $activeSemester->id,
+    'remarks' => $request->remarks,
+]);
+
 
     // Save Counseling Form Images
     if ($request->hasFile('form_images')) {
@@ -138,9 +141,32 @@ public function updateStatus(Request $request, Counseling $counseling)
         'status' => 'required|in:In Progress,Completed'
     ]);
 
-    $counseling->update(['status' => $request->status]);
+    $counseling->status = $request->status;
+    $counseling->save();
 
-    return redirect()->back()->with('success', 'Counseling status updated.');
+    return redirect()->route('counselings.index', [
+    'page' => request()->page, // 👈 retain current page
+    'view_id' => $counseling->id
+])->with('success', 'Status updated.');
+
 }
+
+public function updateRemarks(Request $request, Counseling $counseling)
+{
+    $request->validate([
+        'remarks' => 'nullable|string|max:1000',
+    ]);
+
+    $counseling->remarks = $request->remarks;
+    $counseling->save();
+
+    return redirect()->route('counselings.index', [
+    'page' => request()->page,
+    'view_id' => $counseling->id
+])->with('success', 'Remarks updated.');
+
+}
+
+
 
 }
