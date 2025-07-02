@@ -15,12 +15,13 @@
                 @endforeach
             </select>
 
-            <select name="semester_name" class="border border-gray-300 rounded px-3 py-2">
+           <select name="semester_name" class="border border-gray-300 rounded px-3 py-2">
                 <option value="">Select Semester</option>
-                <option value="1st" {{ request('semester_name') == '1st' ? 'selected' : '' }}>1st</option>
-                <option value="2nd" {{ request('semester_name') == '2nd' ? 'selected' : '' }}>2nd</option>
-                <option value="Summer" {{ request('semester_name') == 'Summer' ? 'selected' : '' }}>Summer</option>
+                <option value="1st" {{ $selectedSem == '1st' ? 'selected' : '' }}>1st</option>
+                <option value="2nd" {{ $selectedSem == '2nd' ? 'selected' : '' }}>2nd</option>
+                <option value="Summer" {{ $selectedSem == 'Summer' ? 'selected' : '' }}>Summer</option>
             </select>
+
 
             
 
@@ -49,6 +50,7 @@
         {{-- Summary Cards --}}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             @if($activeTab === 'all' || $activeTab === 'student_profiles')
+
                 <div class="bg-white border rounded shadow p-4">
                     <p class="text-sm text-gray-500">Total Students</p>
                     <h3 class="text-2xl font-bold text-gray-800">{{ $uniqueStudentCount }}</h3>
@@ -73,6 +75,109 @@
                 </div>
             @endif
         </div>
+
+        
+        @if($activeTab === 'student_profiles')
+        <form method="GET" class="flex flex-wrap gap-4 items-center mb-4">
+            <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
+            <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
+            <input type="hidden" name="tab" value="student_profiles">
+
+            <select name="filter_course" class="border px-3 py-2 rounded">
+                <option value="">All Courses</option>
+                @foreach($courses as $course)
+                    <option value="{{ $course->course }}" {{ request('filter_course') == $course->course ? 'selected' : '' }}>
+                        {{ $course->course }}
+                    </option>
+                @endforeach
+            </select>
+
+            <select name="filter_year" class="border px-3 py-2 rounded">
+                <option value="">All Years</option>
+                @foreach($years as $year)
+                    <option value="{{ $year->year_level }}" {{ request('filter_year') == $year->year_level ? 'selected' : '' }}>
+                        {{ $year->year_level }}
+                    </option>
+                @endforeach
+            </select>
+
+            <select name="filter_section" class="border px-3 py-2 rounded">
+                <option value="">All Sections</option>
+                @foreach($sections as $section)
+                    <option value="{{ $section->section }}" {{ request('filter_section') == $section->section ? 'selected' : '' }}>
+                        {{ $section->section }}
+                    </option>
+                @endforeach
+            </select>
+
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700">Apply</button>
+        </form>
+        @endif
+
+        {{-- Filters for Contracts --}}
+        @if($activeTab === 'contracts')
+        <form method="GET" class="flex flex-wrap gap-4 items-center mb-4">
+            <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
+            <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
+            <input type="hidden" name="tab" value="contracts">
+
+            <select name="filter_contract_type" class="border px-3 py-2 rounded">
+                <option value="">All Types</option>
+                @foreach($contractTypesList as $type)
+                    <option value="{{ $type->type }}" {{ request('filter_contract_type') == $type->type ? 'selected' : '' }}>
+                        {{ $type->type }}
+                    </option>
+                @endforeach
+            </select>
+
+            <select name="filter_contract_status" class="border px-3 py-2 rounded">
+                <option value="">All Status</option>
+                <option value="In Progress" {{ request('filter_contract_status') == 'In Progress' ? 'selected' : '' }}>In Progredd</option>
+                <option value="Completed" {{ request('filter_contract_status') == 'Completed' ? 'selected' : '' }}>Completed</option>
+            </select>
+
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700">Apply</button>
+        </form>
+        @endif
+
+        {{-- Filters for Referrals --}}
+        @if($activeTab === 'referrals')
+        <form method="GET" class="flex gap-4 items-center mb-4">
+            <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
+            <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
+            <input type="hidden" name="tab" value="referrals">
+
+            <select name="filter_reason" class="border px-3 py-2 rounded">
+                <option value="">All Reasons</option>
+                @foreach($referralReasons as $reason)
+                    <option value="{{ $reason->reason }}" {{ request('filter_reason') == $reason->reason ? 'selected' : '' }}>
+                        {{ $reason->reason }}
+                    </option>
+                @endforeach
+            </select>
+
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700">Apply</button>
+        </form>
+        @endif
+
+        {{-- Filters for Counseling --}}
+        @if($activeTab === 'counseling')
+        <form method="GET" class="flex gap-4 items-center mb-4">
+            <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
+            <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
+            <input type="hidden" name="tab" value="counseling">
+
+            <select name="filter_counseling_status" class="border px-3 py-2 rounded">
+                <option value="">All Status</option>
+                <option value="In Progress" {{ request('filter_counseling_status') == 'In Progress' ? 'selected' : '' }}>In Progress</option>
+                <option value="Completed" {{ request('filter_counseling_status') == 'Completed' ? 'selected' : '' }}>Completed</option>
+            </select>
+
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700">Apply</button>
+        </form>
+        @endif
+
+        
 
         {{-- Student Profiles Table --}}
         @if($activeTab === 'all' || $activeTab === 'student_profiles')
