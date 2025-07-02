@@ -15,8 +15,16 @@ class ReferralController extends Controller
     $currentSemester = Semester::where('is_current', true)->first();
     
     if (!$currentSemester) {
-        return back()->with('error', 'No active semester set.');
-    }
+    $emptyPaginator = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 10);
+    return view('referrals.referral', [
+        'referrals' => $emptyPaginator,
+        'students' => collect(),
+        'reasons' => ReferralReason::all(),
+        'currentSemester' => null,
+    ])->with('warning', 'No active semester is set. Please create one to enable referrals.');
+}
+
+
 
     $lastSemester = Semester::where('id', '<>', $currentSemester->id)
                             ->orderByDesc('id')

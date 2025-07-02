@@ -88,6 +88,12 @@ public function referrals() {
     return $this->hasMany(Referral::class);
 }
 
+// In Student.php, Referral.php, etc.
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
 
 
 

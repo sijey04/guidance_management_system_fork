@@ -55,6 +55,8 @@ class StudentController extends Controller
     $sections = Section::all();
     $semesters = Semester::all();
 
+    
+
     return view('student.students', compact('students', 'courses', 'years', 'sections', 'semesters', 'activeSemester'));
 }
 
@@ -71,6 +73,8 @@ class StudentController extends Controller
         $years = Year::all();
         $sections = Section::all();
         $semesters = Semester::all();
+
+        
 
         return view('student.create', compact('semesters', 'courses', 'years', 'sections'));
     }

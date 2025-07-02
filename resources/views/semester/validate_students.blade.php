@@ -1,3 +1,5 @@
+
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -176,13 +178,14 @@
                                         </td>
                                         <td class="p-3">
                                             <select name="students[{{ $id }}][course]" class="w-full border-gray-300 rounded"
-                                                x-model="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
-                                                @change="updateStudentValue('{{ $id }}', 'course', $event.target.value)"
-                                                {{ $student->alreadyValidated ? 'disabled' : '' }}>
-                                                @foreach($courses as $course)
-                                                    <option value="{{ $course->course }}">{{ $course->course }}</option>
-                                                @endforeach
-                                            </select>
+                                            x-model="studentData['{{ $id }}']?.course ?? '{{ $student->alreadyValidated ? $student->validatedProfile->course : $student->latestProfile->course }}'"
+                                            @change="updateStudentValue('{{ $id }}', 'course', $event.target.value)"
+                                            {{ $student->alreadyValidated ? 'disabled' : '' }}>
+                                            @foreach($courses as $course)
+                                                <option value="{{ $course->course }}">{{ $course->course }}</option>
+                                            @endforeach
+                                        </select>
+
                                         </td>
                                         <td class="p-3">
                                             <select name="students[{{ $id }}][year_level]" class="w-full border-gray-300 rounded"

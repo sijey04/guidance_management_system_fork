@@ -39,12 +39,13 @@
 
           
 
-            @if($activeSemester && !$hasStudents)
+           @if($activeSemester)
                 <a href="{{ route('semester.validate', $activeSemester->id) }}"
                 class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">
                     Validate Students from Previous Semester
                 </a>
             @endif
+
 
 
             {{-- Table: School Years and Their Semesters --}}

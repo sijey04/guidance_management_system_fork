@@ -16,8 +16,13 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     
+
+    
     <body class="font-sans antialiased h-screen">
+
+
         <div style="display: flex; min-height: 100vh; background: #f8f8f8;">
+            
             @include('layouts.navigation')
             <div style="flex: 1; display: flex; flex-direction: column; min-height: 100vh; margin-left: 250px;">
                 <div class="topbar">
@@ -55,6 +60,12 @@
                             </div>
                 </div>
                 <main class="main-content">
+                    @if(!$globalActiveSchoolYear || !$globalActiveSemester)
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4">
+        ⚠️ <strong>First-time Setup:</strong> Please create an active <a href="{{ route('semester.index') }}" class="underline text-red-600">School Year and Semester</a> in Academic Setup before accessing other features.
+    </div>
+@endif
+
                     {{ $slot }}
                 </main>
             </div>

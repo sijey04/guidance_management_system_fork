@@ -104,6 +104,8 @@ Route::post('/semester/{semesterId}/validate', [SemesterController::class, 'proc
 
 //Route::get('/semester/{semester}/validate', [SemesterController::class, 'showValidationForm'])
     //->name('semester.showValidationForm');
+Route::get('/reports', [ReportController::class, 'index'])->name('report');
+Route::get('/reports/student/{student_id}', [App\Http\Controllers\ReportController::class, 'view'])->name('reports.student.view');
 
 //Route::post('/semester/{semester}/validate', [SemesterController::class, 'processValidation'])
    // ->name('semester.processValidation');
