@@ -22,12 +22,14 @@
                 <option value="Summer" {{ request('semester_name') == 'Summer' ? 'selected' : '' }}>Summer</option>
             </select>
 
+            
+
             <button class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700">Filter</button>
         </form>
 
         {{-- Tabs --}}
         @php $activeTab = request('tab', 'all'); @endphp
-        <div class="flex gap-2">
+        <div class="flex gap-2 mb-4">
             @foreach([
                 'all' => 'All',
                 'student_profiles' => 'Student Profiles',
@@ -44,29 +46,35 @@
             @endforeach
         </div>
 
-        {{-- Dashboard Cards --}}
-        @if($activeTab === 'all')
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {{-- Summary Cards --}}
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            @if($activeTab === 'all' || $activeTab === 'student_profiles')
                 <div class="bg-white border rounded shadow p-4">
                     <p class="text-sm text-gray-500">Total Students</p>
                     <h3 class="text-2xl font-bold text-gray-800">{{ $uniqueStudentCount }}</h3>
                 </div>
+            @endif
+            @if($activeTab === 'all' || $activeTab === 'contracts')
                 <div class="bg-white border rounded shadow p-4">
                     <p class="text-sm text-gray-500">Total Contracts</p>
                     <h3 class="text-2xl font-bold text-gray-800">{{ $contracts->count() }}</h3>
                 </div>
+            @endif
+            @if($activeTab === 'all' || $activeTab === 'referrals')
                 <div class="bg-white border rounded shadow p-4">
                     <p class="text-sm text-gray-500">Total Referrals</p>
                     <h3 class="text-2xl font-bold text-gray-800">{{ $referrals->count() }}</h3>
                 </div>
+            @endif
+            @if($activeTab === 'all' || $activeTab === 'counseling')
                 <div class="bg-white border rounded shadow p-4">
                     <p class="text-sm text-gray-500">Total Counseling</p>
                     <h3 class="text-2xl font-bold text-gray-800">{{ $counselings->count() }}</h3>
                 </div>
-            </div>
-        @endif
+            @endif
+        </div>
 
-        {{-- Student Profiles --}}
+        {{-- Student Profiles Table --}}
         @if($activeTab === 'all' || $activeTab === 'student_profiles')
             <div class="bg-white border rounded shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Student Profiles</h3>
@@ -108,7 +116,7 @@
             </div>
         @endif
 
-        {{-- Contracts --}}
+        {{-- Contracts Table --}}
         @if($activeTab === 'all' || $activeTab === 'contracts')
             <div class="bg-white border rounded shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Contracts</h3>
@@ -139,7 +147,7 @@
             </div>
         @endif
 
-        {{-- Referrals --}}
+        {{-- Referrals Table --}}
         @if($activeTab === 'all' || $activeTab === 'referrals')
             <div class="bg-white border rounded shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Referrals</h3>
@@ -170,7 +178,7 @@
             </div>
         @endif
 
-        {{-- Counseling --}}
+        {{-- Counseling Table --}}
         @if($activeTab === 'all' || $activeTab === 'counseling')
             <div class="bg-white border rounded shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Counseling Records</h3>
@@ -201,7 +209,7 @@
             </div>
         @endif
 
-        {{-- Student Transitions --}}
+        {{-- Student Transitions Table --}}
         @if($activeTab === 'all' || $activeTab === 'transitions')
             <div class="bg-white border rounded shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Student Transitions</h3>
@@ -224,7 +232,7 @@
                                     <td class="px-4 py-2">{{ $transition->remark }}</td>
                                 </tr>
                             @empty
-                                <tr><td colspan="4" class="text-center py-4">No student transition records found.</td></tr>
+                                <tr><td colspan="4" class="text-center py-4">No transition records found.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
