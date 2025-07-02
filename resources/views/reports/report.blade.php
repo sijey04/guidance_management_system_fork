@@ -4,30 +4,39 @@
     </x-slot>
 
     <div class="max-w-7xl mx-auto py-6 px-6 space-y-6">
-        {{-- Filters --}}
-        <form method="GET" class="flex gap-4 items-center mb-4">
-            <select name="school_year_id" class="border border-gray-300 rounded px-3 py-2">
-                <option value="">Select School Year</option>
-                @foreach($schoolYears as $sy)
-                    <option value="{{ $sy->id }}" {{ $selectedSY == $sy->id ? 'selected' : '' }}>
-                        {{ $sy->school_year }}
-                    </option>
-                @endforeach
-            </select>
 
-           <select name="semester_name" class="border border-gray-300 rounded px-3 py-2">
-                <option value="">Select Semester</option>
-                <option value="1st" {{ $selectedSem == '1st' ? 'selected' : '' }}>1st</option>
-                <option value="2nd" {{ $selectedSem == '2nd' ? 'selected' : '' }}>2nd</option>
-                <option value="Summer" {{ $selectedSem == 'Summer' ? 'selected' : '' }}>Summer</option>
-            </select>
-
-
+        <div class="flex justify-between bg-white border rounded p-4 shadow text-gray-700 items-center">
+            <div class="">
+                <p class="text-sm">Showing records for:</p>
+                <p class="font-semibold text-lg">
+                    School Year: 
+                    {{ $schoolYears->firstWhere('id', $selectedSY)?->school_year ?? 'Not Selected' }} |
+                    Semester: {{ $selectedSem ?? 'Not Selected' }}
+                </p>
+            </div>
             
+            <form method="GET" class="flex gap-4 items-center ">
+                <select name="school_year_id" class="border border-gray-300 rounded px-3 py-2">
+                    <option value="">Select School Year</option>
+                    @foreach($schoolYears as $sy)
+                        <option value="{{ $sy->id }}" {{ $selectedSY == $sy->id ? 'selected' : '' }}>
+                            {{ $sy->school_year }}
+                        </option>
+                    @endforeach
+                </select>
 
-            <button class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700">Filter</button>
-        </form>
+                <select name="semester_name" class="border border-gray-300 rounded px-3 py-2">
+                    <option value="">Select Semester</option>
+                    <option value="1st" {{ $selectedSem == '1st' ? 'selected' : '' }}>1st</option>
+                    <option value="2nd" {{ $selectedSem == '2nd' ? 'selected' : '' }}>2nd</option>
+                    <option value="Summer" {{ $selectedSem == 'Summer' ? 'selected' : '' }}>Summer</option>
+                </select>
 
+                <button class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700">Filter</button>
+            </form>
+
+        </div>
+       
         {{-- Tabs --}}
         @php $activeTab = request('tab', 'all'); @endphp
         <div class="flex gap-2 mb-4">
@@ -48,7 +57,7 @@
         </div>
 
         {{-- Summary Cards --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {{-- <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             @if($activeTab === 'all' || $activeTab === 'student_profiles')
 
                 <div class="bg-white border rounded shadow p-4">
@@ -74,7 +83,7 @@
                     <h3 class="text-2xl font-bold text-gray-800">{{ $counselings->count() }}</h3>
                 </div>
             @endif
-        </div>
+        </div> --}}
 
         
         @if($activeTab === 'student_profiles')
@@ -233,6 +242,7 @@
                                 <th class="px-4 py-2">Type</th>
                                 <th class="px-4 py-2">Status</th>
                                 <th class="px-4 py-2">Start - End</th>
+                                 <th class="px-4 py-2"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -242,6 +252,15 @@
                                     <td class="px-4 py-2">{{ $contract->contract_type }}</td>
                                     <td class="px-4 py-2">{{ $contract->status }}</td>
                                     <td class="px-4 py-2">{{ $contract->start_date }} - {{ $contract->end_date }}</td>
+                                 <td class="px-4 py-2">
+                                    <div x-data="{ openViewContractModal_{{ $contract->id }}: false }">
+                                        <button @click="openMenu = false; openViewContractModal_{{ $contract->id }} = true"
+                                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            View
+                                        </button>
+                                        @include('contracts.viewContract', ['contract' => $contract])
+                                    </div>
+                                </td>
                                 </tr>
                             @empty
                                 <tr><td colspan="4" class="text-center py-4">No contracts found.</td></tr>
@@ -264,6 +283,7 @@
                                 <th class="px-4 py-2">Reason</th>
                                 <th class="px-4 py-2">Remarks</th>
                                 <th class="px-4 py-2">Date</th>
+                                 <th class="px-4 py-2"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -295,6 +315,7 @@
                                 <th class="px-4 py-2">Date</th>
                                 <th class="px-4 py-2">Status</th>
                                 <th class="px-4 py-2">Remarks</th>
+                                 <th class="px-4 py-2"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -304,6 +325,15 @@
                                     <td class="px-4 py-2">{{ $counseling->counseling_date }}</td>
                                     <td class="px-4 py-2">{{ $counseling->status }}</td>
                                     <td class="px-4 py-2">{{ $counseling->remarks }}</td>
+                                    <td> 
+                                        <div x-data="{ openViewCounselingModal_{{ $counseling->id }}: false }">
+                                            <button @click="openViewCounselingModal_{{ $counseling->id }} = true"
+                                                    class="text-blue-600 hover:underline">
+                                                View
+                                            </button>
+                                            @include('counselings.view', ['counseling' => $counseling, 'readonly' => true])
+                                        </div>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr><td colspan="4" class="text-center py-4">No counseling records found.</td></tr>

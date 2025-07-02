@@ -20,35 +20,46 @@
         @endif
 
         <!-- Status Form -->
-        <form method="POST" action="{{ route('counseling.updateStatus', $counseling->id) }}" class="mb-6">
-            @csrf
-            @method('PATCH')
-            <input type="hidden" name="page" value="{{ request()->page }}">
+        @if(empty($readonly))
+<form method="POST" action="{{ route('counseling.updateStatus', $counseling->id) }}" class="mb-6">
+    @csrf
+    @method('PATCH')
+    <input type="hidden" name="page" value="{{ request()->page }}">
 
-            <div class="flex items-center justify-between border p-4 rounded-lg bg-gray-50">
-                <div>
-                    <span class="font-semibold text-sm text-gray-700">Current Status:</span>
-                    <span class="ml-2 px-3 py-1 rounded-full text-xs font-semibold
-                        {{ $counseling->status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
-                        {{ $counseling->status }}
-                    </span>
-                </div>
-                <div class="flex gap-2">
-                    @if($counseling->status !== 'In Progress')
-                        <button type="submit" name="status" value="In Progress"
-                            class="bg-yellow-600 text-white text-sm px-3 py-2 rounded hover:bg-yellow-700">
-                            Mark as In Progress
-                        </button>
-                    @endif
-                    @if($counseling->status !== 'Completed')
-                        <button type="submit" name="status" value="Completed"
-                            class="bg-green-600 text-white text-sm px-3 py-2 rounded hover:bg-green-700">
-                            Mark as Completed
-                        </button>
-                    @endif
-                </div>
-            </div>
-        </form>
+    <div class="flex items-center justify-between border p-4 rounded-lg bg-gray-50">
+        <div>
+            <span class="font-semibold text-sm text-gray-700">Current Status:</span>
+            <span class="ml-2 px-3 py-1 rounded-full text-xs font-semibold
+                {{ $counseling->status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                {{ $counseling->status }}
+            </span>
+        </div>
+        <div class="flex gap-2">
+            @if($counseling->status !== 'In Progress')
+                <button type="submit" name="status" value="In Progress"
+                    class="bg-yellow-600 text-white text-sm px-3 py-2 rounded hover:bg-yellow-700">
+                    Mark as In Progress
+                </button>
+            @endif
+            @if($counseling->status !== 'Completed')
+                <button type="submit" name="status" value="Completed"
+                    class="bg-green-600 text-white text-sm px-3 py-2 rounded hover:bg-green-700">
+                    Mark as Completed
+                </button>
+            @endif
+        </div>
+    </div>
+</form>
+@else
+<div class="border p-4 rounded-lg bg-gray-50 mb-6">
+    <span class="font-semibold text-sm text-gray-700">Current Status:</span>
+    <span class="ml-2 px-3 py-1 rounded-full text-xs font-semibold
+        {{ $counseling->status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+        {{ $counseling->status }}
+    </span>
+</div>
+@endif
+
 
         <!-- Student Info -->
         <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
@@ -79,12 +90,13 @@
 
         <!-- Remarks Editable -->
 <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+    <label class="text-lg font-bold text-red-700 mb-2 block">Remarks</label>
+    @if(empty($readonly))
     <form method="POST" action="{{ route('counseling.updateRemarks', $counseling->id) }}">
         @csrf
         @method('PATCH')
-<input type="hidden" name="page" value="{{ request()->page }}">
+        <input type="hidden" name="page" value="{{ request()->page }}">
 
-        <label class="text-lg font-bold text-red-700 mb-2 block">Remarks</label>
         <textarea name="remarks"
                   rows="4"
                   class="w-full border rounded p-2 text-sm text-gray-800 focus:ring focus:border-blue-400"
@@ -97,8 +109,12 @@
             </button>
         </div>
     </form>
+    @else
+        <div class="border p-3 rounded bg-white text-sm text-gray-700">
+            {{ $counseling->remarks ?: 'No remarks provided.' }}
+        </div>
+    @endif
 </div>
-
 
         <!-- Counseling Form Pictures -->
         <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
