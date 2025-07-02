@@ -16,6 +16,15 @@ class CounselingController extends Controller
 public function index()
 {
     $currentSemester = Semester::where('is_current', true)->first();
+
+    if (!$currentSemester) {
+        return view('counselings.counseling', [
+            'counselings' => collect(), // empty collection
+            'students' => collect(),    // empty collection
+            'error' => 'No active semester found.'
+        ]);
+    }
+
     $lastSemester = Semester::where('id', '<>', $currentSemester->id)
                             ->orderByDesc('id')
                             ->first();
@@ -27,14 +36,14 @@ public function index()
     });
 
     // ✅ Get validated students carried over from last semester
-    $validatedStudents = Student::whereHas('profiles', function ($query) use ($lastSemester, $currentSemester) {
+    $validatedStudents = Student::whereHas('profiles', function ($query) use ($currentSemester) {
         $query->where('semester_id', $currentSemester->id);
     });
 
     // ✅ Union both queries
     $students = $newStudents->union($validatedStudents)->get();
 
-   $counselings = Counseling::with(['student', 'images'])->paginate(10);
+    $counselings = Counseling::with(['student', 'images'])->paginate(10);
 
     return view('counselings.counseling', compact('counselings', 'students'));
 }

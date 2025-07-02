@@ -68,9 +68,12 @@
                 </tbody>
             </table>
 
-            <div class="p-4">
-                {{ $counselings->links() }}
-            </div>
+           @if(method_exists($counselings, 'links'))
+    <div class="p-4">
+        {{ $counselings->links() }}
+    </div>
+@endif
+
         </div>
     </div>
 </x-app-layout>
