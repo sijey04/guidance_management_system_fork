@@ -159,19 +159,31 @@
                                         <td class="p-3 text-center">
                                             @if ($student->alreadyValidated)
                                                 <span class="text-green-700 text-xs font-semibold bg-green-100 px-2 py-1 rounded">Validated</span>
+                                            @elseif($student->latestTransition && $student->latestTransition->transition_type !== 'Returning Student')
+                                                <span class="text-red-700 text-xs font-semibold bg-red-100 px-2 py-1 rounded">Excluded</span>
                                             @else
                                                 <input type="checkbox"
-                                                       name="selected_students[]"
-                                                       value="{{ $id }}"
-                                                       x-bind:checked="isChecked('{{ $id }}')"
-                                                       @change="toggle('{{ $id }}')"
-                                                       class="form-checkbox">
+                                                    name="selected_students[]"
+                                                    value="{{ $id }}"
+                                                    x-bind:checked="isChecked('{{ $id }}')"
+                                                    @change="toggle('{{ $id }}')"
+                                                    class="form-checkbox">
                                             @endif
+
                                         </td>
                                         <td class="p-3">
-                                            <div class="font-medium">{{ $student->first_name }} {{ $student->last_name }}</div>
+                                            <div class="font-medium">
+                                                {{ $student->first_name }} {{ $student->last_name }}
+
+                                                @if($student->latestTransition && $student->latestTransition->transition_type !== 'None')
+                                                    <span class="ml-2 text-xs text-red-700 bg-red-100 px-2 py-1 rounded-full">
+                                                        {{ $student->latestTransition->transition_type }}
+                                                    </span>
+                                                @endif
+                                            </div>
                                             <div class="text-xs text-gray-500">ID: {{ $student->student_id }}</div>
                                         </td>
+
                                         <td class="p-3">
                                             {{ $student->latestProfile->course ?? '-' }}<br>
                                             {{ $student->latestProfile->year_level ?? '-' }}{{ $student->latestProfile->section ?? '' }}
@@ -207,6 +219,52 @@
                                                 @endforeach
                                             </select>
                                         </td>
+                                        <td>
+    <div x-data="{ openModal{{ $id }}: false }">
+        <button type="button" @click="openModal{{ $id }} = true"
+            class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 text-sm font-semibold">
+            Mark Transition
+        </button>
+
+        <div x-show="openModal{{ $id }}" @keydown.escape.window="openModal{{ $id }} = false"
+            x-cloak class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div @click.away="openModal{{ $id }} = false"
+                class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+                <h2 class="text-lg font-bold mb-4 text-gray-800">Mark Transition for {{ $student->first_name }}</h2>
+
+                <div class="space-y-4">
+                    <input type="hidden" name="transitions[{{ $id }}][student_id]" value="{{ $id }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Transition Type</label>
+                        <select name="transitions[{{ $id }}][transition_type]" class="w-full border-gray-300 rounded">
+                            <option value="">None</option>
+                            <option value="Shifting Out">Shifting Out</option>
+                            <option value="Transferring Out">Transferring Out</option>
+                            <option value="Dropped">Dropped</option>
+                            <option value="Returning Student">Returning Student</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Transition Date</label>
+                        <input type="date" name="transitions[{{ $id }}][transition_date]" class="w-full border-gray-300 rounded">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Remarks</label>
+                        <textarea name="transitions[{{ $id }}][remark]" rows="2" class="w-full border-gray-300 rounded"></textarea>
+                    </div>
+
+                    <div class="text-right mt-4">
+                        <button type="button" @click="openModal{{ $id }} = false" class="text-sm text-gray-600 hover:underline">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</td>
+
                                     </tr>
                                 @endforeach
                             </tbody>

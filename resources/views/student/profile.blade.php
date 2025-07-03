@@ -33,17 +33,6 @@
                             </span>
                             <div class="flex gap-3">
 
-                                <!-- Add transition button -->
-                              <div x-data="{ openModal: false }">
-                                    <button @click="openModal = true"
-                                        class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 text-sm font-semibold">
-                                        Mark Transition
-                                    </button>
-
-                                    {{-- Include your modal --}}
-                                    @include('transitions.mark', ['student' => $student])
-                                </div>
-
 
 
                                 <!-- Edit Button -->
@@ -69,19 +58,7 @@
 
                             </div>
                         </div>
-@php
-    $latestTransition = $student->transitions()->latest()->first();
-@endphp
-
-@if ($latestTransition)
-    <x-student-info 
-    label="Transition Status" 
-    :value="$latestTransition->transition_type . ' (' . \Carbon\Carbon::parse($latestTransition->transition_date)->format('M d, Y') . ')'" 
-/>
-
-@endif
-
-                        
+                     
                         <!-- Basic Information -->
                         <h3 class="text-lg font-semibold" style="color:#a82323; border-bottom:1.5px solid #f8eaea; padding-bottom:6px;">Basic Information</h3>
                         <p class="text-sm text-gray-500 mb-3">Personal and enrollment details of the student.</p>
