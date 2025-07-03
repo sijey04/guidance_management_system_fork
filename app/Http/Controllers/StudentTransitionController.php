@@ -47,27 +47,64 @@ class StudentTransitionController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'last_name' => 'required|string',
-            'first_name' => 'required|string',
-            'transition_type' => 'required|in:Shiftee,Transferee,Returnee,Dropped,Stopped',
-            'transition_date' => 'required|date',
-        ]);
+{
+    $request->validate([
+        'student_id' => 'nullable|string|max:255',
+        'first_name' => 'required|string|max:255',
+        'last_name' => 'required|string|max:255',
+        'transition_type' => 'required|in:None,Shifting In,Shifting Out,Transferring In,Transferring Out,Dropped,Returning Student',
+        'transition_date' => 'required|date',
+        'remark' => 'nullable|string',
+    ]);
 
-         $activeSemester = Semester::where('is_current', true)->first();
+    $activeSemester = Semester::where('is_current', true)->first();
     if (!$activeSemester) {
         return back()->with('error', 'No active semester is set.');
     }
 
-   $transitionData = $request->all();
-        $transitionData['semester_id'] = $activeSemester->id;
+    StudentTransition::create([
+        'student_id' => $request->student_id, // can be null
+        'first_name' => $request->first_name,
+        'last_name' => $request->last_name,
+        'semester_id' => $activeSemester->id,
+        'transition_type' => $request->transition_type,
+        'transition_date' => $request->transition_date,
+        'remark' => $request->remark,
+    ]);
 
-        StudentTransition::create($transitionData);
+    return redirect()->route('transitions.index')->with('success', 'Incoming student transition recorded.');
+}
 
+    public function storeStudentTransition(Request $request)
+{
+    $request->validate([
+        'student_id' => 'required|exists:students,id',
+        'transition_type' => 'required|in:None,Shifting In,Shifting Out,Transferring In,Transferring Out,Dropped,Returning Student',
+        'transition_date' => 'required|date',
+        'remark' => 'nullable|string',
+    ]);
 
-        return redirect()->route('transitions.index')->with('success', 'Student movement recorded.');
+    $activeSemester = Semester::where('is_current', true)->first();
+
+    if (!$activeSemester) {
+        return back()->with('error', 'No active semester is set.');
     }
+
+    $student = Student::findOrFail($request->student_id);
+
+    StudentTransition::create([
+        'student_id' => $student->id,
+        'semester_id' => $activeSemester->id,
+        'first_name' => $student->first_name,
+        'last_name' => $student->last_name,
+        'transition_type' => $request->transition_type,
+        'transition_date' => $request->transition_date,
+        'remark' => $request->remark,
+    ]);
+
+   return redirect()->route('students.profile', ['id' => $student->id])->with('success', 'Incoming student transition recorded.');
+
+}
 
     public function edit(StudentTransition $transition)
     {

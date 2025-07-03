@@ -140,8 +140,11 @@ Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewR
 Route::resource('transitions', StudentTransitionController::class);
 
 Route::get('/transitions/{transition}', [StudentTransitionController::class, 'show'])->name('transitions.show');
-Route::post('/student/transition/store', [StudentTransitionController::class, 'store'])
-    ->name('student.transition.store');
+// Route::post('/student/transition/store', [StudentTransitionController::class, 'store'])
+//     ->name('student.transition.store');
+Route::post('/transitions/store', [StudentTransitionController::class, 'store'])->name('transitions.store');
+Route::post('/transitions/store-student-transition', [StudentTransitionController::class, 'storeStudentTransition'])
+    ->name('transitions.storeStudentTransition');
 
 });
 // // Student List,Create,edit

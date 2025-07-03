@@ -6,10 +6,8 @@
     <div class="px-4 py-6 max-w-7xl mx-auto" x-data="{ openModal: false }">
 
         <div class="mb-4">
-            <button @click="openModal = true"
-                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                Add Student
-            </button>
+            <button @click="openModal = true" class="bg-indigo-600 text-white px-4 py-2 rounded text-sm">Add Transition</button>
+
         </div>
 
         @include('transitions.create')

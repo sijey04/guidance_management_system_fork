@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('counseling_imag', function (Blueprint $table) {
-            //
-        });
+            Schema::table('student_transition', function (Blueprint $table) {
+                $table->string('transition_type')->change(); // Convert ENUM to VARCHAR
+            });
+
     }
 
     /**
@@ -21,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('counseling_imag', function (Blueprint $table) {
+        Schema::table('student_transition', function (Blueprint $table) {
             //
         });
     }

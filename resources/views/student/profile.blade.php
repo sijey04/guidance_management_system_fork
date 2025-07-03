@@ -33,14 +33,18 @@
                             </span>
                             <div class="flex gap-3">
 
-                                <div x-data="{ openTransitionModal: false }">
-                                    <button @click="openTransitionModal = true"
-                                        class="bg-yellow-500 text-white px-4 py-2 rounded font-semibold text-sm hover:bg-yellow-600">
-                                        Add Movement Record
+                                <!-- Add transition button -->
+                              <div x-data="{ openModal: false }">
+                                    <button @click="openModal = true"
+                                        class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 text-sm font-semibold">
+                                        Mark Transition
                                     </button>
 
-                                    @include('student.transitionModal', ['student' => $student])
+                                    {{-- Include your modal --}}
+                                    @include('transitions.mark', ['student' => $student])
                                 </div>
+
+
 
                                 <!-- Edit Button -->
                                 <div x-data="{ openEditStudentModal: {{ $errors->any() ? 'true' : 'false' }} }">
@@ -66,18 +70,15 @@
                             </div>
                         </div>
 @php
-    $latestTransition = $student->transitions()
-        ->where('semester_id', $activeSemester->id)
-        ->latest('transition_date')
-        ->first();
+    $latestTransition = $student->transitions()->latest()->first();
 @endphp
 
 @if ($latestTransition)
     <x-student-info 
-        label="Movement Status"
-        :value="$latestTransition->transition_type"
-        description="Labeled by counselor"
-    />
+    label="Transition Status" 
+    :value="$latestTransition->transition_type . ' (' . \Carbon\Carbon::parse($latestTransition->transition_date)->format('M d, Y') . ')'" 
+/>
+
 @endif
 
                         

@@ -23,14 +23,17 @@
                 </div>
                 <div>
                     <label class="block text-sm">Type </label>
-                    <select name="transition_type" class="w-full border rounded p-2" required>
-                        <option value="">-- Select --</option>
-                        <option value="Shiftee">Shiftee</option>
-                        <option value="Transferee">Transferee</option>
-                        <option value="Returnee">Returnee</option>
-                        <option value="Dropped">Dropped</option>
-                        <option value="Stopped">Stopped</option>
+                    <select name="transition_type" required class="w-full border-gray-300 rounded mt-1">
+                        <option value="">Select type</option>
+                        <option value="None">None</option>
+                        <option value="Shifting In">Shifting In</option>
+                        {{-- <option value="Shifting Out">Shifting Out</option> --}}
+                        <option value="Transferring In">Transferring In</option>
+                        {{-- <option value="Transferring Out">Transferring Out</option> --}}
+                        {{-- <option value="Dropped">Dropped</option> --}}
+                        <option value="Returning Student">Returning Student</option>
                     </select>
+
                 </div>
                 <div>
                     <label class="block text-sm">From Course/School</label>

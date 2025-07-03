@@ -11,6 +11,7 @@ class StudentTransition extends Model
 
      protected $table = 'student_transition';
     protected $fillable = [
+        'student_id',
         'last_name',
         'first_name',
         'semester_id',
