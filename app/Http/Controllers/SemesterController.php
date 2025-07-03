@@ -265,6 +265,7 @@ public function processValidateStudents(Request $request, $semesterId)
         ]);
     }
 
+    
     return redirect()->route('semester.validate', $semester->id)
         ->with('success', 'Selected students validated and transitions recorded.');
 }

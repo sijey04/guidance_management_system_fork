@@ -171,13 +171,13 @@
                                             @endif
 
                                         </td>
-                                        <td class="p-3">
+                                        <td class="p-3 px-5">
                                             <div class="font-medium">
                                                 {{ $student->first_name }} {{ $student->last_name }}
 
                                                 @if($student->latestTransition && $student->latestTransition->transition_type !== 'None')
-                                                    <span class="ml-2 text-xs text-red-700 bg-red-100 px-2 py-1 rounded-full">
-                                                        {{ $student->latestTransition->transition_type }}
+                                                    <span class="ml-2 text-xs text-red-700 bg-red-100 px-1 py-1 rounded-full">
+                                                     {{ $student->latestTransition->transition_type }}
                                                     </span>
                                                 @endif
                                             </div>
