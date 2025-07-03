@@ -32,6 +32,16 @@
                                 {{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffix }}
                             </span>
                             <div class="flex gap-3">
+
+                                <div x-data="{ openTransitionModal: false }">
+                                    <button @click="openTransitionModal = true"
+                                        class="bg-yellow-500 text-white px-4 py-2 rounded font-semibold text-sm hover:bg-yellow-600">
+                                        Add Movement Record
+                                    </button>
+
+                                    @include('student.transitionModal', ['student' => $student])
+                                </div>
+
                                 <!-- Edit Button -->
                                 <div x-data="{ openEditStudentModal: {{ $errors->any() ? 'true' : 'false' }} }">
                                     <button @click="openEditStudentModal = true" class="sign-in-btn" 
@@ -51,9 +61,24 @@
                                         Delete
                                     </button>
                                 </form>
+                                
 
                             </div>
                         </div>
+@php
+    $latestTransition = $student->transitions()
+        ->where('semester_id', $activeSemester->id)
+        ->latest('transition_date')
+        ->first();
+@endphp
+
+@if ($latestTransition)
+    <x-student-info 
+        label="Movement Status"
+        :value="$latestTransition->transition_type"
+        description="Labeled by counselor"
+    />
+@endif
 
                         
                         <!-- Basic Information -->

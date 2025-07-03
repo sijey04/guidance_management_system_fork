@@ -22,7 +22,7 @@
                     <input type="text" name="middle_name" class="w-full border rounded p-2">
                 </div>
                 <div>
-                    <label class="block text-sm">Type of Movement</label>
+                    <label class="block text-sm">Type </label>
                     <select name="transition_type" class="w-full border rounded p-2" required>
                         <option value="">-- Select --</option>
                         <option value="Shiftee">Shiftee</option>
@@ -40,7 +40,7 @@
                     <label class="block text-sm">To Course/School</label>
                     <input type="text" name="to_program" class="w-full border rounded p-2">
                 </div>
-                <div>
+                {{-- <div>
                     <label class="block text-sm">Reason for Leaving</label>
                     <textarea name="reason_leaving" class="w-full border rounded p-2"></textarea>
                 </div>
@@ -51,13 +51,13 @@
                 <div>
                     <label class="block text-sm">Leave/Drop Reason (if applicable)</label>
                     <textarea name="leave_reason" class="w-full border rounded p-2"></textarea>
-                </div>
+                </div> --}}
                 <div>
-                    <label class="block text-sm">Counselor Notes</label>
+                    <label class="block text-sm">Remarks</label>
                     <textarea name="remark" class="w-full border rounded p-2"></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm">Movement Date</label>
+                    <label class="block text-sm">Date</label>
                     <input type="date" name="transition_date" class="w-full border rounded p-2" required>
                 </div>
                 <div class="mt-4 text-right">

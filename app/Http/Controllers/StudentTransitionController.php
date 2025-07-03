@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContractType;
+use App\Models\semester;
+use App\Models\Student;
 use App\Models\StudentTransition;
 use Illuminate\Http\Request;
 
@@ -10,12 +13,37 @@ class StudentTransitionController extends Controller
     public function index()
     {
         $transitions = StudentTransition::latest()->paginate(10);
-        return view('transitions.index', compact('transitions'));
+
+         $semesters = semester::all();
+         
+    $currentSemester = Semester::where('is_current', true)->first();
+
+    if (!$currentSemester) {
+        $students = collect(); // return empty collection if no active semester
+    } else {
+        // Get students who have profile for current semester (either newly added or validated)
+        $students = Student::whereHas('profiles', function ($query) use ($currentSemester) {
+            $query->where('semester_id', $currentSemester->id);
+        })->with('profiles')->get();
+    }
+        return view('transitions.index', compact('transitions','students', 'semesters',));
     }
 
     public function create()
     {
-        return view('transitions.create');
+         $currentSemester = Semester::where('is_current', true)->first();
+
+            if (!$currentSemester) {
+                return redirect()->back()->with('error', 'No active semester set. Please create and activate a semester first.');
+            }
+
+            $students = Student::whereHas('enrollments', function ($query) use ($currentSemester) {
+                $query->where('semester_id', $currentSemester->id)
+                    ->where('is_enrolled', true);
+            })->with('enrollments')->get();
+
+             $semesters = Semester::all();
+        return view('transitions.create', compact('students', 'semesters'));
     }
 
     public function store(Request $request)
@@ -27,7 +55,16 @@ class StudentTransitionController extends Controller
             'transition_date' => 'required|date',
         ]);
 
-        StudentTransition::create($request->all());
+         $activeSemester = Semester::where('is_current', true)->first();
+    if (!$activeSemester) {
+        return back()->with('error', 'No active semester is set.');
+    }
+
+   $transitionData = $request->all();
+        $transitionData['semester_id'] = $activeSemester->id;
+
+        StudentTransition::create($transitionData);
+
 
         return redirect()->route('transitions.index')->with('success', 'Student movement recorded.');
     }

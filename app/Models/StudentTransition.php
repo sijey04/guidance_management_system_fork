@@ -13,6 +13,7 @@ class StudentTransition extends Model
     protected $fillable = [
         'last_name',
         'first_name',
+        'semester_id',
         'middle_name',
         'transition_type',
         'from_program',
@@ -23,4 +24,21 @@ class StudentTransition extends Model
         'remark',
         'transition_date',
     ];
+
+ public function student()
+{
+    return $this->belongsTo(Student::class);
+}
+
+public function schoolYear()
+{
+    return $this->belongsTo(\App\Models\SchoolYear::class);
+}
+
+public function semester()
+{
+    return $this->belongsTo(semester::class);
+}
+
+
 }

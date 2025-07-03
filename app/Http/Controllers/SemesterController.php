@@ -204,10 +204,17 @@ class SemesterController extends Controller
 
             if (empty($data['course']) || empty($data['year_level']) || empty($data['section'])) continue;
 
-            $exists = StudentProfile::where('student_id', $studentId)
-                                    ->where('semester_id', $semester->id)
-                                    ->exists();
-            if ($exists) continue;
+            $existingProfile = StudentProfile::withTrashed()
+            ->where('student_id', $studentId)
+            ->where('semester_id', $semester->id)
+            ->first();
+
+            if ($existingProfile) {
+                if ($existingProfile->trashed()) {
+                    $existingProfile->restore();
+                }
+                continue; 
+            }
 
             StudentProfile::create([
                 'student_id'  => $studentId,

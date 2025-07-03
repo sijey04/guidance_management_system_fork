@@ -22,6 +22,8 @@
             <table class="w-full text-sm text-left border">
                 <thead class="bg-gray-100">
                     <tr>
+                        <th class="p-2">A.Y</th>
+                        <th class="p-2">Semester</th>
                         <th class="p-2">Name</th>
                         <th class="p-2">Type</th>
                         <th class="p-2">Date</th>
@@ -31,6 +33,8 @@
                 <tbody>
                     @forelse($transitions as $transition)
                         <tr class="border-t">
+                            <td class="px-2 py-4">{{ $transition->semester->schoolYear->school_year ?? 'N/A' }}</td>
+                            <td class="py-4">{{ $transition->semester->semester ?? 'N/A' }}</td>
                             <td class="p-2">{{ $transition->last_name }}, {{ $transition->first_name }}</td>
                             <td class="p-2">{{ $transition->transition_type }}</td>
                             <td class="p-2">{{ \Carbon\Carbon::parse($transition->transition_date)->format('M d, Y') }}</td>
