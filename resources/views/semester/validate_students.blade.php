@@ -108,6 +108,19 @@
                             @endforeach
                         </select>
                     </div>
+                    <div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-600">Transition Type</label>
+                        <select name="filter_transition_type" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
+                            <option value="">All Types</option>
+                            <option value="Shifting In" {{ request('filter_transition_type') == 'Shifting In' ? 'selected' : '' }}>Shifting In</option>
+                            <option value="Shifting Out" {{ request('filter_transition_type') == 'Shifting Out' ? 'selected' : '' }}>Shifting Out</option>
+                            <option value="Transferring Out" {{ request('filter_transition_type') == 'Transferring Out' ? 'selected' : '' }}>Transferring Out</option>
+                            <option value="Dropped" {{ request('filter_transition_type') == 'Dropped' ? 'selected' : '' }}>Dropped</option>
+                            <option value="Returning Student" {{ request('filter_transition_type') == 'Returning Student' ? 'selected' : '' }}>Returning Student</option>
+                        </select>
+                    </div>
+                    </div>
                     <div class="col-span-2">
                         <label class="text-sm font-medium text-gray-600">Search</label>
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Student name or ID..."
@@ -191,9 +204,10 @@
                                         </td>
 
                                         <td class="p-3">
-                                            {{ $student->latestProfile->course ?? '-' }}<br>
-                                            {{ $student->latestProfile->year_level ?? '-' }}{{ $student->latestProfile->section ?? '' }}
+                                            {{ $student->previousProfile->course ?? '-' }}<br>
+                                            {{ $student->previousProfile->year_level ?? '-' }}{{ $student->previousProfile->section ?? '' }}
                                         </td>
+
                                         <td class="p-3">
                                             <select name="students[{{ $id }}][course]"
                                                 class="w-full border-gray-300 rounded"

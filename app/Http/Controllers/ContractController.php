@@ -253,5 +253,38 @@ public function updateStatus(Request $request, $id)
                      ->with('success', 'Status updated successfully.');
 }
 
+public function uploadImages(Request $request, $id, $type)
+{
+    $request->validate([
+        'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    $contract = Contract::findOrFail($id);
+
+    foreach ($request->file('images', []) as $file) {
+        $path = $file->store('contract_images', 'public');
+
+        $contract->images()->create([
+            'image_path' => $path,
+            'type' => $type,
+        ]);
+    }
+
+    return back()->with('success', 'Images uploaded successfully.');
+}
+
+public function deleteImage($contractId, $imageId)
+{
+    $image = ContractImage::findOrFail($imageId);
+
+    if (Storage::disk('public')->exists($image->image_path)) {
+        Storage::disk('public')->delete($image->image_path);
+    }
+
+    $image->delete();
+
+    return back()->with('success', 'Image deleted successfully.');
+}
+
 
 }

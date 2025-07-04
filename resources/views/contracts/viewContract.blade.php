@@ -126,36 +126,44 @@
 
 
         <!-- Contract Images -->
-        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
             <p class="font-semibold text-gray-700 mb-4 text-lg">Contract Images:</p>
 
-            @if($contract->images && $contract->images->count())
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    @foreach ($contract->images as $image)
-                        <div class="relative group">
-                            <img src="{{ asset('storage/' . $image->image_path) }}"
-                                 @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
-                                 class="w-full h-36 object-cover rounded-lg border border-gray-300 shadow cursor-zoom-in group-hover:scale-105 transition-transform duration-200">
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <p class="text-gray-500 italic text-center mt-4">No images available.</p>
-            @endif
-        </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Existing images -->
+                @foreach ($contract->images as $image)
+                    <div class="relative group">
+                        <img src="{{ asset('storage/' . $image->image_path) }}"
+                            @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
+                            class="w-full h-36 object-cover rounded border border-gray-300 shadow cursor-zoom-in group-hover:scale-105 transition-transform duration-200">
+                        
+                        @if(empty($readonly))
+                            <form action="{{ route('contracts.deleteImage', [$contract->id, $image->id]) }}" method="POST"
+                                class="absolute top-1 right-1 bg-white rounded-full shadow p-1 group-hover:opacity-100 opacity-0 transition-opacity">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-800 text-lg font-bold leading-none">
+                                    &times;
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                @endforeach
 
-        <!-- Zoom Modal -->
-        <div x-show="zoomedImage"
-             class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-6"
-             x-transition>
-            <div class="relative max-w-3xl w-full">
-                <button @click="zoomedImage = null"
-                        class="absolute top-2 right-2 text-white text-3xl font-bold z-50">
-                    &times;
-                </button>
-                <img :src="zoomedImage"
-                     class="w-full max-h-[80vh] object-contain rounded-lg shadow-lg border-4 border-white" />
+                <!-- Upload image square -->
+                @if(empty($readonly))
+                <form action="{{ route('contracts.uploadImages', ['id' => $contract->id, 'type' => 'contract']) }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition"
+                    style="height: 9rem;"
+                    onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
+                    @csrf
+                    <input type="file" name="images[]" multiple accept="image/*" class="hidden" onchange="this.form.submit()">
+                    <span class="text-4xl text-gray-400 font-bold">+</span>
+                </form>
+                @endif
             </div>
         </div>
-    </div>
+
 </x-app-layout>

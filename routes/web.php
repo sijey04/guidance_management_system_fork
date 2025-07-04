@@ -42,15 +42,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/students/{id}/referral', [StudentController::class, 'showEnrollmentHistory'])->name('students.referral');
 //Route::get('/students/{id}/contracts', [StudentController::class, 'show']);
     Route::get('/students/{student}/contracts/create', [ContractController::class, 'createForStudent'])->name('student.createContract');
+Route::get('/referrals/{id}/view', [ReferralController::class, 'show'])->name('referrals.view');
+Route::patch('/referrals/{id}/update-remarks', [ReferralController::class, 'updateRemarks'])->name('referrals.updateRemarks');
+Route::patch('/referrals/{referrals}/status', [ReferralController::class, 'updateStatus'])->name('referrals.updateStatus');
+Route::delete('/referrals/{referralId}/images/{imageId}', [ReferralController::class, 'deleteImage'])->name('referrals.deleteImage');
+Route::post('/referrals/{id}/upload-images/{type}', [ReferralController::class, 'uploadImages'])->name('referrals.uploadImages');
 
-// enroll-unenroll-delete all
-    Route::post('/students/enroll-all', [StudentController::class, 'enrollAll'])->name('students.enrollAll');
-    Route::post('/students/unenroll-all', [StudentController::class, 'unenrollAll'])->name('students.unenrollAll');
-    Route::delete('/students/delete-all', [StudentController::class, 'deleteAll'])->name('students.deleteAll');
+// // enroll-unenroll-delete all
+//     Route::post('/students/enroll-all', [StudentController::class, 'enrollAll'])->name('students.enrollAll');
+//     Route::post('/students/unenroll-all', [StudentController::class, 'unenrollAll'])->name('students.unenrollAll');
+//     Route::delete('/students/delete-all', [StudentController::class, 'deleteAll'])->name('students.deleteAll');
 
-// Enrollment and Unenrollment routes
-    Route::post('/students/{student}/enroll/{semester}', [StudentController::class, 'enroll'])->name('students.enroll');
-    Route::post('/students/{student}/unenroll/{semester}', [StudentController::class, 'unenroll'])->name('students.unenroll');
+// // Enrollment and Unenrollment routes
+//     Route::post('/students/{student}/enroll/{semester}', [StudentController::class, 'enroll'])->name('students.enroll');
+//     Route::post('/students/{student}/unenroll/{semester}', [StudentController::class, 'unenroll'])->name('students.unenroll');
 // Contract creation specific to student
     Route::post('/contracts', [ContractController::class, 'store'])->name('contracts.store');
     Route::get('/contracts', [ContractController::class, 'index'])->name('contracts.contract');
@@ -136,7 +141,8 @@ Route::post('/contracts/{id}/mark-inprogress', [ContractController::class, 'mark
 Route::put('/contracts/{id}', [ContractController::class, 'update'])->name('contracts.update');
 Route::patch('/contracts/{contract}/remarks', [ContractController::class, 'updateRemarks'])->name('contract.updateRemarks');
 Route::patch('/contracts/{contracts}/status', [ContractController::class, 'updateStatus'])->name('contract.updateStatus');
-
+Route::post('/contracts/{id}/upload-images/{type}', [ContractController::class, 'uploadImages'])->name('contracts.uploadImages');
+Route::delete('/contracts/{contract}/images/{image}', [ContractController::class, 'deleteImage'])->name('contracts.deleteImage');
 
 Route::resource('referrals', ReferralController::class);
 Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
