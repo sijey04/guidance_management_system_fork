@@ -143,6 +143,13 @@ class SemesterController extends Controller
             ->latest('semester_id')
             ->first();
 
+            $shiftingInCurrentSemester = $student->transitions()
+                ->where('semester_id', $newSemester->id)
+                ->where('transition_type', 'Shifting In')
+                ->exists();
+
+            $student->showShiftingInPill = $shiftingInCurrentSemester;
+
             
 
         $student->validatedProfile = $validatedProfile;

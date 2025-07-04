@@ -201,17 +201,18 @@
                                             <div class="font-medium">
                                                 {{ $student->first_name }} {{ $student->last_name }}
                                                <div class="text-xs text-gray-500">ID: {{ $student->student_id }}</div>
-                                                 @if($student->latestTransition && $student->latestTransition->transition_type !== 'None')
+                                                 {{-- @if($student->latestTransition && $student->latestTransition->transition_type !== 'None')
                                                     <span class="ml-2 text-xs text-red-700 bg-red-100 px-1 py-1 rounded-full">
                                                         {{ $student->latestTransition->transition_type }}
                                                     </span>
-                                                @endif
+                                                 @endif --}}
 
-                                                @if($student->lastOutTransition)
-                                                    <div class="mt-1 text-xs inline-block bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
-                                                        {{ $student->lastOutTransition->transition_type }} from prev sem
+                                                @if($student->showShiftingInPill)
+                                                    <div class="mt-1 text-xs inline-block bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                                                        Shifting In
                                                     </div>
                                                 @endif
+
                                             </div>
                                             
                                         </td>
