@@ -8,9 +8,11 @@ use App\Models\Section;
 use App\Models\Semester;
 use App\Models\Student;
 use App\Models\StudentProfile;
+use App\Models\StudentTransition;
 use App\Models\Year;
 use Illuminate\Http\Request;
  use Illuminate\Pagination\LengthAwarePaginator;
+  use Illuminate\Support\Str;
 
 class SemesterController extends Controller
 {
@@ -112,23 +114,45 @@ class SemesterController extends Controller
 
         $allPreviousSemesterIds = Semester::where('id', '<', $semesterId)->pluck('id')->toArray();
 
-        $students = Student::whereHas('profiles', function ($q) use ($allPreviousSemesterIds) {
-            $q->whereIn('semester_id', $allPreviousSemesterIds);
+        $students = Student::whereHas('profiles', function ($q) use ($allPreviousSemesterIds, $semesterId) {
+            $q->whereIn('semester_id', array_merge($allPreviousSemesterIds, [$semesterId]));
         })
-        ->with(['profiles' => function ($q) use ($allPreviousSemesterIds) {
-            $q->whereIn('semester_id', $allPreviousSemesterIds);
+        ->with(['profiles' => function ($q) use ($allPreviousSemesterIds, $semesterId) {
+            $q->whereIn('semester_id', array_merge($allPreviousSemesterIds, [$semesterId]));
         }])
         ->get();
 
+
+
         // Attach latest profile and validated flag
         $students = $students->map(function ($student) use ($newSemester) {
+       $student->previousProfile = $student->profiles
+            ->filter(fn($p) => $p->semester_id < $newSemester->id)
+            ->sortByDesc('semester_id')
+            ->first();
+
         $student->latestProfile = $student->profiles->sortByDesc('semester_id')->first();
+
 
         $validatedProfile = StudentProfile::where('student_id', $student->id)
             ->where('semester_id', $newSemester->id)
             ->first();
 
-        $student->validatedProfile = $validatedProfile; // assign if exists
+       $student->latestTransition = $student->transitions()
+            ->where('semester_id', '<=', $newSemester->id)
+            ->latest('semester_id')
+            ->first();
+
+            $shiftingInCurrentSemester = $student->transitions()
+                ->where('semester_id', $newSemester->id)
+                ->where('transition_type', 'Shifting In')
+                ->exists();
+
+            $student->showShiftingInPill = $shiftingInCurrentSemester;
+
+            
+
+        $student->validatedProfile = $validatedProfile;
         $student->alreadyValidated = $validatedProfile !== null;
 
         return $student;
@@ -163,6 +187,15 @@ class SemesterController extends Controller
             });
         }
 
+        if ($request->filled('filter_transition_type')) {
+            $type = $request->input('filter_transition_type');
+            $students = $students->filter(function ($student) use ($type) {
+                return $student->latestTransition && $student->latestTransition->transition_type === $type;
+            });
+        }
+
+
+
         // Paginate
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $perPage = 10;
@@ -187,41 +220,125 @@ class SemesterController extends Controller
         ]);
     }
 
-    public function processValidateStudents(Request $request, $semesterId)
-    {
-        $validated = $request->validate([
-            'selected_students' => 'required|array',
-            'selected_students.*' => 'exists:students,id',
-        ]);
 
-        $studentsData = $request->input('students', []);
-        $semester = Semester::findOrFail($semesterId);
+public function processValidateStudents(Request $request, $semesterId)
+{
+    $validated = $request->validate([
+        'selected_students' => 'required|array',
+        'selected_students.*' => 'exists:students,id',
+    ]);
 
-        foreach ($validated['selected_students'] as $studentId) {
-            if (!isset($studentsData[$studentId])) continue;
+    $studentsData = $request->input('students', []);
+    $transitionData = $request->input('transitions', []);
+    $semester = Semester::findOrFail($semesterId);
 
-            $data = $studentsData[$studentId];
+    foreach ($validated['selected_students'] as $studentId) {
+        if (!isset($studentsData[$studentId])) continue;
 
-            if (empty($data['course']) || empty($data['year_level']) || empty($data['section'])) continue;
+        $data = $studentsData[$studentId];
+        if (empty($data['course']) || empty($data['year_level']) || empty($data['section'])) continue;
 
-            $exists = StudentProfile::where('student_id', $studentId)
-                                    ->where('semester_id', $semester->id)
-                                    ->exists();
-            if ($exists) continue;
+        $student = Student::find($studentId);
 
-            StudentProfile::create([
-                'student_id'  => $studentId,
-                'semester_id' => $semester->id,
-                'course'      => $data['course'],
-                'year_level'  => $data['year_level'],
-                'section'     => $data['section'],
-            ]);
+        // Transition handling
+        if (isset($transitionData[$studentId])) {
+            $transition = $transitionData[$studentId];
+            $type = $transition['transition_type'] ?? null;
+            $date = $transition['transition_date'] ?? null;
+
+            if ($type && $type !== 'None' && $date) {
+                if ($type === 'Shifting In') {
+                    // Get latest profile (prior to this semester)
+                    $latestProfile = $student->profiles()
+                        ->where('semester_id', '<', $semester->id)
+                        ->orderByDesc('semester_id')->first();
+
+                    $previousSemesterId = $latestProfile?->semester_id;
+
+                    // Create 'Shifting Out' record
+                    if ($previousSemesterId) {
+                        StudentTransition::firstOrCreate([
+                            'student_id' => $studentId,
+                            'semester_id' => $previousSemesterId,
+                            'transition_type' => 'Shifting Out',
+                        ], [
+                            'first_name' => $student->first_name,
+                            'last_name' => $student->last_name,
+                            'transition_date' => $date,
+                            'remark' => 'Auto-generated shift out',
+                        ]);
+                    }
+
+                    // Create 'Shifting In' record
+                    StudentTransition::firstOrCreate([
+                        'student_id' => $studentId,
+                        'semester_id' => $semester->id,
+                        'transition_type' => 'Shifting In',
+                    ], [
+                        'first_name' => $student->first_name,
+                        'last_name' => $student->last_name,
+                        'transition_date' => $date,
+                        'remark' => $transition['remark'] ?? null,
+                    ]);
+                } else {
+                    // Handle other types (e.g. Dropped, Transferring Out, etc.)
+                    $exists = StudentTransition::where('student_id', $studentId)
+                        ->where('semester_id', $semester->id)
+                        ->where('transition_type', $type)
+                        ->exists();
+
+                    if (!$exists) {
+                        StudentTransition::create([
+                            'student_id' => $studentId,
+                            'semester_id' => $semester->id,
+                            'first_name' => $student->first_name,
+                            'last_name' => $student->last_name,
+                            'transition_type' => $type,
+                            'transition_date' => $date,
+                            'remark' => $transition['remark'] ?? null,
+                        ]);
+                    }
+
+                    // Skip creating profile for students going out
+                    if (in_array($type, ['Shifting Out', 'Transferring Out'])) {
+                        continue;
+                    }
+                }
+            }
         }
 
-        return redirect()
-            ->route('semester.validate', $semester->id)
-            ->with('success', 'Selected students validated to the new semester.');
+        // Validation / Profile logic
+        $existingProfile = StudentProfile::withTrashed()
+            ->where('student_id', $studentId)
+            ->where('semester_id', $semester->id)
+            ->first();
+
+        if ($existingProfile) {
+            if ($existingProfile->trashed()) {
+                $existingProfile->restore();
+                $existingProfile->update([
+                    'course' => $data['course'],
+                    'year_level' => $data['year_level'],
+                    'section' => $data['section'],
+                ]);
+            }
+            continue;
+        }
+
+        // Create new profile
+        StudentProfile::create([
+            'student_id' => $studentId,
+            'semester_id' => $semester->id,
+            'course' => $data['course'],
+            'year_level' => $data['year_level'],
+            'section' => $data['section'],
+        ]);
     }
+
+    return redirect()->route('semester.validate', $semester->id)
+        ->with('success', 'Selected students validated and transitions recorded.');
+}
+
 // public function undoValidation(Request $request, $semesterId, $studentId)
 // {
 //     $semester = Semester::findOrFail($semesterId);
@@ -238,4 +355,35 @@ class SemesterController extends Controller
 //     return back()->with('error', 'No validation found for this student in this semester.');
 // }
 
+
+//   public function storeStudentTransition(Request $request)
+// {
+//     $request->validate([
+//         'student_id' => 'required|exists:students,id',
+//         'transition_type' => 'required|in:None,Shifting In,Shifting Out,Transferring In,Transferring Out,Dropped,Returning Student',
+//         'transition_date' => 'required|date',
+//         'remark' => 'nullable|string',
+//     ]);
+
+//     $activeSemester = Semester::where('is_current', true)->first();
+
+//     if (!$activeSemester) {
+//         return back()->with('error', 'No active semester is set.');
+//     }
+
+//     $student = Student::findOrFail($request->student_id);
+
+//     StudentTransition::create([
+//         'student_id' => $student->id,
+//         'semester_id' => $activeSemester->id,
+//         'first_name' => $student->first_name,
+//         'last_name' => $student->last_name,
+//         'transition_type' => $request->transition_type,
+//         'transition_date' => $request->transition_date,
+//         'remark' => $request->remark,
+//     ]);
+
+//    return redirect()->route('students.profile', ['id' => $student->id])->with('success', 'Incoming student transition recorded.');
+
+// }
 }

@@ -1,4 +1,5 @@
 <div x-show="openStudentModal"
+x-data="{ transitionType: '' }"
      x-transition
      class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center"
      style="display: none;">
@@ -133,6 +134,7 @@
                     </div>
             </div>
 
+
             <!-- Parent/Guardian Information -->
             <div>
                 <h3 class="font-semibold text-gray-600 mb-2">Parent/Guardian Information</h3>
@@ -148,8 +150,40 @@
                 </div>
             </div>
 
-                <!-- Family Information -->
+
+            <!-- Transition Type -->
+        <div>
+    <h3 class="font-semibold text-gray-600 mb-2">Transition Information</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+            <label class="text-sm text-gray-600">Transition Type</label>
+            <select name="transition_type" x-model="transitionType" class="w-full mt-1 border-gray-300 rounded">
+                <option value="">None</option>
+                <option value="Shifting In">Shifting In</option>
+                <option value="Transferring In">Transferring In</option>
+            </select>
+        </div>
+
+        <template x-if="transitionType === 'Shifting In' || transitionType === 'Transferring In'">
             <div>
+                <label class="text-sm text-gray-600">Transition Date</label>
+                <input type="date" name="transition_date" class="w-full mt-1 border-gray-300 rounded" />
+            </div>
+        </template>
+
+        <template x-if="transitionType === 'Shifting In' || transitionType === 'Transferring In'">
+            <div class="md:col-span-3">
+                <label class="text-sm text-gray-600">Transition Remarks</label>
+                <textarea name="transition_remark"
+                          rows="3"
+                          class="w-full mt-1 border-gray-300 rounded resize-y"
+                          placeholder="Enter reason, background, and other notes here..."></textarea>
+            </div>
+        </template>
+    </div>
+</div>
+                <!-- Family Information -->
+            {{-- <div>
                 <h3 class="font-semibold text-gray-600 mb-2">Family Information</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
@@ -169,12 +203,13 @@
                         <x-text-input id="mother_occupation" name="mother_occupation" type="text" :value="old('mother_occupation')" placeholder="e.g. Vendor" class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
                 </div>
-            </div>
+            </div> --}}
                    
 
+            
 
             <!-- Siblings Information -->
-            <div>
+            {{-- <div>
                 <h3 class="font-semibold text-gray-600 mb-2">Siblings Information</h3>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <div>
@@ -190,7 +225,7 @@
                         <x-text-input id="ordinal_position" name="ordinal_position" type="number" :value="old('ordinal_position')" placeholder="e.g. 1" class="mt-1 w-full border-gray-300 rounded"/>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Action Buttons -->
             <div class="flex justify-end space-x-3 pt-4">

@@ -46,7 +46,7 @@
                     <div>{{ $transition->to_program }}</div>
                 </div>
 
-                <div class="md:col-span-2">
+                {{-- <div class="md:col-span-2">
                     <strong>Reason for Leaving:</strong>
                     <p class="mt-1 text-gray-700">{{ $transition->reason_leaving }}</p>
                 </div>
@@ -59,7 +59,7 @@
                 <div class="md:col-span-2">
                     <strong>Leave/Drop Reason (if any):</strong>
                     <p class="mt-1 text-gray-700">{{ $transition->leave_reason }}</p>
-                </div>
+                </div> --}}
 
                 <div class="md:col-span-2">
                     <strong>Counselor Notes:</strong>

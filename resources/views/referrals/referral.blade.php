@@ -70,18 +70,20 @@
                                 <div x-data="{ open: false }" class="relative">
                                     <button @click="open = !open">⋮</button>
                                     <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-32 bg-white shadow rounded z-10">
-                                        <div x-data="{ openViewReferralModal_{{ $referral->id }}: false }">
-                                            <button @click="openMenu = false; openViewReferralModal_{{ $referral->id }} = true"
-                                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                View
-                                            </button>
-                                            @include('referrals.view', ['referral' => $referral])
-                                        </div>
-                                        <a href="{{ route('referrals.edit', $referral->id) }}" class="block px-4 py-2 hover:bg-gray-100">Edit</a>
-                                        <form method="POST" action="{{ route('referrals.destroy', $referral->id) }}" onsubmit="return confirm('Are you sure?');">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="w-full px-4 py-2 text-left hover:bg-gray-100 text-red-600">Delete</button>
-                                        </form>
+                                        <a href="{{ route('referrals.view', ['id' => $referral->id, 'source' => 'refferal']) }}"
+                                        class="text-blue-600 hover:underline">
+                                        View
+                                    </a>
+                                    <form action="{{ route('referrals.destroy', $referral->id) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Are you sure you want to delete this counseling record?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                            Delete
+                                        </button>
+                                    </form>
                                     </div>
                                 </div>
                             </td>

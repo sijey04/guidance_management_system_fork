@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Referral;
+use App\Models\ReferralImage;
 use App\Models\ReferralReason;
 use App\Models\semester;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ReferralController extends Controller
 {
@@ -124,10 +126,12 @@ public function create()
     return redirect()->route('referrals.index')->with('success', 'Referral added with images.');
 }
 
-    public function show($id)
+  public function show(Request $request, $id)
 {
-    $referral = Referral::with('student')->findOrFail($id);
-    return view('referrals.view', compact('referral'));
+    $referral = Referral::with(['student.profiles', 'images'])->findOrFail($id);
+    $source = $request->query('source', 'referrals');
+    $readonly = $source === 'report';
+    return view('referrals.view', compact('referral', 'readonly', 'source'));
 }
 
 public function edit($id)
@@ -156,6 +160,66 @@ public function update(Request $request, $id)
 
     return redirect()->route('referrals.index')->with('success', 'Referral updated successfully.');
 }
+
+
+public function updateStatus(Request $request, $id)
+{
+    $referral = Referral::findOrFail($id);
+    $status = $request->input('status');
+
+    if (in_array($status, ['In Progress', 'Completed'])) {
+        $referral->status = $status;
+        $referral->save();
+    }
+
+    return redirect()->route('referrals.view', $id)
+                     ->with('success', 'Status updated successfully.');
+}
+
+public function updateRemarks(Request $request, $id)
+{
+    $referral = Referral::findOrFail($id);
+    $referral->remarks = $request->input('remarks');
+    $referral->save();
+
+    return redirect()->route('referrals.view', $id)
+                     ->with('success', 'Remarks updated successfully.');
+}
+
+public function uploadImages(Request $request, $id, $type)
+{
+    $request->validate([
+        'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    $referral = referral::findOrFail($id);
+
+    foreach ($request->file('images', []) as $file) {
+        $path = $file->store('counseling_images', 'public');
+
+        $referral->images()->create([
+            'image_path' => $path,
+            'type' => $type,
+        ]);
+    }
+
+    return back()->with('success', ucfirst($type) . ' images uploaded successfully.');
+}
+
+public function deleteImage($referralId, $imageId)
+{
+    $image = ReferralImage::findOrFail($imageId);
+
+    if (Storage::disk('public')->exists($image->image_path)) {
+        Storage::disk('public')->delete($image->image_path);
+    }
+
+    $image->delete();
+
+    return back()->with('success', 'Image deleted successfully.');
+}
+
+
 
 }
 

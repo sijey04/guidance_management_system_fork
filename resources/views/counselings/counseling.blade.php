@@ -3,6 +3,7 @@
         <h2 class="font-semibold text-xl text-gray-800">All Counseling Records</h2>
     </x-slot>
 
+    
     <div class="max-w-7xl px-4 mx-auto sm:px-6 lg:px-8 mt-6">
         <div class="flex justify-end mb-4" x-data="{ openModal: false }">
             <button @click="openModal = true"
@@ -13,7 +14,7 @@
             @include('counselings.create', ['students' => $students])
         </div>
 
-        <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="bg-white shadow rounded-lg overflow">
             <table class="min-w-full text-sm text-gray-800 border">
                 <thead class="bg-red-700 text-white">
                     <tr>
@@ -54,14 +55,39 @@
                                     $isOpen = request('view_id') == $counseling->id ? 'true' : 'false';
                                 @endphp
 
-                                <div x-data="{ openViewCounselingModal_{{ $counseling->id }}: {{ $isOpen }} }">
-
-                                    <button @click="openViewCounselingModal_{{ $counseling->id }} = true"
-                                            class="text-blue-600 hover:underline">
+                                <td class="px-4 py-3 text-sm text-gray-700 relative" x-data="{ open: false }">
+                                <!-- 3-dot icon button -->
+                                <button @click="open = !open"
+                                        class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v.01M12 12v.01M12 18v.01" />
+                                    </svg>
+                                </button>
+                                <!-- Dropdown menu -->
+                                <div x-show="open" @click.away="open = false"
+                                    class="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded-md shadow-lg z-10 text-left">
+                                    <a href="{{ route('counseling.view', ['id' => $counseling->id, 'source' => 'counseling']) }}"
+                                        class="text-blue-600 hover:underline">
                                         View
-                                    </button>
-                                    @include('counselings.view', ['counseling' => $counseling])
+                                        </a>
+
+
+                                    <form action="{{ route('counseling.destroy', $counseling->id) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Are you sure you want to delete this counseling record?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                            Delete
+                                        </button>
+                                    </form>
                                 </div>
+                            </td>
+
+
                             </td>
                         </tr>
                     @endforeach

@@ -96,6 +96,10 @@ public function user()
 
 
 
+public function transitions()
+{
+    return $this->hasMany(StudentTransition::class);
+}
 
 
 }

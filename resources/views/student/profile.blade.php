@@ -32,6 +32,9 @@
                                 {{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffix }}
                             </span>
                             <div class="flex gap-3">
+
+
+
                                 <!-- Edit Button -->
                                 <div x-data="{ openEditStudentModal: {{ $errors->any() ? 'true' : 'false' }} }">
                                     <button @click="openEditStudentModal = true" class="sign-in-btn" 
@@ -51,11 +54,11 @@
                                         Delete
                                     </button>
                                 </form>
+                                
 
                             </div>
                         </div>
-
-                        
+                     
                         <!-- Basic Information -->
                         <h3 class="text-lg font-semibold" style="color:#a82323; border-bottom:1.5px solid #f8eaea; padding-bottom:6px;">Basic Information</h3>
                         <p class="text-sm text-gray-500 mb-3">Personal and enrollment details of the student.</p>

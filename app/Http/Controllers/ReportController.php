@@ -73,14 +73,19 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
             ->whereIn('semester_id', $semesterIds)
             ->when($request->filled('filter_counseling_status'), fn($q) => $q->where('status', $request->filter_counseling_status))
             ->get();
-    } else {
-        $studentProfiles = collect();
-        $contracts = collect();
-        $referrals = collect();
-        $counselings = collect();
-    }
 
-    $transitions = StudentTransition::all();
+            $transitions = StudentTransition::with('student')
+            ->whereIn('semester_id', $semesterIds)
+            ->get();
+    
+        } else {
+    $studentProfiles = collect();
+    $contracts = collect();
+    $referrals = collect();
+    $counselings = collect();
+    $transitions = collect(); 
+}
+
     $uniqueStudentIds = $studentProfiles->pluck('student_id')->unique();
 
     return view('reports.report', [

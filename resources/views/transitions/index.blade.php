@@ -6,10 +6,8 @@
     <div class="px-4 py-6 max-w-7xl mx-auto" x-data="{ openModal: false }">
 
         <div class="mb-4">
-            <button @click="openModal = true"
-                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                Add Student
-            </button>
+            <button @click="openModal = true" class="bg-indigo-600 text-white px-4 py-2 rounded text-sm">Add Transition</button>
+
         </div>
 
         @include('transitions.create')
@@ -22,6 +20,8 @@
             <table class="w-full text-sm text-left border">
                 <thead class="bg-gray-100">
                     <tr>
+                        <th class="p-2">A.Y</th>
+                        <th class="p-2">Semester</th>
                         <th class="p-2">Name</th>
                         <th class="p-2">Type</th>
                         <th class="p-2">Date</th>
@@ -31,6 +31,8 @@
                 <tbody>
                     @forelse($transitions as $transition)
                         <tr class="border-t">
+                            <td class="px-2 py-4">{{ $transition->semester->schoolYear->school_year ?? 'N/A' }}</td>
+                            <td class="py-4">{{ $transition->semester->semester ?? 'N/A' }}</td>
                             <td class="p-2">{{ $transition->last_name }}, {{ $transition->first_name }}</td>
                             <td class="p-2">{{ $transition->transition_type }}</td>
                             <td class="p-2">{{ \Carbon\Carbon::parse($transition->transition_date)->format('M d, Y') }}</td>
