@@ -13,16 +13,15 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700">Transition Type</label>
-                <select name="transition_type" required class="w-full border-gray-300 rounded mt-1">
-                    {{-- <option value="">Select type</option> --}}
-                    <option value="None">None</option>
-                    {{-- <option value="Shifting In">Shifting In</option> --}}
+               <select name="transitions[{{ $id }}][transition_type]" class="w-full border-gray-300 rounded">
+                    <option value="">None</option>
+                    <option value="Shifting In">Shifting In</option>
                     <option value="Shifting Out">Shifting Out</option>
-                    {{-- <option value="Transferring In">Transferring In</option> --}}
                     <option value="Transferring Out">Transferring Out</option>
                     <option value="Dropped">Dropped</option>
-                    {{-- <option value="Returning Student">Returning Student</option> --}}
+                    <option value="Returning Student">Returning Student</option>
                 </select>
+
 
             </div>
 

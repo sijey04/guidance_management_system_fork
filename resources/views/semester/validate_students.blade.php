@@ -154,13 +154,20 @@
                                     @php
                                         $profile = $student->validatedProfile ?? $student->latestProfile;
                                         $id = $student->id;
+                                        $transitionType = $student->latestTransition->transition_type ?? null;
+
+                                        // Classification
+                                        $isExcluded = in_array($transitionType, ['Shifting Out', 'Transferring Out']);
+                                        $isDropped = $transitionType === 'Dropped';
+                                        $isDisabled = $student->alreadyValidated || $isExcluded;
                                     @endphp
+
                                     <tr class="border-b hover:bg-gray-50">
                                         <td class="p-3 text-center">
                                             @if ($student->alreadyValidated)
                                                 <span class="text-green-700 text-xs font-semibold bg-green-100 px-2 py-1 rounded">Validated</span>
-                                            @elseif($student->latestTransition && $student->latestTransition->transition_type !== 'Returning Student')
-                                                <span class="text-red-700 text-xs font-semibold bg-red-100 px-2 py-1 rounded">Excluded</span>
+                                            @elseif($isExcluded)
+                                                <span class="text-red-700 text-xs font-semibold bg-red-100 px-2 py-1 rounded">{{ $transitionType }}</span>
                                             @else
                                                 <input type="checkbox"
                                                     name="selected_students[]"
@@ -169,7 +176,6 @@
                                                     @change="toggle('{{ $id }}')"
                                                     class="form-checkbox">
                                             @endif
-
                                         </td>
                                         <td class="p-3 px-5">
                                             <div class="font-medium">
@@ -189,42 +195,50 @@
                                             {{ $student->latestProfile->year_level ?? '-' }}{{ $student->latestProfile->section ?? '' }}
                                         </td>
                                         <td class="p-3">
-                                            <select name="students[{{ $id }}][course]" class="w-full border-gray-300 rounded"
-                                            x-model="studentData['{{ $id }}']?.course ?? '{{ $student->alreadyValidated ? $student->validatedProfile->course : $student->latestProfile->course }}'"
-                                            @change="updateStudentValue('{{ $id }}', 'course', $event.target.value)"
-                                            {{ $student->alreadyValidated ? 'disabled' : '' }}>
-                                            @foreach($courses as $course)
-                                                <option value="{{ $course->course }}">{{ $course->course }}</option>
-                                            @endforeach
-                                        </select>
+                                            <select name="students[{{ $id }}][course]"
+                                                class="w-full border-gray-300 rounded"
+                                                x-model="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
+                                                @change="updateStudentValue('{{ $id }}', 'course', $event.target.value)"
+                                                {{ $isDisabled ? 'disabled' : '' }}>
+                                                @foreach($courses as $course)
+                                                    <option value="{{ $course->course }}">{{ $course->course }}</option>
+                                                @endforeach
+                                            </select>
+
 
                                         </td>
                                         <td class="p-3">
-                                            <select name="students[{{ $id }}][year_level]" class="w-full border-gray-300 rounded"
+                                            <select name="students[{{ $id }}][year_level]"
+                                                class="w-full border-gray-300 rounded"
                                                 x-model="studentData['{{ $id }}']?.year_level ?? '{{ $profile->year_level }}'"
                                                 @change="updateStudentValue('{{ $id }}', 'year_level', $event.target.value)"
-                                                {{ $student->alreadyValidated ? 'disabled' : '' }}>
+                                                {{ $isDisabled ? 'disabled' : '' }}>
                                                 @foreach($years as $year)
                                                     <option value="{{ $year->year_level }}">{{ $year->year_level }}</option>
                                                 @endforeach
                                             </select>
+
                                         </td>
                                         <td class="p-3">
-                                            <select name="students[{{ $id }}][section]" class="w-full border-gray-300 rounded"
+                                            <select name="students[{{ $id }}][section]"
+                                                class="w-full border-gray-300 rounded"
                                                 x-model="studentData['{{ $id }}']?.section ?? '{{ $profile->section }}'"
                                                 @change="updateStudentValue('{{ $id }}', 'section', $event.target.value)"
-                                                {{ $student->alreadyValidated ? 'disabled' : '' }}>
+                                                {{ $isDisabled ? 'disabled' : '' }}>
                                                 @foreach($sections as $section)
                                                     <option value="{{ $section->section }}">{{ $section->section }}</option>
                                                 @endforeach
                                             </select>
+
                                         </td>
                                         <td>
     <div x-data="{ openModal{{ $id }}: false }">
-        <button type="button" @click="openModal{{ $id }} = true"
-            class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 text-sm font-semibold">
+       <button type="button" @click="openModal{{ $id }} = true"
+            class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 text-sm font-semibold"
+            {{ $isDisabled ? 'disabled' : '' }}>
             Mark Transition
         </button>
+
 
         <div x-show="openModal{{ $id }}" @keydown.escape.window="openModal{{ $id }} = false"
             x-cloak class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
@@ -239,6 +253,7 @@
                         <label class="block text-sm font-medium text-gray-700">Transition Type</label>
                         <select name="transitions[{{ $id }}][transition_type]" class="w-full border-gray-300 rounded">
                             <option value="">None</option>
+                            <option value="Shifting In">Shifting In</option>
                             <option value="Shifting Out">Shifting Out</option>
                             <option value="Transferring Out">Transferring Out</option>
                             <option value="Dropped">Dropped</option>

@@ -114,13 +114,15 @@ class SemesterController extends Controller
 
         $allPreviousSemesterIds = Semester::where('id', '<', $semesterId)->pluck('id')->toArray();
 
-        $students = Student::whereHas('profiles', function ($q) use ($allPreviousSemesterIds) {
-            $q->whereIn('semester_id', $allPreviousSemesterIds);
+        $students = Student::whereHas('profiles', function ($q) use ($allPreviousSemesterIds, $semesterId) {
+            $q->whereIn('semester_id', array_merge($allPreviousSemesterIds, [$semesterId]));
         })
-        ->with(['profiles' => function ($q) use ($allPreviousSemesterIds) {
-            $q->whereIn('semester_id', $allPreviousSemesterIds);
+        ->with(['profiles' => function ($q) use ($allPreviousSemesterIds, $semesterId) {
+            $q->whereIn('semester_id', array_merge($allPreviousSemesterIds, [$semesterId]));
         }])
         ->get();
+
+
 
         // Attach latest profile and validated flag
         $students = $students->map(function ($student) use ($newSemester) {
@@ -236,10 +238,11 @@ public function processValidateStudents(Request $request, $semesterId)
                     ]);
                 }
 
-                // Skip profile creation if student is transitioning out
-                if (!in_array($type, ['Returning Student'])) {
+                // Skip profile creation if student is transitioning OUT
+                if (in_array($type, ['Shifting Out', 'Transferring Out'])) {
                     continue;
                 }
+
             }
         }
 
@@ -252,9 +255,16 @@ public function processValidateStudents(Request $request, $semesterId)
         if ($existingProfile) {
             if ($existingProfile->trashed()) {
                 $existingProfile->restore();
+                // Update with latest values
+                $existingProfile->update([
+                    'course' => $data['course'],
+                    'year_level' => $data['year_level'],
+                    'section' => $data['section'],
+                ]);
             }
             continue;
         }
+
 
         StudentProfile::create([
             'student_id' => $studentId,
