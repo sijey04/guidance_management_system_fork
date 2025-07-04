@@ -96,6 +96,10 @@ Route::resource('counselings', CounselingController::class);
 Route::put('/counselings/{id}', [CounselingController::class, 'update'])->name('counselings.update');
 Route::patch('/counseling/{counseling}/status', [App\Http\Controllers\CounselingController::class, 'updateStatus'])->name('counseling.updateStatus');
 Route::patch('/counselings/{counseling}/remarks', [CounselingController::class, 'updateRemarks'])->name('counseling.updateRemarks');
+Route::get('/counseling/{id}/view', [CounselingController::class, 'show'])->name('counseling.view');
+Route::post('/counseling/{id}/upload-images/{type}', [CounselingController::class, 'uploadImages'])->name('counseling.uploadImages');
+Route::delete('/counseling/{counseling}/images/{image}', [CounselingController::class, 'deleteImage'])->name('counseling.deleteImage');
+Route::delete('/counseling/{id}', [CounselingController::class, 'destroy'])->name('counseling.destroy');
 
 // Show the validation form modal
 //Route::get('/semester/{id}/validate', [SemesterController::class, 'showValidationForm'])->name('semester.validate');
@@ -125,10 +129,14 @@ Route::get('/contract-types', [ContractTypeController::class, 'index'])->name('c
 Route::post('/contract-types', [ContractTypeController::class, 'store'])->name('contract-types.store');
 Route::delete('/contract-types/{id}', [ContractTypeController::class, 'destroy'])->name('contract-types.destroy');
 Route::resource('contracts', ContractController::class);
+Route::get('/contracts/{id}/view', [ContractController::class, 'view'])->name('contracts.view');
 
 Route::post('/contracts/{id}/mark-complete', [ContractController::class, 'markComplete'])->name('contracts.markComplete');
 Route::post('/contracts/{id}/mark-inprogress', [ContractController::class, 'markInProgress'])->name('contracts.markInProgress');
 Route::put('/contracts/{id}', [ContractController::class, 'update'])->name('contracts.update');
+Route::patch('/contracts/{contract}/remarks', [ContractController::class, 'updateRemarks'])->name('contract.updateRemarks');
+Route::patch('/contracts/{contracts}/status', [ContractController::class, 'updateStatus'])->name('contract.updateStatus');
+
 
 Route::resource('referrals', ReferralController::class);
 Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');

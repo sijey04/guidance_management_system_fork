@@ -78,23 +78,12 @@
                                                 <!-- Dropdown menu -->
                                                 <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg z-20">
                                                     <!-- View -->
-                                                     <div x-data="{ openViewContractModal_{{ $contract->id }}: false }">
-                                                        <button @click="openMenu = false; openViewContractModal_{{ $contract->id }} = true"
-                                                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                     <a href="{{ route('contracts.view', ['id' => $contract->id, 'source' => 'contract']) }}">
+                                                         <button class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
                                                             View
                                                         </button>
-                                                        @include('contracts.viewContract', ['contract' => $contract])
-                                                    </div>
+                                                    </a>
 
-                                                    <!-- Edit -->
-                                                    <div x-data="{ openEditContractModal_{{ $contract->id }}: false }">
-
-                                                        <button @click="openMenu = false; openEditContractModal_{{ $contract->id }} = true"
-                                                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                            Edit
-                                                        </button>
-                                                        @include('contracts.editContract', ['contract' => $contract])
-                                                    </div>
                                                     <!-- Delete -->
                                                     <form method="POST" action="{{ route('contracts.destroy', $contract->id) }}" 
                                                         onsubmit="return confirm('Are you sure you want to delete this contract?');">
@@ -104,8 +93,7 @@
                                                             Delete
                                                         </button>
                                                     </form>
-
-                                                    <!-- Mark as Completed/In Progress -->
+                                                    {{-- <!-- Mark as Completed/In Progress -->
                                                     @if($contract->status === 'In Progress')
                                                         <form method="POST" action="{{ route('contracts.markComplete', $contract->id) }}">
                                                             @csrf
@@ -120,7 +108,7 @@
                                                                 Mark as In Progress
                                                             </button>
                                                         </form>
-                                                    @endif
+                                                    @endif --}}
                                                 </div>
                                             </div>
                                         </td>

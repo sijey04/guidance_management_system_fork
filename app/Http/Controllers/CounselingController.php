@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
 use App\Models\counseling;
 use App\Models\CounselingImage;
 use App\Models\semester;
@@ -102,11 +103,17 @@ public function store(Request $request)
     /**
      * Display the specified resource.
      */
-   public function show(Counseling $counseling)
+  public function show($id, Request $request)
 {
-    $counseling->load(['student', 'images']); 
-    return view('counselings.view', compact('counseling'));
+    $counseling = Counseling::with(['student.profiles', 'images'])->findOrFail($id);
+    
+    $source = $request->query('source', 'counseling'); // default to 'counseling'
+    $readonly = $source === 'report'; // make it readonly if from report
+
+    return view('counselings.view', compact('counseling', 'readonly', 'source'));
 }
+
+
 
 
     /**
@@ -138,44 +145,90 @@ public function store(Request $request)
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(counseling $counseling)
-    {
-        //
+    public function destroy($id)
+{
+    $counseling = \App\Models\Counseling::findOrFail($id);
+
+    foreach ($counseling->images as $image) {
+        if (Storage::exists($image->image_path)) {
+            Storage::delete($image->image_path);
+        }
+        $image->delete();
     }
 
+    $counseling->delete();
 
-public function updateStatus(Request $request, Counseling $counseling)
-{
-    $request->validate([
-        'status' => 'required|in:In Progress,Completed'
-    ]);
-
-    $counseling->status = $request->status;
-    $counseling->save();
-
-    return redirect()->route('counselings.index', [
-    'page' => request()->page, // 👈 retain current page
-    'view_id' => $counseling->id
-])->with('success', 'Status updated.');
-
+    return redirect()->route('counselings.index')->with('success', 'Counseling record deleted.');
 }
 
-public function updateRemarks(Request $request, Counseling $counseling)
+
+public function updateStatus(Request $request, $id)
 {
-    $request->validate([
-        'remarks' => 'nullable|string|max:1000',
-    ]);
+    $counseling = Counseling::findOrFail($id);
+    $status = $request->input('status');
 
-    $counseling->remarks = $request->remarks;
-    $counseling->save();
+    if (in_array($status, ['In Progress', 'Completed'])) {
+        $counseling->status = $status;
+        $counseling->save();
+    }
 
-    return redirect()->route('counselings.index', [
-    'page' => request()->page,
-    'view_id' => $counseling->id
-])->with('success', 'Remarks updated.');
-
+    return redirect()->route('counseling.view', $id)
+                     ->with('success', 'Status updated successfully.');
 }
 
+public function updateRemarks(Request $request, $id)
+{
+    $counseling = Counseling::findOrFail($id);
+    $counseling->remarks = $request->input('remarks');
+    $counseling->save();
+
+    return redirect()->route('counseling.view', $id)
+                     ->with('success', 'Remarks updated successfully.');
+}
+
+public function uploadImages(Request $request, $id, $type)
+{
+    $request->validate([
+        'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    $counseling = Counseling::findOrFail($id);
+
+    foreach ($request->file('images', []) as $file) {
+        $path = $file->store('counseling_images', 'public');
+
+        $counseling->images()->create([
+            'image_path' => $path,
+            'type' => $type,
+        ]);
+    }
+
+    return back()->with('success', ucfirst($type) . ' images uploaded successfully.');
+}
+
+public function deleteImage($counselingId, $imageId)
+    {
+        $image = CounselingImage::findOrFail($imageId);
+
+        if (Storage::exists($image->image_path)) {
+            Storage::delete($image->image_path);
+        }
+
+        $image->delete();
+
+        return redirect()->back()->with('success', 'Image deleted successfully.');
+    }
+
+//     public function view($id)
+// {
+//     $counseling = Counseling::with('student.profiles', 'images')->findOrFail($id);
+//     $readonly = false;
+
+//     // Capture previous page URL
+//     session(['previous_url' => url()->previous()]);
+
+//     return view('counselings.view', compact('counseling', 'readonly'));
+// }
 
 
 }

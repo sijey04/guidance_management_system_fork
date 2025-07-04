@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
 use App\Models\contract;
 use App\Models\ContractImage;
 use App\Models\ContractType;
@@ -100,9 +101,9 @@ public function store(Request $request)
     /**
      * Display the specified resource.
      */
-    public function show(contract $contract)
+    public function show()
     {
-        //
+        
     }
 
     /**
@@ -136,14 +137,21 @@ public function store(Request $request)
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
-    {
-         $contract = Contract::findOrFail($id);
-        $contract->delete();
+       public function destroy($id)
+        {
+            $contract = \App\Models\Counseling::findOrFail($id);
 
-        return redirect()->route('contracts.index')->with('success', 'Contract deleted successfully.');
+            foreach ($contract->images as $image) {
+                if (Storage::exists($image->image_path)) {
+                    Storage::delete($image->image_path);
+                }
+                $image->delete();
+            }
 
-    }
+            $contract->delete();
+
+            return redirect()->route('contracts.index')->with('success', 'Counseling record deleted.');
+        }
 
     public function createForStudent(Student $student)
 {
@@ -192,11 +200,17 @@ public function allContracts(Request $request)
 }
 
 
-public function view($id)
+public function view(Request $request, $id)
 {
-    $contract = Contract::with('student')->findOrFail($id);
-    return view('contracts.viewContract', compact('contract'));
+    $contract = Contract::with(['student.profiles', 'images'])->findOrFail($id);
+
+    $source = $request->query('source', 'contract'); // default to 'contract'
+    $readonly = $source === 'report'; // disable editing when source is report
+
+    return view('contracts.viewContract', compact('contract', 'readonly', 'source'));
 }
+
+
 
 
 public function markComplete($id)
@@ -215,7 +229,29 @@ public function markInProgress($id)
     return back()->with('success', 'Contract marked as In Progress.');
 }
 
+public function updateRemarks(Request $request, $id)
+{
+    $contracts = contract::findOrFail($id);
+    $contracts->remarks = $request->input('remarks');
+    $contracts->save();
 
+    return redirect()->route('contracts.view', $id)
+                     ->with('success', 'Remarks updated successfully.');
+}
+
+public function updateStatus(Request $request, $id)
+{
+    $contract = contract::findOrFail($id);
+    $status = $request->input('status');
+
+    if (in_array($status, ['In Progress', 'Completed'])) {
+        $contract->status = $status;
+        $contract->save();
+    }
+
+    return redirect()->route('contracts.view', $id)
+                     ->with('success', 'Status updated successfully.');
+}
 
 
 }

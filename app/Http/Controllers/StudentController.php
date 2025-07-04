@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\contract;
 use App\Models\ContractType;
+use App\Models\CounselingImage;
 use App\Models\Course;
 use App\Models\Post;
 use App\Models\Section;
@@ -13,6 +14,7 @@ use App\Models\StudentProfile;
 use App\Models\StudentSemesterEnrollment;
 use App\Models\Year;
 use Illuminate\Http\Request;
+ use App\Models\StudentTransition; // Add to top if not already imported
 
 class StudentController extends Controller
 {
@@ -111,6 +113,10 @@ class StudentController extends Controller
         'course' => 'required|exists:courses,course',
         'year_level' => 'required|exists:years,year_level',
         'section' => 'required|exists:sections,section',
+
+         'transition_type' => 'nullable|in:Shifting In,Transferring In',
+        'transition_date' => 'nullable|date|required_with:transition_type',
+        'remark' => 'nullable|string|max:255',
     ]);
 
     // Save the Student first (this goes to 'students' table)
@@ -166,6 +172,21 @@ class StudentController extends Controller
         'ordinal_position' => $validated['ordinal_position'] ?? null,
         'student_contact' => $validated['student_contact'] ?? null,
     ]);
+
+   
+
+    if ($request->filled('transition_type') && $request->input('transition_type') !== 'None') {
+        StudentTransition::create([
+            'student_id' => $student->id,
+            'semester_id' => $activeSemester->id,
+            'first_name' => $student->first_name,
+            'last_name' => $student->last_name,
+            'transition_type' => $request->transition_type,
+            'transition_date' => $request->transition_date,
+            'remark' => $request->transition_remark,
+        ]);
+    }
+
 
     return redirect()->route('student.index')->with('success', 'Student created successfully with course, year level, and section.');
 }
@@ -425,12 +446,7 @@ public function unenrollAll()
 
     return redirect()->back()->with('success', 'All students unenrolled for the active semester.');
 }
-public function deleteAll()
-{
-    Student::query()->delete(); // This will hard-delete all students
 
-    return redirect()->route('students.index')->with('success', 'All students deleted successfully.');
-}
 
 public function updateProfile(Request $request, Student $student)
 {
@@ -460,7 +476,6 @@ public function viewProfile($studentId, $profileId)
 
     return view('student.view_profile', compact('student', 'profile'));
 }
-
 
 
 

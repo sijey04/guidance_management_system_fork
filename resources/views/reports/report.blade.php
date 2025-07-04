@@ -253,13 +253,10 @@
                                     <td class="px-4 py-2">{{ $contract->status }}</td>
                                     <td class="px-4 py-2">{{ $contract->start_date }} - {{ $contract->end_date }}</td>
                                  <td class="px-4 py-2">
-                                    <div x-data="{ openViewContractModal_{{ $contract->id }}: false }">
-                                        <button @click="openMenu = false; openViewContractModal_{{ $contract->id }} = true"
-                                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <a href="{{ route('contracts.view', ['id' => $contract->id, 'source' => 'report']) }}"
+                                            class="text-blue-600 hover:underline">
                                             View
-                                        </button>
-                                        @include('contracts.viewContract', ['contract' => $contract])
-                                    </div>
+                                            </a>
                                 </td>
                                 </tr>
                             @empty
@@ -326,13 +323,11 @@
                                     <td class="px-4 py-2">{{ $counseling->status }}</td>
                                     <td class="px-4 py-2">{{ $counseling->remarks }}</td>
                                     <td> 
-                                        <div x-data="{ openViewCounselingModal_{{ $counseling->id }}: false }">
-                                            <button @click="openViewCounselingModal_{{ $counseling->id }} = true"
-                                                    class="text-blue-600 hover:underline">
-                                                View
-                                            </button>
-                                            @include('counselings.view', ['counseling' => $counseling, 'readonly' => true])
-                                        </div>
+                                        <a href="{{ route('counseling.view', ['id' => $counseling->id, 'source' => 'report']) }}"
+                                            class="text-blue-600 hover:underline">
+                                            View
+                                            </a>
+
                                     </td>
                                 </tr>
                             @empty
