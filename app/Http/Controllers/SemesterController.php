@@ -138,7 +138,13 @@ class SemesterController extends Controller
             ->where('semester_id', $newSemester->id)
             ->first();
 
-        $student->latestTransition = $student->transitions()->latest()->first();
+       $student->latestTransition = $student->transitions()
+            ->where('semester_id', '<=', $newSemester->id)
+            ->latest('semester_id')
+            ->first();
+
+            
+
         $student->validatedProfile = $validatedProfile;
         $student->alreadyValidated = $validatedProfile !== null;
 

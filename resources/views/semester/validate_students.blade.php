@@ -169,11 +169,18 @@
                                         $id = $student->id;
                                         $transitionType = $student->latestTransition->transition_type ?? null;
 
-                                        // Classification
+                                        $isNewOrTransferredIn = !$student->previousProfile || $student->previousProfile->semester_id == $newSemester->id;
+
                                         $isExcluded = in_array($transitionType, ['Shifting Out', 'Transferring Out']);
                                         $isDropped = $transitionType === 'Dropped';
-                                        $isDisabled = $student->alreadyValidated || $isExcluded;
+
+                                        $disableDropdowns = $student->alreadyValidated || $isExcluded || $isNewOrTransferredIn;
+
+                                        $hasReturnableTransition = in_array($transitionType, ['Shifting Out', 'Transferring Out', 'Dropped']);
+                                        $isDisabled = $student->alreadyValidated && !$hasReturnableTransition;
                                     @endphp
+
+
 
                                     <tr class="border-b hover:bg-gray-50">
                                         <td class="p-3 text-center">
@@ -193,27 +200,38 @@
                                         <td class="p-3 px-5">
                                             <div class="font-medium">
                                                 {{ $student->first_name }} {{ $student->last_name }}
-
-                                                @if($student->latestTransition && $student->latestTransition->transition_type !== 'None')
+                                               <div class="text-xs text-gray-500">ID: {{ $student->student_id }}</div>
+                                                 @if($student->latestTransition && $student->latestTransition->transition_type !== 'None')
                                                     <span class="ml-2 text-xs text-red-700 bg-red-100 px-1 py-1 rounded-full">
-                                                     {{ $student->latestTransition->transition_type }}
+                                                        {{ $student->latestTransition->transition_type }}
                                                     </span>
                                                 @endif
+
+                                                @if($student->lastOutTransition)
+                                                    <div class="mt-1 text-xs inline-block bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
+                                                        {{ $student->lastOutTransition->transition_type }} from prev sem
+                                                    </div>
+                                                @endif
                                             </div>
-                                            <div class="text-xs text-gray-500">ID: {{ $student->student_id }}</div>
+                                            
                                         </td>
 
                                         <td class="p-3">
-                                            {{ $student->previousProfile->course ?? '-' }}<br>
-                                            {{ $student->previousProfile->year_level ?? '-' }}{{ $student->previousProfile->section ?? '' }}
+                                            @if($isNewOrTransferredIn)
+                                                <span class="text-sm text-blue-700 bg-blue-100 px-5 py-2 rounded">New</span>
+                                            @else
+                                                {{ $student->previousProfile->course ?? '' }}<br>
+                                                {{ $student->previousProfile->year_level ?? '' }}{{ $student->previousProfile->section ?? '' }}
+                                            @endif
                                         </td>
+
 
                                         <td class="p-3">
                                             <select name="students[{{ $id }}][course]"
                                                 class="w-full border-gray-300 rounded"
                                                 x-model="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
                                                 @change="updateStudentValue('{{ $id }}', 'course', $event.target.value)"
-                                                {{ $isDisabled ? 'disabled' : '' }}>
+                                                {{ $disableDropdowns ? 'disabled' : '' }}>
                                                 @foreach($courses as $course)
                                                     <option value="{{ $course->course }}">{{ $course->course }}</option>
                                                 @endforeach
@@ -226,7 +244,7 @@
                                                 class="w-full border-gray-300 rounded"
                                                 x-model="studentData['{{ $id }}']?.year_level ?? '{{ $profile->year_level }}'"
                                                 @change="updateStudentValue('{{ $id }}', 'year_level', $event.target.value)"
-                                                {{ $isDisabled ? 'disabled' : '' }}>
+                                                {{ $disableDropdowns ? 'disabled' : '' }}>
                                                 @foreach($years as $year)
                                                     <option value="{{ $year->year_level }}">{{ $year->year_level }}</option>
                                                 @endforeach
@@ -238,7 +256,7 @@
                                                 class="w-full border-gray-300 rounded"
                                                 x-model="studentData['{{ $id }}']?.section ?? '{{ $profile->section }}'"
                                                 @change="updateStudentValue('{{ $id }}', 'section', $event.target.value)"
-                                                {{ $isDisabled ? 'disabled' : '' }}>
+                                                {{ $disableDropdowns ? 'disabled' : '' }}>
                                                 @foreach($sections as $section)
                                                     <option value="{{ $section->section }}">{{ $section->section }}</option>
                                                 @endforeach
@@ -246,53 +264,55 @@
 
                                         </td>
                                         <td>
-    <div x-data="{ openModal{{ $id }}: false }">
-       <button type="button" @click="openModal{{ $id }} = true"
-            class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 text-sm font-semibold"
-            {{ $isDisabled ? 'disabled' : '' }}>
-            Mark Transition
-        </button>
+                                            <div x-data="{ openModal{{ $id }}: false }">
+                                            <button type="button"
+                                                    @click="openModal{{ $id }} = true"
+                                                    class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 text-sm font-semibold"
+                                                    :disabled="{{ $isDisabled ? 'true' : 'false' }}">
+                                                    Mark Transition
+                                                </button>
 
 
-        <div x-show="openModal{{ $id }}" @keydown.escape.window="openModal{{ $id }} = false"
-            x-cloak class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-            <div @click.away="openModal{{ $id }} = false"
-                class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
-                <h2 class="text-lg font-bold mb-4 text-gray-800">Mark Transition for {{ $student->first_name }}</h2>
 
-                <div class="space-y-4">
-                    <input type="hidden" name="transitions[{{ $id }}][student_id]" value="{{ $id }}">
+                                                <div x-show="openModal{{ $id }}" @keydown.escape.window="openModal{{ $id }} = false"
+                                                    x-cloak class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                                                    <div @click.away="openModal{{ $id }} = false"
+                                                        class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+                                                        <h2 class="text-lg font-bold mb-4 text-gray-800">Mark Transition for {{ $student->first_name }}</h2>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Transition Type</label>
-                        <select name="transitions[{{ $id }}][transition_type]" class="w-full border-gray-300 rounded">
-                            <option value="">None</option>
-                            <option value="Shifting In">Shifting In</option>
-                            <option value="Shifting Out">Shifting Out</option>
-                            <option value="Transferring Out">Transferring Out</option>
-                            <option value="Dropped">Dropped</option>
-                            <option value="Returning Student">Returning Student</option>
-                        </select>
-                    </div>
+                                                        <div class="space-y-4">
+                                                            <input type="hidden" name="transitions[{{ $id }}][student_id]" value="{{ $id }}">
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Transition Date</label>
-                        <input type="date" name="transitions[{{ $id }}][transition_date]" class="w-full border-gray-300 rounded">
-                    </div>
+                                                            <div>
+                                                                <label class="block text-sm font-medium text-gray-700">Transition Type</label>
+                                                                <select name="transitions[{{ $id }}][transition_type]" class="w-full border-gray-300 rounded">
+                                                                    <option value="">None</option>
+                                                                    <option value="Shifting In">Shifting In</option>
+                                                                    <option value="Shifting Out">Shifting Out</option>
+                                                                    <option value="Transferring Out">Transferring Out</option>
+                                                                    <option value="Dropped">Dropped</option>
+                                                                    <option value="Returning Student">Returning Student</option>
+                                                                </select>
+                                                            </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Remarks</label>
-                        <textarea name="transitions[{{ $id }}][remark]" rows="2" class="w-full border-gray-300 rounded"></textarea>
-                    </div>
+                                                            <div>
+                                                                <label class="block text-sm font-medium text-gray-700">Transition Date</label>
+                                                                <input type="date" name="transitions[{{ $id }}][transition_date]" class="w-full border-gray-300 rounded">
+                                                            </div>
 
-                    <div class="text-right mt-4">
-                        <button type="button" @click="openModal{{ $id }} = false" class="text-sm text-gray-600 hover:underline">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</td>
+                                                            <div>
+                                                                <label class="block text-sm font-medium text-gray-700">Remarks</label>
+                                                                <textarea name="transitions[{{ $id }}][remark]" rows="2" class="w-full border-gray-300 rounded"></textarea>
+                                                            </div>
+
+                                                            <div class="text-right mt-4">
+                                                                <button type="button" @click="openModal{{ $id }} = false" class="text-sm text-gray-600 hover:underline">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
 
                                     </tr>
                                 @endforeach
