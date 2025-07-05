@@ -14,7 +14,7 @@ use App\Models\StudentProfile;
 use App\Models\StudentSemesterEnrollment;
 use App\Models\Year;
 use Illuminate\Http\Request;
- use App\Models\StudentTransition; // Add to top if not already imported
+ use App\Models\StudentTransition; 
 use App\Models\StudentTransitionImage;
 
 class StudentController extends Controller
@@ -22,46 +22,56 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-   public function index(Request $request)
+ public function index(Request $request)
 {
     $activeSemester = Semester::where('is_current', true)->first();
-
-    if (!$activeSemester) {
-        // If no active semester, return an empty collection
-        $students = collect(); // empty collection
-    } else {
-        $query = Student::withCount('contracts')
-                        ->whereHas('profiles', function ($q) use ($activeSemester) {
-                            $q->where('semester_id', $activeSemester->id);
-                        });
-
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('student_id', 'like', "%{$search}%")
-                  ->orWhere('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('sort_by')) {
-            $sortField = $request->input('sort_by');
-            $sortDirection = $request->input('sort_direction', 'asc');
-            $query->orderBy($sortField, $sortDirection);
-        }
-
-        $students = $query->paginate(8);
-    }
 
     $courses = Course::all();
     $years = Year::all();
     $sections = Section::all();
-    $semesters = Semester::all();
 
-    
+    if (!$activeSemester) {
+        $students = collect();
+    } else {
+        $query = Student::withCount('contracts')
+            ->whereHas('profiles', function ($q) use ($activeSemester, $request) {
+                $q->where('semester_id', $activeSemester->id);
 
-    return view('student.students', compact('students', 'courses', 'years', 'sections', 'semesters', 'activeSemester'));
+                if ($request->filled('filter_course')) {
+                    $q->where('course', $request->filter_course);
+                }
+
+                if ($request->filled('filter_year_level')) {
+                    $q->where('year_level', $request->filter_year_level);
+                }
+
+                if ($request->filled('filter_section')) {
+                    $q->where('section', $request->filter_section);
+                }
+            });
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('student_id', 'like', '%' . $request->search . '%')
+                  ->orWhere('first_name', 'like', '%' . $request->search . '%')
+                  ->orWhere('last_name', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('sort')) {
+            $sort = $request->sort;
+            $direction = $request->input('direction', 'asc');
+            if (in_array($sort, ['student_id', 'first_name', 'last_name'])) {
+                $query->orderBy($sort, $direction);
+            }
+        }
+
+        $students = $query->with('profiles')->paginate(10);
+    }
+
+    return view('student.students', compact('students', 'activeSemester', 'courses', 'years', 'sections'));
 }
+
 
 
 

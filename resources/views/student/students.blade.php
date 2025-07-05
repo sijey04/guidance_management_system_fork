@@ -18,20 +18,64 @@
 
 
                     <!-- Filter & Search Section -->
-                    <div class="flex flex-wrap items-end gap-4 mb-6">
-                        <form method="GET" action="" class="flex gap-3 items-end">
-                            <div>
-                                <label class="block text-sm mb-1 text-gray-700">Sort By:</label>
-                                <select name="sort" class="border-gray-300 rounded-lg px-3 py-2 text-sm">
-                                    <option value="">Select</option>
-                                    <!-- Add sort options here -->
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm mb-1 text-gray-700"> </label>
-                                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by ID or Name" class="border-gray-300 rounded-lg px-3 py-2 text-sm w-80" />
-                            </div>
-                        </form>
+                    <form method="GET" action="{{ route('student.index') }}" class="flex flex-wrap items-end gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm mb-1 text-gray-700">Course:</label>
+                            <select name="filter_course" onchange="this.form.submit()" class="border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                <option value="">All</option>
+                                @foreach($courses as $course)
+                                    <option value="{{ $course->course }}" {{ request('filter_course') == $course->course ? 'selected' : '' }}>
+                                        {{ $course->course }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1 text-gray-700">Year:</label>
+                            <select name="filter_year_level" onchange="this.form.submit()" class="border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                <option value="">All</option>
+                                @foreach($years as $year)
+                                    <option value="{{ $year->year_level }}" {{ request('filter_year_level') == $year->year_level ? 'selected' : '' }}>
+                                        {{ $year->year_level }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1 text-gray-700">Section:</label>
+                            <select name="filter_section" onchange="this.form.submit()" class="border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                <option value="">All</option>
+                                @foreach($sections as $section)
+                                    <option value="{{ $section->section }}" {{ request('filter_section') == $section->section ? 'selected' : '' }}>
+                                        {{ $section->section }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm mb-1 text-gray-700">Sort By:</label>
+                            <select name="sort" onchange="this.form.submit()" class="border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                <option value="">Default</option>
+                                <option value="student_id" {{ request('sort') == 'student_id' ? 'selected' : '' }}>Student ID</option>
+                                <option value="first_name" {{ request('sort') == 'first_name' ? 'selected' : '' }}>First Name</option>
+                                <option value="last_name" {{ request('sort') == 'last_name' ? 'selected' : '' }}>Last Name</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm mb-1 text-gray-700">Search:</label>
+                            <input type="text"
+                                name="search"
+                                value="{{ request('search') }}"
+                                placeholder="Search by ID or Name"
+                                class="border-gray-300 rounded-lg px-3 py-2 text-sm w-64"
+                                onkeydown="if (event.key === 'Enter') this.form.submit();"
+                                oninput="this.form.requestSubmit()" />
+                        </div>
+
+                    </form>
+
                         <!-- Add Student Button -->
                         <div x-data="{ openStudentModal: {{ $errors->any() ? 'true' : 'false' }} }">
                             <p class="text-xs text-gray-400 mt-1">Click to register a new student.</p>
@@ -81,14 +125,30 @@
                                         <td class="px-6 py-4">{{ $profile?->year_level ?? 'N/A' }} {{ $profile?->section ?? 'N/A' }}</td>
                                         <td class="px-6 py-4">{{ $student->contracts_count ?? 0 }}</td>
 
-                                        <td class="px-6 py-4 flex gap-2">
-                                            <a href="{{ route('student.show', $student->id) }}" class="sign-in-btn" style="background:#fff; color:#a82323;">View</a>
-                                            <form action="{{ route('student.destroy', $student->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this student?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="sign-in-btn" style="background:#fff; color:#a82323;">Delete</button>
-                                            </form>
-                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                        <div x-data="{ open: false }" class="relative inline-block text-left">
+                                            <button @click="open = !open" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"/>
+                                                </svg>
+                                            </button>
+
+                                            <!-- Dropdown -->
+                                            <div x-show="open" @click.away="open = false" class="absolute right-0 z-10 mt-2 w-32 bg-white border rounded shadow-md">
+                                                <a href="{{ route('student.show', $student->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                    View
+                                                </a>
+                                                <form action="{{ route('student.destroy', $student->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this student?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </td>
+
                                     </tr>
                                 @empty
                                     <tr>
