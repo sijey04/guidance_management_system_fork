@@ -1,11 +1,24 @@
 <x-app-layout>
     <div class="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8" x-data="{ zoomedImage: null }">
 
-        <a href="{{ $source === 'report' ? route('report') : route('contracts.index') }}"
-            class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-4 py-2 rounded mb-6">
-                ← Back to {{ $source === 'report' ? 'Reports' : 'Contracts' }}
-            </a>
+        @php
+            $backRoute = match ($source) {
+                'report' => route('report'),
+                'contracts' => route('contracts.index'),
+                'student' => route('students.contract', $contract->student->id),
+                default => route('contracts.index'),
+            };
+        @endphp
 
+        <a href="{{ $backRoute }}"
+            class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-4 py-2 rounded mb-6">
+            ← Back to 
+            @switch($source)
+                @case('report') Reports @break
+                @case('student') Student Profile @break
+                @default Contracts
+            @endswitch
+        </a>
 
         <div class="flex justify-between items-center">
             <h2 class="text-3xl font-bold text-red-700 mb-6">Contract Details</h2>
@@ -164,6 +177,23 @@
                 </form>
                 @endif
             </div>
+
+            <!-- Zoom Modal -->
+            <div x-show="zoomedImage"
+                @keydown.escape.window="zoomedImage = null"
+                class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+                style="display: none;"
+                x-transition>
+                
+                <div @click.away="zoomedImage = null" class="relative max-w-4xl w-full mx-4">
+                    <button @click="zoomedImage = null"
+                            class="absolute top-2 right-2 text-white text-3xl font-bold hover:text-red-400 z-50">
+                        &times;
+                    </button>
+                    <img :src="zoomedImage" class="w-full max-h-[90vh] object-contain rounded shadow-lg">
+                </div>
+            </div>
+
         </div>
 
 </x-app-layout>

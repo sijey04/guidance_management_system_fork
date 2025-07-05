@@ -132,7 +132,7 @@
             </form>
 
             <!-- VALIDATION FORM -->
-            <form method="POST" action="{{ route('semester.processValidate', $newSemester->id) }}" @submit="injectHiddenInputs($el)">
+            <form method="POST" enctype="multipart/form-data" action="{{ route('semester.processValidate', $newSemester->id) }}" @submit="injectHiddenInputs($el)">
                 @csrf
                 <div id="selected-hidden"></div>
 
@@ -174,10 +174,10 @@
                                         $isExcluded = in_array($transitionType, ['Shifting Out', 'Transferring Out']);
                                         $isDropped = $transitionType === 'Dropped';
 
-                                        $disableDropdowns = $student->alreadyValidated || $isExcluded || $isNewOrTransferredIn;
+                                        $disableDropdowns = $student->alreadyValidated || $student->currentOutTransition || $isNewOrTransferredIn;
 
-                                        $hasReturnableTransition = in_array($transitionType, ['Shifting Out', 'Transferring Out', 'Dropped']);
-                                        $isDisabled = $student->alreadyValidated && !$hasReturnableTransition;
+                                        $hasReturnableTransition = in_array($transitionType, ['Dropped']);
+                                        $isDisabled = $student->alreadyValidated && !$hasReturnableTransition ;
                                     @endphp
 
 
@@ -186,8 +186,8 @@
                                         <td class="p-3 text-center">
                                             @if ($student->alreadyValidated)
                                                 <span class="text-green-700 text-xs font-semibold bg-green-100 px-2 py-1 rounded">Validated</span>
-                                            @elseif($isExcluded)
-                                                <span class="text-red-700 text-xs font-semibold bg-red-100 px-2 py-1 rounded">{{ $transitionType }}</span>
+                                            @elseif($student->currentOutTransition)
+                                            <span class="text-red-700 text-xs font-semibold bg-red-100 px-2 py-1 rounded">{{ $transitionType }}</span>
                                             @else
                                                 <input type="checkbox"
                                                     name="selected_students[]"
@@ -206,25 +206,41 @@
                                                         {{ $student->latestTransition->transition_type }}
                                                     </span>
                                                  @endif --}}
-
-                                                @if($student->showShiftingInPill)
-                                                    <div class="mt-1 text-xs inline-block bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-                                                        Shifting In
-                                                    </div>
-                                                @endif
-
                                             </div>
                                             
                                         </td>
 
                                         <td class="p-3">
-                                            @if($isNewOrTransferredIn)
-                                                <span class="text-sm text-blue-700 bg-blue-100 px-5 py-2 rounded">New</span>
-                                            @else
-                                                {{ $student->previousProfile->course ?? '' }}<br>
-                                                {{ $student->previousProfile->year_level ?? '' }}{{ $student->previousProfile->section ?? '' }}
+                                        @if ($isNewOrTransferredIn)
+                                            <span class="text-sm text-blue-700 bg-blue-100 px-5 py-2 rounded">New</span>
+                                        @else
+                                            {{ $student->previousProfile->course ?? '' }}<br>
+                                            {{ $student->previousProfile->year_level ?? '' }}{{ $student->previousProfile->section ?? '' }}
+
+                                            @if($isExcluded && !$student->currentOutTransition)
+                                                <span class="text-red-700 text-xs font-semibold bg-red-100 px-2 py-1 rounded">
+                                                    {{ $transitionType }}
+                                                </span>
                                             @endif
-                                        </td>
+                                        @endif
+
+                                         @if($student->isReturningThisSem)
+                                            <div class="mt-1 text-xs inline-block bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">
+                                                Returning Student
+                                            </div>
+                                        @endif
+                                        @if($student->showShiftingInPill)
+                                            <div class="mt-1 text-xs inline-block bg-yellow-100 text-red-700 px-2 py-0.5 rounded-full">
+                                                Shifting In
+                                            </div>
+                                        @endif
+                                        @if($student->wasDroppedInPreviousSem)
+                                            <div class="mt-1 text-xs inline-block bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                                                Dropped (Previous Sem)
+                                            </div>
+                                        @endif
+                                    </td>
+
 
 
                                         <td class="p-3">
@@ -296,11 +312,20 @@
                                                                 </select>
                                                             </div>
 
-                                                            <div>
+                                                            {{-- <div>
                                                                 <label class="block text-sm font-medium text-gray-700">Transition Date</label>
                                                                 <input type="date" name="transitions[{{ $id }}][transition_date]" class="w-full border-gray-300 rounded">
+                                                            </div>  --}}
+
+                                                            <!-- Transition Images -->
+                                                            <div >
+                                                                <label for="images" class="block text-sm text-gray-700">Transition Images</label>
+                                                                <input type="file" name="transition_images[{{ $id }}][]" multiple class="mt-1 block w-full border-gray-300 rounded" accept="image/*">
+
                                                             </div>
 
+                                                                <p class="text-xs text-gray-500 mt-2">You may add multiple images or upload one at a time. Click ❌ to remove.</p>
+                                                            </div>
                                                             <div>
                                                                 <label class="block text-sm font-medium text-gray-700">Remarks</label>
                                                                 <textarea name="transitions[{{ $id }}][remark]" rows="2" class="w-full border-gray-300 rounded"></textarea>

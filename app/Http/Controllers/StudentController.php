@@ -14,53 +14,64 @@ use App\Models\StudentProfile;
 use App\Models\StudentSemesterEnrollment;
 use App\Models\Year;
 use Illuminate\Http\Request;
- use App\Models\StudentTransition; // Add to top if not already imported
+ use App\Models\StudentTransition; 
+use App\Models\StudentTransitionImage;
 
 class StudentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-   public function index(Request $request)
+ public function index(Request $request)
 {
     $activeSemester = Semester::where('is_current', true)->first();
-
-    if (!$activeSemester) {
-        // If no active semester, return an empty collection
-        $students = collect(); // empty collection
-    } else {
-        $query = Student::withCount('contracts')
-                        ->whereHas('profiles', function ($q) use ($activeSemester) {
-                            $q->where('semester_id', $activeSemester->id);
-                        });
-
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('student_id', 'like', "%{$search}%")
-                  ->orWhere('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('sort_by')) {
-            $sortField = $request->input('sort_by');
-            $sortDirection = $request->input('sort_direction', 'asc');
-            $query->orderBy($sortField, $sortDirection);
-        }
-
-        $students = $query->paginate(8);
-    }
 
     $courses = Course::all();
     $years = Year::all();
     $sections = Section::all();
-    $semesters = Semester::all();
 
-    
+    if (!$activeSemester) {
+        $students = collect();
+    } else {
+        $query = Student::withCount('contracts')
+            ->whereHas('profiles', function ($q) use ($activeSemester, $request) {
+                $q->where('semester_id', $activeSemester->id);
 
-    return view('student.students', compact('students', 'courses', 'years', 'sections', 'semesters', 'activeSemester'));
+                if ($request->filled('filter_course')) {
+                    $q->where('course', $request->filter_course);
+                }
+
+                if ($request->filled('filter_year_level')) {
+                    $q->where('year_level', $request->filter_year_level);
+                }
+
+                if ($request->filled('filter_section')) {
+                    $q->where('section', $request->filter_section);
+                }
+            });
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('student_id', 'like', '%' . $request->search . '%')
+                  ->orWhere('first_name', 'like', '%' . $request->search . '%')
+                  ->orWhere('last_name', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('sort')) {
+            $sort = $request->sort;
+            $direction = $request->input('direction', 'asc');
+            if (in_array($sort, ['student_id', 'first_name', 'last_name'])) {
+                $query->orderBy($sort, $direction);
+            }
+        }
+
+        $students = $query->with('profiles')->paginate(10);
+    }
+
+    return view('student.students', compact('students', 'activeSemester', 'courses', 'years', 'sections'));
 }
+
 
 
 
@@ -115,8 +126,9 @@ class StudentController extends Controller
         'section' => 'required|exists:sections,section',
 
          'transition_type' => 'nullable|in:Shifting In,Transferring In',
-        'transition_date' => 'nullable|date|required_with:transition_type',
+       // 'transition_date' => 'nullable|date|required_with:transition_type',
         'remark' => 'nullable|string|max:255',
+        'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
     ]);
 
     // Save the Student first (this goes to 'students' table)
@@ -173,19 +185,29 @@ class StudentController extends Controller
         'student_contact' => $validated['student_contact'] ?? null,
     ]);
 
-   
-
-    if ($request->filled('transition_type') && $request->input('transition_type') !== 'None') {
-        StudentTransition::create([
+    if ($request->filled('transition_type') && $request->transition_type !== 'None') {
+        $transition = StudentTransition::create([
             'student_id' => $student->id,
             'semester_id' => $activeSemester->id,
             'first_name' => $student->first_name,
             'last_name' => $student->last_name,
             'transition_type' => $request->transition_type,
-            'transition_date' => $request->transition_date,
+            'transition_date' => now(),
             'remark' => $request->transition_remark,
         ]);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('transition_images', 'public');
+
+                StudentTransitionImage::create([
+                    'student_transition_id' => $transition->id,
+                    'image_path' => $path,
+                ]);
+            }
+        }
     }
+
 
 
     return redirect()->route('student.index')->with('success', 'Student created successfully with course, year level, and section.');
@@ -212,19 +234,18 @@ public function show(Student $student)
 
 
 
-public function enrollmentHistory(Student $student)
-{
-    $allProfiles = $student->profiles()
-                ->with('semester')
-                ->get()
-                ->sortByDesc(function($profile) {
-                    return ($profile->semester && $profile->semester->is_current)
-                        ? 999999
-                        : ($profile->semester->school_year ?? 0);
-                });
+// public function enrollmentHistory(Student $student)
+// {
+//     $allProfiles = $student->profiles()
+//     ->with('semester')
+//     ->get()
+//     ->sortByDesc(function ($profile) {
+//         return $profile->semester?->id ?? 0; // or use semester.created_at if available
+//     });
 
-    return view('student.enrollment', compact('student', 'allProfiles'));
-}
+
+//     return view('student.enrollment', compact('student', 'allProfiles'));
+// }
 
 
 
@@ -335,6 +356,16 @@ public function counseling($studentId)
     return view('student.counseling', compact('student', 'counselings'));
 }
 
+public function referral($studentId)
+{
+    $student = Student::with('referrals')->findOrFail($studentId);
+    $referrals = $student->referrals;
+
+    return view('student.referral', compact('student', 'referrals'));
+}
+
+
+
 
 
 
@@ -343,20 +374,23 @@ public function counseling($studentId)
 {
     $student = Student::with(['enrollments.semester'])->findOrFail($studentId);
 
-    $semesters = Semester::orderBy('school_year', 'asc')
-                        ->orderBy('semester', 'asc')
-                        ->get();
+   $semesters = Semester::with('schoolYear')
+    ->join('school_years', 'semesters.school_year_id', '=', 'school_years.id')
+    ->orderBy('school_years.school_year', 'asc')
+    ->orderBy('semesters.semester', 'asc')
+    ->select('semesters.*')
+    ->get();
+
 
     $activeSemester = Semester::where('is_current', true)->first();
 
     $allProfiles = $student->profiles()
-                ->with('semester')
-                ->get()
-                ->sortByDesc(function($profile) {
-                     return ($profile->semester && $profile->semester->is_current)
-                         ? 999999 // active semester on top
-                         : ($profile->semester->school_year ?? 0);
-                 });
+    ->with('semester')
+    ->get()
+    ->sortByDesc(function ($profile) {
+        return $profile->semester?->id ?? 0; // or use semester.created_at if available
+    });
+
 
     return view('student.enrollment', compact('student', 'semesters', 'activeSemester', 'allProfiles'));
 }
@@ -477,6 +511,26 @@ public function viewProfile($studentId, $profileId)
     return view('student.view_profile', compact('student', 'profile'));
 }
 
+public function markAsDropped(Request $request, $id)
+{
+    $student = Student::findOrFail($id);
 
+    $activeSemester = Semester::where('is_current', true)->first();
+    if (!$activeSemester) {
+        return back()->with('error', 'No active semester found.');
+    }
+
+    StudentTransition::create([
+        'student_id' => $student->id,
+        'semester_id' => $activeSemester->id,
+        'first_name' => $student->first_name,
+        'last_name' => $student->last_name,
+        'transition_type' => 'Dropped',
+        'transition_date' => now(),
+        'remark' => $request->input('remark'),
+    ]);
+
+    return back()->with('success', 'Student has been marked as dropped.');
+}
 
 }

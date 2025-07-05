@@ -17,23 +17,65 @@ class ContractController extends Controller
      */
   public function index(Request $request)
 {
-    $contracts = Contract::with('student', 'semester')->paginate(5);
-    $semesters = Semester::all();
+    $query = Contract::with('student', 'semester.schoolYear');
+
+    // 🔍 Search
+    if ($request->filled('search')) {
+        $query->whereHas('student', function ($q) use ($request) {
+            $q->where('student_id', 'like', '%' . $request->search . '%')
+              ->orWhere('first_name', 'like', '%' . $request->search . '%')
+              ->orWhere('last_name', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    // 📋 Filter: Contract Type
+    if ($request->filled('contract_type')) {
+        $query->where('contract_type', $request->contract_type);
+    }
+
+    // 🟡 Filter: Status
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    if ($request->filled('semester_label')) {
+    $query->whereHas('semester', function ($q) use ($request) {
+        $q->where('semester', $request->semester_label);
+    });
+}
+
+
+    if ($request->filled('school_year_id')) {
+        $query->whereHas('semester', function ($q) use ($request) {
+            $q->where('school_year_id', $request->school_year_id);
+        });
+    }
+
+    if ($request->filled('sort_by')) {
+        $sortField = $request->sort_by;
+        $sortDirection = $request->get('sort_direction', 'asc');
+
+        if (in_array($sortField, ['contract_date', 'status', 'total_days'])) {
+            $query->orderBy($sortField, $sortDirection);
+        }
+    }
+
+    
+    $contracts = $query->paginate(10)->appends($request->query());
+
+    $semesters = Semester::with('schoolYear')->get();
     $contractTypes = ContractType::all();
 
     $currentSemester = Semester::where('is_current', true)->first();
-
-    if (!$currentSemester) {
-        $students = collect(); // return empty collection if no active semester
-    } else {
-        // Get students who have profile for current semester (either newly added or validated)
-        $students = Student::whereHas('profiles', function ($query) use ($currentSemester) {
+    $students = $currentSemester
+        ? Student::whereHas('profiles', function ($query) use ($currentSemester) {
             $query->where('semester_id', $currentSemester->id);
-        })->with('profiles')->get();
-    }
+        })->with('profiles')->get()
+        : collect();
 
     return view('contracts.contract', compact('contracts', 'students', 'semesters', 'contractTypes'));
 }
+
 
 
 public function create()
@@ -71,7 +113,7 @@ public function store(Request $request)
         'end_date' => 'nullable|date',
         'remarks' => 'nullable|string|max:1000',
         'contract_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // note the '.*'
-        'status' => 'required|string',
+        'status' => 'nullable|string',
     ]);
 
     $activeSemester = Semester::where('is_current', true)->first();
@@ -139,7 +181,7 @@ public function store(Request $request)
      */
        public function destroy($id)
         {
-            $contract = \App\Models\Counseling::findOrFail($id);
+            $contract = contract::findOrFail($id);
 
             foreach ($contract->images as $image) {
                 if (Storage::exists($image->image_path)) {

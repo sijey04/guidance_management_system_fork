@@ -39,7 +39,14 @@
                 <tbody>
                     @forelse($courses as $item)
                         <tr class="hover:bg-gray-50">
-                            <td class="border px-3 py-2">{{ $item->course }}</td>
+                            <td class="border px-3 py-2 flex justify-between items-center">
+                                {{ $item->course }}
+                                <form method="POST" action="{{ route('course.destroy', $item->id) }}" onsubmit="return confirm('Delete this course?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:underline text-xs ml-4">Delete</button>
+                                </form>
+                            </td>
                         </tr>
                     @empty
                         <tr><td class="text-center text-gray-400 py-2" colspan="1">No courses added yet.</td></tr>
@@ -70,7 +77,14 @@
                 <tbody>
                     @forelse($years as $item)
                         <tr class="hover:bg-gray-50">
-                            <td class="border px-3 py-2">{{ $item->year_level }}</td>
+                            <td class="border px-3 py-2 flex justify-between items-center">
+                                {{ $item->year_level }}
+                                <form method="POST" action="{{ route('year.destroy', $item->id) }}" onsubmit="return confirm('Delete this course?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:underline text-xs ml-4">Delete</button>
+                                </form>
+                            </td>
                         </tr>
                     @empty
                         <tr><td class="text-center text-gray-400 py-2" colspan="1">No year levels added yet.</td></tr>
@@ -101,7 +115,14 @@
                 <tbody>
                     @forelse($sections as $item)
                         <tr class="hover:bg-gray-50">
-                            <td class="border px-3 py-2">{{ $item->section }}</td>
+                            <td class="border px-3 py-2 flex justify-between items-center">
+                                {{ $item->section }}
+                                <form method="POST" action="{{ route('section.destroy', $item->id) }}" onsubmit="return confirm('Delete this course?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:underline text-xs ml-4">Delete</button>
+                                </form>
+                            </td>
                         </tr>
                     @empty
                         <tr><td class="text-center text-gray-400 py-2" colspan="1">No sections added yet.</td></tr>

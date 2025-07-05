@@ -67,6 +67,15 @@
                 </div>
             </div>
 
+            @if($transition->images->count())
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                   @foreach($transition->images as $image)
+                        <img src="{{ asset('storage/' . $image->image_path) }}" class="w-32 h-32 rounded shadow object-cover">
+                    @endforeach
+                </div>
+            @endif
+
+
             <!-- Modal Include -->
             @include('transitions.edit', ['transition' => $transition])
 

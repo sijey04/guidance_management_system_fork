@@ -89,38 +89,66 @@
                 <label class="block text-sm mb-1" style="color:#a82323;">Remarks (Optional)</label>
                 <textarea name="remarks" rows="3" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900"></textarea>
             </div>
+          <!-- IMage Attachment (Optional) -->
+            <div x-data="{
+                    files: [],
+                    handleFiles(event) {
+                        const selectedFiles = Array.from(event.target.files);
+                        selectedFiles.forEach(file => {
+                            this.files.push({ file, url: URL.createObjectURL(file) });
+                        });
+                        // Create a new FileList with only the files in `this.files`
+                        const dataTransfer = new DataTransfer();
+                        this.files.forEach(f => dataTransfer.items.add(f.file));
+                        event.target.files = dataTransfer.files;
+                    },
+                    remove(index, $event) {
+                        this.files.splice(index, 1);
+                        const dataTransfer = new DataTransfer();
+                        this.files.forEach(f => dataTransfer.items.add(f.file));
+                        $event.target.closest('form').querySelector('input[type=file]').files = dataTransfer.files;
+                    }
+                }" class="mt-4">
+                    <label class="block text-sm mb-1" style="color:#a82323;">Attach Contract Images</label>
 
-            <!-- Contract Image -->
-            <div x-data="{ files: [] }">
-                <label class="block text-sm mb-1" style="color:#a82323;">Attach Contract Images</label>
-                <div class="flex flex-wrap gap-4">
-                    <label for="contract_images" class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
+                    <input type="file" name="contract_images[]" accept="image/*" multiple class="hidden" id="contractUpload" @change="handleFiles">
+
+                    <!-- Upload Box -->
+                    <label for="contractUpload" class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
                         <span class="text-4xl text-gray-400">+</span>
-                        <input type="file" id="contract_images" name="contract_images[]" multiple accept="image/*" class="hidden"
-                            @change="files = Array.from($event.target.files).map(file => URL.createObjectURL(file))">
                     </label>
 
-                    <!-- Image Previews -->
-                    <template x-for="file in files" :key="file">
-                        <img :src="file" class="w-32 h-32 object-cover rounded-lg border">
-                    </template>
+                    <!-- Previews -->
+                    <div class="flex flex-wrap gap-4 mt-4">
+                        <template x-for="(fileObj, index) in files" :key="index">
+                            <div class="relative w-32 h-32">
+                                <img :src="fileObj.url" class="object-cover w-full h-full rounded-lg border">
+                                <button type="button"
+                                        @click="remove(index, $event)"
+                                        class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
+                                    &times;
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+
+                    <p class="text-xs text-gray-500 mt-2">You can select one or more images. You may also remove them before submitting.</p>
                 </div>
-                <p class="text-xs text-gray-500 mt-2">You can select multiple images.</p>
-            </div>
+
 
 
             <!-- Status -->
-            <div>
+            {{-- <div>
                 <label class="text-sm">Status:</label>
                 <select name="status" required class="w-full mt-1 border-gray-300 rounded">
                     <option value="In Progress">In Progress</option>
                     <option value="Completed">Completed</option>
                 </select>
-            </div>
+            </div> --}}
 
             <!-- Buttons -->
             <div class="flex justify-end gap-3 mt-4">
-                <button type="button" @click="openCreateContractModal = false" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323;">Cancel</button>
+                <button class="sign-in-btn" @click="openCreateContractModal = false" class="sign-in-btn" style="background:white; color:black; border-radius:6px; padding:10px 18px; font-weight:600;">Cancel</button>
                 <button class="sign-in-btn" style="background:#a82323; color:#fff; border-radius:6px; padding:10px 18px; font-weight:600;">Save</button>
             </div>
         </form>

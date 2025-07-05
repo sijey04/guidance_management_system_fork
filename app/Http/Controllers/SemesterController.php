@@ -9,6 +9,7 @@ use App\Models\Semester;
 use App\Models\Student;
 use App\Models\StudentProfile;
 use App\Models\StudentTransition;
+use App\Models\StudentTransitionImage;
 use App\Models\Year;
 use Illuminate\Http\Request;
  use Illuminate\Pagination\LengthAwarePaginator;
@@ -143,15 +144,29 @@ class SemesterController extends Controller
             ->latest('semester_id')
             ->first();
 
-            $shiftingInCurrentSemester = $student->transitions()
+        $shiftingInCurrentSemester = $student->transitions()
+            ->where('semester_id', $newSemester->id)
+            ->where('transition_type', 'Shifting In')
+            ->exists();
+
+            $student->currentOutTransition = $student->transitions()
                 ->where('semester_id', $newSemester->id)
-                ->where('transition_type', 'Shifting In')
+                ->whereIn('transition_type', ['Shifting Out', 'Transferring Out'])
+                ->latest()
+                ->first();
+
+            $student->isReturningThisSem = $student->transitions()
+                ->where('semester_id', $newSemester->id)
+                ->where('transition_type', 'Returning Student')
                 ->exists();
 
-            $student->showShiftingInPill = $shiftingInCurrentSemester;
+            $student->wasDroppedInPreviousSem = $student->transitions()
+                ->where('semester_id', '<', $newSemester->id)
+                ->where('transition_type', 'Dropped')
+                ->exists();
 
-            
 
+        $student->showShiftingInPill = $shiftingInCurrentSemester;
         $student->validatedProfile = $validatedProfile;
         $student->alreadyValidated = $validatedProfile !== null;
 
@@ -211,12 +226,13 @@ class SemesterController extends Controller
         $years = Year::all();
         $sections = Section::all();
 
+       
         return view('semester.validate_students', [
             'students' => $paginated,
             'newSemester' => $newSemester,
             'courses' => $courses,
             'years' => $years,
-            'sections' => $sections
+            'sections' => $sections,
         ]);
     }
 
@@ -244,9 +260,9 @@ public function processValidateStudents(Request $request, $semesterId)
         if (isset($transitionData[$studentId])) {
             $transition = $transitionData[$studentId];
             $type = $transition['transition_type'] ?? null;
-            $date = $transition['transition_date'] ?? null;
+            $date = now();
 
-            if ($type && $type !== 'None' && $date) {
+            if ($type && $type !== 'None') {
                 if ($type === 'Shifting In') {
                     // Get latest profile (prior to this semester)
                     $latestProfile = $student->profiles()
@@ -257,7 +273,7 @@ public function processValidateStudents(Request $request, $semesterId)
 
                     // Create 'Shifting Out' record
                     if ($previousSemesterId) {
-                        StudentTransition::firstOrCreate([
+                        $shiftOutTransition = StudentTransition::firstOrCreate([
                             'student_id' => $studentId,
                             'semester_id' => $previousSemesterId,
                             'transition_type' => 'Shifting Out',
@@ -270,7 +286,7 @@ public function processValidateStudents(Request $request, $semesterId)
                     }
 
                     // Create 'Shifting In' record
-                    StudentTransition::firstOrCreate([
+                    $shiftInTransition = StudentTransition::firstOrCreate([
                         'student_id' => $studentId,
                         'semester_id' => $semester->id,
                         'transition_type' => 'Shifting In',
@@ -280,24 +296,39 @@ public function processValidateStudents(Request $request, $semesterId)
                         'transition_date' => $date,
                         'remark' => $transition['remark'] ?? null,
                     ]);
-                } else {
-                    // Handle other types (e.g. Dropped, Transferring Out, etc.)
-                    $exists = StudentTransition::where('student_id', $studentId)
-                        ->where('semester_id', $semester->id)
-                        ->where('transition_type', $type)
-                        ->exists();
 
-                    if (!$exists) {
-                        StudentTransition::create([
-                            'student_id' => $studentId,
-                            'semester_id' => $semester->id,
-                            'first_name' => $student->first_name,
-                            'last_name' => $student->last_name,
-                            'transition_type' => $type,
-                            'transition_date' => $date,
-                            'remark' => $transition['remark'] ?? null,
-                        ]);
+                    if ($shiftInTransition->wasRecentlyCreated && $request->hasFile("transition_images.$studentId")) {
+                        foreach ($request->file("transition_images.$studentId") as $file) {
+                            $path = $file->store('transition_images', 'public');
+                            StudentTransitionImage::create([
+                                'student_transition_id' => $shiftInTransition->id,
+                                'image_path' => $path,
+                            ]);
+                        }
                     }
+                } else {
+                    $transitionIn = StudentTransition::firstOrCreate([
+                    'student_id' => $studentId,
+                    'semester_id' => $semester->id,
+                    'transition_type' => $type,
+                ], [
+                    'first_name' => $student->first_name,
+                    'last_name' => $student->last_name,
+                    'transition_date' => $date,
+                    'remark' => $transition['remark'] ?? null,
+                ]);
+
+// Attach images only if the transition is newly created (not existing)
+if ($transitionIn->wasRecentlyCreated && $request->hasFile("transition_images.$studentId")) {
+    foreach ($request->file("transition_images.$studentId") as $file) {
+        $path = $file->store('transition_images', 'public');
+        StudentTransitionImage::create([
+            'student_transition_id' => $transitionIn->id,
+            'image_path' => $path,
+        ]);
+    }
+}
+
 
                     // Skip creating profile for students going out
                     if (in_array($type, ['Shifting Out', 'Transferring Out'])) {
