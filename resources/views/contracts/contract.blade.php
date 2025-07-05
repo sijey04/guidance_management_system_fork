@@ -10,41 +10,94 @@
             <div class="main-content">
                 <div class="p-6 space-y-6">
 
-                    <!-- Instruction -->
-                    <div class="bg-[#f8eaea] border border-[#a82323] p-4 rounded">
-                        <h3 class="text-lg font-semibold text-[#a82323] mb-1">Instructions</h3>
+                    <div>
+                        <h1 class="text-2xl font-bold text-red-700 mb-1">Contracts List</h1>
                         <p class="text-sm text-gray-600">This page lists all contract records. You can sort, filter, search, or add new contracts. Click the three dots to view or delete individual records.</p>
                     </div>
+                   
 
                     <!-- Filter & Actions -->
                     <div class="flex flex-wrap items-end gap-4">
                         <form method="GET" action="{{ route('contracts.index') }}" class="flex flex-wrap gap-4 items-end">
-                            <div>
-                                <label class="block text-sm text-gray-700 mb-1">Sort By:</label>
-                                <select name="sort_by" onchange="this.form.submit()" class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full">
-                                    <option value="">Default</option>
-                                    <option value="contract_date" {{ request('sort_by') == 'contract_date' ? 'selected' : '' }}>Contract Date</option>
-                                    <option value="status" {{ request('sort_by') == 'status' ? 'selected' : '' }}>Status</option>
-                                    <option value="total_days" {{ request('sort_by') == 'total_days' ? 'selected' : '' }}>Total Days</option>
-                                </select>
-                            </div>
 
-                            <div class="flex-1">
-                                <label class="block text-sm text-gray-700 mb-1">Search:</label>
-                                <input type="text" name="search" value="{{ request('search') }}"
-                                       placeholder="Search by ID or Name"
-                                       class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full"
-                                       onkeydown="if (event.key === 'Enter') this.form.submit();"
-                                       oninput="this.form.requestSubmit()" />
-                            </div>
-                        </form>
+    <!-- Contract Type Filter -->
+    <div>
+        <label class="block text-sm text-gray-700 mb-1">Contract Type:</label>
+        <select name="contract_type" onchange="this.form.submit()" class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full">
+            <option value="">All</option>
+            @foreach ($contractTypes as $type)
+                <option value="{{ $type->type }}" {{ request('contract_type') == $type->type ? 'selected' : '' }}>
+                    {{ $type->type }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <!-- Status Filter -->
+    <div>
+        <label class="block text-sm text-gray-700 mb-1">Status:</label>
+        <select name="status" onchange="this.form.submit()" class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full">
+            <option value="">All</option>
+            <option value="In Progress" {{ request('status') == 'In Progress' ? 'selected' : '' }}>In Progress</option>
+            <option value="Completed" {{ request('status') == 'Completed' ? 'selected' : '' }}>Completed</option>
+        </select>
+    </div>
+
+    <!-- School Year Filter -->
+    <div>
+        <label class="block text-sm text-gray-700 mb-1">School Year:</label>
+        <select name="school_year_id" onchange="this.form.submit()" class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full">
+            <option value="">All</option>
+            @foreach ($semesters->pluck('schoolYear')->unique('id') as $year)
+                <option value="{{ $year->id }}" {{ request('school_year_id') == $year->id ? 'selected' : '' }}>
+                    {{ $year->school_year }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <!-- Semester Filter -->
+    <div>
+        <label class="block text-sm text-gray-700 mb-1">Semester:</label>
+        <select name="semester_label" onchange="this.form.submit()" class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full">
+            <option value="">All Semesters</option>
+            <option value="1st" {{ request('semester_label') == '1st' ? 'selected' : '' }}>1st</option>
+            <option value="2nd" {{ request('semester_label') == '2nd' ? 'selected' : '' }}>2nd</option>
+            <option value="Summer" {{ request('semester_label') == 'Summer' ? 'selected' : '' }}>Summer</option>
+        </select>
+
+    </div>
+
+    <!-- Sort By -->
+    <div>
+        <label class="block text-sm text-gray-700 mb-1">Sort By:</label>
+        <select name="sort_by" onchange="this.form.submit()" class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full">
+            <option value="">Default</option>
+            <option value="contract_date" {{ request('sort_by') == 'contract_date' ? 'selected' : '' }}>Contract Date</option>
+            <option value="status" {{ request('sort_by') == 'status' ? 'selected' : '' }}>Status</option>
+            <option value="total_days" {{ request('sort_by') == 'total_days' ? 'selected' : '' }}>Total Days</option>
+        </select>
+    </div>
+
+    <!-- Search -->
+    <div class="flex-1">
+        <label class="block text-sm text-gray-700 mb-1">Search:</label>
+        <input type="text" name="search" value="{{ request('search') }}"
+               placeholder="Search by ID or Name"
+               class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full"
+               onkeydown="if (event.key === 'Enter') this.form.submit();"
+               oninput="this.form.requestSubmit()" />
+    </div>
+
+</form>
+
 
                         <!-- Buttons -->
                         <div class="flex flex-wrap gap-3">
                             <div x-data="{ openCreateContractModal: {{ $errors->any() ? 'true' : 'false' }} }">
                                 <button @click="openCreateContractModal = true"
                                     class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-red-700 transition">
-                                    + Create Contract
+                                    Create Contract
                                 </button>
                                 @include('contracts.createContract')
                             </div>
@@ -57,9 +110,9 @@
                     </div>
 
                     <!-- Contract Table -->
-                    <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm bg-white">
-                        <table class="min-w-full divide-y divide-gray-200 text-sm">
-                            <thead style="background:#a82323; color:#fff;">
+                    <div class="overflow-x-auto border border-gray-200 rounded-lg mt-4">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead style="background:#a82323;" class="text-white text-left">
                                 <tr>
                                     <th class="px-4 py-3">A.Y</th>
                                     <th class="px-4 py-3">Semester</th>

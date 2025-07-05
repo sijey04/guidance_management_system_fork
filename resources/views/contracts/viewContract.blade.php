@@ -177,6 +177,23 @@
                 </form>
                 @endif
             </div>
+
+            <!-- Zoom Modal -->
+            <div x-show="zoomedImage"
+                @keydown.escape.window="zoomedImage = null"
+                class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+                style="display: none;"
+                x-transition>
+                
+                <div @click.away="zoomedImage = null" class="relative max-w-4xl w-full mx-4">
+                    <button @click="zoomedImage = null"
+                            class="absolute top-2 right-2 text-white text-3xl font-bold hover:text-red-400 z-50">
+                        &times;
+                    </button>
+                    <img :src="zoomedImage" class="w-full max-h-[90vh] object-contain rounded shadow-lg">
+                </div>
+            </div>
+
         </div>
 
 </x-app-layout>

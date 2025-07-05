@@ -4,9 +4,9 @@
         @php
             $backRoute = match ($source) {
                 'report' => route('report'),
-                'counseling' => route('counseling.index'),
+                'counseling' => route('counselings.index'),
                 'student' => route('students.counseling', $counseling->student->id),
-                default => route('counseling.index'),
+                default => route('counselings.index'),
             };
         @endphp
 
