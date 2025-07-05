@@ -160,6 +160,12 @@ class SemesterController extends Controller
                 ->where('transition_type', 'Returning Student')
                 ->exists();
 
+            $student->wasDroppedInPreviousSem = $student->transitions()
+                ->where('semester_id', '<', $newSemester->id)
+                ->where('transition_type', 'Dropped')
+                ->exists();
+
+
         $student->showShiftingInPill = $shiftingInCurrentSemester;
         $student->validatedProfile = $validatedProfile;
         $student->alreadyValidated = $validatedProfile !== null;

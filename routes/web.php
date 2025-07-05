@@ -40,7 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/students/{id}/counseling', [StudentController::class, 'counseling'])->name('students.counseling');
     Route::get('/students/{id}/contract', [StudentController::class, 'contract'])->name('students.contract');
     Route::get('/students/{id}/referral', [StudentController::class, 'showEnrollmentHistory'])->name('students.referral');
-//Route::get('/students/{id}/contracts', [StudentController::class, 'show']);
+Route::post('/student/{id}/drop', [App\Http\Controllers\StudentController::class, 'markAsDropped'])->name('student.drop');
+    //Route::get('/students/{id}/contracts', [StudentController::class, 'show']);
     Route::get('/students/{student}/contracts/create', [ContractController::class, 'createForStudent'])->name('student.createContract');
 Route::get('/referrals/{id}/view', [ReferralController::class, 'show'])->name('referrals.view');
 Route::patch('/referrals/{id}/update-remarks', [ReferralController::class, 'updateRemarks'])->name('referrals.updateRemarks');

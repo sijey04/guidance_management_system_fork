@@ -32,9 +32,43 @@
                                 {{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffix }}
                             </span>
                             <div class="flex gap-3">
+                                <!-- Mark as Dropped Button + Modal -->
+                                <div x-data="{ openDropModal: false }">
+                                    <button @click="openDropModal = true"
+                                        class="sign-in-btn"
+                                        style="background:#d97706; color:#fff; border-radius:6px; padding:7px 16px; font-weight:600;">
+                                        Mark as Dropped
+                                    </button>
 
+                                    <!-- Drop Modal -->
+                                    <div x-show="openDropModal"
+                                        x-cloak
+                                        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                                        <div @click.away="openDropModal = false"
+                                            class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
 
+                                            <h2 class="text-lg font-semibold mb-4 text-gray-800">Confirm Drop for {{ $student->first_name }}</h2>
 
+                                            <form action="{{ route('student.drop', $student->id) }}" method="POST">
+                                                @csrf
+                                                <div class="mb-4">
+                                                    <label class="block text-sm font-medium text-gray-700">Remarks</label>
+                                                    <textarea name="remark" rows="3"
+                                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"></textarea>
+                                                </div>
+
+                                                <div class="flex justify-end gap-3">
+                                                    <button type="button" @click="openDropModal = false"
+                                                        class="text-gray-500 hover:underline">Cancel</button>
+                                                    <button type="submit"
+                                                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                                                        Confirm Drop
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                                 <!-- Edit Button -->
                                 <div x-data="{ openEditStudentModal: {{ $errors->any() ? 'true' : 'false' }} }">
                                     <button @click="openEditStudentModal = true" class="sign-in-btn" 
@@ -58,7 +92,14 @@
 
                             </div>
                         </div>
-                     
+                     @if($student->transitions()->where('transition_type', 'Dropped')->where('semester_id', $activeSemester->id)->exists())
+                        <div class="mt-2">
+                            <span class="bg-red-100 text-red-800 text-base font-medium px-2 py-1 rounded-full">
+                                Dropped This Semester
+                            </span>
+                        </div>
+                    @endif
+
                         <!-- Basic Information -->
                         <h3 class="text-lg font-semibold" style="color:#a82323; border-bottom:1.5px solid #f8eaea; padding-bottom:6px;">Basic Information</h3>
                         <p class="text-sm text-gray-500 mb-3">Personal and enrollment details of the student.</p>

@@ -234,6 +234,11 @@
                                                 Shifting In
                                             </div>
                                         @endif
+                                        @if($student->wasDroppedInPreviousSem)
+                                            <div class="mt-1 text-xs inline-block bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                                                Dropped (Previous Sem)
+                                            </div>
+                                        @endif
                                     </td>
 
 
@@ -315,7 +320,7 @@
                                                             <!-- Transition Images -->
                                                             <div >
                                                                 <label for="images" class="block text-sm text-gray-700">Transition Images</label>
-<input type="file" name="transition_images[{{ $id }}][]" multiple class="mt-1 block w-full border-gray-300 rounded" accept="image/*">
+                                                                <input type="file" name="transition_images[{{ $id }}][]" multiple class="mt-1 block w-full border-gray-300 rounded" accept="image/*">
 
                                                             </div>
 

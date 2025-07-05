@@ -489,6 +489,26 @@ public function viewProfile($studentId, $profileId)
     return view('student.view_profile', compact('student', 'profile'));
 }
 
+public function markAsDropped(Request $request, $id)
+{
+    $student = Student::findOrFail($id);
 
+    $activeSemester = Semester::where('is_current', true)->first();
+    if (!$activeSemester) {
+        return back()->with('error', 'No active semester found.');
+    }
+
+    StudentTransition::create([
+        'student_id' => $student->id,
+        'semester_id' => $activeSemester->id,
+        'first_name' => $student->first_name,
+        'last_name' => $student->last_name,
+        'transition_type' => 'Dropped',
+        'transition_date' => now(),
+        'remark' => $request->input('remark'),
+    ]);
+
+    return back()->with('success', 'Student has been marked as dropped.');
+}
 
 }
