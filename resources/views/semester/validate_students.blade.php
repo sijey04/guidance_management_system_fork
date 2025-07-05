@@ -174,10 +174,10 @@
                                         $isExcluded = in_array($transitionType, ['Shifting Out', 'Transferring Out']);
                                         $isDropped = $transitionType === 'Dropped';
 
-                                        $disableDropdowns = $student->alreadyValidated || $isExcluded || $isNewOrTransferredIn;
+                                        $disableDropdowns = $student->alreadyValidated || $student->currentOutTransition || $isNewOrTransferredIn;
 
-                                        $hasReturnableTransition = in_array($transitionType, ['Shifting Out', 'Transferring Out', 'Dropped']);
-                                        $isDisabled = $student->alreadyValidated && !$hasReturnableTransition;
+                                        $hasReturnableTransition = in_array($transitionType, ['Dropped']);
+                                        $isDisabled = $student->alreadyValidated && !$hasReturnableTransition ;
                                     @endphp
 
 
@@ -186,8 +186,8 @@
                                         <td class="p-3 text-center">
                                             @if ($student->alreadyValidated)
                                                 <span class="text-green-700 text-xs font-semibold bg-green-100 px-2 py-1 rounded">Validated</span>
-                                            @elseif($isExcluded)
-                                                <span class="text-red-700 text-xs font-semibold bg-red-100 px-2 py-1 rounded">{{ $transitionType }}</span>
+                                            @elseif($student->currentOutTransition)
+                                            <span class="text-red-700 text-xs font-semibold bg-red-100 px-2 py-1 rounded">{{ $transitionType }}</span>
                                             @else
                                                 <input type="checkbox"
                                                     name="selected_students[]"
@@ -206,25 +206,36 @@
                                                         {{ $student->latestTransition->transition_type }}
                                                     </span>
                                                  @endif --}}
-
-                                                @if($student->showShiftingInPill)
-                                                    <div class="mt-1 text-xs inline-block bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-                                                        Shifting In
-                                                    </div>
-                                                @endif
-
                                             </div>
                                             
                                         </td>
 
                                         <td class="p-3">
-                                            @if($isNewOrTransferredIn)
-                                                <span class="text-sm text-blue-700 bg-blue-100 px-5 py-2 rounded">New</span>
-                                            @else
-                                                {{ $student->previousProfile->course ?? '' }}<br>
-                                                {{ $student->previousProfile->year_level ?? '' }}{{ $student->previousProfile->section ?? '' }}
+                                        @if ($isNewOrTransferredIn)
+                                            <span class="text-sm text-blue-700 bg-blue-100 px-5 py-2 rounded">New</span>
+                                        @else
+                                            {{ $student->previousProfile->course ?? '' }}<br>
+                                            {{ $student->previousProfile->year_level ?? '' }}{{ $student->previousProfile->section ?? '' }}
+
+                                            @if($isExcluded && !$student->currentOutTransition)
+                                                <span class="text-red-700 text-xs font-semibold bg-red-100 px-2 py-1 rounded">
+                                                    {{ $transitionType }}
+                                                </span>
                                             @endif
-                                        </td>
+                                        @endif
+
+                                         @if($student->isReturningThisSem)
+                                            <div class="mt-1 text-xs inline-block bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">
+                                                Returning Student
+                                            </div>
+                                        @endif
+                                        @if($student->showShiftingInPill)
+                                            <div class="mt-1 text-xs inline-block bg-yellow-100 text-red-700 px-2 py-0.5 rounded-full">
+                                                Shifting In
+                                            </div>
+                                        @endif
+                                    </td>
+
 
 
                                         <td class="p-3">

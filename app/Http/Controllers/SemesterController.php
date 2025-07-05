@@ -143,15 +143,23 @@ class SemesterController extends Controller
             ->latest('semester_id')
             ->first();
 
-            $shiftingInCurrentSemester = $student->transitions()
+        $shiftingInCurrentSemester = $student->transitions()
+            ->where('semester_id', $newSemester->id)
+            ->where('transition_type', 'Shifting In')
+            ->exists();
+
+            $student->currentOutTransition = $student->transitions()
                 ->where('semester_id', $newSemester->id)
-                ->where('transition_type', 'Shifting In')
+                ->whereIn('transition_type', ['Shifting Out', 'Transferring Out'])
+                ->latest()
+                ->first();
+
+            $student->isReturningThisSem = $student->transitions()
+                ->where('semester_id', $newSemester->id)
+                ->where('transition_type', 'Returning Student')
                 ->exists();
 
-            $student->showShiftingInPill = $shiftingInCurrentSemester;
-
-            
-
+        $student->showShiftingInPill = $shiftingInCurrentSemester;
         $student->validatedProfile = $validatedProfile;
         $student->alreadyValidated = $validatedProfile !== null;
 
@@ -211,12 +219,13 @@ class SemesterController extends Controller
         $years = Year::all();
         $sections = Section::all();
 
+       
         return view('semester.validate_students', [
             'students' => $paginated,
             'newSemester' => $newSemester,
             'courses' => $courses,
             'years' => $years,
-            'sections' => $sections
+            'sections' => $sections,
         ]);
     }
 
