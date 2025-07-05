@@ -15,6 +15,7 @@ use App\Models\StudentSemesterEnrollment;
 use App\Models\Year;
 use Illuminate\Http\Request;
  use App\Models\StudentTransition; // Add to top if not already imported
+use App\Models\StudentTransitionImage;
 
 class StudentController extends Controller
 {
@@ -115,8 +116,9 @@ class StudentController extends Controller
         'section' => 'required|exists:sections,section',
 
          'transition_type' => 'nullable|in:Shifting In,Transferring In',
-        'transition_date' => 'nullable|date|required_with:transition_type',
+       // 'transition_date' => 'nullable|date|required_with:transition_type',
         'remark' => 'nullable|string|max:255',
+        'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
     ]);
 
     // Save the Student first (this goes to 'students' table)
@@ -173,19 +175,29 @@ class StudentController extends Controller
         'student_contact' => $validated['student_contact'] ?? null,
     ]);
 
-   
-
-    if ($request->filled('transition_type') && $request->input('transition_type') !== 'None') {
-        StudentTransition::create([
+    if ($request->filled('transition_type') && $request->transition_type !== 'None') {
+        $transition = StudentTransition::create([
             'student_id' => $student->id,
             'semester_id' => $activeSemester->id,
             'first_name' => $student->first_name,
             'last_name' => $student->last_name,
             'transition_type' => $request->transition_type,
-            'transition_date' => $request->transition_date,
+            'transition_date' => now(),
             'remark' => $request->transition_remark,
         ]);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('transition_images', 'public');
+
+                StudentTransitionImage::create([
+                    'student_transition_id' => $transition->id,
+                    'image_path' => $path,
+                ]);
+            }
+        }
     }
+
 
 
     return redirect()->route('student.index')->with('success', 'Student created successfully with course, year level, and section.');

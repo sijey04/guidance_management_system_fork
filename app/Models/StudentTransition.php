@@ -40,6 +40,14 @@ public function semester()
 {
     return $this->belongsTo(semester::class);
 }
+// public function images()
+// {
+//     return $this->hasMany(StudentTransitionImage::class);
+// }
+public function images()
+{
+    return $this->hasMany(StudentTransitionImage::class, 'student_transition_id');
+}
 
 
 }

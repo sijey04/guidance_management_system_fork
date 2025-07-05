@@ -6,7 +6,7 @@
          class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6 overflow-y-auto max-h-[90vh]">
         <h2 class="text-lg font-bold mb-4 text-gray-800">Add Student Movement</h2>
 
-        <form action="{{ route('transitions.store') }}" method="POST">
+        <form action="{{ route('transitions.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="grid grid-cols-1 gap-4">
                 <div>
@@ -63,6 +63,10 @@
                     <label class="block text-sm">Date</label>
                     <input type="date" name="transition_date" class="w-full border rounded p-2" required>
                 </div>
+
+                <label for="images" class="block text-sm text-gray-700">Transition Images</label>
+<input type="file" name="images[]" id="images" multiple class="mt-1 block w-full border-gray-300 rounded" accept="image/*">
+
                 <div class="mt-4 text-right">
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
                     <button type="button" @click="openModal = false" class="ml-2 text-gray-500 hover:underline">Cancel</button>

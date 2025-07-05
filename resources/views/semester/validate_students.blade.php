@@ -132,7 +132,7 @@
             </form>
 
             <!-- VALIDATION FORM -->
-            <form method="POST" action="{{ route('semester.processValidate', $newSemester->id) }}" @submit="injectHiddenInputs($el)">
+            <form method="POST" enctype="multipart/form-data" action="{{ route('semester.processValidate', $newSemester->id) }}" @submit="injectHiddenInputs($el)">
                 @csrf
                 <div id="selected-hidden"></div>
 
@@ -307,11 +307,20 @@
                                                                 </select>
                                                             </div>
 
-                                                            <div>
+                                                            {{-- <div>
                                                                 <label class="block text-sm font-medium text-gray-700">Transition Date</label>
                                                                 <input type="date" name="transitions[{{ $id }}][transition_date]" class="w-full border-gray-300 rounded">
+                                                            </div>  --}}
+
+                                                            <!-- Transition Images -->
+                                                            <div >
+                                                                <label for="images" class="block text-sm text-gray-700">Transition Images</label>
+<input type="file" name="transition_images[{{ $id }}][]" multiple class="mt-1 block w-full border-gray-300 rounded" accept="image/*">
+
                                                             </div>
 
+                                                                <p class="text-xs text-gray-500 mt-2">You may add multiple images or upload one at a time. Click ❌ to remove.</p>
+                                                            </div>
                                                             <div>
                                                                 <label class="block text-sm font-medium text-gray-700">Remarks</label>
                                                                 <textarea name="transitions[{{ $id }}][remark]" rows="2" class="w-full border-gray-300 rounded"></textarea>

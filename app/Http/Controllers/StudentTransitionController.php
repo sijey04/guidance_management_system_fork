@@ -53,8 +53,9 @@ class StudentTransitionController extends Controller
         'first_name' => 'required|string|max:255',
         'last_name' => 'required|string|max:255',
         'transition_type' => 'required|in:None,Shifting In,Shifting Out,Transferring In,Transferring Out,Dropped,Returning Student',
-        'transition_date' => 'required|date',
+        //'transition_date' => 'required|date',
         'remark' => 'nullable|string',
+        'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
     ]);
 
     $activeSemester = Semester::where('is_current', true)->first();
@@ -62,15 +63,26 @@ class StudentTransitionController extends Controller
         return back()->with('error', 'No active semester is set.');
     }
 
-    StudentTransition::create([
-        'student_id' => $request->student_id, // can be null
+
+    $transition = StudentTransition::create([
+        'student_id' => $request->student_id,
         'first_name' => $request->first_name,
         'last_name' => $request->last_name,
         'semester_id' => $activeSemester->id,
         'transition_type' => $request->transition_type,
-        'transition_date' => $request->transition_date,
+        'transition_date' => now(),
         'remark' => $request->remark,
     ]);
+
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $image) {
+            $path = $image->store('transition_images', 'public');
+
+            $transition->images()->create([
+                'image_path' => $path,
+            ]);
+        }
+    }
 
     return redirect()->route('transitions.index')->with('success', 'Incoming student transition recorded.');
 }

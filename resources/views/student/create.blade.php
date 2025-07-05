@@ -15,7 +15,7 @@ x-data="{ transitionType: '' }"
         <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">Add New Student</h2>
         <p class="text-sm text-gray-500 mb-6 text-center">Please fill out the form below to add a new student. All required fields are marked with <span class="text-red-500">*</span>.</p>
 
-        <form x-ref="addStudentForm" action="{{ route('student.store') }}" method="POST" class="space-y-6">
+        <form x-ref="addStudentForm" action="{{ route('student.store') }}" method="POST" class="space-y-6" enctype="multipart/form-data">
             @csrf
 
             <!-- Error Display -->
@@ -164,12 +164,12 @@ x-data="{ transitionType: '' }"
             </select>
         </div>
 
-        <template x-if="transitionType === 'Shifting In' || transitionType === 'Transferring In'">
+        {{-- <template x-if="transitionType === 'Shifting In' || transitionType === 'Transferring In'">
             <div>
                 <label class="text-sm text-gray-600">Transition Date</label>
                 <input type="date" name="transition_date" class="w-full mt-1 border-gray-300 rounded" />
             </div>
-        </template>
+        </template> --}}
 
         <template x-if="transitionType === 'Shifting In' || transitionType === 'Transferring In'">
             <div class="md:col-span-3">
@@ -180,6 +180,67 @@ x-data="{ transitionType: '' }"
                           placeholder="Enter reason, background, and other notes here..."></textarea>
             </div>
         </template>
+
+        <template x-if="transitionType === 'Shifting In' || transitionType === 'Transferring In'">
+            <!-- Transition Images -->
+            <div 
+                x-data="{
+                    files: [],
+                    previews: [],
+                    addFiles(event) {
+                        const selected = Array.from(event.target.files);
+                        for (let file of selected) {
+                            this.files.push(file);
+                            this.previews.push(URL.createObjectURL(file));
+                        }
+                        event.target.value = ''; // Reset to allow re-upload of same file
+                    },
+                    remove(index) {
+                        this.files.splice(index, 1);
+                        URL.revokeObjectURL(this.previews[index]);
+                        this.previews.splice(index, 1);
+                    }
+                }"
+                class="md:col-span-3"
+                x-init="$watch('files', value => {
+                    // Sync real input with manually tracked files
+                    const dataTransfer = new DataTransfer();
+                    files.forEach(file => dataTransfer.items.add(file));
+                    $refs.realInput.files = dataTransfer.files;
+                })"
+            >
+
+                <label class="block text-sm font-medium text-red-700 mb-1">Attach Transition Images</label>
+
+                <!-- Real File Input (invisible) -->
+                <input type="file" name="images[]" multiple accept="image/*" class="hidden" x-ref="realInput">
+
+                <div class="flex flex-wrap gap-4">
+                    <!-- Add Image Button -->
+                    <label class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
+                        <span class="text-4xl text-gray-400">+</span>
+                        <input type="file" accept="image/*" multiple class="hidden" @change="addFiles($event)">
+                    </label>
+
+                    <!-- Preview Thumbnails -->
+                    <template x-for="(src, index) in previews" :key="index">
+                        <div class="relative w-32 h-32">
+                            <img :src="src" class="w-full h-full object-cover rounded-lg border">
+                            <button type="button"
+                                    @click="remove(index)"
+                                    class="absolute top-0 right-0 bg-white bg-opacity-80 hover:bg-opacity-100 text-red-600 rounded-full p-1 shadow">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6.293 6.293a1 1 0 011.414 0L10 8.586l2.293-2.293a1 1 0 111.414 1.414L11.414 10l2.293 2.293a1 1 0 01-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 01-1.414-1.414L8.586 10 6.293 7.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+
+                <p class="text-xs text-gray-500 mt-2">You may add multiple images or upload one at a time. Click ❌ to remove.</p>
+            </div>
+        </template>
+
     </div>
 </div>
                 <!-- Family Information -->
