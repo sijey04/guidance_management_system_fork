@@ -181,7 +181,7 @@ public function store(Request $request)
      */
        public function destroy($id)
         {
-            $contract = \App\Models\Counseling::findOrFail($id);
+            $contract = contract::findOrFail($id);
 
             foreach ($contract->images as $image) {
                 if (Storage::exists($image->image_path)) {

@@ -161,6 +161,21 @@ public function update(Request $request, $id)
     return redirect()->route('referrals.index')->with('success', 'Referral updated successfully.');
 }
 
+   public function destroy($id)
+    {
+        $referral = Referral::findOrFail($id);
+
+        foreach ($referral->images as $image) {
+            if (Storage::exists($image->image_path)) {
+                Storage::delete($image->image_path);
+            }
+            $image->delete();
+        }
+
+        $referral->delete();
+
+        return redirect()->route('referrals.index')->with('success', 'Counseling record deleted.');
+    }
 
 public function updateStatus(Request $request, $id)
 {

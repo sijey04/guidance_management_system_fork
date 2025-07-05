@@ -89,7 +89,7 @@
                 <label class="block text-sm mb-1" style="color:#a82323;">Remarks (Optional)</label>
                 <textarea name="remarks" rows="3" class="w-full border-gray-300 rounded-lg mt-1 px-3 py-2 text-gray-900"></textarea>
             </div>
-
+          <!-- IMage Attachment (Optional) -->
             <div x-data="{
                     files: [],
                     handleFiles(event) {
