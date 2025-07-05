@@ -253,10 +253,8 @@
                                     <td class="px-4 py-2">{{ $contract->status }}</td>
                                     <td class="px-4 py-2">{{ $contract->start_date }} - {{ $contract->end_date }}</td>
                                  <td class="px-4 py-2">
-                                    <a href="{{ route('contracts.view', ['id' => $contract->id, 'source' => 'report']) }}"
-                                            class="text-blue-600 hover:underline">
-                                            View
-                                            </a>
+                                    <a href="{{ route('contracts.view', ['id' => $contract->id, 'source' => 'report']) }}">View</a>
+
                                 </td>
                                 </tr>
                             @empty

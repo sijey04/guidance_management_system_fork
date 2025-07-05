@@ -33,9 +33,7 @@
                             <thead style="background:#a82323; color:#fff;">
                                 <tr>
                                     <th class="px-5 py-3">Date</th>
-                                    <th class="px-5 py-3">Problem Statement</th>
-                                    <th class="px-5 py-3">Evaluation</th>
-                                    <th class="px-5 py-3">Action Taken</th>
+                                    <th class="px-5 py-3">Status</th>
                                     <th class="px-5 py-3 text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -43,11 +41,14 @@
                                 @forelse($student->counselings as $counseling)
                                     <tr class="hover:bg-[#f8eaea] transition">
                                         <td class="px-5 py-4">{{ \Carbon\Carbon::parse($counseling->session_date)->format('M d, Y') }}</td>
-                                        <td class="px-5 py-4">{{ Str::limit($counseling->statement_of_problem, 50, '...') }}</td>
-                                        <td class="px-5 py-4">{{ Str::limit($counseling->evaluation, 50, '...') }}</td>
-                                        <td class="px-5 py-4">{{ Str::limit($counseling->recommendation_action_taken, 50, '...') }}</td>
+                                        <td class="px-4 py-3">
+                                            <span class="text-xs px-2 py-1 rounded-full font-semibold
+                                                {{ $counseling->status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                                {{ $counseling->status }}
+                                            </span>
+                                        </td>
                                         <td class="px-5 py-4 text-center">
-                                            <button @click="selectedCounseling = {{ $counseling }}, openViewModal = true" class="sign-in-btn" style="background:#fff; color:#a82323; border:1.5px solid #a82323; border-radius:6px; padding:7px 14px; font-weight:600;">View</button>
+                                             <a href="{{ route('counseling.view', ['id' => $counseling->id, 'source' => 'student']) }}">View</a>             
                                         </td>
                                     </tr>
                                 @empty

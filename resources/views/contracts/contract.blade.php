@@ -78,11 +78,7 @@
                                                 <!-- Dropdown menu -->
                                                 <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg z-20">
                                                     <!-- View -->
-                                                     <a href="{{ route('contracts.view', ['id' => $contract->id, 'source' => 'contract']) }}">
-                                                         <button class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                                                            View
-                                                        </button>
-                                                    </a>
+                                                    <a href="{{ route('contracts.view', ['id' => $contract->id, 'source' => 'contracts']) }}">View</a>
 
                                                     <!-- Delete -->
                                                     <form method="POST" action="{{ route('contracts.destroy', $contract->id) }}" 
@@ -93,22 +89,6 @@
                                                             Delete
                                                         </button>
                                                     </form>
-                                                    {{-- <!-- Mark as Completed/In Progress -->
-                                                    @if($contract->status === 'In Progress')
-                                                        <form method="POST" action="{{ route('contracts.markComplete', $contract->id) }}">
-                                                            @csrf
-                                                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100">
-                                                                Mark as Completed
-                                                            </button>
-                                                        </form>
-                                                    @else
-                                                        <form method="POST" action="{{ route('contracts.markInProgress', $contract->id) }}">
-                                                            @csrf
-                                                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-gray-100">
-                                                                Mark as In Progress
-                                                            </button>
-                                                        </form>
-                                                    @endif --}}
                                                 </div>
                                             </div>
                                         </td>

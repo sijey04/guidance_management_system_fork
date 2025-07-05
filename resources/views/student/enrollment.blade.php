@@ -35,26 +35,29 @@
                                     <th class="px-4 py-2">Semester</th>
                                     <th class="px-4 py-2">Course & Year</th>
                                     <th class="px-4 py-2">Section</th>
+                                    <th class="px-4 py-2">Transition</th>
                                     <th class="px-4 py-2">Status</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @forelse ($allProfiles as $record)
                                     <tr>
-                                        <td class="px-4 py-2">{{ $record->semester->school_year ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2">{{ $record->semester->schoolYear->school_year ?? 'N/A' }}</td>
                                         <td class="px-4 py-2">{{ $record->semester->semester ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2">{{ $record->course_year ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2">{{ $record->section ?? 'N/A' }}</td>
-                                        <td>
-                                            @if($record->semester?->is_current)
-                                                <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300"> Current School Year </span>
-                                            @else 
-                                            @endif
+                                        <td class="px-4 py-2">
+                                            {{ $record->course ?? 'N/A' }} - {{ $record->year_level ?? 'N/A' }}
                                         </td>
-                                        <td>
-                                            {{-- <a href="{{ route('student.enrollment') }}" class="text-blue-500 underline">View Full Profile</a>
-                                                View Profile
-                                            </a> --}}
+                                        <td class="px-4 py-2">{{ $record->section ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2">
+                                            @if($record->semester?->is_current)
+                                                <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                                                    Current School Year
+                                                </span>
+                                            @else
+                                                <span class="bg-gray-100 text-gray-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">
+                                                    Past
+                                                </span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty

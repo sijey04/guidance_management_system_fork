@@ -224,19 +224,18 @@ public function show(Student $student)
 
 
 
-public function enrollmentHistory(Student $student)
-{
-    $allProfiles = $student->profiles()
-                ->with('semester')
-                ->get()
-                ->sortByDesc(function($profile) {
-                    return ($profile->semester && $profile->semester->is_current)
-                        ? 999999
-                        : ($profile->semester->school_year ?? 0);
-                });
+// public function enrollmentHistory(Student $student)
+// {
+//     $allProfiles = $student->profiles()
+//     ->with('semester')
+//     ->get()
+//     ->sortByDesc(function ($profile) {
+//         return $profile->semester?->id ?? 0; // or use semester.created_at if available
+//     });
 
-    return view('student.enrollment', compact('student', 'allProfiles'));
-}
+
+//     return view('student.enrollment', compact('student', 'allProfiles'));
+// }
 
 
 
@@ -347,6 +346,16 @@ public function counseling($studentId)
     return view('student.counseling', compact('student', 'counselings'));
 }
 
+public function referral($studentId)
+{
+    $student = Student::with('referrals')->findOrFail($studentId);
+    $referrals = $student->referrals;
+
+    return view('student.referral', compact('student', 'referrals'));
+}
+
+
+
 
 
 
@@ -355,20 +364,23 @@ public function counseling($studentId)
 {
     $student = Student::with(['enrollments.semester'])->findOrFail($studentId);
 
-    $semesters = Semester::orderBy('school_year', 'asc')
-                        ->orderBy('semester', 'asc')
-                        ->get();
+   $semesters = Semester::with('schoolYear')
+    ->join('school_years', 'semesters.school_year_id', '=', 'school_years.id')
+    ->orderBy('school_years.school_year', 'asc')
+    ->orderBy('semesters.semester', 'asc')
+    ->select('semesters.*')
+    ->get();
+
 
     $activeSemester = Semester::where('is_current', true)->first();
 
     $allProfiles = $student->profiles()
-                ->with('semester')
-                ->get()
-                ->sortByDesc(function($profile) {
-                     return ($profile->semester && $profile->semester->is_current)
-                         ? 999999 // active semester on top
-                         : ($profile->semester->school_year ?? 0);
-                 });
+    ->with('semester')
+    ->get()
+    ->sortByDesc(function ($profile) {
+        return $profile->semester?->id ?? 0; // or use semester.created_at if available
+    });
+
 
     return view('student.enrollment', compact('student', 'semesters', 'activeSemester', 'allProfiles'));
 }

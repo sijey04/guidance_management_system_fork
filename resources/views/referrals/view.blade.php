@@ -1,10 +1,23 @@
 <x-app-layout>
     <div class="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8" x-data="{ zoomedImage: null }">
         
-        <!-- Back Button -->
-        <a href="{{ $source === 'report' ? route('report') : route('referrals.index') }}"
-           class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-4 py-2 rounded mb-6">
-            ← Back to {{ $source === 'report' ? 'Reports' : 'Referrals' }}
+         @php
+            $backRoute = match ($source) {
+                'report' => route('report'),
+                'referral' => route('referrals.index'),
+                'student' => route('students.referral', $referral->student->id),
+                default => route('referrals.index'),
+            };
+        @endphp
+
+        <a href="{{ $backRoute }}"
+            class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-4 py-2 rounded mb-6">
+            ← Back to 
+            @switch($source)
+                @case('report') Reports @break
+                @case('student') Student Profile @break
+                @default Referral
+            @endswitch
         </a>
 
         <div class="flex justify-between items-center">

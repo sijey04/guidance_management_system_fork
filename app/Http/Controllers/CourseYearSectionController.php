@@ -34,5 +34,24 @@ class CourseYearSectionController extends Controller
         return back()->with('success', 'Course added.')->withFragment('manageSection');
 
     }
+
+    public function destroyCourse($id)
+{
+    Course::destroy($id);
+    return back()->with('success', 'Course deleted.')->withFragment('manageCourse');
+}
+
+public function destroyYear($id)
+{
+    Year::destroy($id);
+    return back()->with('success', 'Year level deleted.')->withFragment('manageYear');
+}
+
+public function destroySection($id)
+{
+    Section::destroy($id);
+    return back()->with('success', 'Section deleted.')->withFragment('manageSection');
+}
+
 }
 
