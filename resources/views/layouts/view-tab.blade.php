@@ -1,38 +1,23 @@
-<ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
-    <li class="me-2">
-        <a href="{{ route('students.profile', $student->id) }}"
-           class="inline-block p-4 rounded-t-lg 
-                  {{ request()->routeIs('students.profile') ? 'text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-500' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300' }}">
-            Profile
-        </a>
-    </li>
-    <li class="me-2">
-        <a href="{{ route('students.enrollment', $student->id) }}"
-           class="inline-block p-4 rounded-t-lg 
-                  {{ request()->routeIs('students.enrollment') ? 'text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-500' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300' }}">
-            Enrollment History
-            
-        </a>
-    </li>
-    <li class="me-2">
-        <a href="{{ route('students.contract', $student->id) }}"
-           class="inline-block p-4 rounded-t-lg 
-                  {{ request()->routeIs('students.contract') ? 'text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-500' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300' }}">
-            Contracts
-        </a>
-    </li>
-    <li class="me-2">
-        <a href="{{ route('students.counseling', $student->id) }}"
-           class="inline-block p-4 rounded-t-lg 
-                  {{ request()->routeIs('students.counseling') ? 'text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-500' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300' }}">
-            Counseling
-        </a>
-    </li>
-    <li class="me-2">
-        <a href="{{ route('students.referral', $student->id) }}"
-           class="inline-block p-4 rounded-t-lg 
-                  {{ request()->routeIs('students.referral') ? 'text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-500' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300' }}">
-            Referrals
-        </a>
-    </li>
+<ul class="flex flex-wrap border-b border-gray-200 dark:border-gray-700 text-sm md:text-base font-medium text-gray-600 dark:text-gray-300">
+    @php
+        $tabs = [
+            ['label' => 'Profile', 'route' => 'students.profile'],
+            ['label' => 'Enrollment History', 'route' => 'students.enrollment'],
+            ['label' => 'Contracts', 'route' => 'students.contract'],
+            ['label' => 'Counseling', 'route' => 'students.counseling'],
+            ['label' => 'Referrals', 'route' => 'students.referral'],
+        ];
+    @endphp
+
+    @foreach ($tabs as $tab)
+        <li class="me-2">
+            <a href="{{ route($tab['route'], $student->id) }}"
+               class="inline-block px-4 py-2 md:px-5 md:py-3 rounded-t-lg transition-all duration-150
+                   {{ request()->routeIs($tab['route']) 
+                       ? 'bg-gray-100 text-blue-600 dark:bg-gray-800 dark:text-blue-500' 
+                       : 'hover:bg-gray-50 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300' }}">
+                {{ $tab['label'] }}
+            </a>
+        </li>
+    @endforeach
 </ul>

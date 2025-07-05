@@ -4,8 +4,8 @@
    $disabled = !$activeSchoolYear || !$activeSemester;
 @endphp
 
-<nav class="sidebar">
-    <div class="text-center">
+<aside class="w-64 bg-white border-r border-gray-200 h-full flex-shrink-0">
+    <div class="text-center mt-3">
         <a href="{{ route('dashboard') }}">
             <img src="/logo.png" alt="WMSU Logo" class="sidebar-logo mx-auto">
         </a>
