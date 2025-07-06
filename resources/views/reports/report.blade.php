@@ -5,56 +5,59 @@
 
     <div class="max-w-7xl mx-auto py-6 px-6 space-y-6">
 
-        <div class="flex justify-between bg-white border rounded p-4 shadow text-gray-700 items-center">
-            <div class="">
-                <p class="text-sm">Showing records for:</p>
-                <p class="font-semibold text-lg">
-                    School Year: 
-                    {{ $schoolYears->firstWhere('id', $selectedSY)?->school_year ?? 'Not Selected' }} |
-                    Semester: {{ $selectedSem ?? 'Not Selected' }}
-                </p>
-            </div>
-            
-            <form method="GET" class="flex gap-4 items-center ">
-                <select name="school_year_id" class="border border-gray-300 rounded px-3 py-2">
-                    <option value="">Select School Year</option>
-                    @foreach($schoolYears as $sy)
-                        <option value="{{ $sy->id }}" {{ $selectedSY == $sy->id ? 'selected' : '' }}>
-                            {{ $sy->school_year }}
-                        </option>
-                    @endforeach
-                </select>
+        <div class="flex flex-col md:flex-row justify-between bg-white border rounded p-4 shadow text-gray-700 gap-4">
+    <div class="flex-1">
+        <p class="text-sm">Showing records for:</p>
+        <p class="font-semibold text-lg">
+            School Year:
+            {{ $schoolYears->firstWhere('id', $selectedSY)?->school_year ?? 'Not Selected' }} |
+            Semester: {{ $selectedSem ?? 'Not Selected' }}
+        </p>
+    </div>
 
-                <select name="semester_name" class="border border-gray-300 rounded px-3 py-2">
-                    <option value="">Select Semester</option>
-                    <option value="1st" {{ $selectedSem == '1st' ? 'selected' : '' }}>1st</option>
-                    <option value="2nd" {{ $selectedSem == '2nd' ? 'selected' : '' }}>2nd</option>
-                    <option value="Summer" {{ $selectedSem == 'Summer' ? 'selected' : '' }}>Summer</option>
-                </select>
+    <form method="GET" class="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
+        <select name="school_year_id" class="border border-gray-300 rounded px-3 py-2 w-full sm:w-auto">
+            <option value="">Select School Year</option>
+            @foreach($schoolYears as $sy)
+                <option value="{{ $sy->id }}" {{ $selectedSY == $sy->id ? 'selected' : '' }}>
+                    {{ $sy->school_year }}
+                </option>
+            @endforeach
+        </select>
 
-                <button class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700">Filter</button>
-            </form>
+        <select name="semester_name" class="border border-gray-300 rounded px-3 py-2 w-full sm:w-auto">
+            <option value="">Select Semester</option>
+            <option value="1st" {{ $selectedSem == '1st' ? 'selected' : '' }}>1st</option>
+            <option value="2nd" {{ $selectedSem == '2nd' ? 'selected' : '' }}>2nd</option>
+            <option value="Summer" {{ $selectedSem == 'Summer' ? 'selected' : '' }}>Summer</option>
+        </select>
 
-        </div>
+        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 w-full sm:w-auto">
+            Filter
+        </button>
+    </form>
+</div>
+
        
         {{-- Tabs --}}
         @php $activeTab = request('tab', 'all'); @endphp
-        <div class="flex gap-2 mb-4">
-            @foreach([
-                'all' => 'All',
-                'student_profiles' => 'Student Profiles',
-                'contracts' => 'Contracts',
-                'referrals' => 'Referrals',
-                'counseling' => 'Counseling',
-                'transitions' => 'Student Transitions'
-            ] as $key => $label)
-                <a href="{{ request()->fullUrlWithQuery(['tab' => $key]) }}"
-                   class="px-4 py-2 rounded shadow text-sm font-medium
-                          {{ $activeTab === $key ? 'bg-red-600 text-white' : 'bg-white border text-gray-700 hover:bg-gray-100' }}">
-                    {{ $label }}
-                </a>
-            @endforeach
-        </div>
+        <div class="flex flex-wrap gap-2 mb-4">
+        @foreach([
+            'all' => 'All',
+            'student_profiles' => 'Student Profiles',
+            'contracts' => 'Contracts',
+            'referrals' => 'Referrals',
+            'counseling' => 'Counseling',
+            'transitions' => 'Student Transitions'
+        ] as $key => $label)
+            <a href="{{ request()->fullUrlWithQuery(['tab' => $key]) }}"
+            class="px-4 py-2 rounded shadow text-sm font-medium
+                    {{ $activeTab === $key ? 'bg-red-600 text-white' : 'bg-white border text-gray-700 hover:bg-gray-100' }}">
+                {{ $label }}
+            </a>
+        @endforeach
+    </div>
+
 
         {{-- Summary Cards --}}
         {{-- <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -87,12 +90,12 @@
 
         
         @if($activeTab === 'student_profiles')
-        <form method="GET" class="flex flex-wrap gap-4 items-center mb-4">
+        <form method="GET" class="flex flex-wrap gap-4 items-center mb-4 w-full">
             <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
             <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
             <input type="hidden" name="tab" value="student_profiles">
 
-            <select name="filter_course" class="border px-3 py-2 rounded">
+            <select name="filter_course" class="border px-3 py-2 rounded w-full sm:w-auto">
                 <option value="">All Courses</option>
                 @foreach($courses as $course)
                     <option value="{{ $course->course }}" {{ request('filter_course') == $course->course ? 'selected' : '' }}>
@@ -101,7 +104,7 @@
                 @endforeach
             </select>
 
-            <select name="filter_year" class="border px-3 py-2 rounded">
+            <select name="filter_year" class="border px-3 py-2 rounded w-full sm:w-auto">
                 <option value="">All Years</option>
                 @foreach($years as $year)
                     <option value="{{ $year->year_level }}" {{ request('filter_year') == $year->year_level ? 'selected' : '' }}>
@@ -110,7 +113,7 @@
                 @endforeach
             </select>
 
-            <select name="filter_section" class="border px-3 py-2 rounded">
+            <select name="filter_section" class="border px-3 py-2 rounded w-full sm:w-auto">
                 <option value="">All Sections</option>
                 @foreach($sections as $section)
                     <option value="{{ $section->section }}" {{ request('filter_section') == $section->section ? 'selected' : '' }}>
@@ -125,12 +128,12 @@
 
         {{-- Filters for Contracts --}}
         @if($activeTab === 'contracts')
-        <form method="GET" class="flex flex-wrap gap-4 items-center mb-4">
+        <form method="GET" class="flex flex-wrap gap-4 items-center mb-4 w-full">
             <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
             <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
             <input type="hidden" name="tab" value="contracts">
 
-            <select name="filter_contract_type" class="border px-3 py-2 rounded">
+            <select name="filter_contract_type" class="border px-3 py-2 rounded w-full sm:w-auto">
                 <option value="">All Types</option>
                 @foreach($contractTypesList as $type)
                     <option value="{{ $type->type }}" {{ request('filter_contract_type') == $type->type ? 'selected' : '' }}>
@@ -139,7 +142,7 @@
                 @endforeach
             </select>
 
-            <select name="filter_contract_status" class="border px-3 py-2 rounded">
+            <select name="filter_contract_status" class="border px-3 py-2 rounded w-full sm:w-auto">
                 <option value="">All Status</option>
                 <option value="In Progress" {{ request('filter_contract_status') == 'In Progress' ? 'selected' : '' }}>In Progredd</option>
                 <option value="Completed" {{ request('filter_contract_status') == 'Completed' ? 'selected' : '' }}>Completed</option>
@@ -151,7 +154,7 @@
 
         {{-- Filters for Referrals --}}
         @if($activeTab === 'referrals')
-        <form method="GET" class="flex gap-4 items-center mb-4">
+        <form method="GET" class="flex flex-wrap gap-4 items-center mb-4 w-full">
             <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
             <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
             <input type="hidden" name="tab" value="referrals">
@@ -176,7 +179,7 @@
             <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
             <input type="hidden" name="tab" value="counseling">
 
-            <select name="filter_counseling_status" class="border px-3 py-2 rounded">
+            <select name="filter_counseling_status" class="border px-3 py-2 rounded w-full sm:w-auto">
                 <option value="">All Status</option>
                 <option value="In Progress" {{ request('filter_counseling_status') == 'In Progress' ? 'selected' : '' }}>In Progress</option>
                 <option value="Completed" {{ request('filter_counseling_status') == 'Completed' ? 'selected' : '' }}>Completed</option>
