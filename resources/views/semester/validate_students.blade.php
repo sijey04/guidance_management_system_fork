@@ -7,7 +7,7 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8"
+    <div class="max-w-7xl mx-auto  sm:px-6 lg:px-8"
          x-data="{
              selected: {{ json_encode(request('selected_students', [])) }},
              allOnPage: {{ json_encode($students->pluck('id')->map(fn($id) => (string) $id)) }},
@@ -69,8 +69,11 @@
 
         <div class="bg-white p-6 shadow rounded-lg">
             <div class="mb-4">
-                <a href="{{ route('semester.index') }}" class="text-blue-600 hover:underline text-sm">← Back to Academic Setup</a>
-            </div>
+            <a href="{{ route('semester.index') }}"
+            class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-sm font-semibold text-[#a82323] rounded hover:bg-gray-100 transition">
+                ← Back to Student List
+            </a>
+        </div>
 
             <h2 class="text-2xl font-semibold text-gray-700 mb-4">Validate Students from Previous Semesters</h2>
             <p class="text-gray-500 mb-6">
@@ -80,7 +83,8 @@
 
             <!-- FILTER FORM -->
             <form method="GET" action="{{ route('semester.validate', $newSemester->id) }}" @submit.prevent="injectHiddenInputs($el); $el.submit()">
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+
                     <div>
                         <label class="text-sm font-medium text-gray-600">Course</label>
                         <select name="filter_course" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
@@ -136,13 +140,13 @@
                 @csrf
                 <div id="selected-hidden"></div>
 
-                <div class="flex justify-between items-center mt-6 mb-3">
+                <div class="flex flex-col md:flex-row justify-between gap-4 mt-6 mb-3">
                     <button type="button" @click="toggleAllOnPage"
-                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-semibold">
+                           class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-semibold w-full md:w-auto">
                         <span x-text="allSelectedOnPage() ? 'Unselect All on Page' : 'Select All on Page'"></span>
                     </button>
                     <button type="submit"
-                            class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 font-semibold">
+                            class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 font-semibold w-full md:w-auto">
                         Validate Selected Students
                     </button>
                 </div>
@@ -248,7 +252,7 @@
                                                 class="w-full border-gray-300 rounded"
                                                 x-model="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
                                                 @change="updateStudentValue('{{ $id }}', 'course', $event.target.value)"
-                                                {{ $disableDropdowns ? 'disabled' : '' }}>
+                                                {{ $disableDropdowns ? 'disabled' : '' }} >
                                                 @foreach($courses as $course)
                                                     <option value="{{ $course->course }}">{{ $course->course }}</option>
                                                 @endforeach
@@ -294,7 +298,7 @@
                                                 <div x-show="openModal{{ $id }}" @keydown.escape.window="openModal{{ $id }} = false"
                                                     x-cloak class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
                                                     <div @click.away="openModal{{ $id }} = false"
-                                                        class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+                                                        class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh]">
                                                         <h2 class="text-lg font-bold mb-4 text-gray-800">Mark Transition for {{ $student->first_name }}</h2>
 
                                                         <div class="space-y-4">
