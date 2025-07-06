@@ -165,6 +165,9 @@ Route::get('/transitions/{transition}', [StudentTransitionController::class, 'sh
 Route::post('/transitions/store', [StudentTransitionController::class, 'store'])->name('transitions.store');
 Route::post('/transitions/store-student-transition', [StudentTransitionController::class, 'storeStudentTransition'])
     ->name('transitions.storeStudentTransition');
+Route::patch('/transitions/{transition}/remarks', [StudentTransitionController::class, 'updateRemarks'])->name('transitions.updateRemarks');
+Route::post('/transitions/{transition}/images', [StudentTransitionController::class, 'uploadImages'])->name('transitions.uploadImages');
+Route::delete('/transitions/{transition}/images/{image}', [StudentTransitionController::class, 'deleteImage'])->name('transitions.deleteImage');
 
 });
 // // Student List,Create,edit

@@ -50,22 +50,73 @@
                                 {{-- Drop Modal --}}
                                 <div x-show="openDropModal" x-cloak class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                                     <div @click.away="openDropModal = false"
-                                        class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+                                        class="bg-white rounded-xl shadow-lg max-w-2xl w-full p-6 relative overflow-y-auto max-h-[90vh]">
                                         <h2 class="text-lg font-semibold mb-4 text-gray-800">Confirm Drop</h2>
-                                        <form action="{{ route('student.drop', $student->id) }}" method="POST">
-                                            @csrf
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Remarks:</label>
-                                            <textarea name="remark" rows="3"
-                                                class="w-full border-gray-300 rounded-md shadow-sm mb-4 focus:ring focus:ring-red-300 focus:border-red-300"></textarea>
-                                            <div class="flex justify-end gap-3">
-                                                <button type="button" @click="openDropModal = false" class="text-sm text-gray-500 hover:underline">
-                                                    Cancel
-                                                </button>
-                                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded">
-                                                    Confirm Drop
-                                                </button>
-                                            </div>
-                                        </form>
+                                        <form action="{{ route('student.drop', $student->id) }}" method="POST" enctype="multipart/form-data"
+      x-data="{
+        files: [],
+        handleFiles(event) {
+            const selectedFiles = Array.from(event.target.files);
+            selectedFiles.forEach(file => {
+                this.files.push({ file, url: URL.createObjectURL(file) });
+            });
+            const dataTransfer = new DataTransfer();
+            this.files.forEach(f => dataTransfer.items.add(f.file));
+            event.target.files = dataTransfer.files;
+        },
+        remove(index, $event) {
+            this.files.splice(index, 1);
+            const dataTransfer = new DataTransfer();
+            this.files.forEach(f => dataTransfer.items.add(f.file));
+            $event.target.closest('form').querySelector('input[type=file]').files = dataTransfer.files;
+        }
+    }">
+    @csrf
+
+    <!-- Remarks -->
+    <label class="block text-sm font-medium text-gray-700 mb-1">Remarks:</label>
+    <textarea name="remark" rows="3"
+              class="w-full border-gray-300 rounded-md shadow-sm mb-4 focus:ring focus:ring-red-300 focus:border-red-300"></textarea>
+
+    <!-- Image Upload (Multiple) -->
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Attach Images (Optional)</label>
+        <input type="file" name="images[]" accept="image/*" multiple id="dropImageUpload" class="hidden" @change="handleFiles">
+        
+        <!-- Upload Area -->
+        <label for="dropImageUpload"
+               class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
+            <span class="text-4xl text-gray-400">+</span>
+        </label>
+
+        <!-- Previews -->
+        <div class="flex flex-wrap gap-4 mt-4">
+            <template x-for="(fileObj, index) in files" :key="index">
+                <div class="relative w-32 h-32">
+                    <img :src="fileObj.url" class="object-cover w-full h-full rounded-lg border">
+                    <button type="button"
+                            @click="remove(index, $event)"
+                            class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
+                        &times;
+                    </button>
+                </div>
+            </template>
+        </div>
+
+        <p class="text-xs text-gray-500 mt-2">You can select one or more images. You may also remove them before submitting.</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-end gap-3">
+        <button type="button" @click="openDropModal = false" class="text-sm text-gray-500 hover:underline">
+            Cancel
+        </button>
+        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded">
+            Confirm Drop
+        </button>
+    </div>
+</form>
+
                                     </div>
                                 </div>
                             </div>

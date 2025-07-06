@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
 use App\Models\ContractType;
 use App\Models\semester;
 use App\Models\Student;
 use App\Models\StudentTransition;
+use App\Models\StudentTransitionImage;
 use Illuminate\Http\Request;
 
 class StudentTransitionController extends Controller
@@ -169,4 +171,61 @@ class StudentTransitionController extends Controller
         $transition->delete();
         return redirect()->route('transitions.index')->with('success', 'Record deleted.');
     }
+
+public function updateRemarks(Request $request, $id)
+{
+    $transition = StudentTransition::findOrFail($id);
+    $transition->remarks = $request->input('remarks');
+    $transition->save();
+
+    return redirect()->route('contracts.view', $id)
+                     ->with('success', 'Remarks updated successfully.');
+}
+
+public function updateStatus(Request $request, $id)
+{
+    $transition = StudentTransition::findOrFail($id);
+    $status = $request->input('status');
+
+    if (in_array($status, ['In Progress', 'Completed'])) {
+        $transition->status = $status;
+        $transition->save();
+    }
+
+    return redirect()->route('contracts.view', $id)
+                     ->with('success', 'Status updated successfully.');
+}
+
+public function uploadImages(Request $request, $id, $type)
+{
+    $request->validate([
+        'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    $transition = StudentTransition::findOrFail($id);
+
+    foreach ($request->file('images', []) as $file) {
+        $path = $file->store('$transition_images', 'public');
+
+        $transition->images()->create([
+            'image_path' => $path,
+            'type' => $type,
+        ]);
+    }
+
+    return back()->with('success', 'Images uploaded successfully.');
+}
+
+public function deleteImage($contractId, $imageId)
+{
+    $image = StudentTransitionImage::findOrFail($imageId);
+
+    if (Storage::disk('public')->exists($image->image_path)) {
+        Storage::disk('public')->delete($image->image_path);
+    }
+
+    $image->delete();
+
+    return back()->with('success', 'Image deleted successfully.');
+}
 }

@@ -514,13 +514,18 @@ public function viewProfile($studentId, $profileId)
 public function markAsDropped(Request $request, $id)
 {
     $student = Student::findOrFail($id);
-
     $activeSemester = Semester::where('is_current', true)->first();
+
     if (!$activeSemester) {
         return back()->with('error', 'No active semester found.');
     }
 
-    StudentTransition::create([
+    $request->validate([
+        'remark' => 'nullable|string|max:255',
+        'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
+
+    $transition = StudentTransition::create([
         'student_id' => $student->id,
         'semester_id' => $activeSemester->id,
         'first_name' => $student->first_name,
@@ -530,7 +535,19 @@ public function markAsDropped(Request $request, $id)
         'remark' => $request->input('remark'),
     ]);
 
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $image) {
+            $path = $image->store('transition_images', 'public');
+
+            StudentTransitionImage::create([
+                'student_transition_id' => $transition->id,
+                'image_path' => $path,
+            ]);
+        }
+    }
+
     return back()->with('success', 'Student has been marked as dropped.');
 }
+
 
 }
