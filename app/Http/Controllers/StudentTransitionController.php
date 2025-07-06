@@ -10,24 +10,46 @@ use Illuminate\Http\Request;
 
 class StudentTransitionController extends Controller
 {
-    public function index()
-    {
-        $transitions = StudentTransition::latest()->paginate(10);
+    public function index(Request $request)
+{
+    $query = StudentTransition::with(['semester.schoolYear']);
 
-         $semesters = semester::all();
-         
+    // Search by name or ID
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('first_name', 'like', "%$search%")
+              ->orWhere('last_name', 'like', "%$search%")
+              ->orWhere('student_id', 'like', "%$search%");
+        });
+    }
+
+    // Filter by transition type
+    if ($request->filled('transition_type')) {
+        $query->where('transition_type', $request->transition_type);
+    }
+
+    // Sort by date
+    $sortOrder = $request->get('sort', 'desc'); // default: latest
+    $query->orderBy('transition_date', $sortOrder);
+
+    $transitions = $query->paginate(10)->appends($request->all());
+
+    $semesters = Semester::all();
+    $transitionTypes = [
+        'None', 'Shifting In', 'Shifting Out', 'Transferring In',
+        'Transferring Out', 'Dropped', 'Returning Student'
+    ];
+
     $currentSemester = Semester::where('is_current', true)->first();
+    $students = $currentSemester
+        ? Student::whereHas('profiles', fn($q) => $q->where('semester_id', $currentSemester->id))
+            ->with('profiles')->get()
+        : collect();
 
-    if (!$currentSemester) {
-        $students = collect(); // return empty collection if no active semester
-    } else {
-        // Get students who have profile for current semester (either newly added or validated)
-        $students = Student::whereHas('profiles', function ($query) use ($currentSemester) {
-            $query->where('semester_id', $currentSemester->id);
-        })->with('profiles')->get();
-    }
-        return view('transitions.index', compact('transitions','students', 'semesters',));
-    }
+    return view('transitions.index', compact('transitions', 'students', 'semesters', 'transitionTypes'));
+}
+
 
     public function create()
     {
