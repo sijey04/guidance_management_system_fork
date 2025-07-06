@@ -286,7 +286,8 @@
                                 <th class="px-4 py-2">Student</th>
                                 <th class="px-4 py-2">Type</th>
                                 <th class="px-4 py-2">Status</th>
-                                <th class="px-4 py-2">Start - End</th>
+                                <th class="px-4 py-2">Start Date</th>
+                                <th class="px-4 py-2">End Date</th>
                                  <th class="px-4 py-2"></th>
                             </tr>
                         </thead>
@@ -296,7 +297,8 @@
                                     <td class="px-4 py-2">{{ $contract->student->first_name }} {{ $contract->student->last_name }}</td>
                                     <td class="px-4 py-2">{{ $contract->contract_type }}</td>
                                     <td class="px-4 py-2">{{ $contract->status }}</td>
-                                    <td class="px-4 py-2">{{ $contract->start_date }} - {{ $contract->end_date }}</td>
+                                    <td class="px-4 py-2">{{ $contract->start_date }} </td>
+                                        <td> {{ $contract->end_date }}</td>
                                  <td class="px-4 py-2">
                                     <a href="{{ route('contracts.view', ['id' => $contract->id, 'source' => 'report']) }}">View</a>
 
@@ -321,7 +323,6 @@
                             <tr>
                                 <th class="px-4 py-2">Student</th>
                                 <th class="px-4 py-2">Reason</th>
-                                <th class="px-4 py-2">Remarks</th>
                                 <th class="px-4 py-2">Date</th>
                                  <th class="px-4 py-2"></th>
                             </tr>
@@ -331,7 +332,6 @@
                                 <tr class="border-b hover:bg-gray-50">
                                     <td class="px-4 py-2">{{ $referral->student->first_name }} {{ $referral->student->last_name }}</td>
                                     <td class="px-4 py-2">{{ $referral->reason }}</td>
-                                    <td class="px-4 py-2">{{ $referral->remarks }}</td>
                                     <td class="px-4 py-2">{{ $referral->referral_date }}</td>
                                     <td class="px-4 py-2"><a href="{{ route('referrals.view', ['id' => $referral->id, 'source' => 'report']) }}"
                                             class="text-blue-600 hover:underline">
@@ -359,7 +359,6 @@
                                 <th class="px-4 py-2">Student</th>
                                 <th class="px-4 py-2">Date</th>
                                 <th class="px-4 py-2">Status</th>
-                                <th class="px-4 py-2">Remarks</th>
                                  <th class="px-4 py-2"></th>
                             </tr>
                         </thead>
@@ -369,7 +368,6 @@
                                     <td class="px-4 py-2">{{ $counseling->student->first_name }} {{ $counseling->student->last_name }}</td>
                                     <td class="px-4 py-2">{{ $counseling->counseling_date }}</td>
                                     <td class="px-4 py-2">{{ $counseling->status }}</td>
-                                    <td class="px-4 py-2">{{ $counseling->remarks }}</td>
                                     <td> 
                                         <a href="{{ route('counseling.view', ['id' => $counseling->id, 'source' => 'report']) }}"
                                             class="text-blue-600 hover:underline">

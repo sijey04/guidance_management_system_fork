@@ -239,6 +239,22 @@ public function export(Request $request)
         ->when($request->filled('filter_transition_type'), fn($q) => $q->where('transition_type', $request->filter_transition_type))
         ->get();
 
+    $contractCounts = Contract::selectRaw('student_id, COUNT(*) as count')
+    ->whereIn('semester_id', $semesterIds)
+    ->groupBy('student_id')
+    ->pluck('count', 'student_id');
+
+    $referralCounts = Referral::selectRaw('student_id, COUNT(*) as count')
+        ->whereIn('semester_id', $semesterIds)
+        ->groupBy('student_id')
+        ->pluck('count', 'student_id');
+
+    $counselingCounts = Counseling::selectRaw('student_id, COUNT(*) as count')
+        ->whereIn('semester_id', $semesterIds)
+        ->groupBy('student_id')
+        ->pluck('count', 'student_id');
+
+
     $pdf = Pdf::loadView('reports.export_pdf', compact(
         'schoolYear',
         'semesterName',
@@ -247,7 +263,10 @@ public function export(Request $request)
         'contracts',
         'referrals',
         'counselings',
-        'transitions'
+        'transitions',
+        'contractCounts',
+        'referralCounts',
+        'counselingCounts'
     ))->setPaper('a4', 'landscape');
 
     return $pdf->download("Report_{$schoolYear->school_year}_{$semesterName}.pdf");
