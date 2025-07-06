@@ -140,7 +140,11 @@
                                                 <div x-show="open" @click.away="open = false" x-transition
                                                     class="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg z-10">
                                                     <a href="{{ route('counseling.view', ['id' => $counseling->id, 'source' => 'counseling']) }}"
-                                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">View</a>
+                                                       >
+                                                        <button type="submit"
+                                                        class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                                    View
+                                                </button></a>
                                                     <form method="POST" action="{{ route('counseling.destroy', $counseling->id) }}"
                                                           onsubmit="return confirm('Are you sure you want to delete this record?');">
                                                         @csrf

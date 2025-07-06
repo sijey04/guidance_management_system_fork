@@ -86,10 +86,34 @@
                             <td class="px-4 py-3">{{ $transition->last_name }}, {{ $transition->first_name }}</td>
                             <td class="px-4 py-3">{{ $transition->transition_type }}</td>
                             <td class="px-4 py-3">{{ \Carbon\Carbon::parse($transition->transition_date)->format('F j, Y') }}</td>
-                            <td class="px-4 py-3 text-center">
-                                <a href="{{ route('transitions.show', $transition) }}"
-                                   class="text-blue-600 hover:underline text-sm">View</a>
-                            </td>
+                            <td class="px-4 py-3 text-center relative">
+                                            <div x-data="{ open: false }" class="relative inline-block text-left">
+                                                <button @click="open = !open" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"/>
+                                                    </svg>
+                                                </button>
+
+                                                <!-- Dropdown -->
+                                                <div x-show="open" @click.away="open = false" x-transition
+                                                     class="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg z-10">
+                                                    <a href="{{ route('transitions.show', $transition) }}"
+                                                       >
+                                                         <button type="submit"
+                                                        class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                                    View
+                                                </button>
+                                                    </a>
+                                                   <form action="{{ route('transitions.destroy', $transition) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Are you sure you want to delete this record?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </td>
                         </tr>
                     @empty
                         <tr>

@@ -175,28 +175,14 @@ class StudentTransitionController extends Controller
 public function updateRemarks(Request $request, $id)
 {
     $transition = StudentTransition::findOrFail($id);
-    $transition->remarks = $request->input('remarks');
+    $transition->remark = $request->input('remark');
     $transition->save();
 
-    return redirect()->route('contracts.view', $id)
+    return redirect()->route('transitions.show', $id)
                      ->with('success', 'Remarks updated successfully.');
 }
 
-public function updateStatus(Request $request, $id)
-{
-    $transition = StudentTransition::findOrFail($id);
-    $status = $request->input('status');
-
-    if (in_array($status, ['In Progress', 'Completed'])) {
-        $transition->status = $status;
-        $transition->save();
-    }
-
-    return redirect()->route('contracts.view', $id)
-                     ->with('success', 'Status updated successfully.');
-}
-
-public function uploadImages(Request $request, $id, $type)
+public function uploadImages(Request $request, $id)
 {
     $request->validate([
         'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -205,12 +191,12 @@ public function uploadImages(Request $request, $id, $type)
     $transition = StudentTransition::findOrFail($id);
 
     foreach ($request->file('images', []) as $file) {
-        $path = $file->store('$transition_images', 'public');
+        $path = $file->store('transition_images', 'public');
 
-        $transition->images()->create([
-            'image_path' => $path,
-            'type' => $type,
-        ]);
+$transition->images()->create([
+    'image_path' => $path,
+]);
+
     }
 
     return back()->with('success', 'Images uploaded successfully.');

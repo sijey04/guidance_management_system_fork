@@ -3,15 +3,13 @@
 
         <a href="{{ route('transitions.index') }}"
            class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-4 py-2 rounded mb-6">
-            ← Back to Student Movement Records
+            ← Back to Student Transition Records
         </a>
 
         <div class="flex justify-between items-center">
             <h2 class="text-3xl font-bold text-red-700 mb-6">Student Movement Details</h2>
 
             <div class="flex gap-2">
-                <button @click="$dispatch('open-modal', 'editTransitionModal')"
-                        class="text-blue-600 font-medium hover:underline">Edit</button>
 
                 <form action="{{ route('transitions.destroy', $transition) }}"
                       method="POST"
