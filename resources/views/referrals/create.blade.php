@@ -49,51 +49,46 @@
                 <input type="date" name="referral_date" required class="w-full border p-2 rounded">
             </div>
 
-            <!-- Image Attachment -->
-             <div x-data="{
-                    files: [],
-                    handleFiles(event) {
-                        const selectedFiles = Array.from(event.target.files);
-                        selectedFiles.forEach(file => {
-                            this.files.push({ file, url: URL.createObjectURL(file) });
+             <!-- IMage Attachment (Optional) -->
+            <div x-data="{
+                    previews: [],
+                    previewFiles(event) {
+                        previews = [];
+                        [...event.target.files].forEach(file => {
+                            previews.push({ url: URL.createObjectURL(file), name: file.name });
                         });
-                        // Create a new FileList with only the files in `this.files`
-                        const dataTransfer = new DataTransfer();
-                        this.files.forEach(f => dataTransfer.items.add(f.file));
-                        event.target.files = dataTransfer.files;
-                    },
-                    remove(index, $event) {
-                        this.files.splice(index, 1);
-                        const dataTransfer = new DataTransfer();
-                        this.files.forEach(f => dataTransfer.items.add(f.file));
-                        $event.target.closest('form').querySelector('input[type=file]').files = dataTransfer.files;
                     }
                 }" class="mt-4">
-                    <label class="block text-sm mb-1" style="color:#a82323;">Attach Contract Images</label>
+                    <label class="block text-sm mb-1 text-red-700">Attach Referral Images</label>
 
-                    <input type="file" name="referral_images[]" accept="image/*" multiple class="hidden" id="referralUpload" @change="handleFiles">
+                    <!-- Real File Input -->
+                    <input type="file" name="image_path[]" id="referralUpload" accept="image/*" multiple @change="previewFiles" class="hidden">
 
-                    <!-- Upload Box -->
-                    <label for="referralUpload" class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
+                    <!-- Custom Button -->
+                    <label for="referralUpload"
+                        class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
                         <span class="text-4xl text-gray-400">+</span>
                     </label>
 
                     <!-- Previews -->
                     <div class="flex flex-wrap gap-4 mt-4">
-                        <template x-for="(fileObj, index) in files" :key="index">
+                        <template x-for="(file, index) in previews" :key="index">
                             <div class="relative w-32 h-32">
-                                <img :src="fileObj.url" class="object-cover w-full h-full rounded-lg border">
-                                <button type="button"
-                                        @click="remove(index, $event)"
-                                        class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
-                                    &times;
-                                </button>
+                                <img :src="file.url" class="object-cover w-full h-full rounded-lg border">
+                                <div class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </div>
                             </div>
                         </template>
                     </div>
 
-                    <p class="text-xs text-gray-500 mt-2">You can select one or more images. You may also remove them before submitting.</p>
-                </div>
+    <p class="text-xs text-gray-500 mt-2">Selected images will be uploaded. You can remove them by clicking “Cancel” and reselecting.</p>
+</div>
+
 
 
             <!-- Remarks -->
