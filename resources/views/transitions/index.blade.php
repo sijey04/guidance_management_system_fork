@@ -97,11 +97,10 @@
                                                 <!-- Dropdown -->
                                                 <div x-show="open" @click.away="open = false" x-transition
                                                      class="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg z-10">
-                                                    <a href="{{ route('transitions.show', $transition) }}"
-                                                       >
-                                                         <button type="submit"
-                                                        class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                                                    View
+                                                    <a href="{{ route('transitions.show', ['transition' => $transition->id, 'source' => 'transition']) }}">
+                                                               <button class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">view</button>
+                                                            </a>
+
                                                 </button>
                                                     </a>
                                                    <form action="{{ route('transitions.destroy', $transition) }}"

@@ -161,10 +161,13 @@ class StudentTransitionController extends Controller
         return redirect()->route('transitions.show', $transition)->with('success', 'Student movement updated.');
     }
 
-    public function show(StudentTransition $transition)
+    public function show(StudentTransition $transition, Request $request)
     {
-        return view('transitions.view', compact('transition'));
+        $source = $request->query('source', 'transition'); // default to 'transition'
+        
+        return view('transitions.view', compact('transition', 'source'));
     }
+
 
     public function destroy(StudentTransition $transition)
     {

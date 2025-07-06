@@ -74,9 +74,13 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
             ->when($request->filled('filter_counseling_status'), fn($q) => $q->where('status', $request->filter_counseling_status))
             ->get();
 
-            $transitions = StudentTransition::with('student')
+        $transitions = StudentTransition::with('student')
             ->whereIn('semester_id', $semesterIds)
+            ->when($request->filled('filter_transition_type'), function ($q) use ($request) {
+                $q->where('transition_type', $request->filter_transition_type);
+            })
             ->get();
+
     
         } else {
     $studentProfiles = collect();

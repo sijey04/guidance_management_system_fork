@@ -346,26 +346,51 @@
         @endif
 
         {{-- Student Transitions Table --}}
-        @if($activeTab === 'all' || $activeTab === 'transitions')
+        @if( $activeTab === 'transitions')
+        <form method="GET" class="flex flex-wrap gap-4 items-center mb-4 w-full">
+            <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
+            <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
+            <input type="hidden" name="tab" value="transitions">
+
+            <select name="filter_transition_type" class="border px-3 py-2 rounded w-full sm:w-auto">
+                <option value="">All Types</option>
+                @foreach(['Shifting In', 'Shifting Out', 'Transferring In', 'Transferring Out', 'Dropped', 'Returning Student'] as $type)
+                    <option value="{{ $type }}" {{ request('filter_transition_type') == $type ? 'selected' : '' }}>
+                        {{ $type }}
+                    </option>
+                @endforeach
+            </select>
+
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700">Apply</button>
+        </form>
             <div class="bg-white border rounded shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Student Transitions</h3>
                 <div class="overflow-x-auto">
                     <table class="min-w-full text-sm border text-left text-gray-700">
                         <thead class="bg-gray-100">
                             <tr>
-                                <th class="px-4 py-2">Student</th>
-                                <th class="px-4 py-2">Type</th>
-                                <th class="px-4 py-2">From → To</th>
-                                <th class="px-4 py-2">Reason</th>
+                                <th class="px-4 py-3">A.Y</th>
+                                <th class="px-4 py-3">Semester</th>
+                                <th class="px-4 py-3">Name</th>
+                                <th class="px-4 py-3">Type</th>
+                                <th class="px-4 py-3">Date</th>
+                                <th class="px-4 py-3 text-center"></th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($transitions as $transition)
                                 <tr class="border-b hover:bg-gray-50">
-                                    <td class="px-4 py-2">{{ $transition->first_name }} {{ $transition->last_name }}</td>
-                                    <td class="px-4 py-2">{{ $transition->transition_type }}</td>
-                                    <td class="px-4 py-2">{{ $transition->from_program }} → {{ $transition->to_program }}</td>
-                                    <td class="px-4 py-2">{{ $transition->remark }}</td>
+                                    <td class="px-4 py-3">{{ $transition->semester->schoolYear->school_year ?? 'N/A' }}</td>
+                                    <td class="px-4 py-3">{{ $transition->semester->semester ?? 'N/A' }}</td>
+                                    <td class="px-4 py-3">{{ $transition->last_name }}, {{ $transition->first_name }}</td>
+                                    <td class="px-4 py-3">{{ $transition->transition_type }}</td>
+                                    <td class="px-4 py-3">{{ \Carbon\Carbon::parse($transition->transition_date)->format('F j, Y') }}</td>
+                                    <td> 
+                                        <a href="{{ route('transitions.show', ['transition' => $transition->id, 'source' => 'report']) }}">
+                                            View
+                                        </a>
+
+                                    </td>
                                 </tr>
                             @empty
                                 <tr><td colspan="4" class="text-center py-4">No transition records found.</td></tr>
