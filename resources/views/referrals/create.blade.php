@@ -50,44 +50,57 @@
             </div>
 
              <!-- IMage Attachment (Optional) -->
-            <div x-data="{
-                    previews: [],
-                    previewFiles(event) {
-                        previews = [];
-                        [...event.target.files].forEach(file => {
-                            previews.push({ url: URL.createObjectURL(file), name: file.name });
-                        });
-                    }
-                }" class="mt-4">
-                    <label class="block text-sm mb-1 text-red-700">Attach Referral Images</label>
+           <!-- Image Attachment (Multiple with Preview & Removal) -->
+<div x-data="{
+    files: [],
+    handleFiles(event) {
+        const selectedFiles = Array.from(event.target.files);
+        selectedFiles.forEach(file => {
+            this.files.push({ file, url: URL.createObjectURL(file) });
+        });
+        const dt = new DataTransfer();
+        this.files.forEach(f => dt.items.add(f.file));
+        event.target.files = dt.files;
+    },
+    remove(index, $event) {
+        this.files.splice(index, 1);
+        const dt = new DataTransfer();
+        this.files.forEach(f => dt.items.add(f.file));
+        $event.target.closest('form').querySelector('input[type=file]').files = dt.files;
+    }
+}" class="mt-4">
+    <label class="block text-sm font-medium text-red-700 mb-1">Attach Referral Images</label>
 
-                    <!-- Real File Input -->
-                    <input type="file" name="image_path[]" id="referralUpload" accept="image/*" multiple @change="previewFiles" class="hidden">
+    <!-- File Input (hidden) -->
+    <input type="file" name="image_path[]" accept="image/*" multiple
+           class="hidden" id="referralUpload" @change="handleFiles">
 
-                    <!-- Custom Button -->
-                    <label for="referralUpload"
-                        class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
-                        <span class="text-4xl text-gray-400">+</span>
-                    </label>
+    <!-- Upload Box -->
+    <label for="referralUpload"
+           class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
+        <span class="text-4xl text-gray-400">+</span>
+    </label>
 
-                    <!-- Previews -->
-                    <div class="flex flex-wrap gap-4 mt-4">
-                        <template x-for="(file, index) in previews" :key="index">
-                            <div class="relative w-32 h-32">
-                                <img :src="file.url" class="object-cover w-full h-full rounded-lg border">
-                                <div class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
+    <!-- Previews -->
+    <div class="flex flex-wrap gap-4 mt-4">
+        <template x-for="(fileObj, index) in files" :key="index">
+            <div class="relative w-32 h-32">
+                <img :src="fileObj.url" class="object-cover w-full h-full rounded-lg border">
+                <button type="button"
+                        @click="remove(index, $event)"
+                        class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
+                    &times;
+                </button>
+            </div>
+        </template>
+    </div>
 
-    <p class="text-xs text-gray-500 mt-2">Selected images will be uploaded. You can remove them by clicking “Cancel” and reselecting.</p>
+    <p class="text-xs text-gray-500 mt-2">You can select one or more images. You may remove them before submitting.</p>
+    @error('image_path')
+        <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+    @enderror
 </div>
+
 
 
 

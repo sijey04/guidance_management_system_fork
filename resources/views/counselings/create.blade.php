@@ -74,24 +74,100 @@
             </div>
 
             <!-- Counseling Form Images -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Counseling Form Pictures <span class="text-gray-500 text-xs">(Multiple)</span></label>
-                <input type="file" name="form_images[]" accept="image/*" multiple
-                       class="w-full border-gray-300 rounded px-3 py-2 text-sm">
-                @error('form_images')
-                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                @enderror
+<div x-data="{
+    files: [],
+    handleFiles(event) {
+        const selectedFiles = Array.from(event.target.files);
+        selectedFiles.forEach(file => {
+            this.files.push({ file, url: URL.createObjectURL(file) });
+        });
+        const dt = new DataTransfer();
+        this.files.forEach(f => dt.items.add(f.file));
+        event.target.files = dt.files;
+    },
+    remove(index, $event) {
+        this.files.splice(index, 1);
+        const dt = new DataTransfer();
+        this.files.forEach(f => dt.items.add(f.file));
+        $event.target.closest('form').querySelector('#formImagesInput').files = dt.files;
+    }
+}" class="mt-4">
+    <label class="block text-sm font-medium text-gray-700 mb-1">Counseling Form Pictures <span class="text-gray-500 text-xs">(Multiple)</span></label>
+    
+    <input type="file" name="form_images[]" id="formImagesInput" accept="image/*" multiple class="hidden" @change="handleFiles">
+
+    <label for="formImagesInput"
+           class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
+        <span class="text-4xl text-gray-400">+</span>
+    </label>
+
+    <div class="flex flex-wrap gap-4 mt-4">
+        <template x-for="(file, index) in files" :key="index">
+            <div class="relative w-32 h-32">
+                <img :src="file.url" class="object-cover w-full h-full rounded-lg border">
+                <button type="button"
+                        @click="remove(index, $event)"
+                        class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
+                    &times;
+                </button>
             </div>
+        </template>
+    </div>
+
+    <p class="text-xs text-gray-500 mt-2">You can add or remove images before submitting.</p>
+    @error('form_images')
+        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+    @enderror
+</div>
+
 
             <!-- Student ID Card Images -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Student ID Card <span class="text-gray-500 text-xs">(Front/Back)</span></label>
-                <input type="file" name="id_images[]" accept="image/*" multiple
-                       class="w-full border-gray-300 rounded px-3 py-2 text-sm">
-                @error('id_images')
-                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                @enderror
+<div x-data="{
+    files: [],
+    handleFiles(event) {
+        const selectedFiles = Array.from(event.target.files);
+        selectedFiles.forEach(file => {
+            this.files.push({ file, url: URL.createObjectURL(file) });
+        });
+        const dt = new DataTransfer();
+        this.files.forEach(f => dt.items.add(f.file));
+        event.target.files = dt.files;
+    },
+    remove(index, $event) {
+        this.files.splice(index, 1);
+        const dt = new DataTransfer();
+        this.files.forEach(f => dt.items.add(f.file));
+        $event.target.closest('form').querySelector('#idImagesInput').files = dt.files;
+    }
+}" class="mt-4">
+    <label class="block text-sm font-medium text-gray-700 mb-1">Student ID Card <span class="text-gray-500 text-xs">(Front/Back)</span></label>
+
+    <input type="file" name="id_images[]" id="idImagesInput" accept="image/*" multiple class="hidden" @change="handleFiles">
+
+    <label for="idImagesInput"
+           class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
+        <span class="text-4xl text-gray-400">+</span>
+    </label>
+
+    <div class="flex flex-wrap gap-4 mt-4">
+        <template x-for="(file, index) in files" :key="index">
+            <div class="relative w-32 h-32">
+                <img :src="file.url" class="object-cover w-full h-full rounded-lg border">
+                <button type="button"
+                        @click="remove(index, $event)"
+                        class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
+                    &times;
+                </button>
             </div>
+        </template>
+    </div>
+
+    <p class="text-xs text-gray-500 mt-2">You can upload both front and back of the ID. Remove as needed.</p>
+    @error('id_images')
+        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+    @enderror
+</div>
+
 
             <!-- Buttons -->
             <div class="pt-4 flex justify-end gap-3">
