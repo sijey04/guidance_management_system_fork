@@ -176,44 +176,45 @@
 
 
         {{-- ID Card Images --}}
-        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
-            <p class="font-semibold text-gray-700 mb-4 text-lg">Student ID Card Images</p>
-            @php $idImages = $counseling->images->where('type', 'id_card'); @endphp
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                @foreach($formImages as $image)
-                    <div class="relative group">
-                        <img src="{{ asset('storage/' . $image->image_path) }}"
-                            @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
-                            class="w-full h-36 object-cover rounded border cursor-zoom-in">
-                        
-                        @if(empty($readonly))
-                        <form action="{{ route('counseling.deleteImage', [$counseling->id, $image->id]) }}" method="POST"
-                            class="absolute top-1 right-1 bg-white rounded-full shadow p-1 group-hover:opacity-100 opacity-0 transition-opacity">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-800 text-lg font-bold leading-none">
-                                &times;
-                            </button>
-                        </form>
-                        @endif
-                    </div>
-                @endforeach
-
+        {{-- ID Card Images --}}
+<div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+    <p class="font-semibold text-gray-700 mb-4 text-lg">Student ID Card Images</p>
+    @php $idImages = $counseling->images->where('type', 'id_card'); @endphp
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        @foreach($idImages as $image) <!-- ✅ CORRECTED HERE -->
+            <div class="relative group">
+                <img src="{{ asset('storage/' . $image->image_path) }}"
+                    @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
+                    class="w-full h-36 object-cover rounded border cursor-zoom-in">
 
                 @if(empty($readonly))
-                <form action="{{ route('counseling.uploadImages', ['id' => $counseling->id, 'type' => 'id_card']) }}"
-                    method="POST"
-                    enctype="multipart/form-data"
-                    class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition"
-                    style="height: 9rem;"
-                    onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
+                <form action="{{ route('counseling.deleteImage', [$counseling->id, $image->id]) }}" method="POST"
+                    class="absolute top-1 right-1 bg-white rounded-full shadow p-1 group-hover:opacity-100 opacity-0 transition-opacity">
                     @csrf
-                    <input type="file" name="images[]" multiple accept="image/*" class="hidden" onchange="this.form.submit()">
-                    <span class="text-4xl text-gray-400 font-bold">+</span>
+                    @method('DELETE')
+                    <button type="submit" class="text-red-600 hover:text-red-800 text-lg font-bold leading-none">
+                        &times;
+                    </button>
                 </form>
                 @endif
             </div>
-        </div>
+        @endforeach
+
+        @if(empty($readonly))
+        <form action="{{ route('counseling.uploadImages', ['id' => $counseling->id, 'type' => 'id_card']) }}"
+            method="POST"
+            enctype="multipart/form-data"
+            class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition"
+            style="height: 9rem;"
+            onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
+            @csrf
+            <input type="file" name="images[]" multiple accept="image/*" class="hidden" onchange="this.form.submit()">
+            <span class="text-4xl text-gray-400 font-bold">+</span>
+        </form>
+        @endif
+    </div>
+</div>
+
 
         {{-- Zoom Image Modal --}}
         <div x-show="zoomedImage"

@@ -14,40 +14,69 @@ class CounselingController extends Controller
     /**
      * Display a listing of the resource.
      */
-public function index()
+public function index(Request $request)
 {
     $currentSemester = Semester::where('is_current', true)->first();
 
     if (!$currentSemester) {
         return view('counselings.counseling', [
-            'counselings' => collect(), // empty collection
-            'students' => collect(),    // empty collection
-            'error' => 'No active semester found.'
+            'counselings' => collect(),
+            'students' => collect(),
+            'error' => 'No active semester found.',
+            'semesters' => Semester::with('schoolYear')->get(),
         ]);
     }
 
-    $lastSemester = Semester::where('id', '<>', $currentSemester->id)
-                            ->orderByDesc('id')
-                            ->first();
+    $semesters = Semester::with('schoolYear')->orderByDesc('id')->get();
 
-    // ✅ Get students newly enrolled in current semester
-    $newStudents = Student::whereHas('enrollments', function ($query) use ($currentSemester) {
-        $query->where('semester_id', $currentSemester->id)
-              ->where('is_enrolled', true);
-    });
+    $query = Counseling::with(['student.profiles', 'images', 'semester.schoolYear']);
 
-    // ✅ Get validated students carried over from last semester
-    $validatedStudents = Student::whereHas('profiles', function ($query) use ($currentSemester) {
-        $query->where('semester_id', $currentSemester->id);
-    });
+    // 🔎 School Year Filter
+    if ($request->filled('school_year_id')) {
+        $query->whereHas('semester', function ($q) use ($request) {
+            $q->where('school_year_id', $request->school_year_id);
+        });
+    }
 
-    // ✅ Union both queries
+    // 🔎 Semester Label Filter
+    if ($request->filled('semester_label')) {
+        $query->whereHas('semester', function ($q) use ($request) {
+            $q->where('semester', $request->semester_label);
+        });
+    }
+
+    // 🔎 Status Filter
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    // 🔎 Search Filter
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->whereHas('student', function ($q) use ($search) {
+            $q->where('first_name', 'like', "%{$search}%")
+              ->orWhere('last_name', 'like', "%{$search}%")
+              ->orWhere('student_id', 'like', "%{$search}%");
+        });
+    }
+
+    // 🔃 Sort Filter
+    if ($request->filled('sort')) {
+        $query->orderBy('counseling_date', $request->sort === 'oldest' ? 'asc' : 'desc');
+    } else {
+        $query->orderByDesc('counseling_date');
+    }
+
+    $counselings = $query->paginate(10)->appends($request->all());
+
+    // 👥 Fetch students
+    $newStudents = Student::whereHas('enrollments', fn ($q) => $q->where('semester_id', $currentSemester->id)->where('is_enrolled', true));
+    $validatedStudents = Student::whereHas('profiles', fn ($q) => $q->where('semester_id', $currentSemester->id));
     $students = $newStudents->union($validatedStudents)->get();
 
-    $counselings = Counseling::with(['student', 'images'])->paginate(10);
-
-    return view('counselings.counseling', compact('counselings', 'students'));
+    return view('counselings.counseling', compact('counselings', 'students', 'semesters', 'currentSemester'));
 }
+
 
 
 public function store(Request $request)

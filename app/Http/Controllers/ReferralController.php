@@ -210,7 +210,7 @@ public function uploadImages(Request $request, $id, $type)
     $referral = referral::findOrFail($id);
 
     foreach ($request->file('images', []) as $file) {
-        $path = $file->store('counseling_images', 'public');
+        $path = $file->store('referral_images', 'public');
 
         $referral->images()->create([
             'image_path' => $path,
@@ -237,4 +237,3 @@ public function deleteImage($referralId, $imageId)
 
 
 }
-

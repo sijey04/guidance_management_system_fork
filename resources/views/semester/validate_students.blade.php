@@ -7,7 +7,7 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8"
+    <div class="max-w-7xl mx-auto  sm:px-6 lg:px-8"
          x-data="{
              selected: {{ json_encode(request('selected_students', [])) }},
              allOnPage: {{ json_encode($students->pluck('id')->map(fn($id) => (string) $id)) }},
@@ -68,9 +68,37 @@
          }">
 
         <div class="bg-white p-6 shadow rounded-lg">
+
+            
             <div class="mb-4">
-                <a href="{{ route('semester.index') }}" class="text-blue-600 hover:underline text-sm">← Back to Academic Setup</a>
-            </div>
+            <a href="{{ route('semester.index') }}"
+            class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-sm font-semibold text-[#a82323] rounded hover:bg-gray-100 transition">
+                ← Back to A.y Setup List
+            </a>
+        </div>
+{{-- Success and Error Flash Messages --}}
+@if (session('success'))
+    <div class="mb-4 px-4 py-3 bg-green-100 border border-green-300 text-green-800 rounded">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="mb-4 px-4 py-3 bg-red-100 border border-red-300 text-red-800 rounded">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if ($errors->any())
+    <div class="mb-4 px-4 py-3 bg-red-100 border border-red-300 text-red-800 rounded">
+        <strong>There were some issues with your submission:</strong>
+        <ul class="list-disc pl-5 mt-2 text-sm">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
             <h2 class="text-2xl font-semibold text-gray-700 mb-4">Validate Students from Previous Semesters</h2>
             <p class="text-gray-500 mb-6">
@@ -80,7 +108,8 @@
 
             <!-- FILTER FORM -->
             <form method="GET" action="{{ route('semester.validate', $newSemester->id) }}" @submit.prevent="injectHiddenInputs($el); $el.submit()">
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+
                     <div>
                         <label class="text-sm font-medium text-gray-600">Course</label>
                         <select name="filter_course" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
@@ -136,13 +165,13 @@
                 @csrf
                 <div id="selected-hidden"></div>
 
-                <div class="flex justify-between items-center mt-6 mb-3">
+                <div class="flex flex-col md:flex-row justify-between gap-4 mt-6 mb-3">
                     <button type="button" @click="toggleAllOnPage"
-                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-semibold">
+                           class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-semibold w-full md:w-auto">
                         <span x-text="allSelectedOnPage() ? 'Unselect All on Page' : 'Select All on Page'"></span>
                     </button>
                     <button type="submit"
-                            class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 font-semibold">
+                            class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-red-700 transition">
                         Validate Selected Students
                     </button>
                 </div>
@@ -160,6 +189,7 @@
                                     <th class="p-3">New Course</th>
                                     <th class="p-3">New Year</th>
                                     <th class="p-3">New Section</th>
+                                    <th class="p-3 text-center"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -248,7 +278,7 @@
                                                 class="w-full border-gray-300 rounded"
                                                 x-model="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
                                                 @change="updateStudentValue('{{ $id }}', 'course', $event.target.value)"
-                                                {{ $disableDropdowns ? 'disabled' : '' }}>
+                                                {{ $disableDropdowns ? 'disabled' : '' }} >
                                                 @foreach($courses as $course)
                                                     <option value="{{ $course->course }}">{{ $course->course }}</option>
                                                 @endforeach
@@ -284,7 +314,7 @@
                                             <div x-data="{ openModal{{ $id }}: false }">
                                             <button type="button"
                                                     @click="openModal{{ $id }} = true"
-                                                    class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 text-sm font-semibold"
+                                                    class="bg-[#a82323] text-white text-xs font-semibold px-2 py-2 rounded hover:bg-red-700 transition"
                                                     :disabled="{{ $isDisabled ? 'true' : 'false' }}">
                                                     Mark Transition
                                                 </button>
@@ -294,7 +324,7 @@
                                                 <div x-show="openModal{{ $id }}" @keydown.escape.window="openModal{{ $id }} = false"
                                                     x-cloak class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
                                                     <div @click.away="openModal{{ $id }} = false"
-                                                        class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+                                                        class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh]">
                                                         <h2 class="text-lg font-bold mb-4 text-gray-800">Mark Transition for {{ $student->first_name }}</h2>
 
                                                         <div class="space-y-4">
@@ -317,19 +347,57 @@
                                                                 <input type="date" name="transitions[{{ $id }}][transition_date]" class="w-full border-gray-300 rounded">
                                                             </div>  --}}
 
-                                                            <!-- Transition Images -->
-                                                            <div >
-                                                                <label for="images" class="block text-sm text-gray-700">Transition Images</label>
-                                                                <input type="file" name="transition_images[{{ $id }}][]" multiple class="mt-1 block w-full border-gray-300 rounded" accept="image/*">
-
-                                                            </div>
-
-                                                                <p class="text-xs text-gray-500 mt-2">You may add multiple images or upload one at a time. Click ❌ to remove.</p>
-                                                            </div>
                                                             <div>
                                                                 <label class="block text-sm font-medium text-gray-700">Remarks</label>
                                                                 <textarea name="transitions[{{ $id }}][remark]" rows="2" class="w-full border-gray-300 rounded"></textarea>
                                                             </div>
+
+                                                            <div x-data="{
+                                                                    files: [],
+                                                                    handleFiles(event) {
+                                                                        const selected = Array.from(event.target.files);
+                                                                        selected.forEach(file => {
+                                                                            this.files.push({ file, url: URL.createObjectURL(file) });
+                                                                        });
+                                                                        const dt = new DataTransfer();
+                                                                        this.files.forEach(f => dt.items.add(f.file));
+                                                                        event.target.files = dt.files;
+                                                                    },
+                                                                    remove(index, $event) {
+                                                                        this.files.splice(index, 1);
+                                                                        const dt = new DataTransfer();
+                                                                        this.files.forEach(f => dt.items.add(f.file));
+                                                                        $event.target.closest('form').querySelector('#transitionUpload-{{ $id }}').files = dt.files;
+                                                                    }
+                                                                }">
+                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Transition Images</label>
+
+                                                                    <!-- Hidden File Input -->
+                                                                    <input type="file" name="transition_images[{{ $id }}][]" accept="image/*" multiple class="hidden" id="transitionUpload-{{ $id }}" @change="handleFiles">
+
+                                                                    <!-- Upload Area -->
+                                                                    <label for="transitionUpload-{{ $id }}"
+                                                                        class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
+                                                                        <span class="text-4xl text-gray-400">+</span>
+                                                                    </label>
+
+                                                                    <!-- Preview Thumbnails -->
+                                                                    <div class="flex flex-wrap gap-4 mt-4">
+                                                                        <template x-for="(fileObj, index) in files" :key="index">
+                                                                            <div class="relative w-32 h-32">
+                                                                                <img :src="fileObj.url" class="object-cover w-full h-full rounded-lg border">
+                                                                                <button type="button"
+                                                                                        @click="remove(index, $event)"
+                                                                                        class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
+                                                                                    &times;
+                                                                                </button>
+                                                                            </div>
+                                                                        </template>
+                                                                    </div>
+
+                                                                    <p class="text-xs text-gray-500 mt-2">You can select one or more images. You may also remove them before submitting.</p>
+                                                                </div>
+
 
                                                             <div class="text-right mt-4">
                                                                 <button type="button" @click="openModal{{ $id }} = false" class="text-sm text-gray-600 hover:underline">Close</button>

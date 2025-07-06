@@ -49,51 +49,59 @@
                 <input type="date" name="referral_date" required class="w-full border p-2 rounded">
             </div>
 
-            <!-- Image Attachment -->
-             <div x-data="{
-                    files: [],
-                    handleFiles(event) {
-                        const selectedFiles = Array.from(event.target.files);
-                        selectedFiles.forEach(file => {
-                            this.files.push({ file, url: URL.createObjectURL(file) });
-                        });
-                        // Create a new FileList with only the files in `this.files`
-                        const dataTransfer = new DataTransfer();
-                        this.files.forEach(f => dataTransfer.items.add(f.file));
-                        event.target.files = dataTransfer.files;
-                    },
-                    remove(index, $event) {
-                        this.files.splice(index, 1);
-                        const dataTransfer = new DataTransfer();
-                        this.files.forEach(f => dataTransfer.items.add(f.file));
-                        $event.target.closest('form').querySelector('input[type=file]').files = dataTransfer.files;
-                    }
-                }" class="mt-4">
-                    <label class="block text-sm mb-1" style="color:#a82323;">Attach Contract Images</label>
+             <!-- IMage Attachment (Optional) -->
+           <!-- Image Attachment (Multiple with Preview & Removal) -->
+<div x-data="{
+    files: [],
+    handleFiles(event) {
+        const selectedFiles = Array.from(event.target.files);
+        selectedFiles.forEach(file => {
+            this.files.push({ file, url: URL.createObjectURL(file) });
+        });
+        const dt = new DataTransfer();
+        this.files.forEach(f => dt.items.add(f.file));
+        event.target.files = dt.files;
+    },
+    remove(index, $event) {
+        this.files.splice(index, 1);
+        const dt = new DataTransfer();
+        this.files.forEach(f => dt.items.add(f.file));
+        $event.target.closest('form').querySelector('input[type=file]').files = dt.files;
+    }
+}" class="mt-4">
+    <label class="block text-sm font-medium text-red-700 mb-1">Attach Referral Images</label>
 
-                    <input type="file" name="referral_images[]" accept="image/*" multiple class="hidden" id="referralUpload" @change="handleFiles">
+    <!-- File Input (hidden) -->
+    <input type="file" name="image_path[]" accept="image/*" multiple
+           class="hidden" id="referralUpload" @change="handleFiles">
 
-                    <!-- Upload Box -->
-                    <label for="referralUpload" class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
-                        <span class="text-4xl text-gray-400">+</span>
-                    </label>
+    <!-- Upload Box -->
+    <label for="referralUpload"
+           class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
+        <span class="text-4xl text-gray-400">+</span>
+    </label>
 
-                    <!-- Previews -->
-                    <div class="flex flex-wrap gap-4 mt-4">
-                        <template x-for="(fileObj, index) in files" :key="index">
-                            <div class="relative w-32 h-32">
-                                <img :src="fileObj.url" class="object-cover w-full h-full rounded-lg border">
-                                <button type="button"
-                                        @click="remove(index, $event)"
-                                        class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
-                                    &times;
-                                </button>
-                            </div>
-                        </template>
-                    </div>
+    <!-- Previews -->
+    <div class="flex flex-wrap gap-4 mt-4">
+        <template x-for="(fileObj, index) in files" :key="index">
+            <div class="relative w-32 h-32">
+                <img :src="fileObj.url" class="object-cover w-full h-full rounded-lg border">
+                <button type="button"
+                        @click="remove(index, $event)"
+                        class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
+                    &times;
+                </button>
+            </div>
+        </template>
+    </div>
 
-                    <p class="text-xs text-gray-500 mt-2">You can select one or more images. You may also remove them before submitting.</p>
-                </div>
+    <p class="text-xs text-gray-500 mt-2">You can select one or more images. You may remove them before submitting.</p>
+    @error('image_path')
+        <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+    @enderror
+</div>
+
+
 
 
             <!-- Remarks -->

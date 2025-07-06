@@ -78,11 +78,8 @@ Route::put('/student/profile/{student}', [StudentController::class, 'updateProfi
 Route::get('/report', [ReportController::class, 'index'])->middleware(['auth', 'verified'])->name('report');
 
   Route::get('/reports/student-list', [ReportController::class, 'studentList'])->name('reports.studentList');
-Route::get('/reports/student-history/{student}', [ReportController::class, 'studentHistory'])->name('reports.studentHistory');
 Route::get('/reports/view-profile/{studentId}/{semesterId}', [ReportController::class, 'viewProfile'])->name('reports.viewProfile');
-Route::get('/reports/student-history/{studentId}', [ReportController::class, 'studentFullHistory'])->name('reports.studentFullHistory');
 Route::get('/reports', [ReportController::class, 'report'])->name('reports.report');
-Route::get('/reports/student-history/{student_id}', [ReportController::class, 'studentHistory'])->name('reports.student-history');
 Route::get('/contracts/{contract}/view', [ContractController::class, 'view'])->name('contracts.view');
 
 Route::get('/student/{studentId}/profile/{profileId}', [StudentController::class, 'viewProfile'])
@@ -154,8 +151,13 @@ Route::resource('referrals', ReferralController::class);
 Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
 Route::resource('referral-reasons', ReferralReasonController::class);
 
+Route::get('/reports/export/pdf', [ReportController::class, 'export'])->name('reports.export');
+
+Route::get('/reports/student/export', [ReportController::class, 'exportStudentHistory'])->name('reports.student.export');
+
 Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])
     ->name('reports.view-records');
+
 // Route::delete('/semester/{semester}/undo-validation/{student}', [SemesterController::class, 'undoValidation'])->name('semester.undoValidation');
 Route::resource('transitions', StudentTransitionController::class);
 
@@ -165,6 +167,9 @@ Route::get('/transitions/{transition}', [StudentTransitionController::class, 'sh
 Route::post('/transitions/store', [StudentTransitionController::class, 'store'])->name('transitions.store');
 Route::post('/transitions/store-student-transition', [StudentTransitionController::class, 'storeStudentTransition'])
     ->name('transitions.storeStudentTransition');
+Route::patch('/transitions/{transition}/remarks', [StudentTransitionController::class, 'updateRemarks'])->name('transitions.updateRemarks');
+Route::post('/transitions/{transition}/images', [StudentTransitionController::class, 'uploadImages'])->name('transitions.uploadImages');
+Route::delete('/transitions/{transition}/images/{image}', [StudentTransitionController::class, 'deleteImage'])->name('transitions.deleteImage');
 
 });
 // // Student List,Create,edit
