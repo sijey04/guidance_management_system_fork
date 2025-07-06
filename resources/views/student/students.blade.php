@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div class="bg-white shadow-md rounded-xl p-6 space-y-6">
             
             <!-- Heading & Description -->
@@ -131,6 +131,14 @@
                                 <td class="px-4 py-3">{{ $student->student_id }}</td>
                                 <td class="px-4 py-3">
                                     {{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffix }}
+                                     {{-- Dropped Tag --}}
+                                    @if($student->transitions()->where('transition_type', 'Dropped')->where('semester_id', $activeSemester->id)->exists())
+                                        <div>
+                                            <span class="bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded-full inline-block">
+                                                Dropped This Semester
+                                            </span>
+                                        </div>
+                                    @endif
                                 </td>
                                 @php
                                     $profile = $activeSemester 

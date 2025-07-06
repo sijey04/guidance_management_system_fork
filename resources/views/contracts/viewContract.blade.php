@@ -1,24 +1,12 @@
 <x-app-layout>
     <div class="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8" x-data="{ zoomedImage: null }">
 
-        @php
-            $backRoute = match ($source) {
-                'report' => route('report'),
-                'contracts' => route('contracts.index'),
-                'student' => route('students.contract', $contract->student->id),
-                default => route('contracts.index'),
-            };
-        @endphp
-
-        <a href="{{ $backRoute }}"
-            class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-4 py-2 rounded mb-6">
-            ← Back to 
-            @switch($source)
-                @case('report') Reports @break
-                @case('student') Student Profile @break
-                @default Contracts
-            @endswitch
-        </a>
+       <div>
+                <a href="{{ url()->previous() }}"
+                   class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-sm font-semibold text-[#a82323] rounded hover:bg-gray-100 transition">
+                    ← 
+                </a>
+            </div>
 
         <div class="flex justify-between items-center">
             <h2 class="text-3xl font-bold text-red-700 mb-6">Contract Details</h2>

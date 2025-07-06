@@ -2,45 +2,65 @@
     <x-slot name="header">
         <h2 class="text-xl font-semibold text-gray-800 leading-tight">Report & History</h2>
     </x-slot>
-
+ @php $activeTab = request('tab', 'all'); @endphp
     <div class="max-w-7xl mx-auto py-6 px-6 space-y-6">
 
         <div class="flex flex-col md:flex-row justify-between bg-white border rounded p-4 shadow text-gray-700 gap-4">
-    <div class="flex-1">
-        <p class="text-sm">Showing records for:</p>
-        <p class="font-semibold text-lg">
-            School Year:
-            {{ $schoolYears->firstWhere('id', $selectedSY)?->school_year ?? 'Not Selected' }} |
-            Semester: {{ $selectedSem ?? 'Not Selected' }}
-        </p>
-    </div>
+            <div class="flex-1">
+                <p class="text-sm">Showing records for:</p>
+                <p class="font-semibold text-lg">
+                    School Year:
+                    {{ $schoolYears->firstWhere('id', $selectedSY)?->school_year ?? 'Not Selected' }} |
+                    Semester: {{ $selectedSem ?? 'Not Selected' }}
+                </p>
+            </div>
 
-    <form method="GET" class="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
-        <select name="school_year_id" class="border border-gray-300 rounded px-3 py-2 w-full sm:w-auto">
-            <option value="">Select School Year</option>
-            @foreach($schoolYears as $sy)
-                <option value="{{ $sy->id }}" {{ $selectedSY == $sy->id ? 'selected' : '' }}>
-                    {{ $sy->school_year }}
-                </option>
-            @endforeach
-        </select>
+            @if($selectedSY && $selectedSem)
+            <div class="flex justify-end items-center">
+                <a href="{{ route('reports.export', [
+                        'school_year_id' => $selectedSY,
+                        'semester_name' => $selectedSem,
+                        'tab' => $activeTab,
+                        'filter_course' => request('filter_course'),
+                        'filter_year' => request('filter_year'),
+                        'filter_section' => request('filter_section'),
+                        'filter_contract_type' => request('filter_contract_type'),
+                        'filter_contract_status' => request('filter_contract_status'),
+                        'filter_reason' => request('filter_reason'),
+                        'filter_counseling_status' => request('filter_counseling_status'),
+                        'filter_transition_type' => request('filter_transition_type'),
+                    ]) }}"
+                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm shadow">
+                        🖨 Export PDF
+                </a>
 
-        <select name="semester_name" class="border border-gray-300 rounded px-3 py-2 w-full sm:w-auto">
-            <option value="">Select Semester</option>
-            <option value="1st" {{ $selectedSem == '1st' ? 'selected' : '' }}>1st</option>
-            <option value="2nd" {{ $selectedSem == '2nd' ? 'selected' : '' }}>2nd</option>
-            <option value="Summer" {{ $selectedSem == 'Summer' ? 'selected' : '' }}>Summer</option>
-        </select>
+            </div>
+        @endif
+            <form method="GET" class="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
+                <select name="school_year_id" class="border border-gray-300 rounded px-3 py-2 w-full sm:w-auto">
+                    <option value="">Select School Year</option>
+                    @foreach($schoolYears as $sy)
+                        <option value="{{ $sy->id }}" {{ $selectedSY == $sy->id ? 'selected' : '' }}>
+                            {{ $sy->school_year }}
+                        </option>
+                    @endforeach
+                </select>
 
-        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 w-full sm:w-auto">
-            Filter
-        </button>
-    </form>
-</div>
+                <select name="semester_name" class="border border-gray-300 rounded px-3 py-2 w-full sm:w-auto">
+                    <option value="">Select Semester</option>
+                    <option value="1st" {{ $selectedSem == '1st' ? 'selected' : '' }}>1st</option>
+                    <option value="2nd" {{ $selectedSem == '2nd' ? 'selected' : '' }}>2nd</option>
+                    <option value="Summer" {{ $selectedSem == 'Summer' ? 'selected' : '' }}>Summer</option>
+                </select>
 
-       
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 w-full sm:w-auto">
+                    Filter
+                </button>
+            </form>
+        </div>
+
         {{-- Tabs --}}
-        @php $activeTab = request('tab', 'all'); @endphp
+       
         <div class="flex flex-wrap gap-2 mb-4">
         @foreach([
             'all' => 'All',
@@ -216,12 +236,12 @@
                                     <td class="px-4 py-2">
                                         <a href="{{ route('reports.student.view', [
                                             'student_id' => $profile->student->id,
-                                            'school_year_id' => request('school_year_id'),
-                                            'semester_name' => request('semester_name')
-                                        ]) }}"
-                                           class="inline-block mt-2 text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                                            View Records
+                                            'school_year_id' => $selectedSY,
+                                            'semester_name' => $selectedSem
+                                        ]) }}" class="text-blue-600 hover:underline">
+                                            View
                                         </a>
+
                                     </td>
                                 </tr>
                             @empty
