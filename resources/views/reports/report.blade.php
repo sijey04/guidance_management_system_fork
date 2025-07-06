@@ -80,33 +80,43 @@
 
 
         {{-- Summary Cards --}}
-        {{-- <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             @if($activeTab === 'all' || $activeTab === 'student_profiles')
-
                 <div class="bg-white border rounded shadow p-4">
                     <p class="text-sm text-gray-500">Total Students</p>
-                    <h3 class="text-2xl font-bold text-gray-800">{{ $uniqueStudentCount }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ $totalStudents ?? 0 }}</h3>
                 </div>
             @endif
+
             @if($activeTab === 'all' || $activeTab === 'contracts')
                 <div class="bg-white border rounded shadow p-4">
                     <p class="text-sm text-gray-500">Total Contracts</p>
-                    <h3 class="text-2xl font-bold text-gray-800">{{ $contracts->count() }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ $totalContracts ?? 0 }}</h3>
                 </div>
             @endif
+
             @if($activeTab === 'all' || $activeTab === 'referrals')
                 <div class="bg-white border rounded shadow p-4">
                     <p class="text-sm text-gray-500">Total Referrals</p>
-                    <h3 class="text-2xl font-bold text-gray-800">{{ $referrals->count() }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ $totalReferrals ?? 0 }}</h3>
                 </div>
             @endif
+
             @if($activeTab === 'all' || $activeTab === 'counseling')
                 <div class="bg-white border rounded shadow p-4">
                     <p class="text-sm text-gray-500">Total Counseling</p>
-                    <h3 class="text-2xl font-bold text-gray-800">{{ $counselings->count() }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ $totalCounselings ?? 0 }}</h3>
                 </div>
             @endif
-        </div> --}}
+
+            @if($activeTab === 'all' || $activeTab === 'transitions')
+                <div class="bg-white border rounded shadow p-4">
+                    <p class="text-sm text-gray-500">Total Transitions</p>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ $totalTransitions ?? 0 }}</h3>
+                </div>
+            @endif
+        </div>
+
 
         
         @if($activeTab === 'student_profiles')
@@ -223,31 +233,43 @@
                                 <th class="px-4 py-2">Name</th>
                                 <th class="px-4 py-2">Course</th>
                                 <th class="px-4 py-2">Year & Section</th>
+                                <th class="px-4 py-2 text-center">Contracts</th>
+                                <th class="px-4 py-2 text-center">Referrals</th>
+                                <th class="px-4 py-2 text-center">Counseling</th>
                                 <th class="px-4 py-2">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($students as $profile)
-                                <tr class="border-b hover:bg-gray-50">
-                                    <td class="px-4 py-2">{{ $profile->student->student_id }}</td>
-                                    <td class="px-4 py-2">{{ $profile->student->first_name }} {{ $profile->student->last_name }}</td>
-                                    <td class="px-4 py-2">{{ $profile->course }}</td>
-                                    <td class="px-4 py-2">{{ $profile->year_level }} {{ $profile->section }}</td>
-                                    <td class="px-4 py-2">
-                                        <a href="{{ route('reports.student.view', [
-                                            'student_id' => $profile->student->id,
-                                            'school_year_id' => $selectedSY,
-                                            'semester_name' => $selectedSem
-                                        ]) }}" class="text-blue-600 hover:underline">
-                                            View
-                                        </a>
-
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr><td colspan="5" class="text-center py-4">No student data found.</td></tr>
-                            @endforelse
+                        @forelse ($students as $profile)
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-4 py-2">{{ $profile->student->student_id }}</td>
+                                <td class="px-4 py-2">{{ $profile->student->first_name }} {{ $profile->student->last_name }}</td>
+                                <td class="px-4 py-2">{{ $profile->course }}</td>
+                                <td class="px-4 py-2">{{ $profile->year_level }} {{ $profile->section }}</td>
+                                <td class="px-4 py-2 text-center">
+                                    {{ $contractCounts[$profile->student_id] ?? 0 }}
+                                </td>
+                                <td class="px-4 py-2 text-center">
+                                    {{ $referralCounts[$profile->student_id] ?? 0 }}
+                                </td>
+                                <td class="px-4 py-2 text-center">
+                                    {{ $counselingCounts[$profile->student_id] ?? 0 }}
+                                </td>
+                                <td class="px-4 py-2">
+                                    <a href="{{ route('reports.student.view', [
+                                        'student_id' => $profile->student->id,
+                                        'school_year_id' => $selectedSY,
+                                        'semester_name' => $selectedSem
+                                    ]) }}" class="text-blue-600 hover:underline">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="8" class="text-center py-4">No student data found.</td></tr>
+                        @endforelse
                         </tbody>
+
                     </table>
                 </div>
             </div>

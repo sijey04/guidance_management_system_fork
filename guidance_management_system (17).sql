@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 05, 2025 at 03:35 PM
+-- Generation Time: Jul 06, 2025 at 04:53 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,14 +32,6 @@ CREATE TABLE `cache` (
   `value` mediumtext NOT NULL,
   `expiration` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `cache`
---
-
-INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('laravel_cache_77de68daecd823babbb58edb1c8e14d7106e83bb', 'i:1;', 1751433279),
-('laravel_cache_77de68daecd823babbb58edb1c8e14d7106e83bb:timer', 'i:1751433279;', 1751433279);
 
 -- --------------------------------------------------------
 
@@ -81,9 +73,22 @@ CREATE TABLE `contracts` (
 --
 
 INSERT INTO `contracts` (`id`, `student_id`, `semester_id`, `contract_date`, `contract_image`, `total_days`, `completed_days`, `status`, `created_at`, `updated_at`, `contract_type`, `start_date`, `end_date`, `remarks`) VALUES
-(1, 4, 1, '2025-07-03', NULL, 20, NULL, 'In Progress', '2025-07-02 07:26:42', '2025-07-04 04:09:38', 'Community Service', '2025-07-01', '2025-07-21', 'djfijfidj dnfkjnflfdk kjdsnlnskdn'),
 (2, 1, 2, '2025-07-02', NULL, 90, NULL, 'In Progress', '2025-07-03 04:48:21', '2025-07-03 04:48:21', 'Community Service', '2025-07-02', '2025-09-30', 'HOtdog cheeesdog kaya mo ba to'),
-(3, 8, 3, '2025-07-02', NULL, 20, NULL, 'In Progress', '2025-07-04 01:04:03', '2025-07-04 01:04:03', 'cheating', '2025-07-01', '2025-07-21', 'dkfndkdfn');
+(3, 8, 3, '2025-07-02', NULL, 20, NULL, 'In Progress', '2025-07-04 01:04:03', '2025-07-04 01:04:03', 'cheating', '2025-07-01', '2025-07-21', 'dkfndkdfn'),
+(4, 3, 10, '2025-07-03', NULL, 90, NULL, 'Completed', '2025-07-05 06:25:20', '2025-07-05 06:25:36', 'Misconduct', '2025-07-09', '2025-10-07', 'mdlkmkm\r\n\r\ndkfdskmflds'),
+(5, 1, 10, '2025-07-02', NULL, 23, NULL, 'In Progress', '2025-07-05 07:12:38', '2025-07-05 07:12:38', 'cheating', '2025-07-03', '2025-07-26', 'dfs'),
+(6, 1, 10, '2025-07-01', NULL, 20, NULL, 'In Progress', '2025-07-05 10:30:49', '2025-07-05 10:30:49', 'Misconduct', '2025-07-01', '2025-07-21', NULL),
+(8, 7, 10, '2025-07-02', NULL, NULL, NULL, 'In Progress', '2025-07-05 10:54:23', '2025-07-05 10:54:23', 'Misconduct', NULL, NULL, NULL),
+(9, 1, 10, '2025-07-01', NULL, NULL, NULL, 'In Progress', '2025-07-05 11:16:08', '2025-07-05 11:16:08', 'cheating', '2025-07-02', NULL, NULL),
+(10, 4, 10, '2025-07-02', NULL, NULL, NULL, 'In Progress', '2025-07-05 11:18:47', '2025-07-05 11:18:47', 'Misconduct', '2025-07-03', NULL, NULL),
+(11, 7, 10, '2025-07-01', NULL, 40, NULL, 'In Progress', '2025-07-05 11:20:18', '2025-07-05 11:20:18', 'cheating', '2025-07-02', '2025-08-11', NULL),
+(12, 3, 10, '2025-07-02', NULL, 20, NULL, 'In Progress', '2025-07-05 21:58:44', '2025-07-05 21:58:44', 'cheating', '2025-07-10', '2025-07-30', 'cmv'),
+(13, 4, 10, '2025-07-02', NULL, NULL, NULL, 'In Progress', '2025-07-05 22:03:14', '2025-07-05 22:03:14', 'Misconduct', NULL, NULL, 'fk'),
+(14, 1, 10, '2025-07-03', NULL, 30, NULL, 'In Progress', '2025-07-05 22:52:22', '2025-07-05 22:52:22', 'Community Service', '2025-07-02', '2025-08-01', 'ck'),
+(15, 23, 10, '2025-07-02', NULL, NULL, NULL, 'In Progress', '2025-07-05 23:29:40', '2025-07-05 23:30:25', 'Community Service', NULL, NULL, 'jdjn'),
+(16, 1, 10, '2025-07-03', NULL, NULL, NULL, 'In Progress', '2025-07-05 23:39:54', '2025-07-05 23:39:54', 'cheating', NULL, NULL, NULL),
+(17, 23, 10, '2025-07-02', NULL, NULL, NULL, 'In Progress', '2025-07-06 01:26:02', '2025-07-06 01:26:02', 'Community Service', '2025-07-04', NULL, NULL),
+(18, 26, 10, '2025-07-06', NULL, 30, NULL, 'Completed', '2025-07-06 06:25:52', '2025-07-06 06:26:12', 'Community Service', '2025-07-06', '2025-08-05', 'mdfkm');
 
 -- --------------------------------------------------------
 
@@ -104,16 +109,47 @@ CREATE TABLE `contract_images` (
 --
 
 INSERT INTO `contract_images` (`id`, `contract_id`, `image_path`, `created_at`, `updated_at`) VALUES
-(1, 1, 'contract_images/Y9N2OCngB58TNytmuOGiBdf5FRymlZaSJBPMpaqD.png', '2025-07-02 07:26:42', '2025-07-02 07:26:42'),
 (3, 2, 'contract_images/U6eS6Qx1B1MUzYpfNGx7rrPnPeW9CIT5bAzprRhd.png', '2025-07-03 04:48:21', '2025-07-03 04:48:21'),
 (4, 2, 'contract_images/hK4C5IG0jDzpQySbDiz5y7iigOE2GhL6x3xtJA2p.jpg', '2025-07-03 04:48:21', '2025-07-03 04:48:21'),
 (5, 3, 'contract_images/9CyS2GbUdVsokPqYKLxcnIgxApwU3Nm3SjdPBspo.png', '2025-07-04 01:04:04', '2025-07-04 01:04:04'),
 (6, 3, 'contract_images/AX70thcDACqxhwbbZAvuoBShbAZTZrJp6RU2Kd4d.png', '2025-07-04 01:04:04', '2025-07-04 01:04:04'),
 (7, 2, 'contract_images/Or6FuyV5JjweQIojzUlrqFpQ3zgpLlJBeVhk3XFK.png', '2025-07-04 04:03:01', '2025-07-04 04:03:01'),
 (8, 2, 'contract_images/dEGxYmSTPMT65d0c1ymUFlwsw8bQfyfGqhPDrRWl.jpg', '2025-07-04 04:03:01', '2025-07-04 04:03:01'),
-(9, 1, 'contract_images/Q6IcMMcqdouailO6OLkHrHWUEbgn3jicZ8nqELG2.png', '2025-07-04 04:09:19', '2025-07-04 04:09:19'),
-(10, 1, 'contract_images/QBTWhFoZ1CYK13qQVNDW6WWhLuOxJFXIB3EvfBdq.png', '2025-07-04 04:09:29', '2025-07-04 04:09:29'),
-(11, 1, 'contract_images/dDvkKYn4H9z5fMaxDOorlngZD5o4lrMxZheVK3aH.png', '2025-07-04 04:09:29', '2025-07-04 04:09:29');
+(12, 4, 'contract_images/SSHJRpPfy2QDADZXbaS0OdHPSu03TB2jsul22fvp.png', '2025-07-05 06:25:20', '2025-07-05 06:25:20'),
+(13, 4, 'contract_images/xWUsvzh3bPaO4v2qHSj6s6uV79RKcCFjdws2zb84.png', '2025-07-05 06:25:20', '2025-07-05 06:25:20'),
+(14, 4, 'contract_images/s2mq38NOIGBCXgpCCz05wLuuoWpIdUnJkBrGv4nO.jpg', '2025-07-05 06:25:47', '2025-07-05 06:25:47'),
+(15, 5, 'contract_images/wj4KrZGtKMmIe1zoDw6NjuT7wKaqcRPyrAlsnBKm.png', '2025-07-05 07:12:38', '2025-07-05 07:12:38'),
+(16, 5, 'contract_images/1j5Ph1LTiYMVCjlUpovxDMCCnFQfTJlcP2jWJGRq.png', '2025-07-05 07:12:38', '2025-07-05 07:12:38'),
+(17, 6, 'contract_images/kQs3Zxi7JI0RDIS56lsePEvuIXxT9PZAcj1p9ZU8.png', '2025-07-05 10:31:31', '2025-07-05 10:31:31'),
+(18, 6, 'contract_images/aSRmUNlZADBzSRIbO5v1fYkkP7QkTqSoRTXCZ5N9.jpg', '2025-07-05 10:31:31', '2025-07-05 10:31:31'),
+(19, 6, 'contract_images/9OtF8LfX01mitCZvByjy24I6uxbvZENTehoWIM9L.png', '2025-07-05 10:31:37', '2025-07-05 10:31:37'),
+(22, 8, 'contract_images/lEvGIKSPklm5DawOyBCJ46aoxmMx73oK6NCj0QNQ.png', '2025-07-05 10:54:23', '2025-07-05 10:54:23'),
+(23, 8, 'contract_images/5UN9NAAWoQOP1zzn2BevEgk0Iasz9lJ9Hj2PVvNR.png', '2025-07-05 10:54:23', '2025-07-05 10:54:23'),
+(24, 8, 'contract_images/JePRmSymoeWFgh1OccA87sosOXG4ltxsigkmQSS4.jpg', '2025-07-05 10:54:23', '2025-07-05 10:54:23'),
+(25, 8, 'contract_images/sDojDU1DxzcrQN7yeErQpOmYjCjTmE45qlp2dh1X.jpg', '2025-07-05 10:54:23', '2025-07-05 10:54:23'),
+(26, 10, 'contract_images/jdOeC72IvjVcNxwoAKtYpEVzhB9LyqJUMBf6jfsT.png', '2025-07-05 11:18:47', '2025-07-05 11:18:47'),
+(27, 10, 'contract_images/A0V25ieAx5Hdmzvw6JCumOpVWdPHgCpSyE0sknsc.jpg', '2025-07-05 11:18:47', '2025-07-05 11:18:47'),
+(28, 11, 'contract_images/Zjso2oU770akKxycK1ljVDSUhgOvBgcFs5HLvJjA.jpg', '2025-07-05 11:20:18', '2025-07-05 11:20:18'),
+(29, 11, 'contract_images/roHVPMyZNmaQEdlRXNMJAtAL6DavIgFqHoQwffQg.jpg', '2025-07-05 11:20:18', '2025-07-05 11:20:18'),
+(30, 11, 'contract_images/ngLEjoNAwdFjDwKVgH7RpKHuvH7dDQwVs2TPylyf.jpg', '2025-07-05 11:20:18', '2025-07-05 11:20:18'),
+(31, 12, 'contract_images/yjSRjTg8TNOxF0DbaxICDmeZfn9nZRmOhfqnHcyG.png', '2025-07-05 21:58:44', '2025-07-05 21:58:44'),
+(32, 12, 'contract_images/55YthkK8uD9pkUPVPsYuPhTGNqVzOeDqjjyjvkgE.png', '2025-07-05 21:58:44', '2025-07-05 21:58:44'),
+(33, 12, 'contract_images/1YhEwJ9uyiZ3fOFlz9UAyJEYxKT4GbJkiSL7vrp4.jpg', '2025-07-05 21:58:44', '2025-07-05 21:58:44'),
+(34, 13, 'contract_images/DtLERyX9ugqDSzNDvB96yja8yvlFBFz5HtYDpmWV.jpg', '2025-07-05 22:03:14', '2025-07-05 22:03:14'),
+(35, 13, 'contract_images/tIY0IIGixrouBnNQiuKGmQL0EPecN8DImo5g62We.jpg', '2025-07-05 22:03:14', '2025-07-05 22:03:14'),
+(36, 13, 'contract_images/fIeq1vUDTqGRSq4MhIVEejC127cJvlzUiHl3oW0Q.jpg', '2025-07-05 22:03:14', '2025-07-05 22:03:14'),
+(37, 14, 'contract_images/OxTexJDTPESFFPvnL88Dzlde12MIU5rDqwAa6Nxz.png', '2025-07-05 22:52:22', '2025-07-05 22:52:22'),
+(38, 14, 'contract_images/nPLuRzYmpUa2v9YKNEHSbZ7qEoKcagAe5bLniCXW.jpg', '2025-07-05 22:52:22', '2025-07-05 22:52:22'),
+(39, 15, 'contract_images/8GctEPt4GIFesjs7qaYtLp1Xga3edqXF2jDgUfic.jpg', '2025-07-05 23:29:40', '2025-07-05 23:29:40'),
+(40, 15, 'contract_images/pwckIzYNL0qflAic26DqqTuRkg1xEI2HkQaD0ODA.jpg', '2025-07-05 23:29:40', '2025-07-05 23:29:40'),
+(41, 16, 'contract_images/dmMhmdhUXhPe0Vd833FdOgGbIMhJrwBwbvnpYBto.jpg', '2025-07-05 23:39:54', '2025-07-05 23:39:54'),
+(42, 16, 'contract_images/TH3qNUb7CqP7zJhW7TdwGXmvfwEqSjRmwITu6Q9h.jpg', '2025-07-05 23:39:54', '2025-07-05 23:39:54'),
+(43, 16, 'contract_images/CI7BiEQX2QA85nvjHP2gPiCRFlIWxAM7CFQbrgIg.jpg', '2025-07-05 23:39:54', '2025-07-05 23:39:54'),
+(44, 17, 'contract_images/Tip9kex3MfFtf03ISxjNEjUT0WpCshJZesl8B46o.jpg', '2025-07-06 01:26:03', '2025-07-06 01:26:03'),
+(45, 17, 'contract_images/ed9RnMOpyNpQ6g2jaRB0G8anwWdSlrPKDbrnAzco.jpg', '2025-07-06 01:26:03', '2025-07-06 01:26:03'),
+(46, 17, 'contract_images/4SoMfNFRfDHG0q0Wmozk6Xqu7Q9cA0rWnPO3Ez9e.jpg', '2025-07-06 01:26:03', '2025-07-06 01:26:03'),
+(47, 18, 'contract_images/h4TBwRQwKn90VUZNq3XGMyHCRlWfc4ZpnbPVuxok.jpg', '2025-07-06 06:25:52', '2025-07-06 06:25:52'),
+(48, 18, 'contract_images/DVyEZDfmEDkBlukHIbDItytkUpwbwxWwCxw7mAAv.jpg', '2025-07-06 06:25:52', '2025-07-06 06:25:52');
 
 -- --------------------------------------------------------
 
@@ -161,7 +197,18 @@ CREATE TABLE `counselings` (
 --
 
 INSERT INTO `counselings` (`id`, `student_id`, `semester_id`, `counseling_date`, `status`, `image_path`, `created_at`, `updated_at`, `remarks`) VALUES
-(1, 5, 1, '2025-07-01', 'Completed', NULL, '2025-07-02 07:28:20', '2025-07-04 01:59:21', 'Ajnkdfn\r\n\r\nhotdoooggxfm');
+(1, 5, 1, '2025-07-01', 'Completed', NULL, '2025-07-02 07:28:20', '2025-07-04 01:59:21', 'Ajnkdfn\r\n\r\nhotdoooggxfm'),
+(2, 1, 10, '2025-07-05', 'In Progress', NULL, '2025-07-05 07:20:43', '2025-07-05 23:26:05', 'xc,xcx,l'),
+(3, 1, 10, '2025-07-02', 'In Progress', NULL, '2025-07-05 21:57:27', '2025-07-05 21:57:27', 'difmk'),
+(4, 24, 10, '2025-07-01', 'Completed', NULL, '2025-07-05 22:21:35', '2025-07-05 22:27:20', 'dkfjdj \r\n\r\ndofokdsfo'),
+(5, 3, 10, '2025-07-01', 'In Progress', NULL, '2025-07-05 22:30:55', '2025-07-05 22:30:55', 'djfij'),
+(6, 23, 10, '2025-07-02', 'In Progress', NULL, '2025-07-05 23:14:05', '2025-07-05 23:14:05', 'sdskod'),
+(7, 23, 10, '2025-07-02', 'In Progress', NULL, '2025-07-05 23:22:38', '2025-07-05 23:22:38', 'xmskcm'),
+(8, 3, 10, '2025-07-01', 'In Progress', NULL, '2025-07-05 23:23:43', '2025-07-05 23:23:43', 'cxokcok'),
+(9, 25, 10, '2025-07-01', 'In Progress', NULL, '2025-07-05 23:24:33', '2025-07-05 23:24:33', 'ckxlck'),
+(10, 25, 10, '2025-07-01', 'In Progress', NULL, '2025-07-05 23:44:55', '2025-07-05 23:44:55', 'cxl,cx'),
+(11, 7, 10, '2025-07-04', 'In Progress', NULL, '2025-07-06 01:27:54', '2025-07-06 01:27:54', 'xxl,'),
+(12, 27, 10, '2025-07-02', 'In Progress', NULL, '2025-07-06 06:28:27', '2025-07-06 06:28:27', 'mxc');
 
 -- --------------------------------------------------------
 
@@ -191,7 +238,61 @@ INSERT INTO `counseling_images` (`id`, `counseling_id`, `image_path`, `created_a
 (7, 1, 'counseling_images/vjD5Kl4GtH9hgK45nYLYuWojCzxCeDB6QQOHVUK1.png', '2025-07-04 01:32:34', '2025-07-04 01:32:34', 'form'),
 (8, 1, 'counseling_images/GWcQfEJxw6HMZ4XilbQGVz6GJzHDFbBk4JLaQ5bJ.jpg', '2025-07-04 01:32:35', '2025-07-04 01:32:35', 'form'),
 (9, 1, 'counseling_images/SDm7VHAC1q5a54kT731QhAfbhugDGzGDbtyODdOD.jpg', '2025-07-04 01:33:34', '2025-07-04 01:33:34', 'id_card'),
-(10, 1, 'counseling_images/5fzrv10kt2bQ2YB11Ca8YQXMNX5fy50FVtsPHVIg.jpg', '2025-07-04 01:33:34', '2025-07-04 01:33:34', 'id_card');
+(10, 1, 'counseling_images/5fzrv10kt2bQ2YB11Ca8YQXMNX5fy50FVtsPHVIg.jpg', '2025-07-04 01:33:34', '2025-07-04 01:33:34', 'id_card'),
+(11, 2, 'counseling_images/afW9WGjLXp18aA1mu3sQUDXDP5ktIUeNrdgS3V1Q.png', '2025-07-05 07:20:43', '2025-07-05 07:20:43', 'form'),
+(12, 2, 'counseling_images/ryOXkhn5oBkgQ3dYSjX4Y2qUXuyIJGGkcGuUeAns.png', '2025-07-05 07:20:43', '2025-07-05 07:20:43', 'form'),
+(13, 3, 'counseling_images/cTt6PD38bgNn40chfyT7tzMRBvLVqpB6B4bDWJ72.png', '2025-07-05 21:57:27', '2025-07-05 21:57:27', 'form'),
+(14, 3, 'counseling_images/09zciUOVJ5aaePRFcTH4ebOZJdinxvjTQN0TEFEx.jpg', '2025-07-05 21:57:27', '2025-07-05 21:57:27', 'form'),
+(15, 3, 'counseling_images/hq1c4YBdMqxBcwSG47bNLjPQMC8kUyvh1sUKV2Uw.jpg', '2025-07-05 21:57:27', '2025-07-05 21:57:27', 'form'),
+(16, 3, 'counseling_images/EFv6gOJbVJ1VFzP7Nq59CGAbcrJYcEbpO65PuhzP.jpg', '2025-07-05 21:57:27', '2025-07-05 21:57:27', 'id_card'),
+(17, 3, 'counseling_images/eal3cLVTfd0RUQMkQQ1jAiQ0JoZQYlDgZNekATCa.jpg', '2025-07-05 21:57:27', '2025-07-05 21:57:27', 'id_card'),
+(18, 3, 'counseling_images/0wOidZjdVl2pXowf0cC3HUOn4EzW28yLzinUudol.jpg', '2025-07-05 21:57:27', '2025-07-05 21:57:27', 'id_card'),
+(19, 4, 'counseling_images/e6O0jMp4j98JNjeniGiyTuZD2YV2pMj2wozobffV.png', '2025-07-05 22:21:35', '2025-07-05 22:21:35', 'form'),
+(20, 4, 'counseling_images/7GFw0MNCUzVUlyTV3S41pzChNnSoq8qYjaQlxqap.png', '2025-07-05 22:21:35', '2025-07-05 22:21:35', 'form'),
+(21, 4, 'counseling_images/JMAWqUDHx5z8jRanoyecnUEv4QTBZPEhHrSp6FkS.jpg', '2025-07-05 22:21:35', '2025-07-05 22:21:35', 'form'),
+(22, 4, 'counseling_images/sfWHUISHiuamvkj3kGNUHcaZwbhksgLNaFgzQ10s.jpg', '2025-07-05 22:21:35', '2025-07-05 22:21:35', 'form'),
+(23, 4, 'counseling_images/diG6lK9sEUm4r06HSDp8jeHFotQotyGS4e6ip5gP.jpg', '2025-07-05 22:21:35', '2025-07-05 22:21:35', 'id_card'),
+(24, 4, 'counseling_images/lwU84Za3TtUB8xL81ERQGSiF4rURdpl2RYES6z9t.jpg', '2025-07-05 22:21:35', '2025-07-05 22:21:35', 'id_card'),
+(25, 4, 'counseling_images/jrY6OSPkrLNkAeMUQfxarAMAqvZAXd2y1t2wmP9y.jpg', '2025-07-05 22:22:40', '2025-07-05 22:22:40', 'form'),
+(26, 5, 'counseling_images/VPcNu7Gb2ZmCo5O2SesygpOchu2PxiRkYaF9l26f.png', '2025-07-05 22:30:55', '2025-07-05 22:30:55', 'form'),
+(27, 5, 'counseling_images/n2sDCB1uQa9rQadd65MjBNzHdCEeJ26DwZBcnfbW.png', '2025-07-05 22:30:55', '2025-07-05 22:30:55', 'form'),
+(28, 5, 'counseling_images/qyWHRNdCkVQVQmJW2cfBPXSMQZS4gEMRXalbkVil.jpg', '2025-07-05 22:30:55', '2025-07-05 22:30:55', 'form'),
+(29, 5, 'counseling_images/wCj2W7kMVvVG49JlFWQQ8cBanllKGJvkw9ItmYRf.jpg', '2025-07-05 22:30:55', '2025-07-05 22:30:55', 'id_card'),
+(30, 5, 'counseling_images/Ir77ueMK8bUqjrZw592w1hb0V5aI7vUf8xrb0w9W.jpg', '2025-07-05 22:30:55', '2025-07-05 22:30:55', 'id_card'),
+(31, 6, 'counseling_images/egVKI2f4jZThwmGld5JoXxIPI1yUCjppjuczVwia.png', '2025-07-05 23:14:05', '2025-07-05 23:14:05', 'form'),
+(32, 6, 'counseling_images/Tv6hTJk8aoMpyvA3Xsfr2F2kMc6wQMFHB2FwPEbC.png', '2025-07-05 23:14:05', '2025-07-05 23:14:05', 'form'),
+(33, 2, 'counseling_images/fsEN2FDyiLT34GIFrSZNicdvBDQsq20ZXuqtwXse.png', '2025-07-05 23:14:28', '2025-07-05 23:14:28', 'id_card'),
+(34, 2, 'counseling_images/LMQtQrisG5Rn3prtWgwNZuNZsp23Fkozdm5hL9dq.jpg', '2025-07-05 23:14:28', '2025-07-05 23:14:28', 'id_card'),
+(35, 7, 'counseling_images/7AoHPljKPU3tk0xkPcQKYgm7GoIsm18L1mr7VUDv.png', '2025-07-05 23:22:38', '2025-07-05 23:22:38', 'form'),
+(36, 7, 'counseling_images/Y8xJpWAoZ44o2kvElQ3kvD8PdQblg2Legj74aIcm.png', '2025-07-05 23:22:38', '2025-07-05 23:22:38', 'form'),
+(37, 7, 'counseling_images/gIDOMOWu08j1kNEaGJYtHoYpjhxasuIfmHoTTS7F.jpg', '2025-07-05 23:22:38', '2025-07-05 23:22:38', 'form'),
+(38, 7, 'counseling_images/b7zeX5E8lkQJxXHndAVYjXChtk0wHS4BqjVlCrpi.jpg', '2025-07-05 23:22:38', '2025-07-05 23:22:38', 'form'),
+(39, 7, 'counseling_images/yiE9bCizuuV0oquMzOrHP0SeHNeJeqgaYAHVvfeY.jpg', '2025-07-05 23:22:38', '2025-07-05 23:22:38', 'id_card'),
+(40, 7, 'counseling_images/KbaThXBUZX9vkqPSVvebGrtRH6Hr1CAlejUJ8JEx.jpg', '2025-07-05 23:22:38', '2025-07-05 23:22:38', 'id_card'),
+(41, 8, 'counseling_images/sUa1yIT88PxFWQrTBuQFwHpeEiy4YyZGP89r7eqI.png', '2025-07-05 23:23:43', '2025-07-05 23:23:43', 'form'),
+(42, 8, 'counseling_images/WpkR49fsjrBZc68AL7OtScXlQuR5OR9Et7HQbI1r.png', '2025-07-05 23:23:43', '2025-07-05 23:23:43', 'form'),
+(43, 8, 'counseling_images/y6wJoJtYblvlW9KOAabG6KFEaRbNmEBUQ8UkN3QG.jpg', '2025-07-05 23:23:43', '2025-07-05 23:23:43', 'form'),
+(44, 8, 'counseling_images/8qQ6hBTpEfHCaVH5fjc1fbgUxbVv8QfUy0k3rdrf.jpg', '2025-07-05 23:23:43', '2025-07-05 23:23:43', 'form'),
+(45, 8, 'counseling_images/T1O43Rs8a8tO468k2KfkuonjqnyAvMVttQXuPrcW.jpg', '2025-07-05 23:23:43', '2025-07-05 23:23:43', 'id_card'),
+(46, 8, 'counseling_images/iCzp8RkHWo1AIvghD1r79cS1hUkXIKqVNKD92LYb.jpg', '2025-07-05 23:23:43', '2025-07-05 23:23:43', 'id_card'),
+(47, 9, 'counseling_images/n0alvz09WPymk8mnxyGZQj7XeFoDxXuz8XDcxA8k.png', '2025-07-05 23:24:33', '2025-07-05 23:24:33', 'form'),
+(48, 9, 'counseling_images/A3R2rZ6pR3z7K0MqOk6KWnII3Z2B1HBj0Xisf9tG.png', '2025-07-05 23:24:33', '2025-07-05 23:24:33', 'form'),
+(49, 9, 'counseling_images/pH3QzsJHn6OAIgXQJKmkSzfSWnOVwnpFGWfALdBL.jpg', '2025-07-05 23:24:33', '2025-07-05 23:24:33', 'form'),
+(50, 9, 'counseling_images/LZ7oiIizcjdUBrSEnDvsBRx1Gm2sRqI9naIDyTCA.jpg', '2025-07-05 23:24:33', '2025-07-05 23:24:33', 'id_card'),
+(51, 9, 'counseling_images/gtURNMEuSl04rGJ8OB9TtAWtoDNgcWVFX5HjtR8X.jpg', '2025-07-05 23:24:33', '2025-07-05 23:24:33', 'id_card'),
+(52, 10, 'counseling_images/l8qkZQaIE7C5Kv4IWgejt9QO4hZ4YjWWSqyfwnDt.jpg', '2025-07-05 23:44:55', '2025-07-05 23:44:55', 'form'),
+(53, 10, 'counseling_images/qKjqWCrlTdK7512XO9TGKoC032fHWl8W45GTpRao.jpg', '2025-07-05 23:44:55', '2025-07-05 23:44:55', 'form'),
+(54, 10, 'counseling_images/LjfQlDmK45rxFxbGNlHa14W2p57eCqr1hf8hk3Bt.jpg', '2025-07-05 23:44:55', '2025-07-05 23:44:55', 'form'),
+(55, 10, 'counseling_images/y8Fl8NKiiuSSiPXqs8h2uiHohFiTn2wwEYC3A9SV.jpg', '2025-07-05 23:44:55', '2025-07-05 23:44:55', 'id_card'),
+(56, 10, 'counseling_images/0WmB7yajFNdvdzmwKlvwk6x5RorXpKANjBJfAuRP.png', '2025-07-05 23:44:55', '2025-07-05 23:44:55', 'id_card'),
+(57, 11, 'counseling_images/qJ2NjE3SNGAcngnTXAPtUbb61PRJQPN4IooyaSvX.jpg', '2025-07-06 01:27:54', '2025-07-06 01:27:54', 'form'),
+(58, 11, 'counseling_images/zwFhGc61IODuFCyjNgprMhGLX6skSwnoimi3CTE2.jpg', '2025-07-06 01:27:54', '2025-07-06 01:27:54', 'form'),
+(59, 11, 'counseling_images/L2deG0Arpg6135ThUZtnT2LwJSwkM9nc5uO0eivt.jpg', '2025-07-06 01:27:54', '2025-07-06 01:27:54', 'form'),
+(60, 11, 'counseling_images/IRqg4gvjyr9gT8xXoj9LKb3uxkhC1oODoMmYGOvB.jpg', '2025-07-06 01:27:54', '2025-07-06 01:27:54', 'id_card'),
+(61, 11, 'counseling_images/zBbhR1t8uSSfbT4qmdG064iuTLv1mB46egYbXwFd.jpg', '2025-07-06 01:27:54', '2025-07-06 01:27:54', 'id_card'),
+(62, 12, 'counseling_images/lk9cR0X316X7M7NM9iF1c7SIrJoWksRezomdE9Zs.jpg', '2025-07-06 06:28:27', '2025-07-06 06:28:27', 'form'),
+(63, 12, 'counseling_images/tglXhZocfOKnwePb8heMMGxQBLiocJ04n0pMYR1b.png', '2025-07-06 06:28:27', '2025-07-06 06:28:27', 'id_card'),
+(64, 12, 'counseling_images/Rm1hfEuUfPO6179TaLfi2Hfj1ubWYmpo0HQ7kuLB.png', '2025-07-06 06:28:27', '2025-07-06 06:28:27', 'id_card');
 
 -- --------------------------------------------------------
 
@@ -213,8 +314,7 @@ CREATE TABLE `courses` (
 INSERT INTO `courses` (`id`, `course`, `created_at`, `updated_at`) VALUES
 (1, 'BS Information Technology', '2025-06-21 08:53:23', '2025-06-21 08:53:23'),
 (2, 'Associate in Computer Technology', '2025-06-21 09:26:35', '2025-06-21 09:26:35'),
-(3, 'BS Computer Science', '2025-06-21 09:26:45', '2025-06-21 09:26:45'),
-(4, 'bshit', '2025-06-21 10:48:26', '2025-06-21 10:48:26');
+(3, 'BS Computer Science', '2025-06-21 09:26:45', '2025-06-21 09:26:45');
 
 -- --------------------------------------------------------
 
@@ -377,7 +477,22 @@ CREATE TABLE `referrals` (
 --
 
 INSERT INTO `referrals` (`id`, `student_id`, `semester_id`, `reason`, `remarks`, `image_path`, `referral_date`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, 'Failing Grades', 'cbjbx,clmlkdvkkklcxmxcm', NULL, '2025-07-01', '2025-07-02 07:27:39', '2025-07-04 05:32:06');
+(2, 1, 10, 'Absences', 'xcmxkcm', NULL, '2025-07-10', '2025-07-05 07:38:28', '2025-07-05 07:38:28'),
+(3, 1, 10, 'Failing Grades', 'xlxl', NULL, '2025-07-01', '2025-07-05 11:59:23', '2025-07-05 11:59:23'),
+(4, 3, 10, 'Failing Grades', NULL, NULL, '2025-07-10', '2025-07-05 12:02:54', '2025-07-05 12:02:54'),
+(5, 23, 10, 'Absences', 'dfd', NULL, '2025-07-15', '2025-07-05 21:43:51', '2025-07-05 21:43:51'),
+(6, 1, 10, 'Poor Study Habits', 'cvfokf', NULL, '2025-07-16', '2025-07-05 21:44:56', '2025-07-05 21:44:56'),
+(7, 1, 10, 'Failing Grades', 'dcd,l', NULL, '2025-07-10', '2025-07-05 21:50:11', '2025-07-05 21:50:11'),
+(8, 7, 10, 'Poor Study Habits', 'xkkd', NULL, '2025-07-02', '2025-07-05 21:59:27', '2025-07-05 21:59:27'),
+(11, 24, 10, 'Mental Health', 'c,l', NULL, '2025-07-02', '2025-07-05 22:06:16', '2025-07-05 22:06:16'),
+(12, 24, 10, 'Absences', NULL, NULL, '2025-07-03', '2025-07-05 22:13:44', '2025-07-05 22:13:44'),
+(13, 4, 10, 'Poor Study Habits', 'ckdock \r\ndkos;kfoso', NULL, '2025-07-03', '2025-07-05 22:18:59', '2025-07-05 22:28:49'),
+(14, 4, 10, 'Poor Study Habits', NULL, NULL, '2025-07-03', '2025-07-05 22:35:36', '2025-07-05 22:35:36'),
+(15, 7, 10, 'Failing Grades', '2 images', NULL, '2025-07-02', '2025-07-05 22:53:09', '2025-07-05 22:53:09'),
+(16, 4, 10, 'Poor Study Habits', 'lcxl', NULL, '2025-07-01', '2025-07-05 23:40:45', '2025-07-05 23:40:45'),
+(17, 3, 10, 'Failing Grades', 'xlx', NULL, '2025-07-03', '2025-07-06 01:27:06', '2025-07-06 01:27:06'),
+(18, 3, 10, 'Failing Grades', NULL, NULL, '2025-07-01', '2025-07-06 06:27:01', '2025-07-06 06:27:01'),
+(19, 26, 10, 'Absences', NULL, NULL, '2025-07-01', '2025-07-06 06:27:35', '2025-07-06 06:27:35');
 
 -- --------------------------------------------------------
 
@@ -398,9 +513,34 @@ CREATE TABLE `referral_images` (
 --
 
 INSERT INTO `referral_images` (`id`, `referral_id`, `image_path`, `created_at`, `updated_at`) VALUES
-(1, 1, 'referral_images/FXyDG7YWvRzUAA2yQM9pm02DH3jtic5PIohW7Wow.jpg', '2025-07-02 07:27:39', '2025-07-02 07:27:39'),
-(3, 1, 'counseling_images/rXzwtS5MwfW33fmjbRSW77lK0EFMTgpEZFJd9Ltv.png', '2025-07-04 05:38:26', '2025-07-04 05:38:26'),
-(4, 1, 'counseling_images/4gOMb6FcI8bIravBXJxrY8nDffikuNRAsFznST3s.jpg', '2025-07-04 05:38:26', '2025-07-04 05:38:26');
+(5, 2, 'referral_images/vet00tE5wpB6HJ2FAzsUuuvGFN0UhQxniQdocVre.png', '2025-07-05 07:38:28', '2025-07-05 07:38:28'),
+(6, 2, 'referral_images/SXW18BY9HLJo3mSTBxEzZ0wDtPjxIhi8S8zlUjSB.png', '2025-07-05 07:38:28', '2025-07-05 07:38:28'),
+(7, 2, 'referral_images/VY9LIBOt45mq9vRjeSIXxD5Bhx3359EEQCqBYJGw.jpg', '2025-07-05 07:38:28', '2025-07-05 07:38:28'),
+(8, 2, 'referral_images/PBH8xYQn4ZWZDQFYv1DoIF5n6PPD1Gt5b23Encyj.jpg', '2025-07-05 07:38:28', '2025-07-05 07:38:28'),
+(9, 3, 'referral_images/lCEuH0uaYKTT886KSr520oFvzCM8K7gQDrwGCrNJ.png', '2025-07-05 11:59:23', '2025-07-05 11:59:23'),
+(10, 3, 'referral_images/QuzTTsqAYB1fTsmFWG8qHLmACf3Ssu240yZDHQGB.jpg', '2025-07-05 11:59:23', '2025-07-05 11:59:23'),
+(11, 3, 'referral_images/ul5lAV7PAFQZyEiLKvjIXdq6OvVI5MLxkMLgkQpb.jpg', '2025-07-05 11:59:23', '2025-07-05 11:59:23'),
+(12, 5, 'counseling_images/ibMtDA93qtWoNX4jdYmlMuMlnnYPQnb82M06OBmA.jpg', '2025-07-05 21:50:47', '2025-07-05 21:50:47'),
+(17, 11, 'referral_images/dQ498Bm1UTUF5ubZXUf1KA4eDfNPPq46QscR1bAK.png', '2025-07-05 22:12:19', '2025-07-05 22:12:19'),
+(18, 11, 'referral_images/kS7bfUrOsnPRffuTNLH6M2h6zsRz8BHNVl300Rs1.png', '2025-07-05 22:12:19', '2025-07-05 22:12:19'),
+(19, 11, 'referral_images/R9RWbBroRor4pf7SViHv9LKCPtgt8cJXPejg1wTm.jpg', '2025-07-05 22:12:19', '2025-07-05 22:12:19'),
+(20, 13, 'referral_images/b7glDs0pggjqgsklSPqoCJmbxQNwU2nNO293i07k.jpg', '2025-07-05 22:18:59', '2025-07-05 22:18:59'),
+(21, 13, 'referral_images/wB7Jbp3qt3BaeAZEmusxewHi9Su66cMLOtK8ySCa.png', '2025-07-05 22:28:42', '2025-07-05 22:28:42'),
+(22, 13, 'referral_images/ni22eOXUccAZl06hZTLI2fvvNO10AnYlBRlFPKJf.png', '2025-07-05 22:28:42', '2025-07-05 22:28:42'),
+(23, 2, 'referral_images/CrU8fIWTZmBsM4FKQffQKDTRPnQHaRIL7LOICYag.png', '2025-07-05 22:33:04', '2025-07-05 22:33:04'),
+(25, 14, 'referral_images/K7qettyQbZ8qqAVZkVVMTVW49IpSz77FHWeCnKUw.png', '2025-07-05 22:35:36', '2025-07-05 22:35:36'),
+(26, 14, 'referral_images/6j4N3LvmATVRnX9M1AlhgzcDZSr4XAlZeuCQDsbI.jpg', '2025-07-05 22:35:36', '2025-07-05 22:35:36'),
+(27, 15, 'referral_images/gcVCyGlzzxfhLswvgEAVmZ9ihqxWBv6mrM0rAYQ2.png', '2025-07-05 22:53:09', '2025-07-05 22:53:09'),
+(28, 15, 'referral_images/Qt7BI9wQ1oMaUtE6MR4kdLazU7ux3oi9ULqzAklh.jpg', '2025-07-05 22:53:09', '2025-07-05 22:53:09'),
+(29, 16, 'referral_images/749nYMM7c1uffj9kxBCZN8pAFjtKWLF99xcjABJe.jpg', '2025-07-05 23:40:45', '2025-07-05 23:40:45'),
+(30, 16, 'referral_images/81g198OtJKGwkPxH6ck6hA1LRspLW5swOTcxOlF9.jpg', '2025-07-05 23:40:45', '2025-07-05 23:40:45'),
+(31, 17, 'referral_images/PprfudCqemLslCwwMBsNEZelwD9EnN6BtSgi8Rge.png', '2025-07-06 01:27:06', '2025-07-06 01:27:06'),
+(32, 17, 'referral_images/ZyMAdM1akoQleeLufhdMAEcHHXpbehp4W4Yld8ST.jpg', '2025-07-06 01:27:06', '2025-07-06 01:27:06'),
+(33, 18, 'referral_images/u0XoLLjMWYSPYFujvm1oxa9VETLhlx36EjBgrQni.png', '2025-07-06 06:27:01', '2025-07-06 06:27:01'),
+(34, 18, 'referral_images/jhCsgr4reoQ0QMyRTSlmPsbdh6l1VWVM9OcQfyxO.png', '2025-07-06 06:27:01', '2025-07-06 06:27:01'),
+(35, 18, 'referral_images/rlkiu9m8QkW6OPz6XEoZPZQGzJLRxpXhNdTahK16.jpg', '2025-07-06 06:27:01', '2025-07-06 06:27:01'),
+(36, 19, 'referral_images/ggPiSQkrxoR6uTw1xQME6XvvKdqd1ok6zhrbaPcb.jpg', '2025-07-06 06:27:35', '2025-07-06 06:27:35'),
+(37, 19, 'referral_images/7f9qijX4vNY9Oraxqhf4e70BOJAEEsdtLH45izlY.jpg', '2025-07-06 06:27:35', '2025-07-06 06:27:35');
 
 -- --------------------------------------------------------
 
@@ -423,7 +563,8 @@ INSERT INTO `referral_reasons` (`id`, `reason`, `created_at`, `updated_at`) VALU
 (1, 'Absences', '2025-06-22 04:54:43', '2025-06-22 04:54:43'),
 (2, 'Failing Grades', '2025-06-23 22:12:18', '2025-06-23 22:12:18'),
 (3, 'Poor Study Habits', '2025-06-23 22:12:32', '2025-06-23 22:12:32'),
-(4, 'Mental Health', '2025-06-24 20:11:49', '2025-06-24 20:11:49');
+(4, 'Mental Health', '2025-06-24 20:11:49', '2025-06-24 20:11:49'),
+(5, 'Deviant Behavior', '2025-07-06 03:46:14', '2025-07-06 03:46:14');
 
 -- --------------------------------------------------------
 
@@ -449,7 +590,8 @@ INSERT INTO `school_years` (`id`, `created_at`, `updated_at`, `start_date`, `end
 (1, '2025-07-02 07:17:05', '2025-07-03 09:52:22', '2024-08-15', '2025-05-20', '2024-2025', 0),
 (2, '2025-07-03 09:52:22', '2025-07-04 07:19:21', '2025-08-20', '2026-01-05', '2025-2026', 0),
 (3, '2025-07-04 07:19:21', '2025-07-04 08:51:21', '2026-05-20', '2027-08-15', '2026-2027', 0),
-(4, '2025-07-04 08:51:21', '2025-07-04 08:51:21', '2027-06-04', '2028-08-23', '2027-2028', 1);
+(4, '2025-07-04 08:51:21', '2025-07-05 05:38:54', '2027-06-04', '2028-08-23', '2027-2028', 0),
+(5, '2025-07-05 05:38:54', '2025-07-05 05:38:54', '2028-05-05', '2029-08-08', '2028-2029', 1);
 
 -- --------------------------------------------------------
 
@@ -500,8 +642,10 @@ INSERT INTO `semesters` (`id`, `semester`, `is_current`, `created_at`, `updated_
 (4, '2nd', 0, '2025-07-04 04:12:52', '2025-07-04 07:19:21', 0, 2),
 (5, '1st', 0, '2025-07-04 07:19:21', '2025-07-04 08:51:21', 0, 3),
 (6, '2nd', 0, '2025-07-04 08:47:55', '2025-07-04 08:51:21', 0, 3),
-(7, '1st', 0, '2025-07-04 08:51:21', '2025-07-05 00:31:23', 0, 4),
-(8, '2nd', 1, '2025-07-05 00:31:23', '2025-07-05 00:31:23', 0, 4);
+(7, '1st', 0, '2025-07-04 08:51:21', '2025-07-05 05:38:54', 0, 4),
+(8, '2nd', 0, '2025-07-05 00:31:23', '2025-07-05 05:38:54', 0, 4),
+(9, '1st', 0, '2025-07-05 05:38:54', '2025-07-05 06:02:52', 0, 5),
+(10, '2nd', 1, '2025-07-05 06:02:52', '2025-07-05 06:02:52', 0, 5);
 
 -- --------------------------------------------------------
 
@@ -523,77 +667,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('10W7yViBtPWaGFQZNg5FHW3mmAbG3qH6YP3fDLdY', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoic2JwbEluYUlkNzVsQUFLeWI4Uk1wc2M1Mk1kejRJZnNNelVxcEdQRCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720792),
-('2SFxRUZropkiFZn4Lipt62sQLFCsCdz45f2TMDqK', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoibVVrTmRaaDBNeEFXMFhydzlzempIV0Y1dWNqbWtFbFRma0xWcFhXaiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715054),
-('3plTFEhSeOceCsfM3J16i5ZJgQUFmaLL9cvcPro2', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiQm92OTkyTFNOOWVSM05LN21GMGtvMEhhQmVZSDl2QmozNW9ORGNYUSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720778),
-('4jJqv10sIpFU0vSC5iXr06iuGfvdv2bkdRGdcm8C', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidmtSRGVkRHJTdVlycGtkVjZJM1lvSHMxSFJNalJlV05tdFF3TGx3SSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720746),
-('4UgL5nYuQOLRxYR594NaNyFFKmRsRRlXr7TJ2MyZ', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTzJodElpNzBkZDBMZlFSeEJTdjdOZUdwOUpIams3ZXlhb3lhWlhUbiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720775),
-('4Ww9Zpl60Je3qXwLlQqLgJSkp9cZrqrpEfVOEUbq', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSW9aV3hQakpoTzZ0akg0cXVwS09FdThOS3JtZjVqVWNUN2FqcUI3OCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715436),
-('8tklArvTahX4FVWFcJVMy2Th7bxOBiHasfr64hoW', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiYXVJQlVvNnhmZDZDblBxbjEzSEd0cU13VFUwcVZNWkZLeExndWI4MSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751721332),
-('94QRQPNIYsm3joUkdrTRebzojwvjBXf1LtYockjP', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRzM2R05wZlZPS3YzTEZBencyaU15RElRbEJReEVuYko4cWNLSVU2TiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720104),
-('9lpciuHAQoFNIzD6UyFT3YTvLiJuJuUt1kRjFSCt', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUE9HRTVwN29HRXZ2RzJVMEh6UVRLaTVjYjRzYzZYak1IWXFjUE1TaiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751721349),
-('9SdXS8gva0CdLAw7euMwoUaxHb8FdqTtyNhupQcB', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWHJrQ3hrbVdsUlNqU3M1d0ZOcmt0VkYwQTJNM0pNcjlVUjNJYmpPVyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715034),
-('A2JYq7Zaeltbzd67QaZmPxda9LRcRaJYmjDoinC6', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVkxuNGhWTmdVRFNsNkppak1pSVBGWEc1SHJ4cmpMR25BVjlTbDdSUiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720750),
-('a6MH7YhsEjShB0pbNOnlNfOVKuobAYpbQlIUmfmS', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoibGF2VVBTV3dRT0JGTmtsNTZJb1NhTEZxd3lKRkJGak5jVDI4ZDBMUCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751719094),
-('BjXLwL3EevDjsW1KA6diABUh1b1h3GaSUIFQtlDI', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidmVlSHFZOU03allneFNUbnZrbWppV3k5WDBqaHNob1BXaFZpMnJCdiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720750),
-('DiyA5yDIYxHAUy0behWJO4nUgT1S44taqQWFNFrd', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiU0Y2OFo0bWN4NGQxOU5HM3JWZE9udzhxNGpMNFVwZmpDd0kyTERjZSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720776),
-('DoDATsAlEYrx3rkwGffUweoeSnw5sNgw1m46fS8L', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTlJWRFliZU9pMFRNRG5VYzZVME9vMmlrbW5nZU1IeGRlZkV2UktjYSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720793),
-('dpbsyU1MFJZpVyzeVhehnODcJL4P6WaquKgxhdDp', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZ2g5Z3p1blhLZkhUQXc1SUZpTzFiWU53cmlOQlY0TnVvcnBraWJSdCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720903),
-('ekqQhAf1INa8dM1yxLqwe64xVfQscOYJvhIFCnT4', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiaHV6SkRWWURGSHBYWlN2TzdvUWM0RllIM2tGY0FucWhjSnZ3ZGx5OCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715038),
-('eTHrJZ32vKAuGpne3846evLc9sSEkyOdrdFTAAZQ', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiV2NTWHhpdld5NVBTd09EUVoycTV4TlFXVFlSbW9Lbk5oMzVhd216ayI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715695),
-('f4LX5FzqzRJY2vWF202kdZOHTY14SGQR2VjoV4Ru', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiY21NMWpoek5KSERkQmlKSzNESm1wY3Q3NE5mZWpKdXpqSlBZMzdCRiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716097),
-('fffXDSPj3JZiWY28Nn9zEWJChL6Q8yVwPduf6mWD', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiV1V4aENSQklRZjhIa2tobGRBdzJxQWNLbzAwSkdhc3Q0WEtMcGgxTSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716087),
-('fstphlfPGPsZCxmiXt2QuasPSFqj6VKDiHntTjUJ', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiQ2o5Vmw2VVlaZzgwenlud1RvaE41Tlc5QW9WbUsxbGlUZjBKRldKOSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715430),
-('fUguGqq6Ce3xSr2phuBtdONZmpMlpyyVly0qm84Z', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiQzJGSHJnSzJ1c0ZwR2hoQVlra3lYalFOUlExc3NyS2tQNHpGcjBDQyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715425),
-('h4zUmBG0Icf9SVYM7ukDT8yoAERw5YPP5AMn4ohx', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidWxoejJJckd1UXJTelVXbFh4dU8zRHNBaWtTTnZVcFFpaUg5MDFKbCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720483),
-('h8fy6Yx1EN3wKhqUYCv8K7L9iiSniGSkXSkHh82r', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiOXNiVW9HSjBjTGhrajNHMDg5dG0xRnBUa1hpMzRrMWtUaXlNVzI5WiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720782),
-('hKxChYOKT9dpnNgPbgTgviXhj6bnufPKdMSRO2Rs', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiczVveERld0tkY3Z2NW9zek1zdHZTUFpvVUg4SVFKVXpHOTNrNTg0SyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716428),
-('HQvAnhxYBLpCdpE2fds3sGBCAvsW7yPYy0oeqG9w', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiNXhsbEx6ekJoN3I3b2lJRkJWdkdGclFuY0JGSUY1N21EallKMzBaSyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720745),
-('Hxi5seSuv1qfRk5k7W2yCi8BiyQY0LBJhdLTXBBU', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTHNJR1BSaGpSbTVDTExyTU5RTGVidVIzdnRxNnZQS0VJblQwQW5JSiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720794),
-('IgOKuB0hrrZ5fXaUDqpioNtxOoW5ZNntxn9Lc7hK', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidUpBUWdQbFVqTWp1WFpHUmdFWFU5YU1vVGlxTWFzOTNiMVdETFA1SSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715440),
-('j4sIhvSr9mCqK5QLfGO4yFplXp1HLZ4k1J1EFKOD', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoicWtOQjB0MDBSTkl6RmIxclBXRFVKazJ6Ulhna29rVzNWV0JmenZDUCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715038),
-('K4RwOxMOHV1AE7va3uqF4qGx4sXChk9MAMz3NZD2', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoid2RRT2ZobTZxVTJYNWVQN3hNR2lWUUZoVDEwbTBBRlVsWE5UQ0RzUCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720773),
-('l7AoTw3ZtdHaBGT2X1EDWQPdnAW9QPm33GlawJvM', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTmZ1YUdqWmhjVUhQbnNMbFJxUVV5R3pMck5LUjROdnVMRzZBWlhxUCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720112),
-('ledIwBfJr8Mo1rXIx3XUam1EGXphMnrn4PLi3FsI', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoicDY1SGF4NUtUcHdqdW0yQ2pwcG5xeGJycVVBMDlPZ0d2YjBLeUhiMCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751718578),
-('mFFBt2KqWXSlxFK8x8HCqyDv067xEjYojtIxz8vO', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidVBtYUpWMDZUNkhYek5odkNBenllSHdGVWJFRWJqRzJQRUc5V1UzTyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716430),
-('MFJjueIdQ5BiEi90dxFzeDJjY5mTueG169wKEtWd', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiMjhZR2VOREdtZzJhWWd1NkVKcUpzaUZPWE1id2dyd29NeXVhb3U2TCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716447),
-('mV0XCutTq3rglrT6EJviXdwIbwykYhyPMACnok2j', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTXhkb1JFVWNPZnEyT25NcEhuYWlOaVBlMXFKbTNYa0lNSW9qNTRBMiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716089),
-('N91cVdDVQu8G86yXDdGhWf166Zpt9gENiyq12Vym', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWmljQk1yVGMwOFlrcUZkd25OZHpNUHpab2JGQ3U1WlM5OU56Y1gwbiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720797),
-('OjbP4M3sgHMH3LfeX4mUsdPk5VAYFPp4r7hSAao3', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRThvaXlGdUJzdGlCZjFHS3dLY1czN3hrWHVETHhRaDZiVXI3aml5NSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720691),
-('oVSgUK8Cz9u530nj04LxVQb3tOc16zOk1ZP9pS1u', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiMUhJQnZObHlxeFVDb2tLWG9oUTN5S0NJN29EM1FWR3diZ2xsS25laCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720743),
-('p5Bmdp1t5jMLWQQx0LYvExOocEJwnktR9e8lxnkq', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVW5IYUVoamR1VHpJMWN1VXhlNHdPVlhKWU5zZE1aSENBSkZMcGcwaCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751719098),
-('pGGxjkoePQu0E2nfiEnFoAN1fwTekJFa2i98HZ3S', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRHo5cEVZeno4bFF2UmlPUmx3WHFzdVFhaUdnMlVVVEg4bmdxVnYxZSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715279),
-('ptKGXjNumNMXmK9ultS8LfYwhgHjdXuzt5FI7b9d', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSUJvZUtNUGt0dUd0c3p5T0VTV2ZKTlhCZkVBTmFpVGdMMFFyOXFLUiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720661),
-('pWMphvFfS5qwPhmpE4uCcCO3nyFT1dARFxZRjwYd', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRGtKYk5GSjRqVHE5NG1NUEZIRFBXaFRBOVdWUWJCSks3ZnozUlpmRiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720751),
-('qAVCSzFW6zouWYITiLbByMnEGAuh6uzy1wlZcOvN', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoicjlGaTlZNXhwak1BeGx1b0NKdXZoRUNIc3loOXpnVzROUEgwbWYydSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720673),
-('qDzHsek9sjhNot4mxtFDfvo2Z7zdJzO15N4s7kui', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoic3RxNTZYanppODZabFFyMTZSYlp1Z2hxQ1ZQcFcySUZGWGxsb05HcyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716067),
-('qSmUOUm6UJFbhM79BLX0pI19ldga1CnWACU8lPg4', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieHVSMTFUZEdVN1ZZRTltSU1kQlZCRVVvR0lQM0d1WnFQR1N5NndkVSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716066),
-('qTnknpPzDL8DwM91gJUtHlIatxNJrLP8ElxhM9M9', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTDFFWE43MHgxRWI1bFR5YlVCV1ZralE5b3BLMG1aYWhzWjcxc0tURCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720777),
-('qvUzvZ6Xd4t859PwXQccS93eubap8tAak3fkv36N', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiajNYb0dBWVNibnFkcVVRUVBTbjNoTUtKSU9razdxbVR3bzhGNVhxcSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720156),
-('QXVJsTn3NWYY9bkhrj2yjcgBAqQPpyKhc0mSwZUK', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiQVdDUEltQ3RteTRJM2N1dEg5Q3M3VzVwTk0yZFN2Y28xMG00bkdzayI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720781),
-('R0AblduZnG6z8SrU6eeRBCwYlKh9NVf8usUx41gm', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRUpsSmljMU1kWHhqN0F6enh1YkpoOW9MNEZkTEk3MEtONEs5dHViTiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720745),
-('rqzPzNI7eC2AGBKN1vyjhsss0RUqkfS1GY23E67U', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVFRyQkpRMHdxZ2JkRHBYVnU5d09DRG11UUZzOXg4WlMyVXZacVRVNyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720742),
-('s9h43mY17dlZ16qbruZjoBEdDFaJH7angspXFpz1', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiOFVXTHhFbkJpc2pIVUppc2xDZ2VsbUFEVmpFSFB6ODdOVWZYUnYzNiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720801),
-('SJvO5ztHoZes9GZABsOiWhxMh2Vp9QHbqSVDh6vL', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWXVMQzUwVjNQS0dCMEo5MENFb0cxMkZMbVZXTmNhSG1ET0tDYjFNbyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751718576),
-('SLbTxAv3RUfP3O1OK4yhnxz3xhNX3vfL4I27QpzZ', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoibWhid290dDJLYmFWS3h1cVJ5V2hzWnZoU25JeWZHZlFUNDZYNjA1RCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716430),
-('t0uX44lPUGLkseXnJZEzhpUcglT14Chqxugno9nW', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiYTBHNXl6MTA5VXdla1lHSnpUVjlrTkMzaUxJN1o4U29PWVFzY3FDdSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716997),
-('TEdSALWS19W9azadnwkNXtMdCuhHqPeNufDSChHy', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWWVyanpDeWFoZVhvZHlTUzNwbXdRRFhGMXVBTVNqOFhYVk1rUzVmRiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716164),
-('tqzhSHAvbSARBfjOR6cFW7GcswkMRPhkugyYvNMY', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiUWtIQnNmSEF5R2JaSmxVNW9Ba1d6bjZuQ05rODVSVDZMMGVrU3VhYyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTg6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0L3NlbWVzdGVyLzgvdmFsaWRhdGUiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO30=', 1751722397),
-('ttsJ951rqF2EVTgBB0tt0UYuNxXu6npWrPJzGSMT', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoib25GTUFncU9JbVVKTjJIQlQzSXBFWmtsMjcwMGNwcVhBUElLS3k0cyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715271),
-('tvEhJtx260vnYb9eeOxkMWPZMNtgG8yvYgTQbQlL', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiNDF4ZEd4WG11cHdaTm1LaHFteDJhUFpSTTduZnFpbWdaa3YwV1h4biI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720796),
-('UAtOanF0RlT3U409j8OiO3jgwiYebZ0Exl9kYjlL', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiOFFzd2t4S2VYWnNocHhHVE1qajFRa09YTkNVaXNWSTJVMjZKTTdxWCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720772),
-('UdcuzeKx5mFdfHS3AeQC1oDTPYdl4Q2sLg1JDozU', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiaGpka0hPbVBWTFFOTXBON09wVUllNGVZZWZKdXNBNmtmelFrbmszcCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720800),
-('UGq40kYNnqWbNpr7gu6TAgt30XIULTL3QcsHFXQ4', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieWxMVm9VUmZLZzhySFY1ZXJOOHJueTZ5VmJ0S09WTGw3Ym5iTHFTdCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715034),
-('UgZ9QxtL7z7x21gFIuMhTLcORLPgF6rGJrsgRw4i', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoib2tYT29ubVNYckh3dUhwMnpLVTBuQ2JVVHptWjZ6bUkxSXJxdzJ2ZSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751717206),
-('VNbED7tLWjr47YQh31ZBsS5DhZcnaAZYte24yAfi', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiam5FUlF3djNGU0NqNUNUQ0g3ZkJIOFR4eU44clVZZ2diVVJvV3h4MCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716067),
-('voxG2jOUYEeB28tXRQudtssd0jAvm41ucQ6SYey3', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUUxNYmU3eGZDQ0JPREtQUXZMd3Z4amhLNXZiaHJlMzZQaXViUmlqayI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751716998),
-('vVP2ETmPboFc6V3Ds4wjc8KKaC5zP6uDXwt9jHrJ', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoid3JoWDl6NWI5c0lKajdpOTlSMW1LRmg2eWMyemtyNlFXUEJZS0dCZSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720799),
-('wnp1AIb1OWYWFiZDsLCwFhk2XVyEKZlUFbpeerxT', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVlFjbmxCSlFWR3Qxa2hiTENhVFZyaW5xZ3ZLbDRacFNDMjBKazdWciI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720844),
-('WVEccHjxJbFT5rHd4BvmEA6ZML6e0kMqfD8ozTMf', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieGZ1Vk5aajEzakJ5N0taMVdabjZ6SG1DdEh1QmJGRG1TVkpka2t6diI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715425),
-('y6iAZVuHW6lKiufvuLE0YvrNEhFmPj8GRntaXyn2', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVHZTanJQT3BUenFJMUZYTnpVT2k1bnp2eExQRDJFOUVjUG5JQ0RDSSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715042),
-('yc2qXwIATyZQsPxXG9Sr5orT4h04dyO3BQJYLAup', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSERKeGwxY0xDYXhoa05nVll0SXEyVXUwdWw0c0M5T0dFd3paMU03ZSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715042),
-('YtA40Z5IiEbs9bBBoyZ2ybTQon7unV4mjNHA4mYC', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWUtEeTREYzdNVGtNdEFnSndGcEdydXRkbWlna3dockdxdTZHQWx0NiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751715433),
-('zTnioEU9K01HTqK0GPG5BgxgpeA8QUAy22cF23rY', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.20.2 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiV1pKdnlkcWpQaUtOaG5zTERDVmJCNjZ1NWtyZGplVVlOVVQ0RzVZViI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0Lz9oZXJkPXByZXZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1751720083);
+('BI7mFfEzor4j6AaTB06erdZ9fGauuqGz10ix5kCS', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiMkFQWms2T3ZyT2FZOGJLTklkM3R1V1lqZ0lhSFBlZUxleGxxZDM5byI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDg6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0L2Rhc2hib2FyZCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjI7fQ==', 1751813613);
 
 -- --------------------------------------------------------
 
@@ -657,7 +731,13 @@ INSERT INTO `students` (`id`, `student_id`, `first_name`, `middle_name`, `last_n
 (19, '2739277347947d', 'mkdm', 'dmvldkm', 'kdmddkm', '2025-07-09', 'Jr.', 'Male', NULL, 'kcdcl', NULL, NULL, 'cmsclmkd', '098898765', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-05 03:31:46', '2025-07-05 03:31:46', NULL, NULL, NULL, NULL, '098986'),
 (20, '039830842', 'Jeshua', 'louise', 'corpuz', '2025-07-03', NULL, 'Male', NULL, 'sjaidi', NULL, NULL, 'dffmk', '0979677', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-05 03:36:22', '2025-07-05 03:36:22', NULL, NULL, NULL, NULL, '0989879867'),
 (21, '928732748', 'Jose louis', 'sdn', 'Lamostre', '2025-07-02', NULL, 'Male', NULL, 'dkmcdkm', NULL, NULL, 'Alfaith Mae Luzon', '0987634873', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-05 03:50:42', '2025-07-05 03:50:42', NULL, NULL, NULL, NULL, '0987654'),
-(22, '20253948484', 'ultyse', 'dnfds', 'cnsjn', '2025-07-08', NULL, 'Male', NULL, 'kvmdlskm', NULL, NULL, 'dfmdkmd', 'dfksnj', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-05 04:51:27', '2025-07-05 04:51:27', NULL, NULL, NULL, NULL, '0998876756453');
+(22, '20253948484', 'ultyse', 'dnfds', 'cnsjn', '2025-07-08', NULL, 'Male', NULL, 'kvmdlskm', NULL, NULL, 'dfmdkmd', 'dfksnj', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-05 04:51:27', '2025-07-05 04:51:27', NULL, NULL, NULL, NULL, '0998876756453'),
+(23, '202539484246334', 'mcmcm', 'oeoeo', 'nxnxnx', '2025-07-01', NULL, 'Female', NULL, 'cmcxkmc', NULL, NULL, 'jk', '090887', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-05 11:12:32', '2025-07-05 11:12:32', NULL, NULL, NULL, NULL, '08989799'),
+(24, '202023247983', 'Ulysess', 'Selorio', 'Casino', '2025-07-01', NULL, 'Male', NULL, 'kmkslmklasm', NULL, NULL, 'chjbchjbh', '09363165480', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-05 20:15:57', '2025-07-05 20:15:57', NULL, NULL, NULL, NULL, '0909767554'),
+(25, '2023348487', 'PERSEUS', 'COVARRUBIAS', 'CASIÑO', '2025-07-08', NULL, 'Female', NULL, 'CANELAR', NULL, NULL, 'Perseus Casino', '09363165480', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-05 21:54:24', '2025-07-05 21:54:24', NULL, NULL, NULL, NULL, '09843247387'),
+(26, '2023094875894', 'Regular Student', NULL, 'Sample 1', '2004-05-20', NULL, 'Female', NULL, 'sjkdns', NULL, NULL, 'ndskjndk', 'jdsjdljs', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-06 06:15:26', '2025-07-06 06:15:26', NULL, NULL, NULL, NULL, '099897664654'),
+(27, '29223284738', 'Shifting in', 'Sample', 'Student 2', '2025-06-30', NULL, 'Female', NULL, 'cd', NULL, NULL, 'jsnkjdnsk', '090789878', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-06 06:18:57', '2025-07-06 06:18:57', NULL, NULL, NULL, NULL, '97887687675'),
+(28, '2023039398', 'Transferring In', 'Sample', 'Student 3', '2025-07-01', 'Jr.', 'Female', NULL, 'dkdhsdjf', NULL, NULL, 'cvnkjn', '0909876', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-06 06:21:30', '2025-07-06 06:21:30', NULL, NULL, NULL, NULL, '099877');
 
 -- --------------------------------------------------------
 
@@ -737,7 +817,22 @@ INSERT INTO `student_profiles` (`id`, `student_id`, `semester_id`, `course`, `se
 (45, 10, 8, 'Associate in Computer Technology', 'A', '2025-07-05 03:51:55', '2025-07-05 05:33:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
 (46, 22, 8, 'BS Information Technology', 'A', '2025-07-05 04:51:27', '2025-07-05 04:51:27', 'kvmdlskm', NULL, NULL, 'dfmdkmd', 'dfksnj', NULL, NULL, NULL, NULL, NULL, '2', NULL),
 (47, 11, 8, 'Associate in Computer Technology', 'B', '2025-07-05 05:08:57', '2025-07-05 05:10:15', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', '2025-07-05 05:10:15'),
-(48, 4, 8, 'BS Information Technology', 'C', '2025-07-05 05:27:28', '2025-07-05 05:27:28', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '3', NULL);
+(48, 4, 8, 'BS Information Technology', 'C', '2025-07-05 05:27:28', '2025-07-05 05:27:28', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '3', NULL),
+(49, 1, 9, 'BS Information Technology', 'B', '2025-07-05 05:46:22', '2025-07-05 05:46:22', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '3', NULL),
+(50, 3, 9, 'BS Computer Science', 'A', '2025-07-05 05:46:22', '2025-07-05 05:46:22', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2', NULL),
+(51, 4, 9, 'BS Information Technology', 'C', '2025-07-05 05:46:22', '2025-07-05 05:46:22', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '4', NULL),
+(52, 1, 10, 'BS Information Technology', 'B', '2025-07-05 06:22:23', '2025-07-05 06:22:23', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '3', NULL),
+(53, 3, 10, 'BS Computer Science', 'A', '2025-07-05 06:22:23', '2025-07-05 06:22:23', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2', NULL),
+(54, 4, 10, 'BS Information Technology', 'C', '2025-07-05 06:22:23', '2025-07-05 06:22:23', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '4', NULL),
+(55, 7, 10, 'BS Information Technology', 'B', '2025-07-05 06:22:23', '2025-07-05 06:22:23', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2', NULL),
+(56, 10, 10, 'Associate in Computer Technology', 'A', '2025-07-05 06:22:23', '2025-07-06 00:52:32', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2', NULL),
+(57, 23, 10, 'Associate in Computer Technology', 'A', '2025-07-05 11:12:32', '2025-07-05 11:12:32', 'cmcxkmc', NULL, NULL, 'jk', '090887', NULL, NULL, NULL, NULL, NULL, '2', NULL),
+(58, 24, 10, 'Associate in Computer Technology', 'B', '2025-07-05 20:15:57', '2025-07-05 20:15:57', 'kmkslmklasm', NULL, NULL, 'chjbchjbh', '09363165480', NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(59, 25, 10, 'BS Information Technology', 'B', '2025-07-05 21:54:24', '2025-07-05 21:54:24', 'CANELAR', NULL, NULL, 'Perseus Casino', '09363165480', NULL, NULL, NULL, NULL, NULL, '2', NULL),
+(60, 13, 10, 'BS Information Technology', 'B', '2025-07-06 00:53:14', '2025-07-06 00:53:14', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(61, 26, 10, 'Associate in Computer Technology', 'A', '2025-07-06 06:15:26', '2025-07-06 06:15:26', 'sjkdns', NULL, NULL, 'ndskjndk', 'jdsjdljs', NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(62, 27, 10, 'BS Information Technology', 'B', '2025-07-06 06:18:57', '2025-07-06 06:18:57', 'cd', NULL, NULL, 'jsnkjdnsk', '090789878', NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(63, 28, 10, 'BS Information Technology', 'A', '2025-07-06 06:21:30', '2025-07-06 06:21:30', 'dkdhsdjf', NULL, NULL, 'cvnkjn', '0909876', NULL, NULL, NULL, NULL, NULL, '2', NULL);
 
 -- --------------------------------------------------------
 
@@ -779,7 +874,13 @@ INSERT INTO `student_semester_enrollments` (`id`, `student_id`, `semester_id`, `
 (18, 19, 8, 1, '2025-07-05 03:31:46', '2025-07-05 03:31:46'),
 (19, 20, 8, 1, '2025-07-05 03:36:22', '2025-07-05 03:36:22'),
 (20, 21, 8, 1, '2025-07-05 03:50:42', '2025-07-05 03:50:42'),
-(21, 22, 8, 1, '2025-07-05 04:51:27', '2025-07-05 04:51:27');
+(21, 22, 8, 1, '2025-07-05 04:51:27', '2025-07-05 04:51:27'),
+(22, 23, 10, 1, '2025-07-05 11:12:32', '2025-07-05 11:12:32'),
+(23, 24, 10, 1, '2025-07-05 20:15:57', '2025-07-05 20:15:57'),
+(24, 25, 10, 1, '2025-07-05 21:54:24', '2025-07-05 21:54:24'),
+(25, 26, 10, 1, '2025-07-06 06:15:26', '2025-07-06 06:15:26'),
+(26, 27, 10, 1, '2025-07-06 06:18:57', '2025-07-06 06:18:57'),
+(27, 28, 10, 1, '2025-07-06 06:21:30', '2025-07-06 06:21:30');
 
 -- --------------------------------------------------------
 
@@ -811,7 +912,6 @@ CREATE TABLE `student_transition` (
 --
 
 INSERT INTO `student_transition` (`id`, `last_name`, `first_name`, `middle_name`, `transition_type`, `from_program`, `to_program`, `reason_leaving`, `reason_returning`, `leave_reason`, `transition_date`, `remark`, `created_at`, `updated_at`, `semester_id`, `student_id`) VALUES
-(1, 'Salihuddin', 'Alyacher', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-08', 'ndnsdnjdskn', '2025-07-04 00:57:50', '2025-07-04 00:57:50', 3, 8),
 (2, 'Haliluddin', 'Naila', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-03', 'Auto-generated shift out', '2025-07-04 06:03:32', '2025-07-04 06:03:32', 3, 1),
 (3, 'Haliluddin', 'Naila', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-03', 'fffb', '2025-07-04 06:03:32', '2025-07-04 06:03:32', 4, 1),
 (4, 'talaga', 'last', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-02', 'fgmlkmfd', '2025-07-04 06:06:35', '2025-07-04 06:06:35', 4, 10),
@@ -839,10 +939,19 @@ INSERT INTO `student_transition` (`id`, `last_name`, `first_name`, `middle_name`
 (26, 'kdmddkm', 'mkdm', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-05', 'cdkdsskmkk', '2025-07-05 03:31:46', '2025-07-05 03:31:46', 8, 19),
 (27, 'corpuz', 'Jeshua', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-05', 'kdodk', '2025-07-05 03:36:22', '2025-07-05 03:36:22', 8, 20),
 (42, 'cnsjn', 'ultyse', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-05', 'mkdm', '2025-07-05 04:51:27', '2025-07-05 04:51:27', 8, 22),
-(53, 'tlga', 'final', NULL, 'Transferring Out', NULL, NULL, NULL, NULL, NULL, '2025-07-05', 'sckskl', '2025-07-05 05:23:22', '2025-07-05 05:23:22', 8, 11),
 (57, 'Alvarez', 'April Rose', NULL, 'Returning Student', NULL, NULL, NULL, NULL, NULL, '2025-07-05', NULL, '2025-07-05 05:27:28', '2025-07-05 05:27:28', 8, 4),
 (62, 'talaga', 'last', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-05', 'Auto-generated shift out', '2025-07-05 05:33:00', '2025-07-05 05:33:00', 7, 10),
-(63, 'talaga', 'last', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-05', 'zxzx', '2025-07-05 05:33:00', '2025-07-05 05:33:00', 8, 10);
+(63, 'talaga', 'last', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-05', 'zxzx', '2025-07-05 05:33:00', '2025-07-05 05:33:00', 8, 10),
+(64, 'tlga', 'final', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-05', 'dcxv', '2025-07-05 05:37:51', '2025-07-05 05:37:51', 8, 11),
+(65, 'Haliluddin', 'Naila', NULL, 'Dropped', NULL, NULL, NULL, NULL, NULL, '2025-07-05', 'kjdfsdsknf', '2025-07-05 05:54:06', '2025-07-05 05:54:06', 9, 1),
+(66, 'nxnxnx', 'mcmcm', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-05', NULL, '2025-07-05 11:12:32', '2025-07-05 11:12:32', 10, 23),
+(67, 'CASIÑO', 'PERSEUS', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-06', 'dnkjn', '2025-07-05 21:54:24', '2025-07-05 21:54:24', 10, 25),
+(68, 'cnsjn', 'ultyse', NULL, 'Transferring Out', NULL, NULL, NULL, NULL, NULL, '2025-07-06', 'cvclc,v', '2025-07-05 23:55:07', '2025-07-05 23:55:07', 10, 22),
+(69, 'utet', 'utet', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-06', 'cl,xc,vcl,', '2025-07-06 00:49:21', '2025-07-06 00:49:21', 10, 12),
+(71, 'Haliluddin', 'Naila', NULL, 'Dropped', NULL, NULL, NULL, NULL, NULL, '2025-07-06', 'mvkldvmfkdjfnkj\r\nedit 2', '2025-07-06 01:24:34', '2025-07-06 01:50:54', 10, 1),
+(72, 'Student 2', 'Shifting in', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-06', 'ckcxcfkdnf', '2025-07-06 06:18:57', '2025-07-06 06:19:33', 10, 27),
+(73, 'Student 3', 'Transferring In', NULL, 'Transferring In', NULL, NULL, NULL, NULL, NULL, '2025-07-06', 'djkfdnfknfdlsfn', '2025-07-06 06:21:30', '2025-07-06 06:22:26', 10, 28),
+(74, 'CASIÑO', 'PERSEUS', NULL, 'Dropped', NULL, NULL, NULL, NULL, NULL, '2025-07-06', 'ndkf', '2025-07-06 06:22:51', '2025-07-06 06:22:51', 10, 7);
 
 -- --------------------------------------------------------
 
@@ -946,7 +1055,29 @@ INSERT INTO `student_transition_images` (`id`, `student_transition_id`, `image_p
 (81, 59, 'transition_images/ur1OYYoLfpNAt1IpP7ButidK48qHKAWzeLH2BL8e.jpg', '2025-07-05 05:29:52', '2025-07-05 05:29:52'),
 (82, 61, 'transition_images/ffVmH4NlRoaytMfbuA0dt4dIlnDJeluN0hqsRDbB.png', '2025-07-05 05:31:57', '2025-07-05 05:31:57'),
 (83, 61, 'transition_images/ZSSF0WYddaCLAFLjU8onIhkjPbhPTCafUJa40H5b.png', '2025-07-05 05:31:57', '2025-07-05 05:31:57'),
-(84, 63, 'transition_images/vUAEBt9vTA7TLPvGgl7HgbE2743NXAhiq58EcW9k.png', '2025-07-05 05:33:00', '2025-07-05 05:33:00');
+(84, 63, 'transition_images/vUAEBt9vTA7TLPvGgl7HgbE2743NXAhiq58EcW9k.png', '2025-07-05 05:33:00', '2025-07-05 05:33:00'),
+(85, 64, 'transition_images/v8n5E9VQwUdjzf7MCRO9zGBQJXqetgtzRjGi7FiW.png', '2025-07-05 05:37:51', '2025-07-05 05:37:51'),
+(86, 64, 'transition_images/OcRvenzbMvocim69x3wVdVw6jYosySEywiTro4IP.png', '2025-07-05 05:37:51', '2025-07-05 05:37:51'),
+(87, 66, 'transition_images/e1EiPORmrLTtBVjF4Oc36ekXcQcDesrSmxzFBvDq.png', '2025-07-05 11:12:32', '2025-07-05 11:12:32'),
+(88, 66, 'transition_images/biFP4DCWI1dzdDyoWvn5lxpfwKPehslP0DxMnRs6.jpg', '2025-07-05 11:12:32', '2025-07-05 11:12:32'),
+(89, 67, 'transition_images/4medoRf8rvH0eaShpaAw2pI9DUhfMQcbbqo653u5.png', '2025-07-05 21:54:24', '2025-07-05 21:54:24'),
+(90, 67, 'transition_images/TchC4cBp6f8U2rYJUTQl7eWDGjHEzsHuo1P2K2g6.png', '2025-07-05 21:54:24', '2025-07-05 21:54:24'),
+(91, 67, 'transition_images/XJotJVWQRYMpaGUEicfZlCLUzrYbpf29ol4HPQVt.jpg', '2025-07-05 21:54:24', '2025-07-05 21:54:24'),
+(92, 68, 'transition_images/qQpUxRu33qLHkVZBKYPvWG5N4Ge9kIZ3qNr8FpKd.jpg', '2025-07-05 23:55:07', '2025-07-05 23:55:07'),
+(93, 68, 'transition_images/ffLzfcoyJvr1O1l5omgPalKC7py4RvEm8sSYL0rW.jpg', '2025-07-05 23:55:07', '2025-07-05 23:55:07'),
+(94, 69, 'transition_images/vbT6gyNWPlQulToGIuJsa6sL7noIWDQHOCx6H4gn.png', '2025-07-06 00:49:21', '2025-07-06 00:49:21'),
+(95, 69, 'transition_images/lmcMTc5u70jPhXb6EZ84Wv4XVPNK8PUxL17N2941.jpg', '2025-07-06 00:49:21', '2025-07-06 00:49:21'),
+(96, 71, 'transition_images/cdhoi6h8Js1lZinV4HAaGgRsw0k7jHRYNk4Y3Ho5.png', '2025-07-06 01:24:34', '2025-07-06 01:24:34'),
+(97, 71, 'transition_images/LDzO9WbjpGCIFqna1hsMgHdLiGtUTlEjoODbixGR.png', '2025-07-06 01:24:34', '2025-07-06 01:24:34'),
+(98, 71, 'transition_images/pOSEpPYP457grlzTiHho17rvL01vgMWLpDfpD57V.jpg', '2025-07-06 01:24:34', '2025-07-06 01:24:34'),
+(99, 71, 'transition_images/cAWU0oHO5G55Z0GjFu7ZXwVDBuqCzzZMVURI5CGr.png', '2025-07-06 01:51:56', '2025-07-06 01:51:56'),
+(100, 71, 'transition_images/r6qH1GCaUVGh5bs4b5glTrIuEaqjcxJMxqSOCdUt.png', '2025-07-06 01:51:56', '2025-07-06 01:51:56'),
+(101, 72, 'transition_images/Sqo202cRKxQxSTmuABKZ6TfgLLHCEQrDyRYz43Sa.png', '2025-07-06 06:18:57', '2025-07-06 06:18:57'),
+(102, 72, 'transition_images/odm4gRTb5tuqUhdrqRXW8EPnM85zagV61tlhPCax.jpg', '2025-07-06 06:18:57', '2025-07-06 06:18:57'),
+(103, 72, 'transition_images/ZMJ6v7BNz63ciyzJZI539vXEMtGfPwIQSxHry80R.png', '2025-07-06 06:19:45', '2025-07-06 06:19:45'),
+(104, 73, 'transition_images/jLI6m9W5fQa2hkCcuUnadqS2DH3Bc3fXE11gLOA8.png', '2025-07-06 06:21:30', '2025-07-06 06:21:30'),
+(105, 73, 'transition_images/X5YWgdASptOAvokCWW6CMi4HrOMDYNSj9LCozOtY.jpg', '2025-07-06 06:21:30', '2025-07-06 06:21:30'),
+(106, 74, 'transition_images/6I1xvM40FXna503hzihvLImVXoiRcv8xA52JB77V.png', '2025-07-06 06:22:51', '2025-07-06 06:22:51');
 
 -- --------------------------------------------------------
 
@@ -995,7 +1126,8 @@ INSERT INTO `years` (`id`, `year_level`, `created_at`, `updated_at`) VALUES
 (1, '1', '2025-07-01 22:48:49', '2025-07-01 22:48:49'),
 (2, '2', '2025-07-01 22:48:53', '2025-07-01 22:48:53'),
 (3, '3', '2025-07-01 22:48:56', '2025-07-01 22:48:56'),
-(4, '4', '2025-07-01 22:48:59', '2025-07-01 22:48:59');
+(4, '4', '2025-07-01 22:48:59', '2025-07-01 22:48:59'),
+(5, '5', '2025-07-06 06:09:41', '2025-07-06 06:09:41');
 
 --
 -- Indexes for dumped tables
@@ -1193,13 +1325,13 @@ ALTER TABLE `years`
 -- AUTO_INCREMENT for table `contracts`
 --
 ALTER TABLE `contracts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `contract_images`
 --
 ALTER TABLE `contract_images`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `contract_types`
@@ -1211,13 +1343,13 @@ ALTER TABLE `contract_types`
 -- AUTO_INCREMENT for table `counselings`
 --
 ALTER TABLE `counselings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `counseling_images`
 --
 ALTER TABLE `counseling_images`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `courses`
@@ -1247,25 +1379,25 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `referrals`
 --
 ALTER TABLE `referrals`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `referral_images`
 --
 ALTER TABLE `referral_images`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `referral_reasons`
 --
 ALTER TABLE `referral_reasons`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `school_years`
 --
 ALTER TABLE `school_years`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `sections`
@@ -1277,37 +1409,37 @@ ALTER TABLE `sections`
 -- AUTO_INCREMENT for table `semesters`
 --
 ALTER TABLE `semesters`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `student_profiles`
 --
 ALTER TABLE `student_profiles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT for table `student_semester_enrollments`
 --
 ALTER TABLE `student_semester_enrollments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `student_transition`
 --
 ALTER TABLE `student_transition`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT for table `student_transition_images`
 --
 ALTER TABLE `student_transition_images`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -1319,7 +1451,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `years`
 --
 ALTER TABLE `years`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables

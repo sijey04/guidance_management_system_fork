@@ -94,6 +94,30 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
 
     $uniqueStudentIds = $studentProfiles->pluck('student_id')->unique();
 
+    // Group counts per student_id for this SY + Sem
+$contractCounts = Contract::selectRaw('student_id, COUNT(*) as count')
+    ->whereIn('semester_id', $semesterIds)
+    ->groupBy('student_id')
+    ->pluck('count', 'student_id');
+
+$referralCounts = Referral::selectRaw('student_id, COUNT(*) as count')
+    ->whereIn('semester_id', $semesterIds)
+    ->groupBy('student_id')
+    ->pluck('count', 'student_id');
+
+$counselingCounts = Counseling::selectRaw('student_id, COUNT(*) as count')
+    ->whereIn('semester_id', $semesterIds)
+    ->groupBy('student_id')
+    ->pluck('count', 'student_id');
+
+$totalStudents = $studentProfiles->count(); // count of unique student profiles
+$totalContracts = $contracts->count();      // count of contracts for filtered semester(s)
+$totalReferrals = $referrals->count();      // count of referrals
+$totalCounselings = $counselings->count();  // count of counseling records
+$totalTransitions = $transitions->count();// count of transition records
+
+    
+
     return view('reports.report', [
         'schoolYears' => $schoolYears,
         'semesters' => $semesters,
@@ -110,6 +134,15 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
         'contractTypesList' => $contractTypesList,
         'referralReasons' => $referralReasons,
         'uniqueStudentCount' => $uniqueStudentIds->count(),
+        'contractCounts' => $contractCounts,
+        'referralCounts' => $referralCounts,
+        'counselingCounts' => $counselingCounts,
+        'totalStudents' => $totalStudents,
+        'totalContracts' => $totalContracts,
+        'totalReferrals' => $totalReferrals,
+        'totalCounselings' => $totalCounselings,
+        'totalTransitions' => $totalTransitions,
+
     ]);
 }
 
