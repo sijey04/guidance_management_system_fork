@@ -40,6 +40,13 @@
                     </div>
                 </div>
 
+                @if($globalActiveSchoolYear && $globalActiveSemester)
+                    <div class="text-sm text-gray-500">
+                        <strong class="text-base font-extrabold text-[#a82323]">Active SY:</strong > <span class="text-base font-extrabold ">{{ $globalActiveSchoolYear->school_year }}</span> |
+                        <strong  class="text-base font-extrabold text-[#a82323]">Semester:</strong> <span class="text-base font-extrabold ">{{ $globalActiveSemester->semester }}</span> 
+                    </div>
+                @endif
+
                 <!-- User Dropdown -->
                 <div class="relative">
                     <x-dropdown align="right" width="48">
