@@ -89,6 +89,25 @@
                                     </svg>
                                     Export PDF
                             </a>
+
+                            <form action="{{ route('report.exportExcel') }}" method="GET" target="_blank">
+    <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
+    <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
+    <input type="hidden" name="tab" value="all"> {{-- or 'contracts', 'referrals', etc. based on tab --}}
+    <input type="hidden" name="filter_course" value="{{ request('filter_course') }}">
+    <input type="hidden" name="filter_year" value="{{ request('filter_year') }}">
+    <input type="hidden" name="filter_section" value="{{ request('filter_section') }}">
+    <input type="hidden" name="filter_contract_type" value="{{ request('filter_contract_type') }}">
+    <input type="hidden" name="filter_contract_status" value="{{ request('filter_contract_status') }}">
+    <input type="hidden" name="filter_reason" value="{{ request('filter_reason') }}">
+    <input type="hidden" name="filter_counseling_status" value="{{ request('filter_counseling_status') }}">
+    <input type="hidden" name="filter_transition_type" value="{{ request('filter_transition_type') }}">
+
+    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">
+        Export to Excel
+    </button>
+</form>
+
                         </div>
                     @endif
                     
@@ -174,6 +193,7 @@
 
                     <!-- Filters section -->
                     @if($activeTab === 'student_profiles')
+                    
                         <form method="GET" class="flex flex-wrap gap-4 items-center mb-4 w-full bg-gray-50 p-4 rounded border">
                             <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
                             <input type="hidden" name="semester_name" value="{{ $selectedSem }}">

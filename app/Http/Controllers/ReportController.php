@@ -17,6 +17,9 @@ use App\Models\Section;
 use App\Models\Year;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ReportExport;
+
 
 
 class ReportController extends Controller
@@ -272,43 +275,90 @@ public function export(Request $request)
     return $pdf->download("Report_{$schoolYear->school_year}_{$semesterName}.pdf");
 }
 
-
-public function exportStudentHistory(Request $request)
+public function exportExcel(Request $request)
 {
-    $student = Student::findOrFail($request->student_id);
-    $schoolYear = SchoolYear::find($request->school_year_id);
-    $semesterName = $request->semester_name;
-
-    $semesterIds = Semester::where('school_year_id', $schoolYear?->id)
-        ->where('semester', $semesterName)
-        ->pluck('id');
-
-    $contracts = Contract::with('semester', 'images')
-        ->where('student_id', $student->id)
-        ->whereIn('semester_id', $semesterIds)
-        ->get();
-
-    $referrals = Referral::with('semester', 'images')
-        ->where('student_id', $student->id)
-        ->whereIn('semester_id', $semesterIds)
-        ->get();
-
-    $counselings = Counseling::with('semester', 'images')
-        ->where('student_id', $student->id)
-        ->whereIn('semester_id', $semesterIds)
-        ->get();
-
-    $profile = StudentProfile::where('student_id', $student->id)
-        ->whereIn('semester_id', $semesterIds)
-        ->latest()
-        ->first();
-
-    $pdf = PDF::loadView('reports.student_history_pdf', compact(
-        'student', 'schoolYear', 'semesterName', 'contracts', 'referrals', 'counselings', 'profile'
-    ))->setPaper('a4', 'portrait');
-
-    return $pdf->download("Student_History_{$student->student_id}.pdf");
+    return Excel::download(new ReportExport($request), 'Report_' . now()->format('Ymd_His') . '.xlsx');
 }
+
+// public function exportExcel(Request $request)
+// {
+//     $schoolYearId = $request->school_year_id;
+//     $semesterName = $request->semester_name;
+
+//     $semesterIds = Semester::where('school_year_id', $schoolYearId)
+//         ->where('semester', $semesterName)
+//         ->pluck('id');
+
+//     $students = StudentProfile::with('student')
+//         ->whereIn('semester_id', $semesterIds)
+//         ->when($request->filled('filter_course'), fn($q) => $q->where('course', $request->filter_course))
+//         ->when($request->filled('filter_year'), fn($q) => $q->where('year_level', $request->filter_year))
+//         ->when($request->filled('filter_section'), fn($q) => $q->where('section', $request->filter_section))
+//         ->get()
+//         ->unique('student_id');
+
+//     $contractCounts = Contract::selectRaw('student_id, COUNT(*) as count')
+//         ->whereIn('semester_id', $semesterIds)
+//         ->groupBy('student_id')
+//         ->pluck('count', 'student_id');
+
+//     $referralCounts = Referral::selectRaw('student_id, COUNT(*) as count')
+//         ->whereIn('semester_id', $semesterIds)
+//         ->groupBy('student_id')
+//         ->pluck('count', 'student_id');
+
+//     $counselingCounts = Counseling::selectRaw('student_id, COUNT(*) as count')
+//         ->whereIn('semester_id', $semesterIds)
+//         ->groupBy('student_id')
+//         ->pluck('count', 'student_id');
+
+//     $data = [
+//         'students' => $students,
+//         'contractCounts' => $contractCounts,
+//         'referralCounts' => $referralCounts,
+//         'counselingCounts' => $counselingCounts,
+//     ];
+
+//     return Excel::download(new ReportsExport($data), 'Student_Report_' . now()->format('Ymd_His') . '.xlsx');
+// }
+
+
+// public function exportStudentHistory(Request $request)
+// {
+//     $student = Student::findOrFail($request->student_id);
+//     $schoolYear = SchoolYear::find($request->school_year_id);
+//     $semesterName = $request->semester_name;
+
+//     $semesterIds = Semester::where('school_year_id', $schoolYear?->id)
+//         ->where('semester', $semesterName)
+//         ->pluck('id');
+
+//     $contracts = Contract::with('semester', 'images')
+//         ->where('student_id', $student->id)
+//         ->whereIn('semester_id', $semesterIds)
+//         ->get();
+
+//     $referrals = Referral::with('semester', 'images')
+//         ->where('student_id', $student->id)
+//         ->whereIn('semester_id', $semesterIds)
+//         ->get();
+
+//     $counselings = Counseling::with('semester', 'images')
+//         ->where('student_id', $student->id)
+//         ->whereIn('semester_id', $semesterIds)
+//         ->get();
+
+//     $profile = StudentProfile::where('student_id', $student->id)
+//         ->whereIn('semester_id', $semesterIds)
+//         ->latest()
+//         ->first();
+
+//     $pdf = PDF::loadView('reports.student_history_pdf', compact(
+//         'student', 'schoolYear', 'semesterName', 'contracts', 'referrals', 'counselings', 'profile'
+//     ))->setPaper('a4', 'portrait');
+
+//     return $pdf->download("Student_History_{$student->student_id}.pdf");
+// }
 
 
 }

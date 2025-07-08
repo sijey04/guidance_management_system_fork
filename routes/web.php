@@ -122,6 +122,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/reports/student/export', [ReportController::class, 'exportStudentHistory'])->name('reports.student.export');
     Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])->name('reports.view-records');
     Route::get('/transitions/{transition}', [StudentTransitionController::class, 'show'])->name('transitions.show');
+Route::get('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('report.exportExcel');
 
 });
 
