@@ -91,7 +91,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/referrals/{referrals}/status', [ReferralController::class, 'updateStatus'])->name('referrals.updateStatus');
     Route::delete('/referrals/{referralId}/images/{imageId}', [ReferralController::class, 'deleteImage'])->name('referrals.deleteImage');
     Route::post('/referrals/{id}/upload-images/{type}', [ReferralController::class, 'uploadImages'])->name('referrals.uploadImages');
-    
+    Route::get('/referrals/{id}/view', [ReferralController::class, 'show'])->name('referrals.view');
+
     // Referral Reasons
     Route::resource('referral-reasons', ReferralReasonController::class);
     
