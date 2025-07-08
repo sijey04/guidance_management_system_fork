@@ -90,20 +90,23 @@
                                     Export PDF
                             </a>
 
-                            <form action="{{ route('report.exportExcel') }}" method="GET" target="_blank">
+                            <form method="GET" action="{{ route('report.exportExcel') }}" target="_blank">
     <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
     <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
-    <input type="hidden" name="tab" value="all"> {{-- or 'contracts', 'referrals', etc. based on tab --}}
-    <input type="hidden" name="filter_course" value="{{ request('filter_course') }}">
-    <input type="hidden" name="filter_year" value="{{ request('filter_year') }}">
-    <input type="hidden" name="filter_section" value="{{ request('filter_section') }}">
-    <input type="hidden" name="filter_contract_type" value="{{ request('filter_contract_type') }}">
-    <input type="hidden" name="filter_contract_status" value="{{ request('filter_contract_status') }}">
-    <input type="hidden" name="filter_reason" value="{{ request('filter_reason') }}">
-    <input type="hidden" name="filter_counseling_status" value="{{ request('filter_counseling_status') }}">
-    <input type="hidden" name="filter_transition_type" value="{{ request('filter_transition_type') }}">
+    <input type="hidden" name="tab" value="{{ request()->tab ?? 'all' }}">
 
-    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">
+    <!-- Add other filters as hidden inputs -->
+    <input type="hidden" name="filter_course" value="{{ request()->filter_course }}">
+    <input type="hidden" name="filter_year" value="{{ request()->filter_year }}">
+    <input type="hidden" name="filter_section" value="{{ request()->filter_section }}">
+    <input type="hidden" name="filter_contract_type" value="{{ request()->filter_contract_type }}">
+    <input type="hidden" name="filter_contract_status" value="{{ request()->filter_contract_status }}">
+    <input type="hidden" name="filter_reason" value="{{ request()->filter_reason }}">
+    <input type="hidden" name="filter_counseling_status" value="{{ request()->filter_counseling_status }}">
+    <input type="hidden" name="filter_transition_type" value="{{ request()->filter_transition_type }}">
+
+    <button type="submit"
+        class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition">
         Export to Excel
     </button>
 </form>
