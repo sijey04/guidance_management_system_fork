@@ -61,7 +61,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Contract routes
     Route::resource('contracts', ContractController::class);
     Route::get('/students/{student}/contracts/create', [ContractController::class, 'createForStudent'])->name('student.createContract');
-    Route::get('/contracts/{contract}/view', [ContractController::class, 'view'])->name('contracts.view');
+    Route::get('/contracts/{id}/view', [ContractController::class, 'view'])->name('contracts.view');
     Route::post('/contracts/{id}/mark-complete', [ContractController::class, 'markComplete'])->name('contracts.markComplete');
     Route::post('/contracts/{id}/mark-inprogress', [ContractController::class, 'markInProgress'])->name('contracts.markInProgress');
     Route::patch('/contracts/{contract}/remarks', [ContractController::class, 'updateRemarks'])->name('contract.updateRemarks');
@@ -121,6 +121,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/reports/export/pdf', [ReportController::class, 'export'])->name('reports.export');
     Route::get('/reports/student/export', [ReportController::class, 'exportStudentHistory'])->name('reports.student.export');
     Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])->name('reports.view-records');
+    Route::get('/transitions/{transition}', [StudentTransitionController::class, 'show'])->name('transitions.show');
+
 });
 
 // Static pages

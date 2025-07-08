@@ -246,11 +246,12 @@ public function view(Request $request, $id)
 {
     $contract = Contract::with(['student.profiles', 'images'])->findOrFail($id);
 
-    $source = $request->query('source', 'contract'); // default to 'contract'
-    $readonly = $source === 'report'; // disable editing when source is report
+    $source = $request->query('source', 'contract'); 
+    $readonly = $source === 'report'; 
 
     return view('contracts.viewContract', compact('contract', 'readonly', 'source'));
 }
+
 
 
 

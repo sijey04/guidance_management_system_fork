@@ -162,11 +162,11 @@ class StudentTransitionController extends Controller
     }
 
     public function show(StudentTransition $transition, Request $request)
-    {
-        $source = $request->query('source', 'transition'); // default to 'transition'
-        
-        return view('transitions.view', compact('transition', 'source'));
-    }
+{
+    $source = $request->query('source', 'transition');
+    return view('transitions.view', compact('transition', 'source'));
+}
+
 
 
     public function destroy(StudentTransition $transition)
