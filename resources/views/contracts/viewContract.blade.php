@@ -1,12 +1,24 @@
 <x-app-layout>
     <div class="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8" x-data="{ zoomedImage: null }">
 
-       <div>
-                <a href="{{ url()->previous() }}"
-                   class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-sm font-semibold text-[#a82323] rounded hover:bg-gray-100 transition">
-                    ← 
-                </a>
-            </div>
+       @php
+            $backRoute = match ($source) {
+                'report' => route('report'),
+                'student' => route('students.history', ['id' => $contract->student_id ?? null]),
+                default => route('contracts.index'),
+            };
+        @endphp
+
+        <a href="{{ $backRoute }}"
+        class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-4 py-2 rounded mb-6">
+            ← Back to 
+            @switch($source)
+                @case('report') Reports @break
+                @case('student') Student Profile @break
+                @default Contracts
+            @endswitch
+        </a>
+
 
         <div class="flex justify-between items-center">
             <h2 class="text-3xl font-bold text-red-700 mb-6">Contract Details</h2>
@@ -150,35 +162,103 @@
                         @endif
                     </div>
                 @endforeach
-
                 <!-- Upload image square -->
                 @if(empty($readonly))
-                <form action="{{ route('contracts.uploadImages', ['id' => $contract->id, 'type' => 'contract']) }}"
-                    method="POST"
-                    enctype="multipart/form-data"
-                    class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition"
-                    style="height: 9rem;"
-                    onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
-                    @csrf
-                    <input type="file" name="images[]" multiple accept="image/*" class="hidden" onchange="this.form.submit()">
-                    <span class="text-4xl text-gray-400 font-bold">+</span>
-                </form>
+                <div x-data="{
+                    files: [],
+                    handleFiles(event) {
+                        const selectedFiles = Array.from(event.target.files);
+                        selectedFiles.forEach(file => {
+                            // Avoid duplicates
+                            if (!this.files.some(f => f.name === file.name && f.size === file.size)) {
+                                this.files.push(file);
+                            }
+                        });
+                        this.submitFiles();
+                    },
+                    submitFiles() {
+                        const dataTransfer = new DataTransfer();
+                        this.files.forEach(f => dataTransfer.items.add(f));
+                        const input = document.getElementById('finalUploadInput');
+                        input.files = dataTransfer.files;
+                        input.form.submit();
+                    }
+                }" class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+
+                    <!-- Scan / Camera -->
+                    <form action="{{ route('contracts.uploadImages', ['id' => $contract->id, 'type' => 'contract']) }}" method="POST"
+                        enctype="multipart/form-data" x-ref="uploadForm">
+                        @csrf
+                        <input type="file" accept="image/*" capture="environment" class="hidden" @change="handleFiles" id="cameraInput">
+                        <label for="cameraInput"
+                            class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded h-36 cursor-pointer hover:bg-gray-100 transition text-sm text-center text-gray-600">
+                            <br>Take Photo
+                        </label>
+                        <input type="file" name="images[]" class="hidden" id="finalUploadInput" multiple>
+                    </form>
+
+                    <!-- Gallery -->
+                    <form action="{{ route('contracts.uploadImages', ['id' => $contract->id, 'type' => 'contract']) }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <input type="file" accept="image/*" class="hidden" @change="handleFiles" id="galleryInput">
+                        <label for="galleryInput"
+                            class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded h-36 cursor-pointer hover:bg-gray-100 transition text-sm text-center text-gray-600">
+                            <br>Choose from Gallery
+                        </label>
+                    </form>
+                </div>
                 @endif
+
             </div>
 
-            <!-- Zoom Modal -->
+            <!-- Improved Zoom Modal -->
             <div x-show="zoomedImage"
-                @keydown.escape.window="zoomedImage = null"
-                class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-                style="display: none;"
-                x-transition>
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 z-[9999] overflow-y-auto"
+                 style="z-index: 9999;"
+                 @keydown.escape.window="zoomedImage = null">
                 
-                <div @click.away="zoomedImage = null" class="relative max-w-4xl w-full mx-4">
-                    <button @click="zoomedImage = null"
-                            class="absolute top-2 right-2 text-white text-3xl font-bold hover:text-red-400 z-50">
-                        &times;
-                    </button>
-                    <img :src="zoomedImage" class="w-full max-h-[90vh] object-contain rounded shadow-lg">
+                <!-- Backdrop -->
+                <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" 
+                     style="z-index: 9998;" 
+                     @click="zoomedImage = null"></div>
+                
+                <!-- Modal Container -->
+                <div class="flex min-h-full items-center justify-center p-4 relative"
+                     style="z-index: 10000;">
+                    <div x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         class="relative max-w-4xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden"
+                         style="z-index: 10001;">
+                        
+                        <!-- Header -->
+                        <div class="border-b border-gray-100 p-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-900">Image Preview</h3>
+                                <button @click="zoomedImage = null" 
+                                        class="rounded-full p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Image Content -->
+                        <div class="p-6 flex items-center justify-center bg-gray-50">
+                            <img :src="zoomedImage" class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg">
+                        </div>
+                    </div>
                 </div>
             </div>
 

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Storage;
-use App\Models\counseling;
+use App\Models\Counseling;
 use App\Models\CounselingImage;
-use App\Models\semester;
+use App\Models\Semester;
 use App\Models\Student;
 use Illuminate\Http\Request;
 

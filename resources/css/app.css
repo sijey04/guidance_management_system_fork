@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Ensure modals are always on top and properly positioned */
+[x-cloak] { display: none !important; }
+
+/* Modal specific fixes - only apply to modal containers */
+div[x-show*="Modal"] {
+    z-index: 9999 !important;
+}
+
+/* Ensure backdrop doesn't interfere */
+div[x-show*="Modal"] .bg-black\/50 {
+    z-index: 9998 !important;
+}
+
+/* Ensure modal content is on top */
+div[x-show*="Modal"] .bg-white {
+    z-index: 10000 !important;
+    position: relative !important;
+}

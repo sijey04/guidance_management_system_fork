@@ -9,21 +9,42 @@
     <!-- Fonts and Styles -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/theme.css">
+    
+    <!-- Alpine.js -->
     <script src="//unpkg.com/alpinejs" defer></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Vite Assets -->
+    @vite(['resources/css/app.css', 'resources/css/sidebar.css', 'resources/js/app.js'])
+    
+    <!-- Additional CSS -->
+    <style>
+        [x-cloak] { display: none !important; }
+        .fixed { position: fixed !important; }
+        div[x-show*="Modal"] { z-index: 9999 !important; }
+        div[x-show*="Modal"] .bg-black\/50 { z-index: 9998 !important; }
+        div[x-show*="Modal"] .bg-white { z-index: 10000 !important; position: relative !important; }
+        
+        /* Fix for sidebar overlap */
+        @media (min-width: 768px) {
+            .main-content {
+                margin-left: 16rem; /* 64px = width of sidebar */
+            }
+        }
+    </style>
 </head>
 
 <body class="font-sans antialiased bg-gray-100 h-screen" x-data="{ sidebarOpen: false }">
+    <!-- Overlay for mobile - closes sidebar when clicked -->
+    <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 md:hidden z-20"></div>
 
-    <div class="flex h-screen overflow-hidden">
+    <div class="flex flex-col md:flex-row h-screen overflow-hidden">
         <!-- Sidebar -->
-        <div :class="sidebarOpen ? 'block' : 'hidden md:block'" class="fixed z-30 inset-y-0 left-0 w-64 bg-white border-r border-gray-200 shadow-lg md:relative md:translate-x-0 transition-transform duration-200 ease-in-out">
+        <div :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'" class="md:w-64 md:flex-shrink-0 fixed md:static z-30 inset-y-0 left-0 w-64 bg-white border-r border-gray-200 shadow-lg transition-transform duration-300 ease-in-out">
             @include('layouts.navigation')
         </div>
 
         <!-- Main content -->
-        <div class="flex-1 flex flex-col min-h-screen overflow-x-hidden overflow-y-auto ">
+        <div class="flex-1 flex flex-col min-h-screen overflow-x-hidden overflow-y-auto md:pl-0 transition-all duration-300 main-content">
             <!-- Top Bar -->
             <header class="bg-white shadow-sm px-4 py-3 border-b border-gray-200 flex justify-between items-center">
                 <div class="flex items-center gap-3">
@@ -79,7 +100,7 @@
             </header>
 
             <!-- Main Content Area -->
-            <main class="flex-1 px-2 md:px-3 py-6 space-y-6">
+            <main class="flex-1 px-4 md:px-6 py-6 space-y-6">
                 @if(!$globalActiveSchoolYear || !$globalActiveSemester)
                     <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded shadow">
                         ⚠️ <strong>First-time Setup:</strong> Please create an active
@@ -92,6 +113,5 @@
             </main>
         </div>
     </div>
-
 </body>
 </html>

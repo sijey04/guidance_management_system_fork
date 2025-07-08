@@ -73,9 +73,9 @@
                 @enderror
             </div>
 
-            <!-- Counseling Form Images -->
 <div x-data="{
     files: [],
+    inputMode: '', // 'camera' or 'gallery'
     handleFiles(event) {
         const selectedFiles = Array.from(event.target.files);
         selectedFiles.forEach(file => {
@@ -83,30 +83,51 @@
         });
         const dt = new DataTransfer();
         this.files.forEach(f => dt.items.add(f.file));
-        event.target.files = dt.files;
+        $refs.imageInput.files = dt.files;
     },
-    remove(index, $event) {
+    remove(index) {
         this.files.splice(index, 1);
         const dt = new DataTransfer();
         this.files.forEach(f => dt.items.add(f.file));
-        $event.target.closest('form').querySelector('#formImagesInput').files = dt.files;
+        $refs.imageInput.files = dt.files;
+    },
+    openCamera() {
+        this.inputMode = 'camera';
+        $refs.imageInput.setAttribute('capture', 'environment');
+        $refs.imageInput.click();
+    },
+    openGallery() {
+        this.inputMode = 'gallery';
+        $refs.imageInput.removeAttribute('capture');
+        $refs.imageInput.click();
     }
 }" class="mt-4">
     <label class="block text-sm font-medium text-gray-700 mb-1">Counseling Form Pictures <span class="text-gray-500 text-xs">(Multiple)</span></label>
-    
-    <input type="file" name="form_images[]" id="formImagesInput" accept="image/*" multiple class="hidden" @change="handleFiles">
 
-    <label for="formImagesInput"
-           class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
-        <span class="text-4xl text-gray-400">+</span>
-    </label>
+    <!-- Shared Input -->
+    <input type="file" name="form_images[]" accept="image/*" multiple class="hidden" x-ref="imageInput" @change="handleFiles">
 
+    <!-- Buttons -->
+    <div class="flex gap-4">
+        <button type="button" @click="openCamera"
+                class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+            <div class="text-3xl text-gray-400">📷</div>
+            <span class="text-xs mt-1 text-gray-600">Take Photo</span>
+        </button>
+
+        <button type="button" @click="openGallery"
+                class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+            <div class="text-3xl text-gray-400">🖼️</div>
+            <span class="text-xs mt-1 text-gray-600">Choose Gallery</span>
+        </button>
+    </div>
+
+    <!-- Previews -->
     <div class="flex flex-wrap gap-4 mt-4">
         <template x-for="(file, index) in files" :key="index">
             <div class="relative w-32 h-32">
                 <img :src="file.url" class="object-cover w-full h-full rounded-lg border">
-                <button type="button"
-                        @click="remove(index, $event)"
+                <button type="button" @click="remove(index)"
                         class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
                     &times;
                 </button>
@@ -115,15 +136,13 @@
     </div>
 
     <p class="text-xs text-gray-500 mt-2">You can add or remove images before submitting.</p>
-    @error('form_images')
-        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-    @enderror
 </div>
 
 
-            <!-- Student ID Card Images -->
+
 <div x-data="{
     files: [],
+    inputMode: '',
     handleFiles(event) {
         const selectedFiles = Array.from(event.target.files);
         selectedFiles.forEach(file => {
@@ -131,30 +150,55 @@
         });
         const dt = new DataTransfer();
         this.files.forEach(f => dt.items.add(f.file));
-        event.target.files = dt.files;
+        $refs.idInput.files = dt.files;
     },
-    remove(index, $event) {
+    remove(index) {
         this.files.splice(index, 1);
         const dt = new DataTransfer();
         this.files.forEach(f => dt.items.add(f.file));
-        $event.target.closest('form').querySelector('#idImagesInput').files = dt.files;
+        $refs.idInput.files = dt.files;
+    },
+    openCamera() {
+        this.inputMode = 'camera';
+        $refs.idInput.setAttribute('capture', 'environment');
+        $refs.idInput.click();
+    },
+    openGallery() {
+        this.inputMode = 'gallery';
+        $refs.idInput.removeAttribute('capture');
+        $refs.idInput.click();
     }
-}" class="mt-4">
-    <label class="block text-sm font-medium text-gray-700 mb-1">Student ID Card <span class="text-gray-500 text-xs">(Front/Back)</span></label>
+}" class="mt-6">
 
-    <input type="file" name="id_images[]" id="idImagesInput" accept="image/*" multiple class="hidden" @change="handleFiles">
-
-    <label for="idImagesInput"
-           class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
-        <span class="text-4xl text-gray-400">+</span>
+    <label class="block text-sm font-medium text-gray-700 mb-1">
+        Student ID Card <span class="text-gray-500 text-xs">(Front/Back)</span>
     </label>
 
+    <!-- Shared Input -->
+    <input type="file" name="id_images[]" accept="image/*" multiple class="hidden" x-ref="idInput" @change="handleFiles">
+
+    <!-- Buttons -->
+    <div class="flex gap-4">
+        <button type="button" @click="openCamera"
+                class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+            <div class="text-3xl text-gray-400">📷</div>
+            <span class="text-xs mt-1 text-gray-600">Take Photo</span>
+        </button>
+
+        <button type="button" @click="openGallery"
+                class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+            <div class="text-3xl text-gray-400">🖼️</div>
+            <span class="text-xs mt-1 text-gray-600">Choose Gallery</span>
+        </button>
+    </div>
+
+    <!-- Preview Thumbnails -->
     <div class="flex flex-wrap gap-4 mt-4">
         <template x-for="(file, index) in files" :key="index">
             <div class="relative w-32 h-32">
                 <img :src="file.url" class="object-cover w-full h-full rounded-lg border">
                 <button type="button"
-                        @click="remove(index, $event)"
+                        @click="remove(index)"
                         class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
                     &times;
                 </button>
@@ -167,7 +211,6 @@
         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
     @enderror
 </div>
-
 
             <!-- Buttons -->
             <div class="pt-4 flex justify-end gap-3">

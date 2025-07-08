@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Storage;
-use App\Models\contract;
+use App\Models\Contract;
 use App\Models\ContractImage;
 use App\Models\ContractType;
-use App\Models\semester;
+use App\Models\Semester;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
@@ -181,7 +181,7 @@ public function store(Request $request)
      */
        public function destroy($id)
         {
-            $contract = contract::findOrFail($id);
+            $contract = Contract::findOrFail($id);
 
             foreach ($contract->images as $image) {
                 if (Storage::exists($image->image_path)) {
@@ -246,11 +246,12 @@ public function view(Request $request, $id)
 {
     $contract = Contract::with(['student.profiles', 'images'])->findOrFail($id);
 
-    $source = $request->query('source', 'contract'); // default to 'contract'
-    $readonly = $source === 'report'; // disable editing when source is report
+    $source = $request->query('source', 'contract'); 
+    $readonly = $source === 'report'; 
 
     return view('contracts.viewContract', compact('contract', 'readonly', 'source'));
 }
+
 
 
 
@@ -273,7 +274,7 @@ public function markInProgress($id)
 
 public function updateRemarks(Request $request, $id)
 {
-    $contracts = contract::findOrFail($id);
+    $contracts = Contract::findOrFail($id);
     $contracts->remarks = $request->input('remarks');
     $contracts->save();
 
@@ -283,7 +284,7 @@ public function updateRemarks(Request $request, $id)
 
 public function updateStatus(Request $request, $id)
 {
-    $contract = contract::findOrFail($id);
+    $contract = Contract::findOrFail($id);
     $status = $request->input('status');
 
     if (in_array($status, ['In Progress', 'Completed'])) {

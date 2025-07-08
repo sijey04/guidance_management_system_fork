@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\contract;
+use App\Models\Contract;
 use App\Models\ContractType;
 use App\Models\CounselingImage;
 use App\Models\Course;
 use App\Models\Post;
 use App\Models\Section;
-use App\Models\semester;
+use App\Models\Semester;
 use App\Models\Student;
 use App\Models\StudentProfile;
 use App\Models\StudentSemesterEnrollment;

@@ -1,11 +1,49 @@
+<!-- Improved Referral Creation Modal -->
 <div x-show="openModal" 
-     style="display: none;" 
-     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-     x-transition>
-    <div @click.away="openModal = false" class="bg-white rounded-xl shadow-lg max-w-2xl w-full p-6 relative overflow-y-auto max-h-[90vh]">
-        <button @click="openModal = false" class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">&times;</button>
-        <h2 class="text-xl font-semibold mb-4 text-center">Add New Referral</h2>
-        <form method="POST" action="{{ route('referrals.store') }}" enctype="multipart/form-data">
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-200"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     class="fixed inset-0 z-[9999] overflow-y-auto"
+     style="z-index: 9999;">
+    
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" 
+         style="z-index: 9998;" 
+         @click="openModal = false"></div>
+    
+    <!-- Modal Container -->
+    <div class="flex min-h-full items-center justify-center p-4 relative"
+         style="z-index: 10000;">
+        <div x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             @click.away="openModal = false"
+             class="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl"
+             style="z-index: 10001;">
+            
+            <!-- Header -->
+            <div class="border-b border-gray-100 p-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">Create New Referral</h3>
+                    <button @click="openModal = false" 
+                            class="rounded-full p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <p class="text-sm text-gray-500 mt-1">Create a new referral record for a student</p>
+            </div>
+            
+            <!-- Form Content -->
+            <div class="p-6 max-h-[60vh] overflow-y-auto">
+        <form method="POST" action="{{ route('referrals.store') }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
 
             <!-- Searchable Dropdown for Student -->
@@ -18,13 +56,14 @@
                             (s.first_name + " " + s.last_name + " " + s.student_id).toLowerCase().includes(this.search.toLowerCase())
                         );
                     }
-                }'>
-                <label class="block text-sm font-medium mb-1">Select Student</label>
-                <input type="text" x-model="search" placeholder="Type name or ID..." class="w-full border p-2 rounded mb-2">
-                <div class="bg-white border rounded shadow max-h-40 overflow-y-auto" x-show="search.length > 0">
+                }' class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Select Student</label>
+                <input type="text" x-model="search" placeholder="Type student name or ID..." 
+                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors">
+                <div class="bg-white border rounded-lg shadow-sm max-h-40 overflow-y-auto" x-show="search.length > 0" x-cloak>
                     <template x-for="student in filteredStudents" :key="student.id">
                         <div @click="selectedId = student.id; search = student.first_name + ' ' + student.last_name + ' (' + student.student_id + ')'"
-                             class="p-2 hover:bg-gray-200 cursor-pointer">
+                             class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 transition-colors">
                             <span x-text="student.first_name + ' ' + student.last_name + ' (' + student.student_id + ')'"></span>
                         </div>
                     </template>
@@ -33,10 +72,11 @@
             </div>
 
             <!-- Reason Dropdown -->
-            <div class="mt-4">
-                <label class="block text-sm font-medium mb-1">Reason for Referral</label>
-                <select name="reason" required class="w-full border p-2 rounded">
-                    <option value="">Select Reason</option>
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Reason for Referral</label>
+                <select name="reason" required 
+                        class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors">
+                    <option value="">Choose reason...</option>
                     @foreach($reasons as $reason)
                         <option value="{{ $reason->reason }}">{{ $reason->reason }}</option>
                     @endforeach
@@ -44,70 +84,75 @@
             </div>
 
             <!-- Date of Referral -->
-            <div class="mt-4">
-                <label class="block text-sm font-medium mb-1">Date of Referral</label>
-                <input type="date" name="referral_date" required class="w-full border p-2 rounded">
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Date of Referral</label>
+                <input type="date" name="referral_date" required 
+                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors">
             </div>
 
-             <!-- IMage Attachment (Optional) -->
-           <!-- Image Attachment (Multiple with Preview & Removal) -->
-<div x-data="{
-    files: [],
-    handleFiles(event) {
-        const selectedFiles = Array.from(event.target.files);
-        selectedFiles.forEach(file => {
-            this.files.push({ file, url: URL.createObjectURL(file) });
-        });
-        const dt = new DataTransfer();
-        this.files.forEach(f => dt.items.add(f.file));
-        event.target.files = dt.files;
-    },
-    remove(index, $event) {
-        this.files.splice(index, 1);
-        const dt = new DataTransfer();
-        this.files.forEach(f => dt.items.add(f.file));
-        $event.target.closest('form').querySelector('input[type=file]').files = dt.files;
-    }
-}" class="mt-4">
-    <label class="block text-sm font-medium text-red-700 mb-1">Attach Referral Images</label>
+            <!-- File Upload Section -->
+            <div x-data="{
+                    files: [],
+                    handleFiles(event) {
+                        const selectedFiles = Array.from(event.target.files);
+                        selectedFiles.forEach(file => {
+                            this.files.push({ file, url: URL.createObjectURL(file) });
+                        });
+                        const dt = new DataTransfer();
+                        this.files.forEach(f => dt.items.add(f.file));
+                        $refs.hiddenUpload.files = dt.files;
+                    },
+                    remove(index) {
+                        this.files.splice(index, 1);
+                        const dt = new DataTransfer();
+                        this.files.forEach(f => dt.items.add(f.file));
+                        $refs.hiddenUpload.files = dt.files;
+                    }
+                }" class="space-y-3">
+                
+                <label class="block text-sm font-medium text-gray-700">Supporting Documents</label>
 
-    <!-- File Input (hidden) -->
-    <input type="file" name="image_path[]" accept="image/*" multiple
-           class="hidden" id="referralUpload" @change="handleFiles">
+                <!-- Hidden File Input  -->
+                <input type="file" name="image_path[]" multiple accept="image/*" class="hidden" x-ref="hiddenUpload">
 
-    <!-- Upload Box -->
-    <label for="referralUpload"
-           class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
-        <span class="text-4xl text-gray-400">+</span>
-    </label>
+                <!-- Upload Buttons -->
+                <div class="flex gap-4">
+                    <!-- Take Photo -->
+                    <label class="flex-1 flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg bg-white text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition">
+                        📷 Take Photo
+                        <input type="file" accept="image/*" capture="environment" class="hidden" @change="handleFiles">
+                    </label>
 
-    <!-- Previews -->
-    <div class="flex flex-wrap gap-4 mt-4">
-        <template x-for="(fileObj, index) in files" :key="index">
-            <div class="relative w-32 h-32">
-                <img :src="fileObj.url" class="object-cover w-full h-full rounded-lg border">
-                <button type="button"
-                        @click="remove(index, $event)"
-                        class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
-                    &times;
-                </button>
+                    <!-- Choose from Gallery -->
+                    <label class="flex-1 flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg bg-white text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition">
+                        🖼️ Choose from Gallery
+                        <input type="file" accept="image/*" multiple class="hidden" @change="handleFiles">
+                    </label>
+                </div>
+
+                <!-- Preview Thumbnails -->
+                <div x-show="files.length > 0" class="grid grid-cols-3 gap-3 mt-4" x-cloak>
+                    <template x-for="(fileObj, index) in files" :key="index">
+                        <div class="relative group">
+                            <img :src="fileObj.url" class="object-cover w-full h-20 rounded-lg border border-gray-200">
+                            <button type="button"
+                                    @click="remove(index)"
+                                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100">
+                                ×
+                            </button>
+                        </div>
+                    </template>
+                </div>
+
+                <p class="text-xs text-gray-500">Upload relevant documents or images. You can use your camera or choose from your gallery.</p>
             </div>
-        </template>
-    </div>
-
-    <p class="text-xs text-gray-500 mt-2">You can select one or more images. You may remove them before submitting.</p>
-    @error('image_path')
-        <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
-    @enderror
-</div>
-
-
-
 
             <!-- Remarks -->
-            <div class="mt-4">
-                <label class="block text-sm font-medium mb-1">Remarks (Optional)</label>
-                <textarea name="remarks" rows="3" class="w-full border p-2 rounded"></textarea>
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Additional Notes</label>
+                <textarea name="remarks" rows="3" 
+                          placeholder="Enter any additional information about this referral..."
+                          class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors resize-none"></textarea>
             </div>
 
             <div class="mt-6 flex justify-end space-x-4">
