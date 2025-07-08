@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Referral;
 use App\Models\ReferralImage;
 use App\Models\ReferralReason;
-use App\Models\semester;
+use App\Models\Semester;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;

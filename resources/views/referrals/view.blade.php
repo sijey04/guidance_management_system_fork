@@ -135,15 +135,53 @@
         </div>
 
 
-        <!-- Zoom Modal -->
+        <!-- Improved Zoom Modal -->
         <div x-show="zoomedImage"
-             class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-6"
-             x-transition>
-            <div class="relative max-w-3xl w-full">
-                <button @click="zoomedImage = null"
-                        class="absolute top-2 right-2 text-white text-3xl font-bold z-50">&times;</button>
-                <img :src="zoomedImage"
-                     class="w-full max-h-[80vh] object-contain rounded-lg shadow-lg border-4 border-white" />
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-[9999] overflow-y-auto"
+             style="z-index: 9999;">
+            
+            <!-- Backdrop -->
+            <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" 
+                 style="z-index: 9998;" 
+                 @click="zoomedImage = null"></div>
+            
+            <!-- Modal Container -->
+            <div class="flex min-h-full items-center justify-center p-4 relative"
+                 style="z-index: 10000;">
+                <div x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="relative max-w-4xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden"
+                     style="z-index: 10001;">
+                    
+                    <!-- Header -->
+                    <div class="border-b border-gray-100 p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Image Preview</h3>
+                            <button @click="zoomedImage = null" 
+                                    class="rounded-full p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Image Content -->
+                    <div class="p-6 flex items-center justify-center bg-gray-50">
+                        <img :src="zoomedImage"
+                             class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -321,86 +321,149 @@
 
 
 
-                                                <div x-show="openModal{{ $id }}" @keydown.escape.window="openModal{{ $id }} = false"
-                                                    x-cloak class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-                                                    <div @click.away="openModal{{ $id }} = false"
-                                                        class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh]">
-                                                        <h2 class="text-lg font-bold mb-4 text-gray-800">Mark Transition for {{ $student->first_name }}</h2>
-
-                                                        <div class="space-y-4">
-                                                            <input type="hidden" name="transitions[{{ $id }}][student_id]" value="{{ $id }}">
-
-                                                            <div>
-                                                                <label class="block text-sm font-medium text-gray-700">Transition Type</label>
-                                                                <select name="transitions[{{ $id }}][transition_type]" class="w-full border-gray-300 rounded">
-                                                                    <option value="">None</option>
-                                                                    <option value="Shifting In">Shifting In</option>
-                                                                    <option value="Shifting Out">Shifting Out</option>
-                                                                    <option value="Transferring Out">Transferring Out</option>
-                                                                    <option value="Dropped">Dropped</option>
-                                                                    <option value="Returning Student">Returning Student</option>
-                                                                </select>
-                                                            </div>
-
-                                                            {{-- <div>
-                                                                <label class="block text-sm font-medium text-gray-700">Transition Date</label>
-                                                                <input type="date" name="transitions[{{ $id }}][transition_date]" class="w-full border-gray-300 rounded">
-                                                            </div>  --}}
-
-                                                            <div>
-                                                                <label class="block text-sm font-medium text-gray-700">Remarks</label>
-                                                                <textarea name="transitions[{{ $id }}][remark]" rows="2" class="w-full border-gray-300 rounded"></textarea>
-                                                            </div>
-
-                                                            <div x-data="{
-                                                                    files: [],
-                                                                    handleFiles(event) {
-                                                                        const selected = Array.from(event.target.files);
-                                                                        selected.forEach(file => {
-                                                                            this.files.push({ file, url: URL.createObjectURL(file) });
-                                                                        });
-                                                                        const dt = new DataTransfer();
-                                                                        this.files.forEach(f => dt.items.add(f.file));
-                                                                        event.target.files = dt.files;
-                                                                    },
-                                                                    remove(index, $event) {
-                                                                        this.files.splice(index, 1);
-                                                                        const dt = new DataTransfer();
-                                                                        this.files.forEach(f => dt.items.add(f.file));
-                                                                        $event.target.closest('form').querySelector('#transitionUpload-{{ $id }}').files = dt.files;
-                                                                    }
-                                                                }">
-                                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Transition Images</label>
-
-                                                                    <!-- Hidden File Input -->
-                                                                    <input type="file" name="transition_images[{{ $id }}][]" accept="image/*" multiple class="hidden" id="transitionUpload-{{ $id }}" @change="handleFiles">
-
-                                                                    <!-- Upload Area -->
-                                                                    <label for="transitionUpload-{{ $id }}"
-                                                                        class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
-                                                                        <span class="text-4xl text-gray-400">+</span>
-                                                                    </label>
-
-                                                                    <!-- Preview Thumbnails -->
-                                                                    <div class="flex flex-wrap gap-4 mt-4">
-                                                                        <template x-for="(fileObj, index) in files" :key="index">
-                                                                            <div class="relative w-32 h-32">
-                                                                                <img :src="fileObj.url" class="object-cover w-full h-full rounded-lg border">
-                                                                                <button type="button"
-                                                                                        @click="remove(index, $event)"
-                                                                                        class="absolute top-0 right-0 bg-white rounded-full p-1 shadow text-red-600 hover:text-red-800">
-                                                                                    &times;
-                                                                                </button>
-                                                                            </div>
-                                                                        </template>
+                                                <!-- Improved Student Transition Modal -->
+                                                <div x-show="openModal{{ $id }}" 
+                                                     @keydown.escape.window="openModal{{ $id }} = false"
+                                                     x-transition:enter="transition ease-out duration-300"
+                                                     x-transition:enter-start="opacity-0"
+                                                     x-transition:enter-end="opacity-100"
+                                                     x-transition:leave="transition ease-in duration-200"
+                                                     x-transition:leave-start="opacity-100"
+                                                     x-transition:leave-end="opacity-0"
+                                                     x-cloak class="fixed inset-0 z-[9999] overflow-y-auto"
+                                                     style="z-index: 9999;">
+                                                    
+                                                    <!-- Backdrop -->
+                                                    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" 
+                                                         style="z-index: 9998;" 
+                                                         @click="openModal{{ $id }} = false"></div>
+                                                    
+                                                    <!-- Modal Container -->
+                                                    <div class="flex min-h-full items-center justify-center p-4 relative"
+                                                         style="z-index: 10000;">
+                                                        <div x-transition:enter="transition ease-out duration-300"
+                                                             x-transition:enter-start="opacity-0 scale-95"
+                                                             x-transition:enter-end="opacity-100 scale-100"
+                                                             x-transition:leave="transition ease-in duration-200"
+                                                             x-transition:leave-start="opacity-100 scale-100"
+                                                             x-transition:leave-end="opacity-0 scale-95"
+                                                             @click.away="openModal{{ $id }} = false"
+                                                             class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl"
+                                                             style="z-index: 10001;">
+                                                            
+                                                            <!-- Header -->
+                                                            <div class="border-b border-gray-100 p-6">
+                                                                <div class="flex items-center justify-between">
+                                                                    <div>
+                                                                        <h3 class="text-lg font-semibold text-gray-900">Mark Student Transition</h3>
+                                                                        <p class="text-sm text-gray-500 mt-1">{{ $student->first_name }} {{ $student->last_name }}</p>
                                                                     </div>
+                                                                    <button @click="openModal{{ $id }} = false" 
+                                                                            class="rounded-full p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <!-- Content -->
+                                                            <div class="p-6 space-y-6">
+                                                                <input type="hidden" name="transitions[{{ $id }}][student_id]" value="{{ $id }}">
 
-                                                                    <p class="text-xs text-gray-500 mt-2">You can select one or more images. You may also remove them before submitting.</p>
+                                                                <!-- Transition Type -->
+                                                                <div class="space-y-2">
+                                                                    <label class="block text-sm font-medium text-gray-700">
+                                                                        Transition Type
+                                                                    </label>
+                                                                    <select name="transitions[{{ $id }}][transition_type]" 
+                                                                            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors">
+                                                                        <option value="">No transition</option>
+                                                                        <option value="Shifting In">Shifting In</option>
+                                                                        <option value="Shifting Out">Shifting Out</option>
+                                                                        <option value="Transferring Out">Transferring Out</option>
+                                                                        <option value="Dropped">Dropped</option>
+                                                                        <option value="Returning Student">Returning Student</option>
+                                                                    </select>
                                                                 </div>
 
+                                                                <!-- Remarks -->
+                                                                <div class="space-y-2">
+                                                                    <label class="block text-sm font-medium text-gray-700">
+                                                                        Additional Notes
+                                                                    </label>
+                                                                    <textarea name="transitions[{{ $id }}][remark]" rows="3" 
+                                                                              placeholder="Enter any additional information about this transition..."
+                                                                              class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors resize-none"></textarea>
+                                                                </div>
 
-                                                            <div class="text-right mt-4">
-                                                                <button type="button" @click="openModal{{ $id }} = false" class="text-sm text-gray-600 hover:underline">Close</button>
+                                                                <!-- File Upload Section -->
+                                                                <div x-data="{
+                                                                        files: [],
+                                                                        handleFiles(event) {
+                                                                            const selected = Array.from(event.target.files);
+                                                                            selected.forEach(file => {
+                                                                                this.files.push({ file, url: URL.createObjectURL(file) });
+                                                                            });
+                                                                            const dt = new DataTransfer();
+                                                                            this.files.forEach(f => dt.items.add(f.file));
+                                                                            event.target.files = dt.files;
+                                                                        },
+                                                                        remove(index, $event) {
+                                                                            this.files.splice(index, 1);
+                                                                            const dt = new DataTransfer();
+                                                                            this.files.forEach(f => dt.items.add(f.file));
+                                                                            $event.target.closest('form').querySelector('#transitionUpload-{{ $id }}').files = dt.files;
+                                                                        }
+                                                                    }" class="space-y-3">
+                                                                        
+                                                                        <label class="block text-sm font-medium text-gray-700">
+                                                                            Supporting Documents
+                                                                        </label>
+
+                                                                        <!-- Hidden File Input -->
+                                                                        <input type="file" name="transition_images[{{ $id }}][]" accept="image/*" multiple 
+                                                                               class="hidden" id="transitionUpload-{{ $id }}" @change="handleFiles">
+
+                                                                        <!-- Upload Area -->
+                                                                        <label for="transitionUpload-{{ $id }}"
+                                                                               class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg h-32 cursor-pointer hover:border-red-400 hover:bg-red-50 transition-all group">
+                                                                            <svg class="w-8 h-8 text-gray-400 group-hover:text-red-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                                                            </svg>
+                                                                            <span class="text-sm text-gray-500 group-hover:text-red-600 transition-colors mt-2">Click to upload images</span>
+                                                                        </label>
+
+                                                                        <!-- Preview Thumbnails -->
+                                                                        <div x-show="files.length > 0" class="grid grid-cols-3 gap-3 mt-4">
+                                                                            <template x-for="(fileObj, index) in files" :key="index">
+                                                                                <div class="relative group">
+                                                                                    <img :src="fileObj.url" class="object-cover w-full h-20 rounded-lg border border-gray-200">
+                                                                                    <button type="button"
+                                                                                            @click="remove(index, $event)"
+                                                                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100">
+                                                                                        ×
+                                                                                    </button>
+                                                                                </div>
+                                                                            </template>
+                                                                        </div>
+
+                                                                        <p class="text-xs text-gray-500">Upload relevant documents or images related to this transition</p>
+                                                                    </div>
+                                                            </div>
+                                                            
+                                                            <!-- Footer -->
+                                                            <div class="border-t border-gray-100 p-6">
+                                                                <div class="flex items-center justify-end space-x-3">
+                                                                    <button type="button" @click="openModal{{ $id }} = false" 
+                                                                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                                                                        Cancel
+                                                                    </button>
+                                                                    <button type="submit" 
+                                                                            class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                                                                        Save Transition
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>

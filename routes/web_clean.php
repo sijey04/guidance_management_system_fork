@@ -76,10 +76,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Counseling routes
     Route::resource('counselings', CounselingController::class);
-    Route::post('/counseling/store', [CounselingController::class, 'store'])->name('counseling.store');
     Route::get('/students/{student}/counseling/create', [CounselingController::class, 'create'])->name('students.createCounseling');
-    Route::get('/counseling/{id}/view', [CounselingController::class, 'show'])->name('counseling.view');
-    Route::delete('/counseling/{id}', [CounselingController::class, 'destroy'])->name('counseling.destroy');
     Route::patch('/counselings/{counseling}/status', [CounselingController::class, 'updateStatus'])->name('counseling.updateStatus');
     Route::patch('/counselings/{counseling}/remarks', [CounselingController::class, 'updateRemarks'])->name('counseling.updateRemarks');
     Route::post('/counselings/{id}/upload-images/{type}', [CounselingController::class, 'uploadImages'])->name('counseling.uploadImages');
@@ -112,7 +109,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/section/{id}', [CourseYearSectionController::class, 'destroySection'])->name('section.destroy');
     
     // Reports
-    Route::get('/report', [ReportController::class, 'index'])->name('report');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/student-list', [ReportController::class, 'studentList'])->name('reports.studentList');
     Route::get('/reports/view-profile/{studentId}/{semesterId}', [ReportController::class, 'viewProfile'])->name('reports.viewProfile');
