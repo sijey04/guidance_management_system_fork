@@ -203,26 +203,33 @@ x-data="{ transitionType: '' }"
                 }"
                 class="md:col-span-3"
                 x-init="$watch('files', value => {
-                    // Sync real input with manually tracked files
                     const dataTransfer = new DataTransfer();
                     files.forEach(file => dataTransfer.items.add(file));
                     $refs.realInput.files = dataTransfer.files;
                 })"
             >
-
                 <label class="block text-sm font-medium text-red-700 mb-1">Attach Transition Images</label>
 
-                <!-- Real File Input (invisible) -->
+                <!-- Real input synced with Alpine's file array -->
                 <input type="file" name="images[]" multiple accept="image/*" class="hidden" x-ref="realInput">
 
-                <div class="flex flex-wrap gap-4">
-                    <!-- Add Image Button -->
-                    <label class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-gray-50 transition">
-                        <span class="text-4xl text-gray-400">+</span>
-                        <input type="file" accept="image/*" multiple class="hidden" @change="addFiles($event)">
+                <!-- Upload Options -->
+                <div class="flex gap-4 mb-4">
+                    <!-- Take Photo -->
+                    <label class="flex-1 flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg bg-white text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition">
+                        📷 Take Photo
+                        <input type="file" accept="image/*" capture="environment" class="hidden" @change="addFiles">
                     </label>
 
-                    <!-- Preview Thumbnails -->
+                    <!-- Choose from Gallery -->
+                    <label class="flex-1 flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg bg-white text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition">
+                        🖼️ Choose from Gallery
+                        <input type="file" accept="image/*" multiple class="hidden" @change="addFiles">
+                    </label>
+                </div>
+
+                <!-- Image Previews -->
+                <div class="flex flex-wrap gap-4">
                     <template x-for="(src, index) in previews" :key="index">
                         <div class="relative w-32 h-32">
                             <img :src="src" class="w-full h-full object-cover rounded-lg border">
@@ -237,8 +244,9 @@ x-data="{ transitionType: '' }"
                     </template>
                 </div>
 
-                <p class="text-xs text-gray-500 mt-2">You may add multiple images or upload one at a time. Click ❌ to remove.</p>
+                <p class="text-xs text-gray-500 mt-2">Tap the buttons above to attach photos from camera or gallery. You may add multiple images. Click ❌ to remove.</p>
             </div>
+
         </template>
 
     </div>

@@ -169,36 +169,49 @@
                         @enderror
                     </div>
 
+                    
                     <!-- File Upload with Preview -->
                     <div x-data="{
                         files: [],
                         handleFiles(event) {
                             const selectedFiles = Array.from(event.target.files);
                             selectedFiles.forEach(file => {
-                                this.files.push({ file, url: URL.createObjectURL(file) });
+                                // Avoid duplicate files by checking name + size
+                                if (!this.files.some(f => f.file.name === file.name && f.file.size === file.size)) {
+                                    this.files.push({ file, url: URL.createObjectURL(file) });
+                                }
                             });
                             const dataTransfer = new DataTransfer();
                             this.files.forEach(f => dataTransfer.items.add(f.file));
-                            event.target.files = dataTransfer.files;
+                            document.getElementById('finalInput').files = dataTransfer.files;
                         },
                         remove(index, $event) {
                             this.files.splice(index, 1);
                             const dataTransfer = new DataTransfer();
                             this.files.forEach(f => dataTransfer.items.add(f.file));
-                            $event.target.closest('form').querySelector('input[type=file]').files = dataTransfer.files;
+                            document.getElementById('finalInput').files = dataTransfer.files;
                         }
                     }" class="space-y-2">
-                        <label for="contractUpload" class="block text-sm font-medium text-gray-700">
-                            Attach Contract Images <span class="text-gray-400 text-xs">(optional)</span>
-                        </label>
-                        <input type="file" name="contract_images[]" accept="image/*" multiple
-                               class="hidden" id="contractUpload" @change="handleFiles">
+                        <div class="flex gap-3">
+                            <!-- Scan using Camera -->
+                            <label for="cameraInput"
+                                class="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-red-50 transition-colors">
+                                <span class="text-xs text-center text-gray-500">Scan / Camera</span>
+                            </label>
+                            <input type="file" accept="image/*" capture="environment"
+                                class="hidden" id="cameraInput" @change="handleFiles" multiple>
 
-                        <!-- Upload Area -->
-                        <label for="contractUpload"
-                               class="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-red-50 transition-colors">
-                            <span class="text-4xl text-gray-400">+</span>
-                        </label>
+                            <!-- Choose from Gallery -->
+                            <label for="galleryInput"
+                                class="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg w-32 h-32 cursor-pointer hover:border-red-500 hover:bg-red-50 transition-colors">
+                                <span class="text-xs text-center text-gray-500"><br>Gallery</span>
+                            </label>
+                           <input type="file" accept="image/*"
+                                class="hidden" id="galleryInput" @change="handleFiles" multiple>   
+                                
+                                <input type="file" name="contract_images[]" id="finalInput" class="hidden" multiple>
+                        </div>
+
 
                         <!-- Previews -->
                         <div x-show="files.length > 0" class="grid grid-cols-3 gap-3 mt-4" x-cloak>
@@ -219,6 +232,7 @@
                             <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+                    
                     
                     <!-- Actions -->
                     <div class="flex items-center justify-end space-x-3 pt-4">

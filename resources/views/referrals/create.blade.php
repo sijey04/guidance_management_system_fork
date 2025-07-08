@@ -100,30 +100,35 @@
                         });
                         const dt = new DataTransfer();
                         this.files.forEach(f => dt.items.add(f.file));
-                        event.target.files = dt.files;
+                        $refs.hiddenUpload.files = dt.files;
                     },
-                    remove(index, $event) {
+                    remove(index) {
                         this.files.splice(index, 1);
                         const dt = new DataTransfer();
                         this.files.forEach(f => dt.items.add(f.file));
-                        $event.target.closest('form').querySelector('#referralUpload').files = dt.files;
+                        $refs.hiddenUpload.files = dt.files;
                     }
                 }" class="space-y-3">
                 
                 <label class="block text-sm font-medium text-gray-700">Supporting Documents</label>
 
-                <!-- Hidden File Input -->
-                <input type="file" name="image_path[]" accept="image/*" multiple 
-                       class="hidden" id="referralUpload" @change="handleFiles">
+                <!-- Hidden File Input  -->
+                <input type="file" name="image_path[]" multiple accept="image/*" class="hidden" x-ref="hiddenUpload">
 
-                <!-- Upload Area -->
-                <label for="referralUpload"
-                       class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg h-32 cursor-pointer hover:border-red-400 hover:bg-red-50 transition-all group">
-                    <svg class="w-8 h-8 text-gray-400 group-hover:text-red-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                    </svg>
-                    <span class="text-sm text-gray-500 group-hover:text-red-600 transition-colors mt-2">Click to upload images</span>
-                </label>
+                <!-- Upload Buttons -->
+                <div class="flex gap-4">
+                    <!-- Take Photo -->
+                    <label class="flex-1 flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg bg-white text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition">
+                        📷 Take Photo
+                        <input type="file" accept="image/*" capture="environment" class="hidden" @change="handleFiles">
+                    </label>
+
+                    <!-- Choose from Gallery -->
+                    <label class="flex-1 flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg bg-white text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition">
+                        🖼️ Choose from Gallery
+                        <input type="file" accept="image/*" multiple class="hidden" @change="handleFiles">
+                    </label>
+                </div>
 
                 <!-- Preview Thumbnails -->
                 <div x-show="files.length > 0" class="grid grid-cols-3 gap-3 mt-4" x-cloak>
@@ -131,7 +136,7 @@
                         <div class="relative group">
                             <img :src="fileObj.url" class="object-cover w-full h-20 rounded-lg border border-gray-200">
                             <button type="button"
-                                    @click="remove(index, $event)"
+                                    @click="remove(index)"
                                     class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100">
                                 ×
                             </button>
@@ -139,7 +144,7 @@
                     </template>
                 </div>
 
-                <p class="text-xs text-gray-500">Upload relevant documents or images related to this referral</p>
+                <p class="text-xs text-gray-500">Upload relevant documents or images. You can use your camera or choose from your gallery.</p>
             </div>
 
             <!-- Remarks -->

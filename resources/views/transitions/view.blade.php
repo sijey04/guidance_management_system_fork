@@ -41,8 +41,6 @@
                 <x-student-info label="Student Name" :value="$transition->last_name . ', ' . $transition->first_name . ' ' . $transition->middle_name" />
                 <x-student-info label="Movement Type" :value="$transition->transition_type" />
                 <x-student-info label="Movement Date" :value="\Carbon\Carbon::parse($transition->transition_date)->format('F d, Y')" />
-                <x-student-info label="From Course/College/School" :value="$transition->from_program" />
-                <x-student-info label="To Course/College/School" :value="$transition->to_program" />
             </div>
         </div>
 
@@ -100,17 +98,38 @@
         @endforeach
 
         @if($source !== 'report')
-            <!-- Upload Box -->
+        <div x-data="{
+            openCamera() {
+                $refs.transitionInput.setAttribute('capture', 'environment');
+                $refs.transitionInput.click();
+            },
+            openGallery() {
+                $refs.transitionInput.removeAttribute('capture');
+                $refs.transitionInput.click();
+            }
+        }">
             <form action="{{ route('transitions.uploadImages', $transition->id) }}"
-                  method="POST"
-                  enctype="multipart/form-data"
-                  class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition"
-                  style="height: 9rem;"
-                  onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
+                method="POST"
+                enctype="multipart/form-data">
                 @csrf
-                <input type="file" name="images[]" multiple accept="image/*" class="hidden" onchange="this.form.submit()">
-                <span class="text-4xl text-gray-400 font-bold">+</span>
+                <input type="file" name="images[]" multiple accept="image/*" class="hidden" x-ref="transitionInput" onchange="this.form.submit()">
+
+                <div class="flex gap-4">
+                    <button type="button" @click="openCamera"
+                            class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+                        <div class="text-3xl text-gray-400"></div>
+                        <span class="text-xs mt-1 text-gray-600">Take Photo</span>
+                    </button>
+
+                    <button type="button" @click="openGallery"
+                            class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+                        <div class="text-3xl text-gray-400"></div>
+                        <span class="text-xs mt-1 text-gray-600">Choose Gallery</span>
+                    </button>
+                </div>
             </form>
+        </div>
+
         @endif
     </div>
 </div>

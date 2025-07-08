@@ -159,29 +159,48 @@
 
                 <!-- Add Images Button -->
                 @if(empty($readonly))
-                <form action="{{ route('counseling.uploadImages', ['id' => $counseling->id, 'type' => 'form']) }}"
-                    method="POST"
-                    enctype="multipart/form-data"
-                    class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition"
-                    style="height: 9rem;"
-                    onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
-                    @csrf
-                    <input type="file" name="images[]" multiple accept="image/*" class="hidden" onchange="this.form.submit()">
-                    <span class="text-4xl text-gray-400 font-bold">+</span>
-                </form>
+                <div x-data="{
+                    openCamera() {
+                        $refs.formInput.setAttribute('capture', 'environment');
+                        $refs.formInput.click();
+                    },
+                    openGallery() {
+                        $refs.formInput.removeAttribute('capture');
+                        $refs.formInput.click();
+                    }
+                }">
+                    <form action="{{ route('counseling.uploadImages', ['id' => $counseling->id, 'type' => 'form']) }}"
+                        method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <input type="file" name="images[]" multiple accept="image/*" class="hidden" x-ref="formInput" onchange="this.form.submit()">
+
+                        <div class="flex gap-4">
+                            <button type="button" @click="openCamera"
+                                    class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+                                <div class="text-3xl text-gray-400"></div>
+                                <span class="text-xs mt-1 text-gray-600">Take Photo</span>
+                            </button>
+
+                            <button type="button" @click="openGallery"
+                                    class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+                                <div class="text-3xl text-gray-400"></div>
+                                <span class="text-xs mt-1 text-gray-600">Choose Gallery</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
                 @endif
             </div>
         </div>
 
 
-
-        {{-- ID Card Images --}}
         {{-- ID Card Images --}}
 <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
     <p class="font-semibold text-gray-700 mb-4 text-lg">Student ID Card Images</p>
     @php $idImages = $counseling->images->where('type', 'id_card'); @endphp
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        @foreach($idImages as $image) <!-- ✅ CORRECTED HERE -->
+        @foreach($idImages as $image) 
             <div class="relative group">
                 <img src="{{ asset('storage/' . $image->image_path) }}"
                     @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
@@ -201,16 +220,38 @@
         @endforeach
 
         @if(empty($readonly))
-        <form action="{{ route('counseling.uploadImages', ['id' => $counseling->id, 'type' => 'id_card']) }}"
-            method="POST"
-            enctype="multipart/form-data"
-            class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition"
-            style="height: 9rem;"
-            onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
-            @csrf
-            <input type="file" name="images[]" multiple accept="image/*" class="hidden" onchange="this.form.submit()">
-            <span class="text-4xl text-gray-400 font-bold">+</span>
-        </form>
+        <div x-data="{
+    openCamera() {
+        $refs.idInput.setAttribute('capture', 'environment');
+        $refs.idInput.click();
+    },
+    openGallery() {
+        $refs.idInput.removeAttribute('capture');
+        $refs.idInput.click();
+    }
+}">
+    <form action="{{ route('counseling.uploadImages', ['id' => $counseling->id, 'type' => 'id_card']) }}"
+          method="POST"
+          enctype="multipart/form-data">
+        @csrf
+        <input type="file" name="images[]" multiple accept="image/*" class="hidden" x-ref="idInput" onchange="this.form.submit()">
+
+        <div class="flex gap-4">
+            <button type="button" @click="openCamera"
+                    class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+                <div class="text-3xl text-gray-400"></div>
+                <span class="text-xs mt-1 text-gray-600">Take Photo</span>
+            </button>
+
+            <button type="button" @click="openGallery"
+                    class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+                <div class="text-3xl text-gray-400"></div>
+                <span class="text-xs mt-1 text-gray-600">Choose Gallery</span>
+            </button>
+        </div>
+    </form>
+</div>
+
         @endif
     </div>
 </div>

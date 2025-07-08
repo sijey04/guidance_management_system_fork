@@ -397,59 +397,73 @@
                                                                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors resize-none"></textarea>
                                                                 </div>
 
-                                                                <!-- File Upload Section -->
+                                                                <!-- File Upload Section with Take Photo or Gallery -->
                                                                 <div x-data="{
-                                                                        files: [],
-                                                                        handleFiles(event) {
-                                                                            const selected = Array.from(event.target.files);
-                                                                            selected.forEach(file => {
-                                                                                this.files.push({ file, url: URL.createObjectURL(file) });
-                                                                            });
-                                                                            const dt = new DataTransfer();
-                                                                            this.files.forEach(f => dt.items.add(f.file));
-                                                                            event.target.files = dt.files;
-                                                                        },
-                                                                        remove(index, $event) {
-                                                                            this.files.splice(index, 1);
-                                                                            const dt = new DataTransfer();
-                                                                            this.files.forEach(f => dt.items.add(f.file));
-                                                                            $event.target.closest('form').querySelector('#transitionUpload-{{ $id }}').files = dt.files;
-                                                                        }
-                                                                    }" class="space-y-3">
-                                                                        
-                                                                        <label class="block text-sm font-medium text-gray-700">
-                                                                            Supporting Documents
-                                                                        </label>
+                                                                    files: [],
+                                                                    handleFiles(event) {
+                                                                        const selected = Array.from(event.target.files);
+                                                                        selected.forEach(file => {
+                                                                            this.files.push({ file, url: URL.createObjectURL(file) });
+                                                                        });
+                                                                        const dt = new DataTransfer();
+                                                                        this.files.forEach(f => dt.items.add(f.file));
+                                                                        event.target.files = dt.files;
+                                                                    },
+                                                                    remove(index, $event) {
+                                                                        this.files.splice(index, 1);
+                                                                        const dt = new DataTransfer();
+                                                                        this.files.forEach(f => dt.items.add(f.file));
+                                                                        $event.target.closest('form').querySelector('#transitionUpload-{{ $id }}').files = dt.files;
+                                                                    },
+                                                                    openCamera() {
+                                                                        this.$refs.input.setAttribute('capture', 'environment');
+                                                                        this.$refs.input.click();
+                                                                    },
+                                                                    openGallery() {
+                                                                        this.$refs.input.removeAttribute('capture');
+                                                                        this.$refs.input.click();
+                                                                    }
+                                                                }" class="space-y-3">
+                                                                    <label class="block text-sm font-medium text-gray-700">Supporting Documents</label>
 
-                                                                        <!-- Hidden File Input -->
-                                                                        <input type="file" name="transition_images[{{ $id }}][]" accept="image/*" multiple 
-                                                                               class="hidden" id="transitionUpload-{{ $id }}" @change="handleFiles">
+                                                                    <!-- Hidden File Input -->
+                                                                    <input type="file" name="transition_images[{{ $id }}][]" accept="image/*" multiple
+                                                                        class="hidden" id="transitionUpload-{{ $id }}" x-ref="input" @change="handleFiles">
 
-                                                                        <!-- Upload Area -->
-                                                                        <label for="transitionUpload-{{ $id }}"
-                                                                               class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg h-32 cursor-pointer hover:border-red-400 hover:bg-red-50 transition-all group">
-                                                                            <svg class="w-8 h-8 text-gray-400 group-hover:text-red-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                                                            </svg>
-                                                                            <span class="text-sm text-gray-500 group-hover:text-red-600 transition-colors mt-2">Click to upload images</span>
-                                                                        </label>
+                                                                    <!-- Action Buttons: Take Photo / Choose Gallery -->
+                                                                    <div class="flex gap-4">
+                                                                        <!-- Take Photo -->
+                                                                        <button type="button" @click="openCamera"
+                                                                                class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-28 h-28 hover:border-red-500 hover:bg-gray-50 transition">
+                                                                            <span class="text-2xl">📷</span>
+                                                                            <span class="text-xs mt-1 text-gray-600">Take Photo</span>
+                                                                        </button>
 
-                                                                        <!-- Preview Thumbnails -->
-                                                                        <div x-show="files.length > 0" class="grid grid-cols-3 gap-3 mt-4">
-                                                                            <template x-for="(fileObj, index) in files" :key="index">
-                                                                                <div class="relative group">
-                                                                                    <img :src="fileObj.url" class="object-cover w-full h-20 rounded-lg border border-gray-200">
-                                                                                    <button type="button"
-                                                                                            @click="remove(index, $event)"
-                                                                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100">
-                                                                                        ×
-                                                                                    </button>
-                                                                                </div>
-                                                                            </template>
-                                                                        </div>
-
-                                                                        <p class="text-xs text-gray-500">Upload relevant documents or images related to this transition</p>
+                                                                        <!-- Choose Gallery -->
+                                                                        <button type="button" @click="openGallery"
+                                                                                class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-28 h-28 hover:border-red-500 hover:bg-gray-50 transition">
+                                                                            <span class="text-2xl">🖼️</span>
+                                                                            <span class="text-xs mt-1 text-gray-600">Choose Gallery</span>
+                                                                        </button>
                                                                     </div>
+
+                                                                    <!-- Preview Thumbnails -->
+                                                                    <div x-show="files.length > 0" class="grid grid-cols-3 gap-3 mt-4">
+                                                                        <template x-for="(fileObj, index) in files" :key="index">
+                                                                            <div class="relative group">
+                                                                                <img :src="fileObj.url" class="object-cover w-full h-20 rounded-lg border border-gray-200">
+                                                                                <button type="button"
+                                                                                        @click="remove(index, $event)"
+                                                                                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100">
+                                                                                    ×
+                                                                                </button>
+                                                                            </div>
+                                                                        </template>
+                                                                    </div>
+
+                                                                    <p class="text-xs text-gray-500">You may upload relevant documents or take a photo directly.</p>
+                                                                </div>
+
                                                             </div>
                                                             
                                                             <!-- Footer -->

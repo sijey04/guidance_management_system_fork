@@ -14,7 +14,7 @@
             </a>
         </div>
         <div class="max-w-7xl mx-auto sm:px-4 lg:px-8">
-            <div class="main-content">
+            <div class="">
                 <div class="p-6 space-y-6">
                     
                     <!-- Tabs -->

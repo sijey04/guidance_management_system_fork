@@ -120,16 +120,47 @@
 
                 <!-- Upload image square -->
                 @if(empty($readonly))
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <!-- Take Photo -->
                     <form action="{{ route('referrals.uploadImages', ['id' => $referral->id, 'type' => 'referral']) }}"
                         method="POST"
                         enctype="multipart/form-data"
-                        class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition"
-                        style="height: 9rem;"
+                        class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition h-36"
                         onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
                         @csrf
-                        <input type="file" name="images[]" multiple accept="image/*" class="hidden" onchange="this.form.submit()">
-                        <span class="text-4xl text-gray-400 font-bold">+</span>
+                        <input type="file"
+                            name="images[]"
+                            accept="image/*"
+                            capture="environment"
+                            class="hidden"
+                            onchange="this.form.submit()">
+                        <div class="text-center">
+                            <div class="text-3xl text-gray-500 mb-1"></div>
+                            <p class="text-sm text-gray-700">Take Photo</p>
+                        </div>
                     </form>
+
+                    <!-- Choose from Gallery -->
+                    <form action="{{ route('referrals.uploadImages', ['id' => $referral->id, 'type' => 'referral']) }}"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition h-36"
+                        onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
+                        @csrf
+                        <input type="file"
+                            name="images[]"
+                            multiple
+                            accept="image/*"
+                            class="hidden"
+                            onchange="this.form.submit()">
+                        <div class="text-center">
+                            <div class="text-3xl text-gray-500 mb-1"></div>
+                            <p class="text-sm text-gray-700">Choose from Gallery</p>
+                        </div>
+                    </form>
+                </div>
+
                 @endif
             </div>
         </div>

@@ -162,20 +162,54 @@
                         @endif
                     </div>
                 @endforeach
-
                 <!-- Upload image square -->
                 @if(empty($readonly))
-                <form action="{{ route('contracts.uploadImages', ['id' => $contract->id, 'type' => 'contract']) }}"
-                    method="POST"
-                    enctype="multipart/form-data"
-                    class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition"
-                    style="height: 9rem;"
-                    onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
-                    @csrf
-                    <input type="file" name="images[]" multiple accept="image/*" class="hidden" onchange="this.form.submit()">
-                    <span class="text-4xl text-gray-400 font-bold">+</span>
-                </form>
+                <div x-data="{
+                    files: [],
+                    handleFiles(event) {
+                        const selectedFiles = Array.from(event.target.files);
+                        selectedFiles.forEach(file => {
+                            // Avoid duplicates
+                            if (!this.files.some(f => f.name === file.name && f.size === file.size)) {
+                                this.files.push(file);
+                            }
+                        });
+                        this.submitFiles();
+                    },
+                    submitFiles() {
+                        const dataTransfer = new DataTransfer();
+                        this.files.forEach(f => dataTransfer.items.add(f));
+                        const input = document.getElementById('finalUploadInput');
+                        input.files = dataTransfer.files;
+                        input.form.submit();
+                    }
+                }" class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+
+                    <!-- Scan / Camera -->
+                    <form action="{{ route('contracts.uploadImages', ['id' => $contract->id, 'type' => 'contract']) }}" method="POST"
+                        enctype="multipart/form-data" x-ref="uploadForm">
+                        @csrf
+                        <input type="file" accept="image/*" capture="environment" class="hidden" @change="handleFiles" id="cameraInput">
+                        <label for="cameraInput"
+                            class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded h-36 cursor-pointer hover:bg-gray-100 transition text-sm text-center text-gray-600">
+                            <br>Take Photo
+                        </label>
+                        <input type="file" name="images[]" class="hidden" id="finalUploadInput" multiple>
+                    </form>
+
+                    <!-- Gallery -->
+                    <form action="{{ route('contracts.uploadImages', ['id' => $contract->id, 'type' => 'contract']) }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <input type="file" accept="image/*" class="hidden" @change="handleFiles" id="galleryInput">
+                        <label for="galleryInput"
+                            class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded h-36 cursor-pointer hover:bg-gray-100 transition text-sm text-center text-gray-600">
+                            <br>Choose from Gallery
+                        </label>
+                    </form>
+                </div>
                 @endif
+
             </div>
 
             <!-- Improved Zoom Modal -->
