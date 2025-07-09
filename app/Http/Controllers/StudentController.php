@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\StudentsImport;
 use App\Models\Contract;
 use App\Models\ContractType;
 use App\Models\CounselingImage;
@@ -548,6 +550,19 @@ public function markAsDropped(Request $request, $id)
 
     return back()->with('success', 'Student has been marked as dropped.');
 }
+
+public function import(Request $request)
+{
+    $request->validate([
+        'excel_file' => 'required|file|mimes:xlsx,xls,csv',
+    ]);
+
+    Excel::import(new StudentsImport, $request->file('excel_file'));
+
+    return back()->with('success', 'Student data imported successfully!');
+}
+
+
 
 
 }

@@ -48,7 +48,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/student/{id}/enrollment', [StudentController::class, 'enrollmentHistory'])->name('student.enrollment');
     Route::get('/student/{student}/profile/{semester}', [StudentController::class, 'viewHistoricalProfile'])->name('student.viewHistoricalProfile');
     Route::get('/student/{student}/profile/{profile}', [StudentController::class, 'viewProfile'])->name('student.profile.view');
-    
+    Route::post('/students/import', [StudentController::class, 'import'])->name('student.import');
+
     // Semester routes
     Route::resource('semester', SemesterController::class);
     Route::get('/semester/{semesterId}/validate', [SemesterController::class, 'validateStudentsForm'])->name('semester.validate');

@@ -94,7 +94,7 @@
             </form>
 
             <!-- Action Buttons -->
-            <div class="flex flex-wrap justify-between items-center mt-4 gap-4">
+            <div class="flex flex-wrap  items-center mt-4 gap-4">
                 <div x-data="{ openStudentModal: {{ $errors->any() ? 'true' : 'false' }} }">
                     <button @click="openStudentModal = true"
                         class="bg-[#a82323] text-white px-4 py-2 rounded-md font-semibold hover:bg-red-800 transition">
@@ -102,11 +102,71 @@
                     </button>
                     @include('student.create')
                 </div>
-
                 <a href="{{ route('course_year_section.index') }}"
                    class="bg-[#a82323] text-white px-4 py-2 rounded-md font-semibold hover:bg-red-800 transition">
                     Manage Course/Year/Section
                 </a>
+
+                <div x-data="{ openImportModal: false }"> 
+                    <button @click="openImportModal = true"
+                        class="bg-[#a82323] text-white px-4 py-2 rounded-md font-semibold hover:bg-red-400 transition">
+                        Import Students
+                    </button>
+
+                    <div x-show="openImportModal" 
+                        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+                        x-cloak>
+                        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl overflow-y-auto max-h-[90vh]">
+                            <h2 class="text-2xl font-bold mb-3">Import Students</h2>
+
+                            <p class="text-gray-700 text-sm mb-4">
+                                Please use the provided Excel template to import students. Each row in your Excel file must contain the following columns:
+                            </p>
+
+                            <ul class="list-disc list-inside text-sm text-gray-800 mb-4 space-y-1">
+                                <li><strong>student_id</strong> - Student's unique ID (required)</li>
+                                <li><strong>first_name</strong> - First name (required)</li>
+                                <li><strong>middle_name</strong> - Middle name (optional)</li>
+                                <li><strong>last_name</strong> - Last name (required)</li>
+                                <li><strong>suffix</strong> - Name suffix like Jr., Sr. (optional)</li>
+                                <li><strong>birthday</strong> - Date of birth (format: YYYY-MM-DD)</li>
+                                <li><strong>gender</strong> - Male/Female/Other</li>
+                                <li><strong>home_address</strong> - Home address (optional)</li>
+                                <li><strong>student_contact</strong> - Student's contact number (optional)</li>
+                                <li><strong>parent_guardian_name</strong> - Name of parent/guardian (optional)</li>
+                                <li><strong>parent_guardian_contact</strong> - Parent/guardian contact number (optional)</li>
+                                <li><strong>course</strong> - Course code (must match system course list)</li>
+                                <li><strong>year_level</strong> - Year level (e.g., 1, 2, 3, 4)</li>
+                                <li><strong>section</strong> - Section name (e.g., A, B, C)</li>
+                                <li><strong>transition_type</strong> - (optional) Shifting In / Transferring In / Dropped</li>
+                                <li><strong>transition_remark</strong> - (optional) Reason or note about the transition</li>
+                            </ul>
+
+                            <div class="bg-yellow-100 text-yellow-800 text-xs p-3 rounded mb-4">
+                                <strong>Note:</strong> Fields marked as "required" must not be left blank. Invalid or missing required data will skip that row during import.
+                            </div>
+
+                            <form action="{{ route('student.import') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Excel File (.xlsx / .xls )</label>
+                                <input type="file" name="excel_file" accept=".xlsx,.xls,.csv" required class="w-full mb-4 border rounded p-2">
+
+                                <div class="flex justify-between items-center">
+                                    <a href="{{ asset('templates/student_template.xlsx') }}" class="text-blue-600 underline text-sm">
+                                        📄 Download Template
+                                    </a>
+                                    <div class="flex gap-2">
+                                        <button type="button" @click="openImportModal = false"
+                                            class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">Cancel</button>
+                                        <button type="submit"
+                                            class="bg-[#a82323] text-white px-4 py-2 rounded-md font-semibold hover:bg-red-800 transition">Import</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Student Table -->
