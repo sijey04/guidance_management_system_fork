@@ -554,8 +554,9 @@ public function markAsDropped(Request $request, $id)
 public function import(Request $request)
 {
     $request->validate([
-        'excel_file' => 'required|file|mimes:xlsx,xls,csv',
-    ]);
+    'excel_file' => 'required|file|mimetypes:text/*,application/*',
+]);
+
 
     Excel::import(new StudentsImport, $request->file('excel_file'));
 
