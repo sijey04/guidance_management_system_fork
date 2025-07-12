@@ -26,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
         $activeSemester = Semester::where('is_current', true)->first();
         $view->with('globalActiveSchoolYear', $activeSchoolYear);
         $view->with('globalActiveSemester', $activeSemester);
+
+
+        
     });
     }
 }

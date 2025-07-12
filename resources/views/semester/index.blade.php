@@ -55,10 +55,33 @@
         }
     </style>
 
-    <div class="py-6">
+    <div class="" x-data="{ tab: 'academic' }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ openSemesterModal: false, openSchoolYearModal: false }">
             <div class="bg-white rounded-lg shadow-lg p-6 space-y-6">
 
+            @auth
+                @if(auth()->user()->isCounselor())
+                    <!-- Tab Buttons -->
+                    <div class="flex border-b border-gray-200 mb-6">
+                        <button 
+                            @click="tab = 'academic'" 
+                            :class="tab === 'academic' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                            class="whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm">
+                            Academic Year Setup
+                        </button>
+                        <button 
+                            @click="tab = 'accounts'" 
+                            :class="tab === 'accounts' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                            class="whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm">
+                            Account Management
+                        </button>
+                    </div>
+                @endif
+            @endauth
+
+            
+            <!-- Academic Setup Content -->
+            <div x-show="tab === 'academic'" x-cloak>
                 <!-- Header Section -->
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-gray-200 pb-6">
                     <div>
@@ -81,23 +104,29 @@
                         @endif
                     </div>
 
+                    @auth
+                    @if(auth()->user()->isCounselor())
+                        <div class="flex flex-wrap gap-2">
+                            <button @click="openSchoolYearModal = true"
+                                    class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-red-700 transition duration-150 ease-in-out flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Add School Year
+                            </button>
+                            <button @click="openSemesterModal = true"
+                                    class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-red-700 transition duration-150 ease-in-out flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Add Semester
+                            </button>
+                        </div>
+                    @endif
+                @endauth
+
                     <!-- Action Buttons -->
-                    <div class="flex flex-wrap gap-2">
-                        <button @click="openSchoolYearModal = true"
-                                class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-red-700 transition duration-150 ease-in-out flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            Add School Year
-                        </button>
-                        <button @click="openSemesterModal = true"
-                                class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-red-700 transition duration-150 ease-in-out flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            Add Semester
-                        </button>
-                    </div>
+                    
                 </div>
 
                 <!-- Modals -->
@@ -196,6 +225,100 @@
                     </div>
                 </div>
             </div>
+             <!-- Account Management Content -->
+            <div x-show="tab === 'accounts'" x-cloak>
+               <div class="space-y-4">
+    <h2 class="text-xl font-bold text-gray-700">User Account Management</h2>
+    <p class="text-sm text-gray-500">Counselors can create users here. These users will not be allowed to manage contracts or academic setup.</p>
+
+    <div x-data="{ tab: 'academic', openSemesterModal: false, openSchoolYearModal: false, openCreateUserModal: false }">
+ <button @click="openCreateUserModal = true"
+        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm">
+    + Create User Account
+</button>   
+
+<!-- Create User Modal -->
+<div x-show="openCreateUserModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Create New User Account</h2>
+
+        <form method="POST" action="{{ route('users.store') }}">
+            @csrf
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Name</label>
+                <input type="text" name="name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" name="email" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" name="password" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                <input type="password" name="password_confirmation" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+            </div>
+
+            <input type="hidden" name="role" value="user">
+
+            <div class="flex justify-end space-x-2 mt-6">
+                <button type="button" @click="openCreateUserModal = false"
+                    class="text-sm text-gray-600 hover:underline">Cancel</button>
+                <button type="submit"
+                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+ </div>
+
+
+
+
+
+
+    <div class="overflow-x-auto mt-4 border rounded">
+        <table class="w-full text-sm text-left text-gray-700">
+            <thead class="bg-red-600 text-white">
+                <tr>
+                    <th class="p-3">Name</th>
+                    <th class="p-3">Email</th>
+                    <th class="p-3">Role</th>
+                    <th class="p-3">Created</th>
+                    <th class="p-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+                @foreach($users as $user)
+                    <tr>
+                        <td class="p-3">{{ $user->name }}</td>
+                        <td class="p-3">{{ $user->email }}</td>
+                        <td class="p-3">{{ ucfirst($user->role) }}</td>
+                        <td class="p-3">{{ $user->created_at->format('M d, Y') }}</td>
+                        {{-- <td class="p-3 space-x-2">
+                            <a href="{{ route('users.edit', $user->id) }}" class="text-blue-600 hover:underline text-sm">Edit</a>
+                            <form method="POST" action="{{ route('users.destroy', $user->id) }}" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:underline text-sm">Delete</button>
+                            </form>
+                        </td> --}}
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+
+            </div>
+        </div>
         </div>
     </div>
 </x-app-layout>

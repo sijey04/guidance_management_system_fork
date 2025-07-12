@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-abstract class Controller
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
+
+class Controller extends BaseController
 {
-    //
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 }
-
-// $totalStudents = Student::count(); // Assuming you have a Student model
-// $studentsThisMonth = Student::whereMonth('created_at', Carbon::now()->month)->count(); // Example: count students created this month
-// $change = $studentsThisMonth - ($totalStudents - $studentsThisMonth);
-
-// return view('your_view', compact('totalStudents', 'change'));

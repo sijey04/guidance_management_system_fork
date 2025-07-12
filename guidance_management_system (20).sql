@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 06, 2025 at 05:40 PM
+-- Generation Time: Jul 12, 2025 at 03:24 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -73,7 +73,15 @@ CREATE TABLE `contracts` (
 --
 
 INSERT INTO `contracts` (`id`, `student_id`, `semester_id`, `contract_date`, `contract_image`, `total_days`, `completed_days`, `status`, `created_at`, `updated_at`, `contract_type`, `start_date`, `end_date`, `remarks`) VALUES
-(1, 2, 1, '2025-07-01', NULL, 20, NULL, 'In Progress', '2025-07-06 07:13:09', '2025-07-06 07:13:29', 'Misconduct', '2025-07-02', '2025-07-22', 'dmkcdm');
+(1, 2, 1, '2025-07-01', NULL, 20, NULL, 'In Progress', '2025-07-06 07:13:09', '2025-07-07 21:28:39', 'Misconduct', '2025-07-02', '2025-07-22', 'dmkcdm'),
+(2, 4, 3, '2025-07-03', NULL, 40, NULL, 'Completed', '2025-07-07 20:08:58', '2025-07-07 20:09:23', 'Misconduct', '2025-07-03', '2025-08-12', 'mdkcdkm dcmkm'),
+(3, 3, 3, '2025-07-04', NULL, 80, NULL, 'In Progress', '2025-07-07 21:39:43', '2025-07-07 21:39:43', 'Community Service', '2025-07-04', '2025-09-22', 'njnjn'),
+(4, 8, 3, '2025-07-08', NULL, NULL, NULL, 'In Progress', '2025-07-07 21:41:12', '2025-07-07 21:41:12', 'cheating', '2025-07-08', NULL, NULL),
+(5, 7, 3, '2025-07-03', NULL, NULL, NULL, 'In Progress', '2025-07-07 21:45:41', '2025-07-07 21:45:41', 'deloading', '2025-07-03', NULL, NULL),
+(6, 10, 3, '2025-07-03', NULL, NULL, NULL, 'In Progress', '2025-07-07 21:53:40', '2025-07-07 21:53:40', 'Community Service', '2025-07-03', NULL, NULL),
+(7, 5, 3, '2025-07-01', NULL, NULL, NULL, 'In Progress', '2025-07-07 21:55:01', '2025-07-07 21:55:01', 'Community Service', '2025-07-01', NULL, NULL),
+(8, 10, 4, '2025-07-03', NULL, 20, NULL, 'In Progress', '2025-07-08 02:25:01', '2025-07-08 02:25:01', 'deloading', '2025-07-03', '2025-07-23', 'fnvjfd'),
+(9, 3, 5, '2025-07-03', NULL, NULL, NULL, 'In Progress', '2025-07-12 01:15:12', '2025-07-12 01:15:12', 'cheating', '2025-07-03', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -96,7 +104,22 @@ CREATE TABLE `contract_images` (
 INSERT INTO `contract_images` (`id`, `contract_id`, `image_path`, `created_at`, `updated_at`) VALUES
 (1, 1, 'contract_images/3jze9u1tQlEFOfadOjxSXoezEJbOn3tnnmkX8jvE.png', '2025-07-06 07:13:09', '2025-07-06 07:13:09'),
 (2, 1, 'contract_images/U55fSCwZoMUES19VCJ2zAtZ0HC4hD60TzociworE.png', '2025-07-06 07:13:09', '2025-07-06 07:13:09'),
-(3, 1, 'contract_images/YBt6ME09KmAKGz1icn7Fh4W773CD8aI39S2VkfhJ.jpg', '2025-07-06 07:13:09', '2025-07-06 07:13:09');
+(3, 1, 'contract_images/YBt6ME09KmAKGz1icn7Fh4W773CD8aI39S2VkfhJ.jpg', '2025-07-06 07:13:09', '2025-07-06 07:13:09'),
+(4, 2, 'contract_images/V4a2MWr75FN3xEbbsI0nTHQeF2wIoSvanMn2gYSZ.jpg', '2025-07-07 20:08:58', '2025-07-07 20:08:58'),
+(5, 3, 'contract_images/QYVVHhf751YcGStFC43opDN79Jh1gMeH8p8msVsb.png', '2025-07-07 21:39:43', '2025-07-07 21:39:43'),
+(6, 3, 'contract_images/YUMSszTEd4I8XLOXv9DJiee1A04vwPzfspJ3N3Ko.png', '2025-07-07 21:39:43', '2025-07-07 21:39:43'),
+(7, 3, 'contract_images/wTHMJPoxjNJRBkgNlrNRRbJbosmkpczCODcyZKE5.png', '2025-07-07 21:39:43', '2025-07-07 21:39:43'),
+(8, 4, 'contract_images/vI07i974Hi47RVN2MFei6bbT4gY0ekXtFGJVHCsM.png', '2025-07-07 21:41:12', '2025-07-07 21:41:12'),
+(10, 4, 'contract_images/7iou83kzUI6M5CVTKzeYNd3JRuMVqzwvQWq0DOdr.jpg', '2025-07-07 21:41:12', '2025-07-07 21:41:12'),
+(11, 5, 'contract_images/g1BA29KOhifyFQEZpu8iZGKFeWLGmdVrWmI72UPf.png', '2025-07-07 21:45:41', '2025-07-07 21:45:41'),
+(13, 6, 'contract_images/r0JoJnnxTLBzGCvz3zVPOH3fxbUJ4l3hB4DzEOrV.png', '2025-07-07 21:53:40', '2025-07-07 21:53:40'),
+(14, 7, 'contract_images/zQV6dbvInG4FnAkKO0PJQHZFtddJx9hGSnFPXvqm.png', '2025-07-07 21:55:01', '2025-07-07 21:55:01'),
+(15, 7, 'contract_images/j79sAwueyoXCUmnStaLN3pI1MlAnhltpNRWc7ZgJ.png', '2025-07-07 21:55:01', '2025-07-07 21:55:01'),
+(16, 7, 'contract_images/Iu9vglk1FtPrBf4fonb5us65YngHiQYjhCyNHqDj.jpg', '2025-07-07 21:55:01', '2025-07-07 21:55:01'),
+(18, 1, 'contract_images/2qAgXd24KslZB7TvBVVkEkihQ835W3Wd1X5SWQ8e.png', '2025-07-07 22:02:36', '2025-07-07 22:02:36'),
+(19, 1, 'contract_images/8KrHKoqsKWMkQyxXrgl25q9fcL2mJKtdOk1ZU1ao.jpg', '2025-07-07 22:02:42', '2025-07-07 22:02:42'),
+(20, 8, 'contract_images/2q2F1vHf6CGJvbzkdmZVleFzxpONNpVIsQ62FgOA.png', '2025-07-08 02:25:01', '2025-07-08 02:25:01'),
+(21, 8, 'contract_images/X1cztTRQZUfrrhJfc4GcdeJQRUx8KfQEGcNpo401.png', '2025-07-08 02:25:01', '2025-07-08 02:25:01');
 
 -- --------------------------------------------------------
 
@@ -116,10 +139,10 @@ CREATE TABLE `contract_types` (
 --
 
 INSERT INTO `contract_types` (`id`, `type`, `created_at`, `updated_at`) VALUES
-(2, 'Misconduct', '2025-06-21 20:47:28', '2025-06-21 20:47:28'),
 (3, 'Community Service', '2025-06-21 21:39:11', '2025-06-21 21:39:11'),
 (5, 'cheating', '2025-06-24 20:02:25', '2025-06-24 20:02:25'),
-(6, 'deloading', '2025-06-24 20:03:27', '2025-06-24 20:03:27');
+(6, 'deloading', '2025-06-24 20:03:27', '2025-06-24 20:03:27'),
+(7, 'Misconduct', '2025-07-07 20:10:11', '2025-07-07 20:10:11');
 
 -- --------------------------------------------------------
 
@@ -144,7 +167,10 @@ CREATE TABLE `counselings` (
 --
 
 INSERT INTO `counselings` (`id`, `student_id`, `semester_id`, `counseling_date`, `status`, `image_path`, `created_at`, `updated_at`, `remarks`) VALUES
-(1, 2, 1, '2025-07-02', 'In Progress', NULL, '2025-07-06 07:16:00', '2025-07-06 07:16:00', 'jnkcndn');
+(1, 2, 1, '2025-07-02', 'In Progress', NULL, '2025-07-06 07:16:00', '2025-07-06 07:16:00', 'jnkcndn'),
+(2, 10, 3, '2025-07-02', 'In Progress', NULL, '2025-07-07 20:18:38', '2025-07-07 20:18:38', 'dkocd;'),
+(3, 1, 3, '2025-07-08', 'In Progress', NULL, '2025-07-07 22:25:24', '2025-07-07 22:25:24', 'cxkm'),
+(5, 7, 3, '2025-07-02', 'In Progress', NULL, '2025-07-07 22:29:46', '2025-07-07 22:29:46', NULL);
 
 -- --------------------------------------------------------
 
@@ -170,7 +196,25 @@ INSERT INTO `counseling_images` (`id`, `counseling_id`, `image_path`, `created_a
 (2, 1, 'counseling_images/YjgDM2GB2iYVQEYhmUtIuGRiMk2h3S3llT7qYkOy.jpg', '2025-07-06 07:16:00', '2025-07-06 07:16:00', 'form'),
 (3, 1, 'counseling_images/66EFY4yQXEmExN71rxyiy6oEKZKaJFtYouNqYH0x.jpg', '2025-07-06 07:16:00', '2025-07-06 07:16:00', 'form'),
 (4, 1, 'counseling_images/JZKC1VLAQ3eIiI8HmwqM0l70UYT2ZZ1oOU6rVy30.jpg', '2025-07-06 07:16:00', '2025-07-06 07:16:00', 'id_card'),
-(5, 1, 'counseling_images/s0R2QKDOJbQ69gN7irTwYCheVKIrRMPYGmqd8krY.png', '2025-07-06 07:16:00', '2025-07-06 07:16:00', 'id_card');
+(5, 1, 'counseling_images/s0R2QKDOJbQ69gN7irTwYCheVKIrRMPYGmqd8krY.png', '2025-07-06 07:16:00', '2025-07-06 07:16:00', 'id_card'),
+(6, 2, 'counseling_images/LeYpwlFiuL10vl1SabtHNv1Ae6rCuCto3YFQHURj.png', '2025-07-07 20:18:38', '2025-07-07 20:18:38', 'form'),
+(7, 2, 'counseling_images/VMxbSLGZUHlkNZjH6Pj9K8GHsbVDZIjYi5EMONzC.png', '2025-07-07 20:18:38', '2025-07-07 20:18:38', 'id_card'),
+(8, 2, 'counseling_images/CfeV9DsG0FyO5DtJGPAOudW9cjb3gNMo3HUpTd5y.jpg', '2025-07-07 20:18:38', '2025-07-07 20:18:38', 'id_card'),
+(9, 3, 'counseling_images/FovcDZejGL0Zrke1r5YVHKAMLymfSCkn8dE2O3jK.png', '2025-07-07 22:25:24', '2025-07-07 22:25:24', 'form'),
+(10, 3, 'counseling_images/uUL8JsO9CueVjfW9C5fq1e6BBuiY0ROti5Po6s81.jpg', '2025-07-07 22:25:24', '2025-07-07 22:25:24', 'form'),
+(11, 3, 'counseling_images/HUCgy5ZkGZj33gZ6wn0IUhjAzJGVrJlbMAFEuU9g.png', '2025-07-07 22:25:24', '2025-07-07 22:25:24', 'form'),
+(12, 3, 'counseling_images/2NBzmHjkep398rfzPs7epIM1956uLaBRwGC4hCLa.png', '2025-07-07 22:25:24', '2025-07-07 22:25:24', 'form'),
+(13, 3, 'counseling_images/6PK3WhXyJd9HSlBn3pmtOmHRIT31Tb1BWGtu3btd.jpg', '2025-07-07 22:25:24', '2025-07-07 22:25:24', 'form'),
+(14, 3, 'counseling_images/GK4zEBp4qAmVpmpojvr43cl53pRalg1oiLeQ2O3k.png', '2025-07-07 22:25:24', '2025-07-07 22:25:24', 'form'),
+(15, 3, 'counseling_images/HCd3Q75DnEwlRvn02HG4iz05ld9vncZY751uh3Rs.jpg', '2025-07-07 22:25:24', '2025-07-07 22:25:24', 'id_card'),
+(16, 3, 'counseling_images/cwWSyjihSZejiz89QNPY3xaUDBttJCPNGKyieHvh.png', '2025-07-07 22:25:24', '2025-07-07 22:25:24', 'id_card'),
+(17, 3, 'counseling_images/0Xc8wqZRfcmBrKdo5tAcIED8qHgY0uVqsrOcXuw3.jpg', '2025-07-07 22:25:24', '2025-07-07 22:25:24', 'id_card'),
+(18, 3, 'counseling_images/orha9c5845yiw08xUwV4TlrJGOSoDlQ1NrRC52B4.png', '2025-07-07 22:25:24', '2025-07-07 22:25:24', 'id_card'),
+(24, 5, 'counseling_images/ECHNmenz2oQhlYIIt0pAwCGXfzaLa4FufURwTZ6C.png', '2025-07-07 22:29:46', '2025-07-07 22:29:46', 'form'),
+(25, 5, 'counseling_images/yQzv0rGnBE4u0zbc5P6K8qmS2tRBXLQOYQg3cOCX.jpg', '2025-07-07 22:29:46', '2025-07-07 22:29:46', 'id_card'),
+(26, 5, 'counseling_images/Sclql7ef6SAi17LqXiNm4LD58yYqfmw4atkpSbJc.jpg', '2025-07-07 22:29:46', '2025-07-07 22:29:46', 'id_card'),
+(28, 5, 'counseling_images/tKAYcf5Ka8cOgziBvXZ6Cyu9H6sjxQEfQktdNMRv.png', '2025-07-07 22:35:23', '2025-07-07 22:35:23', 'form'),
+(29, 5, 'counseling_images/gXGHPPq1qUG3eEBcvGsNtxeKTbGGDXcIJNLgbm6c.jpg', '2025-07-07 22:35:31', '2025-07-07 22:35:31', 'form');
 
 -- --------------------------------------------------------
 
@@ -190,9 +234,9 @@ CREATE TABLE `courses` (
 --
 
 INSERT INTO `courses` (`id`, `course`, `created_at`, `updated_at`) VALUES
-(1, 'BS Information Technology', '2025-06-21 08:53:23', '2025-06-21 08:53:23'),
 (2, 'Associate in Computer Technology', '2025-06-21 09:26:35', '2025-06-21 09:26:35'),
-(3, 'BS Computer Science', '2025-06-21 09:26:45', '2025-06-21 09:26:45');
+(3, 'BS Computer Science', '2025-06-21 09:26:45', '2025-06-21 09:26:45'),
+(6, 'BS Information Technology', '2025-07-07 20:04:31', '2025-07-07 20:04:31');
 
 -- --------------------------------------------------------
 
@@ -355,7 +399,9 @@ CREATE TABLE `referrals` (
 --
 
 INSERT INTO `referrals` (`id`, `student_id`, `semester_id`, `reason`, `remarks`, `image_path`, `referral_date`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 'Failing Grades', 'dfjdskfjn', NULL, '2025-07-01', '2025-07-06 07:15:26', '2025-07-06 07:15:26');
+(1, 1, 1, 'Failing Grades', 'dfjdskfjn', NULL, '2025-07-01', '2025-07-06 07:15:26', '2025-07-06 07:15:26'),
+(2, 5, 3, 'Failing Grades', 'cdmkcd', NULL, '2025-07-03', '2025-07-07 20:15:11', '2025-07-07 20:15:11'),
+(3, 1, 3, 'Absences', 'cmxkcm', NULL, '2025-07-07', '2025-07-07 22:11:49', '2025-07-07 22:11:49');
 
 -- --------------------------------------------------------
 
@@ -377,7 +423,14 @@ CREATE TABLE `referral_images` (
 
 INSERT INTO `referral_images` (`id`, `referral_id`, `image_path`, `created_at`, `updated_at`) VALUES
 (1, 1, 'referral_images/3jkhQp6A73VG38DehD1QaN9Dp3VRIek7VqKBy9an.png', '2025-07-06 07:15:26', '2025-07-06 07:15:26'),
-(2, 1, 'referral_images/F3PrutQg9GmJ6mxIRTUyFFYI5tOhff9g2TSISUTP.png', '2025-07-06 07:15:26', '2025-07-06 07:15:26');
+(2, 1, 'referral_images/F3PrutQg9GmJ6mxIRTUyFFYI5tOhff9g2TSISUTP.png', '2025-07-06 07:15:26', '2025-07-06 07:15:26'),
+(3, 2, 'referral_images/z98623s9vTCxz6sVhLMUFYzKzjnyXR0hflX15ZVT.png', '2025-07-07 20:15:11', '2025-07-07 20:15:11'),
+(4, 2, 'referral_images/cYf1mFGKWM0EsWoUhzYBMhYApFWQQlJMDBuwha2H.jpg', '2025-07-07 20:15:11', '2025-07-07 20:15:11'),
+(5, 3, 'referral_images/hKpI0oxmWglypg3VSkvEqZooGOe6a900vKoDRaXg.jpg', '2025-07-07 22:11:49', '2025-07-07 22:11:49'),
+(6, 3, 'referral_images/gPUaSRo9eCbIhNW7znZcxklhPtp8e0wcLAvMig4j.jpg', '2025-07-07 22:11:49', '2025-07-07 22:11:49'),
+(7, 3, 'referral_images/HorDySQkQGmXQDUlZbnPxIKLFUXNnCznOvm0P8eN.jpg', '2025-07-07 22:11:49', '2025-07-07 22:11:49'),
+(8, 1, 'referral_images/sY0ZTKL4xAZADexBWds1oNZ7OhdGfvYVAIjX0RYB.jpg', '2025-07-07 22:20:32', '2025-07-07 22:20:32'),
+(9, 1, 'referral_images/r7hpJpL32zWSI7BI3peGr3BunrmhzW2P15Okx5pP.png', '2025-07-07 22:20:39', '2025-07-07 22:20:39');
 
 -- --------------------------------------------------------
 
@@ -423,7 +476,8 @@ CREATE TABLE `school_years` (
 
 INSERT INTO `school_years` (`id`, `created_at`, `updated_at`, `start_date`, `end_date`, `school_year`, `is_active`) VALUES
 (1, '2025-07-06 07:06:01', '2025-07-06 07:38:54', '2024-08-20', '2025-05-20', '2024-2025', 0),
-(2, '2025-07-06 07:38:54', '2025-07-06 07:38:54', '2025-08-20', '2026-05-05', '2025-2026', 1);
+(2, '2025-07-06 07:38:54', '2025-07-11 23:50:13', '2025-08-20', '2026-05-05', '2025-2026', 0),
+(3, '2025-07-11 23:50:13', '2025-07-11 23:50:13', '2026-07-26', '2027-05-03', '2026-2027', 1);
 
 -- --------------------------------------------------------
 
@@ -445,7 +499,8 @@ CREATE TABLE `sections` (
 INSERT INTO `sections` (`id`, `section`, `created_at`, `updated_at`) VALUES
 (1, 'A', '2025-06-21 08:55:48', '2025-06-21 08:55:48'),
 (2, 'B', '2025-06-21 09:31:39', '2025-06-21 09:31:39'),
-(3, 'C', '2025-06-21 09:31:43', '2025-06-21 09:31:43');
+(3, 'C', '2025-06-21 09:31:43', '2025-06-21 09:31:43'),
+(5, 'D', '2025-07-07 20:04:55', '2025-07-07 20:04:55');
 
 -- --------------------------------------------------------
 
@@ -470,7 +525,9 @@ CREATE TABLE `semesters` (
 INSERT INTO `semesters` (`id`, `semester`, `is_current`, `created_at`, `updated_at`, `is_active`, `school_year_id`) VALUES
 (1, '1st', 0, '2025-07-06 07:06:01', '2025-07-06 07:38:54', 0, 1),
 (2, '2nd', 0, '2025-07-06 07:28:18', '2025-07-06 07:38:54', 0, 1),
-(3, '1st', 1, '2025-07-06 07:38:54', '2025-07-06 07:38:54', 0, 2);
+(3, '1st', 0, '2025-07-06 07:38:54', '2025-07-11 23:50:13', 0, 2),
+(4, '2nd', 0, '2025-07-07 22:58:12', '2025-07-11 23:50:13', 0, 2),
+(5, '1st', 1, '2025-07-11 23:50:13', '2025-07-11 23:50:13', 0, 3);
 
 -- --------------------------------------------------------
 
@@ -492,7 +549,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('I281Lam8wGdhgvWLUPYN8F1Z3JjNxS46I8g6Qhii', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiN1pKV1FOdWZZZjlJWjVEWkJDOHJJcTN6RHpWVHJwWnBaSGpjOWF2NyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTg6Imh0dHA6Ly9ndWlkYW5jZS1tYW5hZ2VtZW50LXN5c3RlbS50ZXN0L3NlbWVzdGVyLzMvdmFsaWRhdGUiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO30=', 1751816378);
+('N2MwdxeUNDy70YvXIlQekqaor6uKaG7r9yRLgqR6', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoib00wQVB5VjB5cTIzRm9sNzNIYmY5RVBFeGxBalBpWThUQ0w1YlA4WCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9zZW1lc3RlciI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjI7fQ==', 1752326616);
 
 -- --------------------------------------------------------
 
@@ -539,7 +596,20 @@ INSERT INTO `students` (`id`, `student_id`, `first_name`, `middle_name`, `last_n
 (2, '202201051', 'Alfaith', 'Mae', 'Luzon', '2025-07-01', 'Jr.', 'Male', NULL, 'CANELAR', NULL, NULL, 'dmslkmf', '098739745767', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-06 07:12:30', '2025-07-06 07:12:30', NULL, NULL, NULL, NULL, '09889778'),
 (3, '202201052', 'April Rose', 'COVARRUBIAS', 'Alvarez', '2025-07-01', 'IV', 'Female', NULL, 'CANELAR', NULL, NULL, 'kdnfdj', 'dlnflfdgjfn', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-06 07:33:43', '2025-07-06 07:33:43', NULL, NULL, NULL, NULL, '09878473994'),
 (4, '202201053', 'Ayana Jade', NULL, 'Alejo', '2025-07-09', NULL, 'Female', NULL, 'ncnkjds', NULL, NULL, 'dkfmldms', '0987876654', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-06 07:37:21', '2025-07-06 07:37:21', NULL, NULL, NULL, NULL, NULL),
-(5, '202201054', 'Sample', 'COVARRUBIAS', 'Student', '2025-07-01', NULL, 'Male', NULL, 'CANELAR', NULL, NULL, 'ckmdkm', '90787876', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-06 07:38:34', '2025-07-06 07:38:34', NULL, NULL, NULL, NULL, '099766765');
+(5, '202201054', 'Sample', 'COVARRUBIAS', 'Student', '2025-07-01', NULL, 'Male', NULL, 'CANELAR', NULL, NULL, 'ckmdkm', '90787876', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-06 07:38:34', '2025-07-06 07:38:34', NULL, NULL, NULL, NULL, '099766765'),
+(6, '202201058', 'Sample', 'Student', '1', '2025-07-03', NULL, 'Female', NULL, 'dmffdmgdlkm', NULL, NULL, 'dsfmgldfkm', '098983789734', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-06 21:39:58', '2025-07-06 21:39:58', NULL, NULL, NULL, NULL, '0908789768657'),
+(7, '2022019282', 'Rahema', NULL, 'Usama', '2025-07-02', NULL, 'Female', NULL, 'dnfdlfnn', NULL, NULL, 'dnkjfndkj', '0908439798', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-06 23:21:15', '2025-07-06 23:21:15', NULL, NULL, NULL, NULL, '0999686675'),
+(8, '2021393993', 'sample', NULL, 'sample', '2025-07-02', NULL, 'Male', NULL, 'csmdkmc', NULL, NULL, 'kdcjcmlddl', '099878765', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-07 19:51:45', '2025-07-07 19:51:45', NULL, NULL, NULL, NULL, '09987675645'),
+(9, '2024393993', 'sample', NULL, 'students shift in', '2025-07-02', NULL, 'Female', NULL, 'dcmdkm', NULL, NULL, 'sample parent', '099877675', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-07 20:06:21', '2025-07-07 20:06:21', NULL, NULL, NULL, NULL, '0998786765'),
+(10, '2025019282', 'sample', NULL, 'student transferring in', '2025-07-01', NULL, 'Female', NULL, 'dvvmdfld', NULL, NULL, 'smaple parent', '098978655746', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-07 20:07:43', '2025-07-07 20:07:43', NULL, NULL, NULL, NULL, '0908765577'),
+(11, '202739874', 'sample studdent', 'for', 'image attachent', '2025-07-02', NULL, 'Female', NULL, 'CANELAR', NULL, NULL, 'dcndkmc', '09987865453', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-07 22:08:07', '2025-07-07 22:08:07', NULL, NULL, NULL, NULL, '0999876546435'),
+(12, '2022029023', 'Norma', NULL, 'Tulabing', '2025-07-01', NULL, 'Female', NULL, 'cmckdmc', NULL, NULL, 'Alfaith Mae Luzon', '0899738658473', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-08 02:22:40', '2025-07-08 02:22:40', NULL, NULL, NULL, NULL, '09934389478'),
+(13, '2023001', 'Juan', 'Santos', 'Dela Cruz ', '1970-01-01', NULL, 'Male', NULL, '123 purok st.', NULL, NULL, NULL, '9124567890', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-08 17:20:48', '2025-07-08 17:20:48', NULL, NULL, NULL, NULL, '9364328734'),
+(15, '2022020212', 'sampling', 'shifting', 'student', '1970-01-01', NULL, 'Male', NULL, 'magnolia', NULL, NULL, 'Madon', '9876756453', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-08 17:48:58', '2025-07-08 17:48:58', NULL, NULL, NULL, NULL, '909098787'),
+(16, '202209855212', 'sampling', 'transferring', 'student', '1970-01-01', NULL, 'Male', NULL, 'magnolia', NULL, NULL, 'Madon', '9876756453', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-08 17:50:49', '2025-07-08 17:50:49', NULL, NULL, NULL, NULL, '909098787'),
+(17, '2030855212', 'sampling', 'transferring', 'student', '2005-03-04', NULL, 'Male', NULL, 'magnolia', NULL, NULL, 'Madon', '9876756453', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-08 18:03:43', '2025-07-08 18:03:43', NULL, NULL, NULL, NULL, '909098787'),
+(18, '2040855212', 'sampling', 'Excel', 'student', '1970-01-01', NULL, 'Male', NULL, 'magnolia', NULL, NULL, 'Madon', '9876756453', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-08 18:05:37', '2025-07-08 18:05:37', NULL, NULL, NULL, NULL, '909098787'),
+(19, '202201010', 'New', 'shifting', 'student', '2025-07-09', NULL, 'Female', NULL, 'dvjmdm', NULL, NULL, 'chschhcds', '00904838947', NULL, NULL, NULL, 'Enrolled', NULL, NULL, '2025-07-12 03:17:46', '2025-07-12 03:17:46', NULL, NULL, NULL, NULL, '0987676657');
 
 -- --------------------------------------------------------
 
@@ -580,7 +650,37 @@ INSERT INTO `student_profiles` (`id`, `student_id`, `semester_id`, `course`, `se
 (4, 2, 2, 'BS Information Technology', 'C', '2025-07-06 07:32:25', '2025-07-06 07:32:25', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
 (5, 3, 2, 'BS Computer Science', 'A', '2025-07-06 07:33:43', '2025-07-06 07:33:43', 'CANELAR', NULL, NULL, 'kdnfdj', 'dlnflfdgjfn', NULL, NULL, NULL, NULL, NULL, '1', NULL),
 (6, 4, 2, 'Associate in Computer Technology', 'B', '2025-07-06 07:37:21', '2025-07-06 07:37:21', 'ncnkjds', NULL, NULL, 'dkfmldms', '0987876654', NULL, NULL, NULL, NULL, NULL, '1', NULL),
-(7, 5, 2, 'BS Information Technology', 'A', '2025-07-06 07:38:34', '2025-07-06 07:38:34', 'CANELAR', NULL, NULL, 'ckmdkm', '90787876', NULL, NULL, NULL, NULL, NULL, '1', NULL);
+(7, 5, 2, 'BS Information Technology', 'A', '2025-07-06 07:38:34', '2025-07-06 07:38:34', 'CANELAR', NULL, NULL, 'ckmdkm', '90787876', NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(8, 1, 3, 'BS Information Technology', 'B', '2025-07-06 21:38:38', '2025-07-06 21:38:38', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2', NULL),
+(9, 6, 3, 'Associate in Computer Technology', 'B', '2025-07-06 21:39:58', '2025-07-06 21:39:58', 'dmffdmgdlkm', NULL, NULL, 'dsfmgldfkm', '098983789734', NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(10, 3, 3, 'BS Information Technology', 'A', '2025-07-06 21:42:37', '2025-07-06 21:42:37', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(11, 7, 3, 'Associate in Computer Technology', 'B', '2025-07-06 23:21:15', '2025-07-06 23:21:15', 'dnfdlfnn', NULL, NULL, 'dnkjfndkj', '0908439798', NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(12, 4, 3, 'BS Information Technology', 'C', '2025-07-06 23:22:36', '2025-07-06 23:22:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(13, 5, 3, 'BS Information Technology', 'C', '2025-07-06 23:23:11', '2025-07-06 23:23:11', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(14, 8, 3, 'BS Information Technology', 'B', '2025-07-07 19:51:45', '2025-07-07 19:51:45', 'csmdkmc', NULL, NULL, 'kdcjcmlddl', '099878765', NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(15, 9, 3, 'Associate in Computer Technology', 'C', '2025-07-07 20:06:21', '2025-07-07 20:06:21', 'dcmdkm', NULL, NULL, 'sample parent', '099877675', NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(16, 10, 3, 'BS Computer Science', 'B', '2025-07-07 20:07:43', '2025-07-07 20:07:43', 'dvvmdfld', NULL, NULL, 'smaple parent', '098978655746', NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(17, 11, 3, 'Associate in Computer Technology', 'B', '2025-07-07 22:08:07', '2025-07-07 22:08:07', 'CANELAR', NULL, NULL, 'dcndkmc', '09987865453', NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(18, 8, 4, 'BS Information Technology', 'B', '2025-07-07 23:04:22', '2025-07-07 23:04:22', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(19, 10, 4, 'BS Computer Science', 'B', '2025-07-07 23:06:07', '2025-07-07 23:06:07', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(20, 12, 4, 'BS Computer Science', 'B', '2025-07-08 02:22:40', '2025-07-08 02:22:40', 'cmckdmc', NULL, NULL, 'Alfaith Mae Luzon', '0899738658473', NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(21, 3, 4, 'BS Information Technology', 'B', '2025-07-08 02:23:29', '2025-07-08 02:23:29', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(22, 13, 4, 'BS Computer Science', 'A', '2025-07-08 17:20:48', '2025-07-08 17:20:48', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(24, 15, 4, 'BS Information Technology', 'B', '2025-07-08 17:48:58', '2025-07-08 17:48:58', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(25, 16, 4, 'BS Information Technology', 'B', '2025-07-08 17:50:49', '2025-07-08 17:50:49', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(26, 17, 4, 'BS Information Technology', 'B', '2025-07-08 18:03:43', '2025-07-08 18:03:43', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(27, 18, 4, 'BS Computer Science', 'B', '2025-07-08 18:05:37', '2025-07-08 18:05:37', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(28, 6, 4, 'Associate in Computer Technology', 'B', '2025-07-10 20:25:48', '2025-07-10 20:25:48', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(29, 5, 4, 'BS Information Technology', 'C', '2025-07-10 20:26:03', '2025-07-10 20:26:03', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(30, 9, 4, 'Associate in Computer Technology', 'C', '2025-07-11 22:28:06', '2025-07-11 22:28:06', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(31, 4, 4, 'BS Information Technology', 'C', '2025-07-11 22:29:49', '2025-07-11 22:35:47', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(32, 7, 4, 'BS Computer Science', 'A', '2025-07-11 22:41:46', '2025-07-11 23:42:30', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(33, 3, 5, 'BS Information Technology', 'B', '2025-07-11 23:51:52', '2025-07-11 23:51:52', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2', NULL),
+(34, 5, 5, 'BS Information Technology', 'B', '2025-07-11 23:52:56', '2025-07-11 23:52:56', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2', NULL),
+(35, 9, 5, 'Associate in Computer Technology', 'C', '2025-07-11 23:54:18', '2025-07-11 23:54:18', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(36, 6, 5, 'Associate in Computer Technology', 'B', '2025-07-12 03:15:53', '2025-07-12 03:15:53', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(37, 7, 5, 'Associate in Computer Technology', 'A', '2025-07-12 03:16:40', '2025-07-12 03:16:40', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(38, 19, 5, 'BS Information Technology', 'B', '2025-07-12 03:17:46', '2025-07-12 03:17:46', 'dvjmdm', NULL, NULL, 'chschhcds', '00904838947', NULL, NULL, NULL, NULL, NULL, '1', NULL);
 
 -- --------------------------------------------------------
 
@@ -606,7 +706,15 @@ INSERT INTO `student_semester_enrollments` (`id`, `student_id`, `semester_id`, `
 (2, 2, 1, 1, '2025-07-06 07:12:30', '2025-07-06 07:12:30'),
 (3, 3, 2, 1, '2025-07-06 07:33:43', '2025-07-06 07:33:43'),
 (4, 4, 2, 1, '2025-07-06 07:37:21', '2025-07-06 07:37:21'),
-(5, 5, 2, 1, '2025-07-06 07:38:34', '2025-07-06 07:38:34');
+(5, 5, 2, 1, '2025-07-06 07:38:34', '2025-07-06 07:38:34'),
+(6, 6, 3, 1, '2025-07-06 21:39:58', '2025-07-06 21:39:58'),
+(7, 7, 3, 1, '2025-07-06 23:21:15', '2025-07-06 23:21:15'),
+(8, 8, 3, 1, '2025-07-07 19:51:45', '2025-07-07 19:51:45'),
+(9, 9, 3, 1, '2025-07-07 20:06:21', '2025-07-07 20:06:21'),
+(10, 10, 3, 1, '2025-07-07 20:07:43', '2025-07-07 20:07:43'),
+(11, 11, 3, 1, '2025-07-07 22:08:07', '2025-07-07 22:08:07'),
+(12, 12, 4, 1, '2025-07-08 02:22:40', '2025-07-08 02:22:40'),
+(13, 19, 5, 1, '2025-07-12 03:17:46', '2025-07-12 03:17:46');
 
 -- --------------------------------------------------------
 
@@ -641,7 +749,32 @@ INSERT INTO `student_transition` (`id`, `last_name`, `first_name`, `middle_name`
 (1, 'Luzon', 'Alfaith', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-06', 'dfmkjm', '2025-07-06 07:12:30', '2025-07-06 07:12:30', 1, 2),
 (5, 'Alvarez', 'April Rose', NULL, 'Transferring In', NULL, NULL, NULL, NULL, NULL, '2025-07-06', 'cvknv', '2025-07-06 07:33:43', '2025-07-06 07:33:43', 2, 3),
 (6, 'Haliluddin', 'Naila', NULL, 'Dropped', NULL, NULL, NULL, NULL, NULL, '2025-07-06', 'dropped', '2025-07-06 07:34:54', '2025-07-06 07:34:54', 2, 1),
-(7, 'Luzon', 'Alfaith', NULL, 'Transferring Out', NULL, NULL, NULL, NULL, NULL, '2025-07-06', 'xcxmkm', '2025-07-06 07:39:23', '2025-07-06 07:39:23', 3, 2);
+(7, 'Luzon', 'Alfaith', NULL, 'Transferring Out', NULL, NULL, NULL, NULL, NULL, '2025-07-06', 'xcxmkm', '2025-07-06 07:39:23', '2025-07-06 07:39:23', 3, 2),
+(8, '1', 'Sample', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-07', 'archi toACTxdckpdsk', '2025-07-06 21:39:58', '2025-07-06 21:40:14', 3, 6),
+(9, 'Alvarez', 'April Rose', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-07', 'Auto-generated shift out', '2025-07-06 21:42:37', '2025-07-06 21:42:37', 2, 3),
+(10, 'Alvarez', 'April Rose', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-07', NULL, '2025-07-06 21:42:37', '2025-07-06 21:42:37', 3, 3),
+(11, 'Usama', 'Rahema', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-07', 'From Archi to ACT', '2025-07-06 23:21:15', '2025-07-06 23:21:15', 3, 7),
+(12, 'Alejo', 'Ayana Jade', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-07', 'Auto-generated shift out', '2025-07-06 23:22:36', '2025-07-06 23:22:36', 2, 4),
+(13, 'Alejo', 'Ayana Jade', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-07', 'xcc', '2025-07-06 23:22:36', '2025-07-06 23:22:36', 3, 4),
+(14, 'Student', 'Sample', NULL, 'Returning Student', NULL, NULL, NULL, NULL, NULL, '2025-07-07', NULL, '2025-07-06 23:23:11', '2025-07-06 23:23:11', 3, 5),
+(17, 'student transferring in', 'sample', NULL, 'Transferring In', NULL, NULL, NULL, NULL, NULL, '2025-07-08', 'kfdokf', '2025-07-07 20:07:43', '2025-07-07 20:07:43', 3, 10),
+(18, 'image attachent', 'sample studdent', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-08', ',cc', '2025-07-07 22:08:07', '2025-07-07 22:08:07', 3, 11),
+(19, 'Haliluddin', 'Naila', NULL, 'Dropped', NULL, NULL, NULL, NULL, NULL, '2025-07-08', 'ccxmc,', '2025-07-07 22:55:39', '2025-07-07 22:55:39', 3, 1),
+(20, 'sample', 'sample', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-08', 'Auto-generated shift out', '2025-07-07 23:04:22', '2025-07-07 23:04:22', 3, 8),
+(21, 'sample', 'sample', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-08', 'mxckm', '2025-07-07 23:04:22', '2025-07-07 23:04:22', 4, 8),
+(22, 'student transferring in', 'sample', NULL, 'Returning Student', NULL, NULL, NULL, NULL, NULL, '2025-07-08', NULL, '2025-07-07 23:06:07', '2025-07-07 23:06:07', 4, 10),
+(23, 'student', 'sampling', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-09', 'from Archi to BSIT', '2025-07-08 17:48:58', '2025-07-08 17:48:58', 4, 15),
+(24, 'student', 'sampling', NULL, 'Transferring In', NULL, NULL, NULL, NULL, NULL, '2025-07-09', 'from Archi to BSIT', '2025-07-08 17:50:49', '2025-07-08 17:50:49', 4, 16),
+(29, 'Alejo', 'Ayana Jade', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'it to hstory', '2025-07-11 22:35:47', '2025-07-11 22:35:47', 4, 4),
+(30, 'Tulabing', 'Norma', NULL, 'Dropped', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'dropped se', '2025-07-11 22:38:33', '2025-07-11 22:38:33', 4, 12),
+(41, 'Usama', 'Rahema', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'Auto-generated shift out', '2025-07-11 23:42:30', '2025-07-11 23:42:30', 3, 7),
+(42, 'Usama', 'Rahema', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'act to cs', '2025-07-11 23:42:30', '2025-07-11 23:42:30', 4, 7),
+(43, 'students shift in', 'sample', NULL, 'Transferring Out', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'to ateneo', '2025-07-11 23:54:18', '2025-07-11 23:54:18', 5, 9),
+(44, 'Alvarez', 'April Rose', NULL, 'Dropped', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'dsd', '2025-07-11 23:56:02', '2025-07-11 23:56:02', 5, 3),
+(45, '1', 'Sample', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'shift to hist', '2025-07-12 03:15:53', '2025-07-12 03:15:53', 5, 6),
+(46, 'Usama', 'Rahema', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'Auto-generated shift out', '2025-07-12 03:16:40', '2025-07-12 03:16:40', 4, 7),
+(47, 'Usama', 'Rahema', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-12', NULL, '2025-07-12 03:16:40', '2025-07-12 03:16:40', 5, 7),
+(48, 'student', 'New', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'from journ to bs it', '2025-07-12 03:17:46', '2025-07-12 03:17:46', 5, 19);
 
 -- --------------------------------------------------------
 
@@ -676,7 +809,22 @@ INSERT INTO `student_transition_images` (`id`, `student_transition_id`, `image_p
 (12, 6, 'transition_images/a1RFHme2OEuxK7nONynazvFjFDQ1qFetLZVOjfh1.png', '2025-07-06 07:34:54', '2025-07-06 07:34:54'),
 (13, 6, 'transition_images/dMvJlXexHa1y2aZW3LadH5Qy3c8nnUdqUyGh0M75.png', '2025-07-06 07:34:54', '2025-07-06 07:34:54'),
 (14, 6, 'transition_images/GDZIeXE8YAnSHVsOwQgW3oTv9kmI6tGEBiDK1Bfg.jpg', '2025-07-06 07:34:54', '2025-07-06 07:34:54'),
-(15, 7, 'transition_images/gVKFrU73DNezKV1QXDJ2zaJ0cl5LGLR9FY1wxvsY.png', '2025-07-06 07:39:23', '2025-07-06 07:39:23');
+(15, 7, 'transition_images/gVKFrU73DNezKV1QXDJ2zaJ0cl5LGLR9FY1wxvsY.png', '2025-07-06 07:39:23', '2025-07-06 07:39:23'),
+(16, 8, 'transition_images/QPfRFb0qM6ibTh6ijxBJUIitokGgbg3mtMKmh9hJ.png', '2025-07-06 21:39:58', '2025-07-06 21:39:58'),
+(17, 8, 'transition_images/ADEg4lyXUU9sXGtHJNF7zYtqBhRaAKU2sZdOyxjo.jpg', '2025-07-06 21:39:58', '2025-07-06 21:39:58'),
+(18, 8, 'transition_images/1G7yYaqpd6mOO7wtqUsX9k1rU2bgmZjvSk0wMMfs.jpg', '2025-07-06 21:40:20', '2025-07-06 21:40:20'),
+(19, 16, 'transition_images/UejApEqdagT14sq9YwEA8iQXA0qPpi2TXhQgrVwU.png', '2025-07-07 20:06:21', '2025-07-07 20:06:21'),
+(20, 16, 'transition_images/XbdYvfGeY8UsnuA1Jx8llmqTEjEjHS9C4yur0hod.jpg', '2025-07-07 20:06:21', '2025-07-07 20:06:21'),
+(21, 17, 'transition_images/Q52ofymHPLFD9dxfTMsNi8nLeuVpO6IFGg0me9PL.jpg', '2025-07-07 20:07:43', '2025-07-07 20:07:43'),
+(22, 18, 'transition_images/709xnpsNkt62Di3qc5t5UwX1rvb3PjhNtwTeFAUd.jpg', '2025-07-07 22:08:07', '2025-07-07 22:08:07'),
+(23, 18, 'transition_images/LyfefpuP16fGAtKdeF8Tev0DluEq4AejHZF6vpW1.jpg', '2025-07-07 22:08:07', '2025-07-07 22:08:07'),
+(24, 18, 'transition_images/WzYKd6N8Lwv3E1qRuWq7DtUgZmCJM3dI5effoSXD.jpg', '2025-07-07 22:08:07', '2025-07-07 22:08:07'),
+(26, 17, 'transition_images/iZMEaMQu4v2FPmKxd8DoJYLqeDtBK6KbNKu6pBnG.png', '2025-07-07 22:39:42', '2025-07-07 22:39:42'),
+(28, 17, 'transition_images/3XSJyXHbkYPxc3oShv8g8iTUkh2OdtWFol16V9G5.png', '2025-07-07 22:40:03', '2025-07-07 22:40:03'),
+(29, 19, 'transition_images/X9ALFJaxITrBg9PLjbTK6C3NHUjuPU9yCSXipFlR.jpg', '2025-07-07 22:55:39', '2025-07-07 22:55:39'),
+(30, 21, 'transition_images/xAFPxuRUYsW7kV0ryvenRE73QDRVM8lMMuDnUNTh.jpg', '2025-07-07 23:04:22', '2025-07-07 23:04:22'),
+(31, 22, 'transition_images/LTQGS10ZEoT7XmB6dzHH6Ge4YPNNHleXv56XGTdf.jpg', '2025-07-07 23:06:07', '2025-07-07 23:06:07'),
+(32, 22, 'transition_images/oWQej2tWAPp3Su8d2ijrFXKIJPaT66G9LRKu3XTv.jpg', '2025-07-07 23:06:07', '2025-07-07 23:06:07');
 
 -- --------------------------------------------------------
 
@@ -692,17 +840,19 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `role` varchar(255) NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Test User', 'test@example.com', '2025-06-07 01:32:55', '$2y$12$86dikTZuoQO1uTnrTagf/uAI6nulfzD/nL0rq2xIhDYFcB0dCeen6', 'aRy9i8z4Zp', '2025-06-07 01:32:55', '2025-06-07 01:32:55'),
-(2, 'admin', 'admin@gmail.com', '2025-06-07 01:36:36', '$2y$12$Y83WxVW5AVkWHww5wrNnLODa34Na.KLgccmE3mA2dehNzMNXro4kO', NULL, '2025-06-07 01:35:09', '2025-06-07 01:36:36'),
-(3, 'testing', 'testing@gmail.com', '2025-07-01 21:13:39', '$2y$12$SMfWULNbLhS.MPBwj8E7beKLZYEqY3Y04NFajdcyziZZqeBVAbApi', NULL, '2025-07-01 21:04:26', '2025-07-01 21:13:39');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `role`) VALUES
+(1, 'Test User', 'test@example.com', '2025-06-07 01:32:55', '$2y$12$86dikTZuoQO1uTnrTagf/uAI6nulfzD/nL0rq2xIhDYFcB0dCeen6', 'aRy9i8z4Zp', '2025-06-07 01:32:55', '2025-06-07 01:32:55', 'user'),
+(2, 'admin', 'admin@gmail.com', '2025-06-07 01:36:36', '$2y$12$Y83WxVW5AVkWHww5wrNnLODa34Na.KLgccmE3mA2dehNzMNXro4kO', NULL, '2025-06-07 01:35:09', '2025-06-07 01:36:36', 'counselor'),
+(3, 'testing', 'testing@gmail.com', '2025-07-01 21:13:39', '$2y$12$SMfWULNbLhS.MPBwj8E7beKLZYEqY3Y04NFajdcyziZZqeBVAbApi', NULL, '2025-07-01 21:04:26', '2025-07-01 21:13:39', 'user'),
+(4, 'Athena Maia Casino', 'athena@gmail.com', NULL, '$2y$12$QO58PPn1CccHorv2O7b.juKcQS.uUeQxAW21IIl830bSlO6Cof4VW', NULL, '2025-07-12 02:38:09', '2025-07-12 02:38:09', 'user');
 
 -- --------------------------------------------------------
 
@@ -725,8 +875,7 @@ INSERT INTO `years` (`id`, `year_level`, `created_at`, `updated_at`) VALUES
 (1, '1', '2025-07-01 22:48:49', '2025-07-01 22:48:49'),
 (2, '2', '2025-07-01 22:48:53', '2025-07-01 22:48:53'),
 (3, '3', '2025-07-01 22:48:56', '2025-07-01 22:48:56'),
-(4, '4', '2025-07-01 22:48:59', '2025-07-01 22:48:59'),
-(5, '5', '2025-07-06 06:09:41', '2025-07-06 06:09:41');
+(6, '4', '2025-07-07 20:04:48', '2025-07-07 20:04:48');
 
 --
 -- Indexes for dumped tables
@@ -924,37 +1073,37 @@ ALTER TABLE `years`
 -- AUTO_INCREMENT for table `contracts`
 --
 ALTER TABLE `contracts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `contract_images`
 --
 ALTER TABLE `contract_images`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `contract_types`
 --
 ALTER TABLE `contract_types`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `counselings`
 --
 ALTER TABLE `counselings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `counseling_images`
 --
 ALTER TABLE `counseling_images`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -978,13 +1127,13 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `referrals`
 --
 ALTER TABLE `referrals`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `referral_images`
 --
 ALTER TABLE `referral_images`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `referral_reasons`
@@ -996,61 +1145,61 @@ ALTER TABLE `referral_reasons`
 -- AUTO_INCREMENT for table `school_years`
 --
 ALTER TABLE `school_years`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `sections`
 --
 ALTER TABLE `sections`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `semesters`
 --
 ALTER TABLE `semesters`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `student_profiles`
 --
 ALTER TABLE `student_profiles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `student_semester_enrollments`
 --
 ALTER TABLE `student_semester_enrollments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `student_transition`
 --
 ALTER TABLE `student_transition`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `student_transition_images`
 --
 ALTER TABLE `student_transition_images`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `years`
 --
 ALTER TABLE `years`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables

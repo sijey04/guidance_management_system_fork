@@ -33,7 +33,8 @@ class StudentTransitionController extends Controller
 
     // Sort by date
     $sortOrder = $request->get('sort', 'desc'); // default: latest
-    $query->orderBy('transition_date', $sortOrder);
+    $query->orderBy('created_at', $sortOrder);
+
 
     $transitions = $query->paginate(10)->appends($request->all());
 

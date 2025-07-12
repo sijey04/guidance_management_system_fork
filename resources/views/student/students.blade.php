@@ -36,7 +36,7 @@
             @endif
 
             <!-- Filters -->
-            <form method="GET" action="{{ route('student.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <form method="GET" action="{{ route('student.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700">Filter by Course</label>
                     <select name="filter_course" onchange="this.form.submit()" class="w-full mt-1 rounded-md border-gray-300 text-sm">
@@ -80,6 +80,19 @@
                         <option value="student_id" {{ request('sort') == 'student_id' ? 'selected' : '' }}>Student ID</option>
                         <option value="first_name" {{ request('sort') == 'first_name' ? 'selected' : '' }}>First Name</option>
                         <option value="last_name" {{ request('sort') == 'last_name' ? 'selected' : '' }}>Last Name</option>
+                        
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700">Filter by Transition</label>
+                    <select name="filter_transition" onchange="this.form.submit()" class="w-full mt-1 rounded-md border-gray-300 text-sm">
+                        <option value="">All</option>
+                        <option value="Shifting In" {{ request('filter_transition') == 'Shifting In' ? 'selected' : '' }}>Shifting In</option>
+                        <option value="Shifting Out" {{ request('filter_transition') == 'Shifting Out' ? 'selected' : '' }}>Shifting Out</option>
+                        <option value="Transferring Out" {{ request('filter_transition') == 'Transferring Out' ? 'selected' : '' }}>Transferring Out</option>
+                        <option value="Returning Student" {{ request('filter_transition') == 'Returning Student' ? 'selected' : '' }}>Returning Student</option>
+                        <option value="Dropped" {{ request('filter_transition') == 'Dropped' ? 'selected' : '' }}>Dropped</option>
                     </select>
                 </div>
 
@@ -191,14 +204,31 @@
                                 <td class="px-4 py-3">{{ $student->student_id }}</td>
                                 <td class="px-4 py-3">
                                     {{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffix }}
-                                     {{-- Dropped Tag --}}
-                                    @if($student->transitions()->where('transition_type', 'Dropped')->where('semester_id', $activeSemester->id)->exists())
-                                        <div>
-                                            <span class="bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded-full inline-block">
-                                                Dropped This Semester
+
+                                    @php
+                                        $transition = $student->transitions()
+                                            ->where('semester_id', $activeSemester->id)
+                                            ->latest('transition_date')
+                                            ->first();
+                                    @endphp
+
+                                    @if($transition)
+                                        <div class="mt-1">
+                                            <span class="inline-block text-xs font-medium px-3 py-1 rounded-full
+                                                @switch($transition->transition_type)
+                                                    @case('Shifting In') bg-blue-100 text-blue-800 @break
+                                                    @case('Shifting Out') bg-yellow-100 text-yellow-800 @break
+                                                    @case('Transferring Out') bg-orange-100 text-orange-800 @break
+                                                    @case('Returning Student') bg-green-100 text-green-800 @break
+                                                    @case('Dropped') bg-red-100 text-red-800 @break
+                                                    @default bg-gray-100 text-gray-800
+                                                @endswitch">
+                                                {{ $transition->transition_type }}
                                             </span>
                                         </div>
                                     @endif
+
+                                    
                                 </td>
                                 @php
                                     $profile = $activeSemester 

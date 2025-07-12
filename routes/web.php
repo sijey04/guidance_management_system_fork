@@ -125,6 +125,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/transitions/{transition}', [StudentTransitionController::class, 'show'])->name('transitions.show');
 Route::get('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('report.exportExcel');
 
+Route::resource('users', \App\Http\Controllers\UserController::class)->middleware('auth');
+
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('contracts', ContractController::class)->only(['index', 'show']);
+    Route::resource('school-years', SchoolYearController::class)->only(['index', 'show']);
+    Route::resource('semesters', SemesterController::class)->only(['index', 'show']);
 });
 
 // Static pages
@@ -142,5 +150,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
 
 require __DIR__.'/auth.php';
