@@ -131,8 +131,11 @@
                                         <option value="contract_date" {{ request('sort_by') == 'contract_date' ? 'selected' : '' }}>Contract Date</option>
                                         <option value="status" {{ request('sort_by') == 'status' ? 'selected' : '' }}>Status</option>
                                         <option value="total_days" {{ request('sort_by') == 'total_days' ? 'selected' : '' }}>Total Days</option>
+                                        <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Newest First</option>
+                                        <option value="asc" {{ request('sort') === 'asc' ? 'selected' : '' }}>Oldest First</option>
                                     </select>
                                 </div>
+                               
 
                                 <!-- Search -->
                                 <div class="md:w-64 w-full">
@@ -147,16 +150,20 @@
 
                             <!-- Action Buttons -->
                             <div class="flex flex-col sm:flex-row gap-2 lg:flex-shrink-0">
-                                <div x-data="{ openCreateContractModal: {{ $errors->any() ? 'true' : 'false' }} }">
-                                    <button @click="openCreateContractModal = true"
-                                        class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition shadow-sm hover:shadow-md flex items-center gap-2 w-full sm:w-auto justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                        </svg>
-                                        Create Contract
-                                    </button>
-                                    @include('contracts.createContract')
-                                </div>
+                                @auth
+                                    @if(auth()->user()->isCounselor())
+                                        <div x-data="{ openCreateContractModal: {{ $errors->any() ? 'true' : 'false' }} }">
+                                            <button @click="openCreateContractModal = true"
+                                                class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition shadow-sm hover:shadow-md flex items-center gap-2 w-full sm:w-auto justify-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                </svg>
+                                                Create Contract
+                                            </button>
+                                            @include('contracts.createContract')
+                                        </div>
+                                    @endif
+                                @endauth
 
                                 <a href="{{ route('contract-types.index') }}"
                                    class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition shadow-sm hover:shadow-md flex items-center gap-2 w-full sm:w-auto justify-center">

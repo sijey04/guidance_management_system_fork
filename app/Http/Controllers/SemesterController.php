@@ -10,6 +10,7 @@ use App\Models\Student;
 use App\Models\StudentProfile;
 use App\Models\StudentTransition;
 use App\Models\StudentTransitionImage;
+use App\Models\User;
 use App\Models\Year;
 use Illuminate\Http\Request;
  use Illuminate\Pagination\LengthAwarePaginator;
@@ -22,13 +23,13 @@ class SemesterController extends Controller
         $schoolYears = SchoolYear::with('semesters')->orderByDesc('is_active')->orderByDesc('id')->get();
         $activeSchoolYear = SchoolYear::where('is_active', true)->with('semesters')->first();
         $activeSemester = Semester::where('is_current', true)->first();
-
+$users = User::all();
         // Check if students already validated in this active semester
         $hasStudents = $activeSemester 
             ? StudentProfile::where('semester_id', $activeSemester->id)->exists() 
             : false;
 
-        return view('semester.index', compact('schoolYears', 'activeSchoolYear', 'activeSemester', 'hasStudents'));
+        return view('semester.index', compact('schoolYears', 'activeSchoolYear', 'activeSemester', 'hasStudents', 'users'));
     }
 
     public function store(Request $request)

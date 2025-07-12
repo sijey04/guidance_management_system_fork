@@ -60,6 +60,13 @@ class StudentController extends Controller
             });
         }
 
+         if ($request->filled('filter_transition')) {
+            $query->whereHas('transitions', function ($query) use ($request, $activeSemester) {
+                $query->where('semester_id', optional($activeSemester)->id)
+                    ->where('transition_type', $request->filter_transition);
+            });
+        }
+
         if ($request->filled('sort')) {
             $sort = $request->sort;
             $direction = $request->input('direction', 'asc');
@@ -67,7 +74,8 @@ class StudentController extends Controller
                 $query->orderBy($sort, $direction);
             }
         }
-        
+     //    $sortOrder = $request->get('sort', 'desc'); // default: latest
+     //   $query->orderBy('created_at', $sortOrder);
 
         $students = $query->with('profiles')->paginate(10);
     }

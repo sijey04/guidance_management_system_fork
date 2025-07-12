@@ -61,6 +61,8 @@ class ContractController extends Controller
     }
 
     
+
+    
     $contracts = $query->paginate(10)->appends($request->query());
 
     $semesters = Semester::with('schoolYear')->get();
