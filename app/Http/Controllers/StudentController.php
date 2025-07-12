@@ -67,6 +67,7 @@ class StudentController extends Controller
                 $query->orderBy($sort, $direction);
             }
         }
+        
 
         $students = $query->with('profiles')->paginate(10);
     }

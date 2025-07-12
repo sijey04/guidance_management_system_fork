@@ -269,6 +269,12 @@
                                                 Dropped (Previous Sem)
                                             </div>
                                         @endif
+                                        @if ($student->currentOutTransition)
+                                            <span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full">
+                                                {{ $student->currentOutTransition->transition_type }}
+                                            </span>
+                                        @endif
+
                                     </td>
 
 
@@ -341,7 +347,8 @@
                                                     <!-- Modal Container -->
                                                     <div class="flex min-h-full items-center justify-center p-4 relative"
                                                          style="z-index: 10000;">
-                                                        <div x-transition:enter="transition ease-out duration-300"
+                                                        <div x-data="{ transitionType: '' }"
+                                                        x-transition:enter="transition ease-out duration-300"
                                                              x-transition:enter-start="opacity-0 scale-95"
                                                              x-transition:enter-end="opacity-100 scale-100"
                                                              x-transition:leave="transition ease-in duration-200"
@@ -376,7 +383,8 @@
                                                                     <label class="block text-sm font-medium text-gray-700">
                                                                         Transition Type
                                                                     </label>
-                                                                    <select name="transitions[{{ $id }}][transition_type]" 
+                                                                    <select name="transitions[{{ $id }}][transition_type]"
+                                                                            x-model="transitionType"
                                                                             class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors">
                                                                         <option value="">No transition</option>
                                                                         <option value="Shifting In">Shifting In</option>
@@ -385,6 +393,42 @@
                                                                         <option value="Dropped">Dropped</option>
                                                                         <option value="Returning Student">Returning Student</option>
                                                                     </select>
+
+                                                                </div>
+
+                                                                <div x-show="transitionType === 'Shifting In'" x-cloak class="space-y-4">
+                                                                    <!-- Course Dropdown -->
+                                                                    <div>
+                                                                        <label class="block text-sm font-medium text-gray-700">New Course</label>
+                                                                        <select x-ref="newCourse" name="transitions[{{ $id }}][new_course]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
+                                                                            <option value="">Select Course</option>
+                                                                            @foreach($courses as $course)
+                                                                                <option value="{{ $course->course }}">{{ $course->course }}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <!-- Year Level Dropdown -->
+                                                                    <div>
+                                                                        <label class="block text-sm font-medium text-gray-700">New Year Level</label>
+                                                                        <select x-ref="newYear" name="transitions[{{ $id }}][new_year_level]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
+                                                                            <option value="">Select Year Level</option>
+                                                                            @foreach($years as $year)
+                                                                                <option value="{{ $year->year_level }}">{{ $year->year_level }}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <!-- Section Dropdown -->
+                                                                    <div>
+                                                                        <label class="block text-sm font-medium text-gray-700">New Section</label>
+                                                                        <select x-ref="newSection" name="transitions[{{ $id }}][new_section]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
+                                                                            <option value="">Select Section</option>
+                                                                            @foreach($sections as $section)
+                                                                                <option value="{{ $section->section }}">{{ $section->section }}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
                                                                 </div>
 
                                                                 <!-- Remarks -->
@@ -473,10 +517,19 @@
                                                                             class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
                                                                         Cancel
                                                                     </button>
-                                                                    <button type="submit" 
-                                                                            class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
-                                                                        Save Transition
-                                                                    </button>
+                                                                    <button type="button"
+        @click="
+            if (transitionType === 'Shifting In') {
+                studentData['{{ $id }}'].course = $refs.newCourse.value;
+                studentData['{{ $id }}'].year_level = $refs.newYear.value;
+                studentData['{{ $id }}'].section = $refs.newSection.value;
+            }
+            openModal{{ $id }} = false
+        "
+        class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">
+    Save Transition
+</button>
+
                                                                 </div>
                                                             </div>
                                                         </div>

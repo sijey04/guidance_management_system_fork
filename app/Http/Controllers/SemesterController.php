@@ -318,22 +318,22 @@ public function processValidateStudents(Request $request, $semesterId)
                     'remark' => $transition['remark'] ?? null,
                 ]);
 
-// Attach images only if the transition is newly created (not existing)
-if ($transitionIn->wasRecentlyCreated && $request->hasFile("transition_images.$studentId")) {
-    foreach ($request->file("transition_images.$studentId") as $file) {
-        $path = $file->store('transition_images', 'public');
-        StudentTransitionImage::create([
-            'student_transition_id' => $transitionIn->id,
-            'image_path' => $path,
-        ]);
-    }
-}
+                // Attach images only if the transition is newly created (not existing)
+                if ($transitionIn->wasRecentlyCreated && $request->hasFile("transition_images.$studentId")) {
+                    foreach ($request->file("transition_images.$studentId") as $file) {
+                        $path = $file->store('transition_images', 'public');
+                        StudentTransitionImage::create([
+                            'student_transition_id' => $transitionIn->id,
+                            'image_path' => $path,
+                        ]);
+                    }
+                }
 
 
                     // Skip creating profile for students going out
-                    if (in_array($type, ['Shifting Out', 'Transferring Out'])) {
-                        continue;
-                    }
+                   // if (in_array($type, ['Shifting Out', 'Transferring Out'])) {
+                   //    continue;
+                   // }
                 }
             }
         }

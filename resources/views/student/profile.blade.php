@@ -181,11 +181,26 @@
                         </div>
                     </div>
 
-                    {{-- Dropped Tag --}}
-                    @if($student->transitions()->where('transition_type', 'Dropped')->where('semester_id', $activeSemester->id)->exists())
-                        <div>
-                            <span class="bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full inline-block">
-                                Dropped This Semester
+
+                    @php
+                        $transition = $student->transitions()
+                            ->where('semester_id', $activeSemester->id)
+                            ->latest('transition_date')
+                            ->first();
+                    @endphp
+
+                    @if($transition)
+                        <div class="mt-1">
+                            <span class="inline-block text-base font-medium px-3 py-1 rounded-full
+                                @switch($transition->transition_type)
+                                    @case('Shifting In') bg-blue-100 text-blue-800 @break
+                                    @case('Shifting Out') bg-yellow-100 text-yellow-800 @break
+                                    @case('Transferring Out') bg-orange-100 text-orange-800 @break
+                                    @case('Returning Student') bg-green-100 text-green-800 @break
+                                    @case('Dropped') bg-red-100 text-red-800 @break
+                                    @default bg-gray-100 text-gray-800
+                                @endswitch">
+                                {{ $transition->transition_type }}
                             </span>
                         </div>
                     @endif
