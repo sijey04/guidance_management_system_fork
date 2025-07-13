@@ -200,7 +200,17 @@
                                     @case('Dropped') bg-red-100 text-red-800 @break
                                     @default bg-gray-100 text-gray-800
                                 @endswitch">
-                                {{ $transition->transition_type }}
+                                <div class="flex items-center gap-5">
+                                    {{ $transition->transition_type }}
+                                    <a href="{{ route('transitions.show', ['transition' => $transition->id, 'source' => 'student']) }}" 
+                                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 rounded-t-md">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        View Details
+                                    </a>
+                                </div>
                             </span>
                         </div>
                     @endif
