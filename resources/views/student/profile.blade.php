@@ -258,9 +258,9 @@
                             <x-student-info label="Father's Occupation" :value="$student->father_occupation ?? 'N/A'" />
                             <x-student-info label="Mother's Name" :value="$student->mothers_name ?? 'N/A'" />
                             <x-student-info label="Mother's Occupation" :value="$student->mother_occupation ?? 'N/A'" />
-                            <x-student-info label="No. of Sisters" :value="$student->number_of_sisters ?? '0'" />
+                            {{-- <x-student-info label="No. of Sisters" :value="$student->number_of_sisters ?? '0'" />
                             <x-student-info label="No. of Brothers" :value="$student->number_of_brothers ?? '0'" />
-                            <x-student-info label="Ordinal Position" :value="$student->ordinal_position ?? 'N/A'" />
+                            <x-student-info label="Ordinal Position" :value="$student->ordinal_position ?? 'N/A'" /> --}}
                         </div>
                     </section>
 
