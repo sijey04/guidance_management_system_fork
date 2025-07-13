@@ -55,7 +55,7 @@
         }
     </style>
 
-    <div class="" x-data="{ tab: 'academic' }">
+   <div class="" x-data="{ tab: '{{ session('tab', 'academic') }}' }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ openSemesterModal: false, openSchoolYearModal: false }">
             <div class="bg-white rounded-lg shadow-lg p-6 space-y-6">
 
@@ -229,7 +229,7 @@
             <div x-show="tab === 'accounts'" x-cloak>
                <div class="space-y-4">
     <h2 class="text-xl font-bold text-gray-700">User Account Management</h2>
-    <p class="text-sm text-gray-500">Counselors can create users here. These users will not be allowed to manage contracts or academic setup.</p>
+    <p class="text-sm text-gray-500">Counselors can create admins or sub admins here. These sub admins will not be allowed to manage contracts or academic setup.</p>
 
     <div x-data="{ tab: 'academic', openSemesterModal: false, openSchoolYearModal: false, openCreateUserModal: false }">
  <button @click="openCreateUserModal = true"
@@ -265,7 +265,14 @@
                 <input type="password" name="password_confirmation" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
             </div>
 
-            <input type="hidden" name="role" value="user">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Role</label>
+                <select name="role" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    <option value="admin">Admin</option>
+                    <option value="sub_admin">Sub Admin</option>
+                </select>
+            </div>
+
 
             <div class="flex justify-end space-x-2 mt-6">
                 <button type="button" @click="openCreateUserModal = false"
@@ -302,14 +309,14 @@
                         <td class="p-3">{{ $user->email }}</td>
                         <td class="p-3">{{ ucfirst($user->role) }}</td>
                         <td class="p-3">{{ $user->created_at->format('M d, Y') }}</td>
-                        {{-- <td class="p-3 space-x-2">
-                            <a href="{{ route('users.edit', $user->id) }}" class="text-blue-600 hover:underline text-sm">Edit</a>
-                            <form method="POST" action="{{ route('users.destroy', $user->id) }}" class="inline">
+                       <td class="p-3 space-x-2">
+                            <form method="POST" action="{{ route('users.destroy', $user->id) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:underline text-sm">Delete</button>
                             </form>
-                        </td> --}}
+                        </td>
+
                     </tr>
                 @endforeach
             </tbody>

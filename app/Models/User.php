@@ -51,7 +51,7 @@ class User extends Authenticatable
 
     public function isCounselor()
 {
-    return $this->role === 'counselor';
+    return $this->role === 'admin';
 }
 
 }

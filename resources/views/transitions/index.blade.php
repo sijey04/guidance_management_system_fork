@@ -107,7 +107,7 @@
                     </form>
 
                     <!-- Action Button -->
-                    <div x-data="{ openModal: {{ $errors->any() ? 'true' : 'false' }} }">
+                    {{-- <div x-data="{ openModal: {{ $errors->any() ? 'true' : 'false' }} }">
                         <button @click="openModal = true"
                                 class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition shadow-sm hover:shadow-md flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -116,7 +116,7 @@
                             Add Transition
                         </button>
                         @include('transitions.create')
-                    </div>
+                    </div> --}}
                 </div>
 
                 <!-- Transitions Table -->
