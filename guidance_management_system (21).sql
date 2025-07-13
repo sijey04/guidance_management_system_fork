@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 12, 2025 at 03:24 PM
+-- Generation Time: Jul 13, 2025 at 04:46 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -549,7 +549,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('N2MwdxeUNDy70YvXIlQekqaor6uKaG7r9yRLgqR6', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoib00wQVB5VjB5cTIzRm9sNzNIYmY5RVBFeGxBalBpWThUQ0w1YlA4WCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9zZW1lc3RlciI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjI7fQ==', 1752326616);
+('qYs9xpGHdf1wv613aPqn2nACegG5ulw8aV25xXuL', 6, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiZlAwbGVXSjFqc2FCaGdkNEZ0ZnJxeXNraWx5SGh6VHdNcXRWeExnciI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9jb250cmFjdHMiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo2O30=', 1752417912);
 
 -- --------------------------------------------------------
 
@@ -841,7 +841,7 @@ CREATE TABLE `users` (
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `role` varchar(255) NOT NULL DEFAULT 'user'
+  `role` varchar(255) NOT NULL DEFAULT 'sub_admin'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -849,10 +849,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `role`) VALUES
-(1, 'Test User', 'test@example.com', '2025-06-07 01:32:55', '$2y$12$86dikTZuoQO1uTnrTagf/uAI6nulfzD/nL0rq2xIhDYFcB0dCeen6', 'aRy9i8z4Zp', '2025-06-07 01:32:55', '2025-06-07 01:32:55', 'user'),
-(2, 'admin', 'admin@gmail.com', '2025-06-07 01:36:36', '$2y$12$Y83WxVW5AVkWHww5wrNnLODa34Na.KLgccmE3mA2dehNzMNXro4kO', NULL, '2025-06-07 01:35:09', '2025-06-07 01:36:36', 'counselor'),
-(3, 'testing', 'testing@gmail.com', '2025-07-01 21:13:39', '$2y$12$SMfWULNbLhS.MPBwj8E7beKLZYEqY3Y04NFajdcyziZZqeBVAbApi', NULL, '2025-07-01 21:04:26', '2025-07-01 21:13:39', 'user'),
-(4, 'Athena Maia Casino', 'athena@gmail.com', NULL, '$2y$12$QO58PPn1CccHorv2O7b.juKcQS.uUeQxAW21IIl830bSlO6Cof4VW', NULL, '2025-07-12 02:38:09', '2025-07-12 02:38:09', 'user');
+(2, 'Main Admin', 'admin@gmail.com', '2025-06-07 01:36:36', '$2y$12$Y83WxVW5AVkWHww5wrNnLODa34Na.KLgccmE3mA2dehNzMNXro4kO', NULL, '2025-06-07 01:35:09', '2025-07-13 06:44:07', 'admin'),
+(6, 'Rahema Usama', 'rahema@gmail.com', NULL, '$2y$12$6vMKX3tWmoYX6CFVb.QwW.S1OlU/bRrB49Eqn2JncRmm6L6Z5xZDG', NULL, '2025-07-13 06:28:09', '2025-07-13 06:28:09', 'sub_admin'),
+(7, 'Marjorie Rojas', 'marjorie@gmail.com', NULL, '$2y$12$19.z368x2WA3aVHxiGWebea6a4Elhz4kkhoK.6cQuMXdrfWyW5OJu', NULL, '2025-07-13 06:32:49', '2025-07-13 06:32:49', 'admin'),
+(8, 'Athena Maia', 'athena@gmail.com', NULL, '$2y$12$AagK5su71OVhfZAx6Oz6H.f6cI0NMSgMrgJUFgLCix6EsNMOoSplK', NULL, '2025-07-13 06:42:11', '2025-07-13 06:42:11', 'sub_admin');
 
 -- --------------------------------------------------------
 
@@ -1193,7 +1193,7 @@ ALTER TABLE `student_transition_images`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `years`
