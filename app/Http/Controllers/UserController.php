@@ -10,7 +10,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::where('role', 'user')->get();
+        // Show only Sub Admins
+        $users = User::where('role', 'sub_admin')->get();
         return view('users.index', compact('users'));
     }
 
@@ -20,26 +21,34 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|confirmed|min:6',
-            'role' => 'in:user,counselor',
+            'role' => 'in:sub_admin,admin', // updated validation
         ]);
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $request->role ?? 'user',
+            'role' => $request->role ?? 'sub_admin', // default to sub_admin
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->back()->with('success', 'User account created successfully.');
+       return redirect()->route('semester.index')->with([
+    'success' => 'User account created successfully.',
+    'tab' => 'accounts'
+]);
+
     }
 
     public function destroy(User $user)
     {
-        if ($user->role === 'counselor') {
-            return back()->with('error', 'You cannot delete a counselor.');
+        // Prevent deleting Admins
+        if ($user->role === 'admin') {
+            return back()->with('error', 'You cannot delete an admin.');
         }
 
         $user->delete();
-        return redirect()->back()->with('success', 'User deleted.');
+        return redirect()->route('semester.index')->with([
+    'success' => 'User deleted.',
+    'tab' => 'accounts'
+]);
     }
 }
