@@ -8,6 +8,7 @@ railway variables set APP_ENV="production"
 railway variables set APP_KEY="base64:Dyc9UPHkyv844Lr3d+KpnUN8+ZY1VIDyy1ln8qEaM8w="
 railway variables set APP_DEBUG="false"
 railway variables set APP_URL="https://guidancemanagementsystem-production.up.railway.app/"
+railway variables set ASSET_URL="https://guidancemanagementsystem-production.up.railway.app/"
 
 REM Database Configuration (Railway MySQL)
 railway variables set DB_CONNECTION="mysql"
