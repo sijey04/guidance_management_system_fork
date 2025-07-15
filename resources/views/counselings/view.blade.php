@@ -85,7 +85,7 @@
                     <div class="bg-gray-100 p-3 rounded shadow-sm">
                         <span class="text-sm text-gray-500 font-medium">Student Name</span><br>
                         <span class="text-lg font-bold text-red-700">
-                            {{ $counseling->student->first_name }} {{ $counseling->student->last_name }}
+                           {{ $counseling->student->last_name }}, {{ $counseling->student->first_name }} {{ $counseling->student->middle_name }}. {{ $counseling->student->suffix }}
                         </span>
                     </div>
                     <x-student-info label="Counseling Date" :value="\Carbon\Carbon::parse($counseling->counseling_date)->format('F j, Y')" />

@@ -46,7 +46,7 @@
                 <div class="flex flex-col gap-3">
                     <div class="flex flex-col bg-gray-100 dark:bg-gray-800 p-3 rounded shadow-sm">
                         <span class="text-sm text-gray-500 dark:text-gray-300 font-medium">Student Name</span>
-                        <span class="text-lg font-bold text-red-700">{{ $referral->student->first_name }} {{ $referral->student->last_name }}</span>
+                        <span class="text-lg font-bold text-red-700">{{ $referral->student->last_name }}, {{ $referral->student->first_name }} {{ $referral->student->middle_name }}. {{ $referral->student->suffix }}</span>
                     </div>
                     <x-student-info label="Reason" :value="$referral->reason" />
                 </div>

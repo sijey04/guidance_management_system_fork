@@ -85,7 +85,7 @@
                     <div class="flex flex-col bg-gray-100 p-3 rounded shadow-sm">
                         <span class="text-sm text-gray-500 font-medium">Student Name</span>
                         <span class="text-lg font-bold text-red-700">
-                            {{ $contract->student->first_name }} {{ $contract->student->last_name }}
+                            {{ $contract->student->last_name }},{{ $contract->student->first_name }} {{ $contract->student->middle_name }}. {{ $contract->student->suffix }}
                         </span>
                     </div>
                     <x-student-info label="Status" :value="$contract->status" />

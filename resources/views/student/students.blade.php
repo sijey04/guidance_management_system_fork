@@ -204,8 +204,7 @@
                             <tr class="hover:bg-[#fdf4f4]">
                                 <td class="px-4 py-3">{{ $student->student_id }}</td>
                                 <td class="px-4 py-3">
-                                    {{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffix }}
-
+                                    {{ $student->last_name }},  {{ $student->first_name }} {{ $student->middle_name }}.  {{ $student->suffix }}
                                     @php
                                         $transition = $student->transitions()
                                             ->where('semester_id', $activeSemester->id)

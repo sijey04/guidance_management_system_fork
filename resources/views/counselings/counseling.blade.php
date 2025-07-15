@@ -194,7 +194,7 @@
                                     @endphp
                                     <tr class="table-row-hover">
                                         <td class="px-4 py-3 font-medium text-gray-800">{{ $counseling->student->student_id }}</td>
-                                        <td class="px-4 py-3">{{ $counseling->student->first_name }} {{ $counseling->student->last_name }}</td>
+                                        <td class="px-4 py-3">{{ $counseling->student->last_name }}, {{ $counseling->student->first_name }} {{ $counseling->student->middle_name }}. {{ $counseling->student->suffix }}</td>
                                         <td class="px-4 py-3">{{ $profile?->course ?? 'N/A' }}</td>
                                         <td class="px-4 py-3">{{ $profile?->year_level ?? 'N/A' }}</td>
                                         <td class="px-4 py-3">{{ $profile?->section ?? 'N/A' }}</td>

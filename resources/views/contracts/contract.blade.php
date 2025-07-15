@@ -226,7 +226,7 @@
                                         <td class="px-4 py-3">{{ $contract->semester->schoolYear->school_year ?? 'N/A' }}</td>
                                         <td class="px-4 py-3">{{ $contract->semester->semester ?? 'N/A' }}</td>
                                         <td class="px-4 py-3 font-medium">{{ $contract->student->student_id }}</td>
-                                        <td class="px-4 py-3">{{ $contract->student->first_name }} {{ $contract->student->last_name }}</td>
+                                        <td class="px-4 py-3">{{ $contract->student->last_name }},{{ $contract->student->first_name }} {{ $contract->student->middle_name }}. {{ $contract->student->suffix }}</td>
                                         <td class="px-4 py-3">
                                             <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800 font-medium">
                                                 {{ $contract->contract_type ?? 'N/A' }}

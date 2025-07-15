@@ -230,7 +230,7 @@
                                         </td>
                                         <td class="p-3 px-5">
                                             <div class="font-medium">
-                                                {{ $student->first_name }} {{ $student->last_name }}
+                                                 {{ $student->last_name }},  {{ $student->first_name }} {{ $student->middle_name }}.  {{ $student->suffix }}
                                                <div class="text-xs text-gray-500">ID: {{ $student->student_id }}</div>
                                                  {{-- @if($student->latestTransition && $student->latestTransition->transition_type !== 'None')
                                                     <span class="ml-2 text-xs text-red-700 bg-red-100 px-1 py-1 rounded-full">

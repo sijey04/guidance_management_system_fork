@@ -370,7 +370,7 @@
                                     @forelse ($students as $profile)
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-4 py-3">{{ $profile->student->student_id }}</td>
-                                            <td class="px-4 py-3 font-medium">{{ $profile->student->first_name }} {{ $profile->student->last_name }}</td>
+                                            <td class="px-4 py-3 font-medium"> {{ $profile->student->last_name }}, {{ $profile->student->first_name }} {{ $profile->student->middle_name }}. {{ $profile->student->suffix }}</td>
                                             <td class="px-4 py-3">{{ $profile->course }}</td>
                                             <td class="px-4 py-3">{{ $profile->year_level }} {{ $profile->section }}</td>
                                             <td class="px-4 py-3 text-center">

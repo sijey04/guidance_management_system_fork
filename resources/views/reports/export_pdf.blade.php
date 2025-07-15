@@ -142,7 +142,7 @@
                 @foreach($students as $profile)
                     <tr>
                         <td>{{ $profile->student->student_id }}</td>
-                        <td>{{ $profile->student->first_name }} {{ $profile->student->last_name }}</td>
+                        <td>  {{ $profile->student->last_name }}, {{ $profile->student->first_name }} {{ $profile->student->middle_name }}.  {{ $profile->student->suffix }}</td>
                         <td>{{ $profile->course }}</td>
                         <td>{{ $profile->year_level }} {{ $profile->section }}</td>
                         <td>{{ $contractCounts[$profile->student_id] ?? 0 }}</td>
