@@ -142,7 +142,21 @@
                 @foreach($students as $profile)
                     <tr>
                         <td>{{ $profile->student->student_id }}</td>
-                        <td>{{ $profile->student->first_name }} {{ $profile->student->last_name }}</td>
+                       @php
+                            $transition = $transitions->first(function ($t) use ($profile) {
+                                return $t->student_id === $profile->student_id && $t->semester_id === $profile->semester_id;
+                            });
+                        @endphp
+
+                        <td class="flex gap-5 items-center">
+                            {{ $profile->student->last_name }}, {{ $profile->student->first_name }} {{ $profile->student->middle_name }} {{ $profile->student->suffix }}
+
+                            @if ($transition)
+                                <span style="display:inline-block; background-color:#ede9fe; color:#5b21b6; font-size:10px; font-weight:600; padding:2px 6px; border-radius:12px; margin-left:5px;">
+                                    {{ $transition->transition_type }}
+                                </span>
+                            @endif
+                        </td>
                         <td>{{ $profile->course }}</td>
                         <td>{{ $profile->year_level }} {{ $profile->section }}</td>
                         <td>{{ $contractCounts[$profile->student_id] ?? 0 }}</td>

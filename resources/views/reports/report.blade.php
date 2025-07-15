@@ -370,7 +370,23 @@
                                     @forelse ($students as $profile)
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-4 py-3">{{ $profile->student->student_id }}</td>
-                                            <td class="px-4 py-3 font-medium">{{ $profile->student->first_name }} {{ $profile->student->last_name }}</td>
+                                            <td class="px-4 py-3 font-medium">
+                                            {{ $profile->student->last_name }}, {{ $profile->student->first_name }} {{ $profile->student->middle_name }} {{ $profile->student->suffix }}
+
+                                            @php
+                                                $transition = $transitions->first(function ($t) use ($profile) {
+                                                    return $t->student_id === $profile->student_id &&
+                                                        $t->semester_id === $profile->semester_id;
+                                                });
+                                            @endphp
+
+                                            @if ($transition)
+                                                <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">
+                                                    {{ $transition->transition_type }}
+                                                </span>
+                                            @endif
+                                        </td>
+
                                             <td class="px-4 py-3">{{ $profile->course }}</td>
                                             <td class="px-4 py-3">{{ $profile->year_level }} {{ $profile->section }}</td>
                                             <td class="px-4 py-3 text-center">

@@ -35,7 +35,7 @@
                     {{-- Header --}}
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <h1 class="text-2xl font-extrabold text-[#a82323]">
-                            {{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffix }}
+                          {{ $student->last_name }},  {{ $student->first_name }} {{ $student->middle_name }}.  {{ $student->suffix }}
                         </h1>
 
                         {{-- Action Buttons --}}

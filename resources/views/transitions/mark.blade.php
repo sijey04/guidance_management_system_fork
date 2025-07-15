@@ -9,7 +9,7 @@
             <!-- ✅ Make sure this is passed correctly -->
             <input type="hidden" name="student_id" value="{{ $student->id }}">
 
-            <h2 class="text-lg font-semibold text-gray-800">Mark Student as Transitioned</h2>
+            <h2 class="text-lg font-semibold text-gray-800">Update Student Admission</h2>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700">Transition Type</label>

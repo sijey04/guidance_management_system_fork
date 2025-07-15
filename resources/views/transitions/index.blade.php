@@ -137,7 +137,7 @@
                                 <tr class="table-row-hover">
                                     <td class="px-4 py-3">{{ $transition->semester->schoolYear->school_year ?? 'N/A' }}</td>
                                     <td class="px-4 py-3">{{ $transition->semester->semester ?? 'N/A' }} Sem</td>
-                                    <td class="px-4 py-3 font-medium text-gray-800">{{ $transition->last_name }}, {{ $transition->first_name }}</td>
+                                    <td class="px-4 py-3 font-medium text-gray-800">{{ $transition->last_name }}, {{ $transition->first_name }}{{ $transition->middle_name }}. {{ $transition->suffix }}</td>
                                     <td class="px-4 py-3">
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $transition->transition_type === 'Transfer' ? 'bg-blue-100 text-blue-800' : ($transition->transition_type === 'Drop' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800') }}">
                                             {{ $transition->transition_type }}
