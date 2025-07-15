@@ -54,12 +54,22 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # Set proper permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Create a start script
+# Create a start script that waits for database and handles environment properly
 RUN echo '#!/bin/bash\n\
-php artisan config:cache\n\
-php artisan route:cache\n\
-php artisan view:cache\n\
-php artisan migrate --force\n\
+echo "Starting Laravel application..."\n\
+echo "Waiting for database connection..."\n\
+until php artisan tinker --execute="try { DB::connection()->getPdo(); echo \"Database connected\"; } catch (Exception \$e) { echo \"Database not ready: \" . \$e->getMessage(); exit(1); }" 2>/dev/null; do\n\
+  echo "Waiting for database..."\n\
+  sleep 2\n\
+done\n\
+echo "Database is ready!"\n\
+echo "Running Laravel optimizations..."\n\
+php artisan config:cache --quiet\n\
+php artisan route:cache --quiet\n\
+php artisan view:cache --quiet\n\
+echo "Running database migrations..."\n\
+php artisan migrate --force --no-interaction\n\
+echo "Laravel application ready!"\n\
 apache2-foreground' > /var/www/html/start.sh
 
 RUN chmod +x /var/www/html/start.sh
