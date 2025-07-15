@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 13, 2025 at 04:46 PM
+-- Generation Time: Jul 15, 2025 at 08:52 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -169,7 +169,7 @@ CREATE TABLE `counselings` (
 INSERT INTO `counselings` (`id`, `student_id`, `semester_id`, `counseling_date`, `status`, `image_path`, `created_at`, `updated_at`, `remarks`) VALUES
 (1, 2, 1, '2025-07-02', 'In Progress', NULL, '2025-07-06 07:16:00', '2025-07-06 07:16:00', 'jnkcndn'),
 (2, 10, 3, '2025-07-02', 'In Progress', NULL, '2025-07-07 20:18:38', '2025-07-07 20:18:38', 'dkocd;'),
-(3, 1, 3, '2025-07-08', 'In Progress', NULL, '2025-07-07 22:25:24', '2025-07-07 22:25:24', 'cxkm'),
+(3, 1, 3, '2025-07-08', 'Completed', NULL, '2025-07-07 22:25:24', '2025-07-13 06:51:38', 'cxkm'),
 (5, 7, 3, '2025-07-02', 'In Progress', NULL, '2025-07-07 22:29:46', '2025-07-07 22:29:46', NULL);
 
 -- --------------------------------------------------------
@@ -549,7 +549,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('qYs9xpGHdf1wv613aPqn2nACegG5ulw8aV25xXuL', 6, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiZlAwbGVXSjFqc2FCaGdkNEZ0ZnJxeXNraWx5SGh6VHdNcXRWeExnciI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9jb250cmFjdHMiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo2O30=', 1752417912);
+('nVBcYPn6KdsbcfexgVLV4VqRAyei9dbbuwQkkid7', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiRHc4WVhYRGFjcWY4eFVpZGptcnAyWnZGYXJDaTE1UkYyd1hHbmd5OSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MTEyOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvc3R1ZGVudD9maWx0ZXJfY291cnNlPSZmaWx0ZXJfc2VjdGlvbj0mZmlsdGVyX3RyYW5zaXRpb249JmZpbHRlcl95ZWFyX2xldmVsPSZzZWFyY2g9JnNvcnQ9Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mjt9', 1752562275);
 
 -- --------------------------------------------------------
 
@@ -680,7 +680,12 @@ INSERT INTO `student_profiles` (`id`, `student_id`, `semester_id`, `course`, `se
 (35, 9, 5, 'Associate in Computer Technology', 'C', '2025-07-11 23:54:18', '2025-07-11 23:54:18', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
 (36, 6, 5, 'Associate in Computer Technology', 'B', '2025-07-12 03:15:53', '2025-07-12 03:15:53', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
 (37, 7, 5, 'Associate in Computer Technology', 'A', '2025-07-12 03:16:40', '2025-07-12 03:16:40', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
-(38, 19, 5, 'BS Information Technology', 'B', '2025-07-12 03:17:46', '2025-07-12 03:17:46', 'dvjmdm', NULL, NULL, 'chschhcds', '00904838947', NULL, NULL, NULL, NULL, NULL, '1', NULL);
+(38, 19, 5, 'BS Information Technology', 'B', '2025-07-12 03:17:46', '2025-07-12 03:17:46', 'dvjmdm', NULL, NULL, 'chschhcds', '00904838947', NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(39, 8, 5, 'BS Information Technology', 'B', '2025-07-13 07:34:43', '2025-07-13 07:34:43', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2', NULL),
+(40, 15, 5, 'BS Information Technology', 'B', '2025-07-13 22:01:34', '2025-07-13 22:01:34', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(41, 13, 5, 'BS Computer Science', 'A', '2025-07-13 22:39:01', '2025-07-13 22:39:01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(42, 1, 5, 'BS Information Technology', 'B', '2025-07-13 22:51:08', '2025-07-13 22:51:08', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '3', NULL),
+(43, 10, 5, 'BS Computer Science', 'B', '2025-07-14 22:39:28', '2025-07-14 22:39:28', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '4', NULL);
 
 -- --------------------------------------------------------
 
@@ -727,7 +732,7 @@ CREATE TABLE `student_transition` (
   `last_name` varchar(255) NOT NULL,
   `first_name` varchar(255) NOT NULL,
   `middle_name` varchar(255) DEFAULT NULL,
-  `transition_type` enum('None','Shifting In','Shifting Out','Transferring In','Transferring Out','Dropped','Returning Student') NOT NULL,
+  `transition_type` enum('None','Shifting In','Shifting Out','Transferring In','Transferring Out','Dropped','Returning Student','Graduated') NOT NULL,
   `from_program` varchar(255) DEFAULT NULL,
   `to_program` varchar(255) DEFAULT NULL,
   `reason_leaving` text DEFAULT NULL,
@@ -774,7 +779,10 @@ INSERT INTO `student_transition` (`id`, `last_name`, `first_name`, `middle_name`
 (45, '1', 'Sample', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'shift to hist', '2025-07-12 03:15:53', '2025-07-12 03:15:53', 5, 6),
 (46, 'Usama', 'Rahema', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'Auto-generated shift out', '2025-07-12 03:16:40', '2025-07-12 03:16:40', 4, 7),
 (47, 'Usama', 'Rahema', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-12', NULL, '2025-07-12 03:16:40', '2025-07-12 03:16:40', 5, 7),
-(48, 'student', 'New', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'from journ to bs it', '2025-07-12 03:17:46', '2025-07-12 03:17:46', 5, 19);
+(48, 'student', 'New', NULL, 'Shifting In', NULL, NULL, NULL, NULL, NULL, '2025-07-12', 'from journ to bs it', '2025-07-12 03:17:46', '2025-07-12 03:17:46', 5, 19),
+(49, 'student', 'sampling', NULL, 'Dropped', NULL, NULL, NULL, NULL, NULL, '2025-07-14', 'dropped SE', '2025-07-13 22:01:34', '2025-07-13 22:01:34', 5, 15),
+(50, 'Dela Cruz ', 'Juan', NULL, 'Shifting Out', NULL, NULL, NULL, NULL, NULL, '2025-07-14', 'to uz', '2025-07-13 22:39:01', '2025-07-13 22:39:01', 5, 13),
+(51, 'student transferring in', 'sample', NULL, 'Graduated', NULL, NULL, NULL, NULL, NULL, '2025-07-15', NULL, '2025-07-14 22:39:28', '2025-07-14 22:39:28', 5, 10);
 
 -- --------------------------------------------------------
 
@@ -1169,7 +1177,7 @@ ALTER TABLE `students`
 -- AUTO_INCREMENT for table `student_profiles`
 --
 ALTER TABLE `student_profiles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `student_semester_enrollments`
@@ -1181,7 +1189,7 @@ ALTER TABLE `student_semester_enrollments`
 -- AUTO_INCREMENT for table `student_transition`
 --
 ALTER TABLE `student_transition`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `student_transition_images`
