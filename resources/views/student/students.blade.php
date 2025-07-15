@@ -93,6 +93,7 @@
                         <option value="Transferring Out" {{ request('filter_transition') == 'Transferring Out' ? 'selected' : '' }}>Transferring Out</option>
                         <option value="Returning Student" {{ request('filter_transition') == 'Returning Student' ? 'selected' : '' }}>Returning Student</option>
                         <option value="Dropped" {{ request('filter_transition') == 'Dropped' ? 'selected' : '' }}>Dropped</option>
+                        <option value="Graduated" {{ request('filter_transition') == 'Graduated' ? 'selected' : '' }}>Graduated</option>
                     </select>
                 </div>
 

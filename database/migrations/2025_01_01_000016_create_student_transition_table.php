@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('first_name');
             $table->string('middle_name')->nullable();
-            $table->enum('transition_type', ['None', 'Shifting In', 'Shifting Out', 'Transferring In', 'Transferring Out', 'Dropped', 'Returning Student']);
+            $table->enum('transition_type', ['None', 'Shifting In', 'Shifting Out', 'Transferring In', 'Transferring Out', 'Dropped', 'Returning Student','Graduated']);
             $table->string('from_program')->nullable();
             $table->string('to_program')->nullable();
             $table->text('reason_leaving')->nullable();

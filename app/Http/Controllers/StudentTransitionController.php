@@ -41,7 +41,7 @@ class StudentTransitionController extends Controller
     $semesters = Semester::all();
     $transitionTypes = [
         'None', 'Shifting In', 'Shifting Out', 'Transferring In',
-        'Transferring Out', 'Dropped', 'Returning Student'
+        'Transferring Out', 'Dropped', 'Returning Student', 'Graduated'
     ];
 
     $currentSemester = Semester::where('is_current', true)->first();
@@ -77,7 +77,7 @@ class StudentTransitionController extends Controller
         'student_id' => 'nullable|string|max:255',
         'first_name' => 'required|string|max:255',
         'last_name' => 'required|string|max:255',
-        'transition_type' => 'required|in:None,Shifting In,Shifting Out,Transferring In,Transferring Out,Dropped,Returning Student',
+        'transition_type' => 'required|in:None,Shifting In,Shifting Out,Transferring In,Transferring Out,Dropped,Returning Student,Graduated',
         //'transition_date' => 'required|date',
         'remark' => 'nullable|string',
         'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
