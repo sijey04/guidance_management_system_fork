@@ -147,6 +147,7 @@
                             <option value="Transferring Out" {{ request('filter_transition_type') == 'Transferring Out' ? 'selected' : '' }}>Transferring Out</option>
                             <option value="Dropped" {{ request('filter_transition_type') == 'Dropped' ? 'selected' : '' }}>Dropped</option>
                             <option value="Returning Student" {{ request('filter_transition_type') == 'Returning Student' ? 'selected' : '' }}>Returning Student</option>
+                             <option value="Graduated" {{ request('filter_transition_type') == 'Graduated' ? 'selected' : '' }}>Graduated</option>
                         </select>
                     </div>
                     </div>
@@ -274,7 +275,11 @@
                                                 {{ $student->currentOutTransition->transition_type }}
                                             </span>
                                         @endif
-
+                                        @if ($student->latestTransition && $student->latestTransition->transition_type === 'Graduated')
+                                            <div class="mt-1 text-xs inline-block bg-gray-300 text-gray-700 px-2 py-0.5 rounded-full">
+                                                Graduated
+                                            </div>
+                                        @endif
                                     </td>
 
 
@@ -316,13 +321,13 @@
                                             </select>
 
                                         </td>
-                                        <td>
+                                        <td class="p-3">
                                             <div x-data="{ openModal{{ $id }}: false }">
                                             <button type="button"
                                                     @click="openModal{{ $id }} = true"
                                                     class="bg-[#a82323] text-white text-xs font-semibold px-2 py-2 rounded hover:bg-red-700 transition"
                                                     :disabled="{{ $isDisabled ? 'true' : 'false' }}">
-                                                    Mark Transition
+                                                    Update
                                                 </button>
 
 
@@ -392,6 +397,7 @@
                                                                         <option value="Transferring Out">Transferring Out</option>
                                                                         <option value="Dropped">Dropped</option>
                                                                         <option value="Returning Student">Returning Student</option>
+                                                                        <option value="Graduated">Graduated</option>
                                                                     </select>
 
                                                                 </div>
