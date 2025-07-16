@@ -49,5 +49,39 @@ public function store(Request $request)
     return redirect()->route('semester.index')->with('success', 'New School Year and its 1st Semester created and set as active.');
 }
 
+/**
+ * Activate a specific school year and deactivate others
+ */
+public function activate($id)
+{
+    try {
+        // Find the school year to activate
+        $schoolYear = SchoolYear::findOrFail($id);
+        
+        // Deactivate all school years and their semesters
+        SchoolYear::where('is_active', true)->update(['is_active' => false]);
+        Semester::where('is_current', true)->update(['is_current' => false]);
+        
+        // Activate the selected school year
+        $schoolYear->update(['is_active' => true]);
+        
+        // Activate the first semester of this school year (if exists)
+        $firstSemester = Semester::where('school_year_id', $schoolYear->id)
+                                ->orderBy('semester')
+                                ->first();
+        
+        if ($firstSemester) {
+            $firstSemester->update(['is_current' => true]);
+        }
+        
+        return redirect()->route('semester.index')
+                        ->with('success', 'School Year ' . $schoolYear->school_year . ' has been activated successfully.');
+                        
+    } catch (\Exception $e) {
+        return redirect()->route('semester.index')
+                        ->with('error', 'Failed to activate school year: ' . $e->getMessage());
+    }
+}
+
 
 }
