@@ -36,6 +36,7 @@ COPY --chown=www-data:www-data . /var/www/html
 
 # Install PHP dependencies
 RUN composer install --optimize-autoloader --no-dev
+RUN composer dump-autoload --optimize
 
 # Install Node.js dependencies and build assets
 RUN npm install
@@ -64,6 +65,10 @@ until php artisan tinker --execute="try { DB::connection()->getPdo(); echo \"Dat
 done\n\
 echo "Database is ready!"\n\
 echo "Running Laravel optimizations..."\n\
+php artisan config:clear --quiet\n\
+php artisan route:clear --quiet\n\
+php artisan view:clear --quiet\n\
+composer dump-autoload --optimize\n\
 php artisan config:cache --quiet\n\
 php artisan route:cache --quiet\n\
 php artisan view:cache --quiet\n\
