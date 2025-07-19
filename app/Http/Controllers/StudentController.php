@@ -68,12 +68,20 @@ class StudentController extends Controller
         }
 
         if ($request->filled('sort')) {
-            $sort = $request->sort;
-            $direction = $request->input('direction', 'asc');
-            if (in_array($sort, ['student_id', 'first_name', 'last_name'])) {
-                $query->orderBy($sort, $direction);
-            }
-        }
+    $sort = $request->sort;
+    $direction = $request->input('direction', 'asc');
+    if (in_array($sort, ['student_id', 'first_name', 'last_name'])) {
+        $query->orderBy($sort, $direction);
+    } else {
+        // Default alphabetical
+        $query->orderBy('last_name')->orderBy('first_name');
+    }
+} else {
+    // Default alphabetical if no sort is requested
+    $query->orderBy('last_name')->orderBy('first_name');
+}
+
+        
      //    $sortOrder = $request->get('sort', 'desc'); // default: latest
      //   $query->orderBy('created_at', $sortOrder);
 
