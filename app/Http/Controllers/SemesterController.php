@@ -174,6 +174,10 @@ $users = User::all();
         return $student;
     });
 
+    $students = $students->sortBy(function ($student) {
+    return strtolower($student->last_name . ' ' . $student->first_name);
+})->values();
+
 
         // Apply filters
         if ($request->filled('filter_course')) {
@@ -243,17 +247,19 @@ public function processValidateStudents(Request $request, $semesterId)
     $validated = $request->validate([
         'selected_students' => 'required|array',
         'selected_students.*' => 'exists:students,id',
+        'student_dropdown_data' => 'nullable|string',
     ]);
 
-    $studentsData = $request->input('students', []);
-    $transitionData = $request->input('transitions', []);
     $semester = Semester::findOrFail($semesterId);
+    $studentDropdownData = json_decode($request->input('student_dropdown_data'), true) ?? [];
+    $transitionData = $request->input('transitions', []);
 
     foreach ($validated['selected_students'] as $studentId) {
-        if (!isset($studentsData[$studentId])) continue;
+        $student = Student::findOrFail($studentId);
 
-        $data = $studentsData[$studentId];
-        if (empty($data['course']) || empty($data['year_level']) || empty($data['section'])) continue;
+        $data = $studentDropdownData[$studentId] ?? null;
+        if (!$data || !$data['course'] || !$data['year_level'] || !$data['section']) continue;
+
 
         $student = Student::find($studentId);
 
@@ -368,7 +374,8 @@ public function processValidateStudents(Request $request, $semesterId)
     }
 
     return redirect()->route('semester.validate', $semester->id)
-        ->with('success', 'Selected students validated and transitions recorded.');
+        ->with('success', 'Selected students validated and transitions recorded.')
+        ->with('clear_local_storage', true);
 }
 
 // public function undoValidation(Request $request, $semesterId, $studentId)

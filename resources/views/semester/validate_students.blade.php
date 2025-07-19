@@ -8,64 +8,67 @@
     </x-slot>
 
     <div class="max-w-7xl mx-auto  sm:px-6 lg:px-8"
-         x-data="{
-             selected: {{ json_encode(request('selected_students', [])) }},
-             allOnPage: {{ json_encode($students->pluck('id')->map(fn($id) => (string) $id)) }},
-             studentData: JSON.parse(localStorage.getItem('studentData') || '{}'),
+     x-data="{
+        selected: [],
+        studentData: {},
+        allOnPage: {{ json_encode($students->pluck('id')->map(fn($id) => (string) $id)) }},
+        init() {
+            this.selected = JSON.parse(localStorage.getItem('selectedStudents') || '[]');
+            this.studentData = JSON.parse(localStorage.getItem('studentData') || '{}');
+        },
+        toggle(id) {
+            id = id.toString();
+            if (this.selected.includes(id)) {
+                this.selected = this.selected.filter(i => i !== id);
+            } else {
+                this.selected.push(id);
+            }
+            localStorage.setItem('selectedStudents', JSON.stringify(this.selected));
+        },
+        isChecked(id) {
+            return this.selected.includes(id.toString());
+        },
+        toggleAllOnPage() {
+            let all = this.allOnPage;
+            const allSelected = all.every(id => this.selected.includes(id));
+            if (allSelected) {
+                this.selected = this.selected.filter(id => !all.includes(id));
+            } else {
+                all.forEach(id => {
+                    if (!this.selected.includes(id)) this.selected.push(id);
+                });
+            }
+            localStorage.setItem('selectedStudents', JSON.stringify(this.selected));
+        },
+        allSelectedOnPage() {
+            return this.allOnPage.every(id => this.selected.includes(id));
+        },
+        updateStudentValue(id, field, value) {
+            if (!this.studentData[id]) this.studentData[id] = {};
+            this.studentData[id][field] = value;
+            localStorage.setItem('studentData', JSON.stringify(this.studentData));
+        },
+        injectHiddenInputs(form) {
+            const container = form.querySelector('#hidden-inputs');
+            container.innerHTML = '';
 
-             toggle(id) {
-                 id = id.toString();
-                 if (this.selected.includes(id)) {
-                     this.selected = this.selected.filter(s => s !== id);
-                 } else {
-                     this.selected.push(id);
-                 }
-             },
+            this.selected.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'selected_students[]';
+                input.value = id;
+                container.appendChild(input);
+            });
 
-             isChecked(id) {
-                 return this.selected.includes(id.toString());
-             },
+            const studentDataInput = document.createElement('input');
+            studentDataInput.type = 'hidden';
+            studentDataInput.name = 'student_dropdown_data';
+            studentDataInput.value = JSON.stringify(this.studentData);
+            container.appendChild(studentDataInput);
+        }
+    }"
+    x-init="init()">
 
-             toggleAllOnPage() {
-                 const allSelected = this.allOnPage.every(id => this.selected.includes(id));
-                 if (allSelected) {
-                     this.selected = this.selected.filter(id => !this.allOnPage.includes(id));
-                 } else {
-                     this.allOnPage.forEach(id => {
-                         if (!this.selected.includes(id)) {
-                             this.selected.push(id);
-                         }
-                     });
-                 }
-             },
-
-             allSelectedOnPage() {
-                 return this.allOnPage.every(id => this.selected.includes(id));
-             },
-
-             injectHiddenInputs(form) {
-                 const container = form.querySelector('#selected-hidden');
-                 container.innerHTML = '';
-                 this.selected.forEach(id => {
-                     const input = document.createElement('input');
-                     input.type = 'hidden';
-                     input.name = 'selected_students[]';
-                     input.value = id;
-                     container.appendChild(input);
-                 });
-                 const dropdownInput = document.createElement('input');
-                 dropdownInput.type = 'hidden';
-                 dropdownInput.name = 'student_dropdown_data';
-                 dropdownInput.value = JSON.stringify(this.studentData);
-                 container.appendChild(dropdownInput);
-             },
-
-             updateStudentValue(id, field, value) {
-                 if (!this.studentData[id]) this.studentData[id] = {};
-                 this.studentData[id][field] = value;
-                 localStorage.setItem('studentData', JSON.stringify(this.studentData));
-             }
-         }">
 
         <div class="bg-white p-6 shadow rounded-lg">
 
@@ -162,9 +165,10 @@
             </form>
 
             <!-- VALIDATION FORM -->
-            <form method="POST" enctype="multipart/form-data" action="{{ route('semester.processValidate', $newSemester->id) }}" @submit="injectHiddenInputs($el)">
+            <form method="POST" enctype="multipart/form-data" action="{{ route('semester.processValidate', $newSemester->id) }}"  @submit="injectHiddenInputs($el)">
                 @csrf
                 <div id="selected-hidden"></div>
+                <div id="hidden-inputs"></div>
 
                 <div class="flex flex-col md:flex-row justify-between gap-4 mt-6 mb-3">
                     <button type="button" @click="toggleAllOnPage"
@@ -221,11 +225,10 @@
                                             <span class="text-red-700 text-xs font-semibold bg-red-100 px-2 py-1 rounded">{{ $transitionType }}</span>
                                             @else
                                                 <input type="checkbox"
-                                                    name="selected_students[]"
-                                                    value="{{ $id }}"
-                                                    x-bind:checked="isChecked('{{ $id }}')"
-                                                    @change="toggle('{{ $id }}')"
-                                                    class="form-checkbox">
+    x-bind:checked="isChecked('{{ $student->id }}')"
+    @change="toggle('{{ $student->id }}')">
+
+
                                             @endif
                                         </td>
                                         <td class="p-3 px-5">
@@ -288,7 +291,7 @@
                                             <select name="students[{{ $id }}][course]"
                                                 class="w-full border-gray-300 rounded"
                                                 x-model="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
-                                                @change="updateStudentValue('{{ $id }}', 'course', $event.target.value)"
+                                                @change="updateStudentValue('{{ $student->id }}', 'course', $event.target.value)"
                                                 {{ $disableDropdowns ? 'disabled' : '' }} >
                                                 @foreach($courses as $course)
                                                     <option value="{{ $course->course }}">{{ $course->course }}</option>
@@ -301,7 +304,7 @@
                                             <select name="students[{{ $id }}][year_level]"
                                                 class="w-full border-gray-300 rounded"
                                                 x-model="studentData['{{ $id }}']?.year_level ?? '{{ $profile->year_level }}'"
-                                                @change="updateStudentValue('{{ $id }}', 'year_level', $event.target.value)"
+                                                @change="updateStudentValue('{{ $student->id }}', 'year_leve', $event.target.value)"
                                                 {{ $disableDropdowns ? 'disabled' : '' }}>
                                                 @foreach($years as $year)
                                                     <option value="{{ $year->year_level }}">{{ $year->year_level }}</option>
@@ -313,7 +316,7 @@
                                             <select name="students[{{ $id }}][section]"
                                                 class="w-full border-gray-300 rounded"
                                                 x-model="studentData['{{ $id }}']?.section ?? '{{ $profile->section }}'"
-                                                @change="updateStudentValue('{{ $id }}', 'section', $event.target.value)"
+                                                @change="updateStudentValue('{{ $student->id }}', 'section', $event.target.value)"
                                                 {{ $disableDropdowns ? 'disabled' : '' }}>
                                                 @foreach($sections as $section)
                                                     <option value="{{ $section->section }}">{{ $section->section }}</option>
