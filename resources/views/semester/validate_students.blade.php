@@ -110,12 +110,15 @@
             </p>
 
             <!-- FILTER FORM -->
-            <form method="GET" action="{{ route('semester.validate', $newSemester->id) }}" @submit.prevent="injectHiddenInputs($el); $el.submit()">
+ <form method="GET"
+      action="{{ route('semester.validate', $newSemester->id) }}"
+      x-ref="filterForm"
+      @submit="injectHiddenInputs($refs.filterForm)">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
 
                     <div>
                         <label class="text-sm font-medium text-gray-600">Course</label>
-                        <select name="filter_course" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_course" @change="$refs.filterForm.submit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Courses</option>
                             @foreach($courses as $course)
                                 <option value="{{ $course->course }}" {{ request('filter_course') == $course->course ? 'selected' : '' }}>{{ $course->course }}</option>
@@ -124,7 +127,7 @@
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Year Level</label>
-                        <select name="filter_year_level" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_year_level" @change="$refs.filterForm.submit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Years</option>
                             @foreach($years as $year)
                                 <option value="{{ $year->year_level }}" {{ request('filter_year_level') == $year->year_level ? 'selected' : '' }}>{{ $year->year_level }}</option>
@@ -133,7 +136,7 @@
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Section</label>
-                        <select name="filter_section" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_section" @change="$refs.filterForm.submit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Sections</option>
                             @foreach($sections as $section)
                                 <option value="{{ $section->section }}" {{ request('filter_section') == $section->section ? 'selected' : '' }}>{{ $section->section }}</option>

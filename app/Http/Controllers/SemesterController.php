@@ -186,11 +186,11 @@ $users = User::all();
             });
         }
 
-        if ($request->filled('filter_year_level')) {
-            $students = $students->filter(function ($student) use ($request) {
-                return $student->latestProfile && $student->latestProfile->year_level === $request->filter_year_level;
-            });
-        }
+       if ($request->filled('filter_year_level')) {
+    $students = $students->filter(function ($student) use ($request) {
+        return $student->previousProfile && $student->previousProfile->year_level === $request->filter_year_level;
+    });
+}
 
         if ($request->filled('filter_section')) {
             $students = $students->filter(function ($student) use ($request) {
