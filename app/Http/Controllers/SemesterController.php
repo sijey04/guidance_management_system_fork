@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contract;
 use App\Models\Course;
 use App\Models\SchoolYear;
 use App\Models\Section;
@@ -186,10 +187,9 @@ $users = User::all();
             });
         }
 
-       
         if ($request->filled('filter_year_level')) {
             $students = $students->filter(function ($student) use ($request) {
-                return $student->previousProfile && $student->previousProfile->year_level === $request->filter_year_level;
+                return $student->latestProfile && $student->latestProfile->year_level === $request->filter_year_level;
             });
         }
 
@@ -370,11 +370,43 @@ public function processValidateStudents(Request $request, $semesterId)
             'year_level' => $data['year_level'],
             'section' => $data['section'],
         ]);
+
+        // After StudentProfile::create(...);
+
+$previousSemesterIds = Semester::where('id', '<', $semester->id)->pluck('id');
+
+$inProgressContracts = Contract::where('student_id', $studentId)
+    ->whereIn('semester_id', $previousSemesterIds)
+    ->where('status', 'In Progress')
+    ->get();
+
+foreach ($inProgressContracts as $contract) {
+    // Check if contract already carried over to current sem
+    $existing = Contract::where('student_id', $studentId)
+        ->where('original_contract_id', $contract->id)
+        ->where('semester_id', $semester->id)
+        ->first();
+
+    if (!$existing) {
+        $newContract = $contract->replicate(); // clone attributes
+        $newContract->semester_id = $semester->id;
+        $newContract->status = 'In Progress';
+        $newContract->original_contract_id = $contract->id; // NEW FIELD
+        $newContract->save();
+
+        // Copy related images (if applicable)
+        foreach ($contract->images as $image) {
+            $newContract->images()->create([
+                'image_path' => $image->image_path,
+            ]);
+        }
+    }
+}
+
     }
 
     return redirect()->route('semester.validate', $semester->id)
-        ->with('success', 'Selected students validated and transitions recorded.')
-        ->with('clear_local_storage', true);
+        ->with('success', 'Selected students validated and transitions recorded.');
 }
 
 // public function undoValidation(Request $request, $semesterId, $studentId)

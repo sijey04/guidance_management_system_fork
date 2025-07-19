@@ -289,13 +289,47 @@ public function updateStatus(Request $request, $id)
     $contract = Contract::findOrFail($id);
     $status = $request->input('status');
 
-    if (in_array($status, ['In Progress', 'Completed'])) {
-        $contract->status = $status;
-        $contract->save();
+    // Only allow 'In Progress' or 'Completed'
+    if (!in_array($status, ['In Progress', 'Completed'])) {
+        return redirect()->back()->with('error', 'Invalid status.');
     }
 
-    return redirect()->route('contracts.view', $id)
-                     ->with('success', 'Status updated successfully.');
+    $activeSemester = Semester::where('is_current', true)->first();
+
+    // 🚨 Carry over logic: If contract is from a previous semester & being marked as Completed
+    if (
+        $contract->status === 'In Progress' &&
+        $status === 'Completed' &&
+        $contract->semester_id !== optional($activeSemester)->id
+    ) {
+        // Check if it was already carried over
+        if ($contract->carriedOver) {
+            return redirect()->back()->with('info', 'This contract has already been carried over.');
+        }
+
+        // Duplicate contract for the active semester
+        $newContract = $contract->replicate(); // copy all fields
+        $newContract->semester_id = $activeSemester->id;
+        $newContract->status = 'Completed';
+        $newContract->original_contract_id = $contract->id;
+        $newContract->save();
+
+        // Optionally also duplicate images if needed:
+        foreach ($contract->images as $image) {
+            $newContract->images()->create([
+                'image_path' => $image->image_path,
+                'type' => $image->type,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Contract carried over and marked as Completed.');
+    }
+
+    // ✅ For current semester or direct update
+    $contract->status = $status;
+    $contract->save();
+
+    return redirect()->back()->with('success', 'Status updated successfully.');
 }
 
 public function uploadImages(Request $request, $id, $type)

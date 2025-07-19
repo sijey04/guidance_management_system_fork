@@ -9,79 +9,63 @@
 
     <div class="max-w-7xl mx-auto  sm:px-6 lg:px-8"
          x-data="{
-    selected: JSON.parse(localStorage.getItem('selected') || '[]'),
-    allOnPage: {{ json_encode($students->pluck('id')->map(fn($id) => (string) $id)) }},
-    studentData: JSON.parse(localStorage.getItem('studentData') || '{}'),
+             selected: {{ json_encode(request('selected_students', [])) }},
+             allOnPage: {{ json_encode($students->pluck('id')->map(fn($id) => (string) $id)) }},
+             studentData: JSON.parse(localStorage.getItem('studentData') || '{}'),
 
-    init() {
-        // Ensure selected and studentData are always in sync with localStorage
-        this.$watch('selected', value => localStorage.setItem('selected', JSON.stringify(value)));
-        this.$watch('studentData', value => localStorage.setItem('studentData', JSON.stringify(value)));
-    },
+             toggle(id) {
+                 id = id.toString();
+                 if (this.selected.includes(id)) {
+                     this.selected = this.selected.filter(s => s !== id);
+                 } else {
+                     this.selected.push(id);
+                 }
+             },
 
-    toggle(id) {
-        id = id.toString();
-        if (this.selected.includes(id)) {
-            this.selected = this.selected.filter(s => s !== id);
-            delete this.studentData[id];
-        } else {
-            this.selected.push(id);
-        }
-    },
+             isChecked(id) {
+                 return this.selected.includes(id.toString());
+             },
 
-    isChecked(id) {
-        return this.selected.includes(id.toString());
-    },
+             toggleAllOnPage() {
+                 const allSelected = this.allOnPage.every(id => this.selected.includes(id));
+                 if (allSelected) {
+                     this.selected = this.selected.filter(id => !this.allOnPage.includes(id));
+                 } else {
+                     this.allOnPage.forEach(id => {
+                         if (!this.selected.includes(id)) {
+                             this.selected.push(id);
+                         }
+                     });
+                 }
+             },
 
-    toggleAllOnPage() {
-        const allSelected = this.allOnPage.every(id => this.selected.includes(id));
-        if (allSelected) {
-            this.selected = this.selected.filter(id => !this.allOnPage.includes(id));
-            this.allOnPage.forEach(id => delete this.studentData[id]);
-        } else {
-            this.allOnPage.forEach(id => {
-                if (!this.selected.includes(id)) this.selected.push(id);
-            });
-        }
-    },
+             allSelectedOnPage() {
+                 return this.allOnPage.every(id => this.selected.includes(id));
+             },
 
-    allSelectedOnPage() {
-        return this.allOnPage.every(id => this.selected.includes(id));
-    },
+             injectHiddenInputs(form) {
+                 const container = form.querySelector('#selected-hidden');
+                 container.innerHTML = '';
+                 this.selected.forEach(id => {
+                     const input = document.createElement('input');
+                     input.type = 'hidden';
+                     input.name = 'selected_students[]';
+                     input.value = id;
+                     container.appendChild(input);
+                 });
+                 const dropdownInput = document.createElement('input');
+                 dropdownInput.type = 'hidden';
+                 dropdownInput.name = 'student_dropdown_data';
+                 dropdownInput.value = JSON.stringify(this.studentData);
+                 container.appendChild(dropdownInput);
+             },
 
-    updateStudentValue(id, field, value) {
-        if (!this.studentData[id]) this.studentData[id] = {};
-        this.studentData[id][field] = value;
-    },
-
-    injectHiddenInputs(form) {
-        const container = form.querySelector('#selected-hidden');
-        container.innerHTML = '';
-
-        this.selected.forEach(id => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'selected_students[]';
-            input.value = id;
-            container.appendChild(input);
-
-            // Create hidden inputs for studentData fields
-            if (this.studentData[id]) {
-                ['course', 'year_level', 'section'].forEach(field => {
-                    if (this.studentData[id][field]) {
-                        const fieldInput = document.createElement('input');
-                        fieldInput.type = 'hidden';
-                        fieldInput.name = `students[${id}][${field}]`;
-                        fieldInput.value = this.studentData[id][field];
-                        container.appendChild(fieldInput);
-                    }
-                });
-            }
-        });
-    }
-}"
- x-init="init()"
->
+             updateStudentValue(id, field, value) {
+                 if (!this.studentData[id]) this.studentData[id] = {};
+                 this.studentData[id][field] = value;
+                 localStorage.setItem('studentData', JSON.stringify(this.studentData));
+             }
+         }">
 
         <div class="bg-white p-6 shadow rounded-lg">
 
@@ -115,13 +99,6 @@
         </ul>
     </div>
 @endif
-@if(session('clear_local_storage'))
-<script>
-    localStorage.removeItem('selected');
-    localStorage.removeItem('studentData');
-</script>
-@endif
-
 
             <h2 class="text-2xl font-semibold text-gray-700 mb-4">Validate Students from Previous Semesters</h2>
             <p class="text-gray-500 mb-6">
@@ -310,7 +287,7 @@
                                         <td class="p-3">
                                             <select name="students[{{ $id }}][course]"
                                                 class="w-full border-gray-300 rounded"
-                                                :value="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
+                                                x-model="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
                                                 @change="updateStudentValue('{{ $id }}', 'course', $event.target.value)"
                                                 {{ $disableDropdowns ? 'disabled' : '' }} >
                                                 @foreach($courses as $course)
@@ -323,7 +300,7 @@
                                         <td class="p-3">
                                             <select name="students[{{ $id }}][year_level]"
                                                 class="w-full border-gray-300 rounded"
-                                                :value="studentData['{{ $id }}']?.year_level ?? '{{ $profile->year_level }}'"
+                                                x-model="studentData['{{ $id }}']?.year_level ?? '{{ $profile->year_level }}'"
                                                 @change="updateStudentValue('{{ $id }}', 'year_level', $event.target.value)"
                                                 {{ $disableDropdowns ? 'disabled' : '' }}>
                                                 @foreach($years as $year)
@@ -335,7 +312,7 @@
                                         <td class="p-3">
                                             <select name="students[{{ $id }}][section]"
                                                 class="w-full border-gray-300 rounded"
-                                               :value="studentData['{{ $id }}']?.section ?? '{{ $profile->section }}'"
+                                                x-model="studentData['{{ $id }}']?.section ?? '{{ $profile->section }}'"
                                                 @change="updateStudentValue('{{ $id }}', 'section', $event.target.value)"
                                                 {{ $disableDropdowns ? 'disabled' : '' }}>
                                                 @foreach($sections as $section)

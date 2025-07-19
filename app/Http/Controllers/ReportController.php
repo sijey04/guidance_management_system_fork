@@ -75,6 +75,17 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
             ->when($request->filled('filter_contract_status'), fn($q) => $q->where('status', $request->filter_contract_status))
             ->get();
 
+            // Include previous "In Progress" contracts for validated students
+$pastInProgressContracts = Contract::with('student')
+    ->where('status', 'In Progress')
+    ->whereNotIn('semester_id', $semesterIds)
+    ->whereIn('student_id', $studentProfiles->pluck('student_id'))
+    ->get();
+
+// Merge them with current contracts
+$contracts = $contracts->merge($pastInProgressContracts);
+
+
         $referrals = Referral::with('student')
             ->whereIn('semester_id', $semesterIds)
             ->when($request->filled('filter_reason'), fn($q) => $q->where('reason', $request->filter_reason))
@@ -172,10 +183,24 @@ $schoolYearName = $schoolYear?->school_year ?? 'N/A';
 
         $semesterIds = $semesters->pluck('id');
 
-        $contracts = Contract::with('semester', 'images')
-            ->where('student_id', $student_id)
-            ->whereIn('semester_id', $semesterIds)
-            ->get();
+$currentContracts = Contract::with(['semester', 'images', 'original'])
+    ->where('student_id', $student_id)
+    ->whereIn('semester_id', $semesterIds)
+    ->get();
+
+$carriedOverContracts = Contract::with(['semester', 'images', 'original'])
+    ->where('student_id', $student_id)
+    ->whereNotIn('semester_id', $semesterIds) 
+    ->whereNotNull('original_contract_id')    
+    ->get();
+
+$originalContracts = Contract::with(['semester', 'images'])
+    ->whereIn('id', $carriedOverContracts->pluck('original_contract_id'))
+    ->get();
+
+$contracts = $currentContracts->merge($carriedOverContracts)->merge($originalContracts);
+
+
 
         $referrals = Referral::with('semester', 'images')
             ->where('student_id', $student_id)
