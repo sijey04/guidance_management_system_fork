@@ -9,7 +9,7 @@ class Kernel extends HttpKernel
     protected $middleware = [
         // Global middleware
         \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
-        \Illuminate\Http\Middleware\TrustProxies::class,
+        \App\Http\Middleware\TrustProxies::class,
         \Fruitcake\Cors\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,

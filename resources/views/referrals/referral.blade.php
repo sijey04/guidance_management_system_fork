@@ -150,7 +150,6 @@
                             </svg>
                             Manage Reasons
                         </a>
-                    </div>
                 </div>
             </div>
 
