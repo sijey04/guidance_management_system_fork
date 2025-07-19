@@ -8,67 +8,80 @@
     </x-slot>
 
     <div class="max-w-7xl mx-auto  sm:px-6 lg:px-8"
-     x-data="{
-        selected: [],
-        studentData: {},
-        allOnPage: {{ json_encode($students->pluck('id')->map(fn($id) => (string) $id)) }},
-        init() {
-            this.selected = JSON.parse(localStorage.getItem('selectedStudents') || '[]');
-            this.studentData = JSON.parse(localStorage.getItem('studentData') || '{}');
-        },
-        toggle(id) {
-            id = id.toString();
-            if (this.selected.includes(id)) {
-                this.selected = this.selected.filter(i => i !== id);
-            } else {
-                this.selected.push(id);
-            }
-            localStorage.setItem('selectedStudents', JSON.stringify(this.selected));
-        },
-        isChecked(id) {
-            return this.selected.includes(id.toString());
-        },
-        toggleAllOnPage() {
-            let all = this.allOnPage;
-            const allSelected = all.every(id => this.selected.includes(id));
-            if (allSelected) {
-                this.selected = this.selected.filter(id => !all.includes(id));
-            } else {
-                all.forEach(id => {
-                    if (!this.selected.includes(id)) this.selected.push(id);
+         x-data="{
+    selected: JSON.parse(localStorage.getItem('selected') || '[]'),
+    allOnPage: {{ json_encode($students->pluck('id')->map(fn($id) => (string) $id)) }},
+    studentData: JSON.parse(localStorage.getItem('studentData') || '{}'),
+
+    init() {
+        // Ensure selected and studentData are always in sync with localStorage
+        this.$watch('selected', value => localStorage.setItem('selected', JSON.stringify(value)));
+        this.$watch('studentData', value => localStorage.setItem('studentData', JSON.stringify(value)));
+    },
+
+    toggle(id) {
+        id = id.toString();
+        if (this.selected.includes(id)) {
+            this.selected = this.selected.filter(s => s !== id);
+            delete this.studentData[id];
+        } else {
+            this.selected.push(id);
+        }
+    },
+
+    isChecked(id) {
+        return this.selected.includes(id.toString());
+    },
+
+    toggleAllOnPage() {
+        const allSelected = this.allOnPage.every(id => this.selected.includes(id));
+        if (allSelected) {
+            this.selected = this.selected.filter(id => !this.allOnPage.includes(id));
+            this.allOnPage.forEach(id => delete this.studentData[id]);
+        } else {
+            this.allOnPage.forEach(id => {
+                if (!this.selected.includes(id)) this.selected.push(id);
+            });
+        }
+    },
+
+    allSelectedOnPage() {
+        return this.allOnPage.every(id => this.selected.includes(id));
+    },
+
+    updateStudentValue(id, field, value) {
+        if (!this.studentData[id]) this.studentData[id] = {};
+        this.studentData[id][field] = value;
+    },
+
+    injectHiddenInputs(form) {
+        const container = form.querySelector('#selected-hidden');
+        container.innerHTML = '';
+
+        this.selected.forEach(id => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'selected_students[]';
+            input.value = id;
+            container.appendChild(input);
+
+            // Create hidden inputs for studentData fields
+            if (this.studentData[id]) {
+                ['course', 'year_level', 'section'].forEach(field => {
+                    if (this.studentData[id][field]) {
+                        const fieldInput = document.createElement('input');
+                        fieldInput.type = 'hidden';
+                        fieldInput.name = `students[${id}][${field}]`;
+                        fieldInput.value = this.studentData[id][field];
+                        container.appendChild(fieldInput);
+                    }
                 });
             }
-            localStorage.setItem('selectedStudents', JSON.stringify(this.selected));
-        },
-        allSelectedOnPage() {
-            return this.allOnPage.every(id => this.selected.includes(id));
-        },
-        updateStudentValue(id, field, value) {
-            if (!this.studentData[id]) this.studentData[id] = {};
-            this.studentData[id][field] = value;
-            localStorage.setItem('studentData', JSON.stringify(this.studentData));
-        },
-        injectHiddenInputs(form) {
-            const container = form.querySelector('#hidden-inputs');
-            container.innerHTML = '';
-
-            this.selected.forEach(id => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'selected_students[]';
-                input.value = id;
-                container.appendChild(input);
-            });
-
-            const studentDataInput = document.createElement('input');
-            studentDataInput.type = 'hidden';
-            studentDataInput.name = 'student_dropdown_data';
-            studentDataInput.value = JSON.stringify(this.studentData);
-            container.appendChild(studentDataInput);
-        }
-    }"
-    x-init="init()">
-
+        });
+    }
+}"
+ x-init="init()"
+>
 
         <div class="bg-white p-6 shadow rounded-lg">
 
@@ -102,6 +115,13 @@
         </ul>
     </div>
 @endif
+@if(session('clear_local_storage'))
+<script>
+    localStorage.removeItem('selected');
+    localStorage.removeItem('studentData');
+</script>
+@endif
+
 
             <h2 class="text-2xl font-semibold text-gray-700 mb-4">Validate Students from Previous Semesters</h2>
             <p class="text-gray-500 mb-6">
@@ -110,15 +130,12 @@
             </p>
 
             <!-- FILTER FORM -->
- <form method="GET"
-      action="{{ route('semester.validate', $newSemester->id) }}"
-      x-ref="filterForm"
-      @submit="injectHiddenInputs($refs.filterForm)">
+            <form method="GET" action="{{ route('semester.validate', $newSemester->id) }}" @submit.prevent="injectHiddenInputs($el); $el.submit()">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
 
                     <div>
                         <label class="text-sm font-medium text-gray-600">Course</label>
-                        <select name="filter_course" @change="$refs.filterForm.submit()" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_course" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Courses</option>
                             @foreach($courses as $course)
                                 <option value="{{ $course->course }}" {{ request('filter_course') == $course->course ? 'selected' : '' }}>{{ $course->course }}</option>
@@ -127,7 +144,7 @@
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Year Level</label>
-                        <select name="filter_year_level" @change="$refs.filterForm.submit()" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_year_level" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Years</option>
                             @foreach($years as $year)
                                 <option value="{{ $year->year_level }}" {{ request('filter_year_level') == $year->year_level ? 'selected' : '' }}>{{ $year->year_level }}</option>
@@ -136,7 +153,7 @@
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Section</label>
-                        <select name="filter_section" @change="$refs.filterForm.submit()" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_section" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Sections</option>
                             @foreach($sections as $section)
                                 <option value="{{ $section->section }}" {{ request('filter_section') == $section->section ? 'selected' : '' }}>{{ $section->section }}</option>
@@ -168,10 +185,9 @@
             </form>
 
             <!-- VALIDATION FORM -->
-            <form method="POST" enctype="multipart/form-data" action="{{ route('semester.processValidate', $newSemester->id) }}"  @submit="injectHiddenInputs($el)">
+            <form method="POST" enctype="multipart/form-data" action="{{ route('semester.processValidate', $newSemester->id) }}" @submit="injectHiddenInputs($el)">
                 @csrf
                 <div id="selected-hidden"></div>
-                <div id="hidden-inputs"></div>
 
                 <div class="flex flex-col md:flex-row justify-between gap-4 mt-6 mb-3">
                     <button type="button" @click="toggleAllOnPage"
@@ -228,10 +244,11 @@
                                             <span class="text-red-700 text-xs font-semibold bg-red-100 px-2 py-1 rounded">{{ $transitionType }}</span>
                                             @else
                                                 <input type="checkbox"
-    x-bind:checked="isChecked('{{ $student->id }}')"
-    @change="toggle('{{ $student->id }}')">
-
-
+                                                    name="selected_students[]"
+                                                    value="{{ $id }}"
+                                                    x-bind:checked="isChecked('{{ $id }}')"
+                                                    @change="toggle('{{ $id }}')"
+                                                    class="form-checkbox">
                                             @endif
                                         </td>
                                         <td class="p-3 px-5">
@@ -293,8 +310,8 @@
                                         <td class="p-3">
                                             <select name="students[{{ $id }}][course]"
                                                 class="w-full border-gray-300 rounded"
-                                                x-model="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
-                                                @change="updateStudentValue('{{ $student->id }}', 'course', $event.target.value)"
+                                                :value="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
+                                                @change="updateStudentValue('{{ $id }}', 'course', $event.target.value)"
                                                 {{ $disableDropdowns ? 'disabled' : '' }} >
                                                 @foreach($courses as $course)
                                                     <option value="{{ $course->course }}">{{ $course->course }}</option>
@@ -306,8 +323,8 @@
                                         <td class="p-3">
                                             <select name="students[{{ $id }}][year_level]"
                                                 class="w-full border-gray-300 rounded"
-                                                x-model="studentData['{{ $id }}']?.year_level ?? '{{ $profile->year_level }}'"
-                                                @change="updateStudentValue('{{ $student->id }}', 'year_leve', $event.target.value)"
+                                                :value="studentData['{{ $id }}']?.year_level ?? '{{ $profile->year_level }}'"
+                                                @change="updateStudentValue('{{ $id }}', 'year_level', $event.target.value)"
                                                 {{ $disableDropdowns ? 'disabled' : '' }}>
                                                 @foreach($years as $year)
                                                     <option value="{{ $year->year_level }}">{{ $year->year_level }}</option>
@@ -318,8 +335,8 @@
                                         <td class="p-3">
                                             <select name="students[{{ $id }}][section]"
                                                 class="w-full border-gray-300 rounded"
-                                                x-model="studentData['{{ $id }}']?.section ?? '{{ $profile->section }}'"
-                                                @change="updateStudentValue('{{ $student->id }}', 'section', $event.target.value)"
+                                               :value="studentData['{{ $id }}']?.section ?? '{{ $profile->section }}'"
+                                                @change="updateStudentValue('{{ $id }}', 'section', $event.target.value)"
                                                 {{ $disableDropdowns ? 'disabled' : '' }}>
                                                 @foreach($sections as $section)
                                                     <option value="{{ $section->section }}">{{ $section->section }}</option>

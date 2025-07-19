@@ -186,11 +186,12 @@ $users = User::all();
             });
         }
 
-       if ($request->filled('filter_year_level')) {
-    $students = $students->filter(function ($student) use ($request) {
-        return $student->previousProfile && $student->previousProfile->year_level === $request->filter_year_level;
-    });
-}
+       
+        if ($request->filled('filter_year_level')) {
+            $students = $students->filter(function ($student) use ($request) {
+                return $student->previousProfile && $student->previousProfile->year_level === $request->filter_year_level;
+            });
+        }
 
         if ($request->filled('filter_section')) {
             $students = $students->filter(function ($student) use ($request) {
@@ -247,19 +248,17 @@ public function processValidateStudents(Request $request, $semesterId)
     $validated = $request->validate([
         'selected_students' => 'required|array',
         'selected_students.*' => 'exists:students,id',
-        'student_dropdown_data' => 'nullable|string',
     ]);
 
-    $semester = Semester::findOrFail($semesterId);
-    $studentDropdownData = json_decode($request->input('student_dropdown_data'), true) ?? [];
+    $studentsData = $request->input('students', []);
     $transitionData = $request->input('transitions', []);
+    $semester = Semester::findOrFail($semesterId);
 
     foreach ($validated['selected_students'] as $studentId) {
-        $student = Student::findOrFail($studentId);
+        if (!isset($studentsData[$studentId])) continue;
 
-        $data = $studentDropdownData[$studentId] ?? null;
-        if (!$data || !$data['course'] || !$data['year_level'] || !$data['section']) continue;
-
+        $data = $studentsData[$studentId];
+        if (empty($data['course']) || empty($data['year_level']) || empty($data['section'])) continue;
 
         $student = Student::find($studentId);
 
