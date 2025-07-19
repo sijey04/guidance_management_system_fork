@@ -69,21 +69,48 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
             ->unique('student_id')
             ->values();
 
-        $contracts = Contract::with('student')
-            ->whereIn('semester_id', $semesterIds)
-            ->when($request->filled('filter_contract_type'), fn($q) => $q->where('contract_type', $request->filter_contract_type))
-            ->when($request->filled('filter_contract_status'), fn($q) => $q->where('status', $request->filter_contract_status))
-            ->get();
+       $currentContracts = Contract::with('student')
+    ->whereIn('semester_id', $semesterIds)
+    ->when($request->filled('filter_contract_type'), fn($q) => $q->where('contract_type', $request->filter_contract_type))
+    ->get();
 
-            // Include previous "In Progress" contracts for validated students
-$pastInProgressContracts = Contract::with('student')
-    ->where('status', 'In Progress')
+
+$pastContracts = Contract::with('student')
     ->whereNotIn('semester_id', $semesterIds)
     ->whereIn('student_id', $studentProfiles->pluck('student_id'))
     ->get();
 
-// Merge them with current contracts
-$contracts = $contracts->merge($pastInProgressContracts);
+    $isCurrentSem = optional($activeSemester)->semester === $selectedSemName
+    && optional($activeSchoolYear)->id == $selectedSY;
+
+
+$allContracts = $currentContracts->merge($pastContracts);
+
+$contracts = $isCurrentSem
+    ? $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request) {
+        if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) {
+            return false;
+        }
+
+        if ($contract->status === 'Completed' && $semesterIds->contains($contract->semester_id)) {
+            return true;
+        }
+
+        $originalId = $contract->original_contract_id ?? $contract->id;
+
+        $hasCompletedInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->status === 'Completed' &&
+                   $semesterIds->contains($c->semester_id) &&
+                   ($c->original_contract_id == $originalId || $c->id == $originalId);
+        });
+
+        return !$hasCompletedInCurrent;
+    })
+    : $allContracts->filter(function ($contract) use ($semesterIds, $request) {
+        return $semesterIds->contains($contract->semester_id) &&
+               (!$request->filled('filter_contract_status') || $contract->status === $request->filter_contract_status);
+    });
+
 
 
         $referrals = Referral::with('student')
@@ -91,10 +118,45 @@ $contracts = $contracts->merge($pastInProgressContracts);
             ->when($request->filled('filter_reason'), fn($q) => $q->where('reason', $request->filter_reason))
             ->get();
 
-        $counselings = Counseling::with('student')
-            ->whereIn('semester_id', $semesterIds)
-            ->when($request->filled('filter_counseling_status'), fn($q) => $q->where('status', $request->filter_counseling_status))
-            ->get();
+     $currentCounselings = Counseling::with('student')
+    ->whereIn('semester_id', $semesterIds)
+    ->get();
+
+
+$pastCounselings = Counseling::with('student')
+    ->whereNotIn('semester_id', $semesterIds)
+    ->whereIn('student_id', $studentProfiles->pluck('student_id'))
+    ->get();
+
+$allCounselings = $currentCounselings->merge($pastCounselings);
+
+$counselings = $isCurrentSem
+    ? $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request) {
+        if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) {
+            return false;
+        }
+
+        if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
+            return true;
+        }
+
+        $originalId = $counseling->original_counseling_id ?? $counseling->id;
+
+        $hasCompletedInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->status === 'Completed' &&
+                   $semesterIds->contains($c->semester_id) &&
+                   ($c->original_counseling_id == $originalId || $c->id == $originalId);
+        });
+
+        return !$hasCompletedInCurrent;
+    })
+    : $allCounselings->filter(function ($counseling) use ($semesterIds, $request) {
+        return $semesterIds->contains($counseling->semester_id) &&
+               (!$request->filled('filter_counseling_status') || $counseling->status === $request->filter_counseling_status);
+    });
+
+
+
 
         $transitions = StudentTransition::with('student')
             ->whereIn('semester_id', $semesterIds)
@@ -199,7 +261,25 @@ $originalContracts = Contract::with(['semester', 'images'])
     ->whereIn('id', $carriedOverContracts->pluck('original_contract_id'))
     ->get();
 
-$contracts = $currentContracts->merge($carriedOverContracts)->merge($originalContracts);
+$allContracts = $currentContracts->merge($carriedOverContracts)->merge($originalContracts);
+
+// Filter out old versions if there's a completed version in current semester
+$contracts = $allContracts->filter(function ($contract) use ($semesterIds, $allContracts) {
+    if ($contract->status === 'Completed' && in_array($contract->semester_id, $semesterIds->toArray())) {
+        return true; // always include completed from current semester
+    }
+
+    // If this is an original or older version, exclude if a newer completed version exists
+    $originalId = $contract->original_contract_id ?? $contract->id;
+
+    $hasCompletedCopyInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+        return $c->status === 'Completed' &&
+               in_array($c->semester_id, $semesterIds->toArray()) &&
+               ($c->original_contract_id == $originalId || $c->id == $originalId);
+    });
+
+    return !$hasCompletedCopyInCurrent;
+});
 
 
 
@@ -208,10 +288,44 @@ $contracts = $currentContracts->merge($carriedOverContracts)->merge($originalCon
             ->whereIn('semester_id', $semesterIds)
             ->get();
 
-        $counselings = Counseling::with('semester', 'images')
-            ->where('student_id', $student_id)
-            ->whereIn('semester_id', $semesterIds)
-            ->get();
+      $carriedOverCounselings = Counseling::with('semester', 'images')
+    ->where('student_id', $student_id)
+    ->whereNotIn('semester_id', $semesterIds)
+    ->whereNotNull('original_counseling_id')
+    ->get();
+
+$originalCounselings = Counseling::with('semester', 'images')
+    ->where('student_id', $student_id)
+    ->whereNotIn('semester_id', $semesterIds)
+    ->whereNull('original_counseling_id')
+    ->whereDoesntHave('carriedOver') // show only if not carried over
+    ->get();
+
+$currentCounselings = Counseling::with('semester', 'images')
+    ->where('student_id', $student_id)
+    ->whereIn('semester_id', $semesterIds)
+    ->get();
+
+$allCounselings = $currentCounselings
+    ->merge($carriedOverCounselings)
+    ->merge($originalCounselings);
+
+$counselings = $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings) {
+    if ($counseling->status === 'Completed' && in_array($counseling->semester_id, $semesterIds->toArray())) {
+        return true; // keep completed from current
+    }
+
+    $originalId = $counseling->original_counseling_id ?? $counseling->id;
+
+    $hasCompletedCopyInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+        return $c->status === 'Completed' &&
+               in_array($c->semester_id, $semesterIds->toArray()) &&
+               ($c->original_counseling_id == $originalId || $c->id == $originalId);
+    });
+
+    return !$hasCompletedCopyInCurrent;
+});
+
 
         $profile = StudentProfile::where('student_id', $student_id)
             ->whereIn('semester_id', $semesterIds)

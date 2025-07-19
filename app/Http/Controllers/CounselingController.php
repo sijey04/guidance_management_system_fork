@@ -193,17 +193,53 @@ public function store(Request $request)
 
 public function updateStatus(Request $request, $id)
 {
-    $counseling = Counseling::findOrFail($id);
+    $counseling = Counseling::with('images', 'carriedOver')->findOrFail($id);
     $status = $request->input('status');
 
-    if (in_array($status, ['In Progress', 'Completed'])) {
-        $counseling->status = $status;
-        $counseling->save();
+    if (!in_array($status, ['In Progress', 'Completed'])) {
+        return back()->with('error', 'Invalid status.');
     }
 
-    return redirect()->route('counseling.view', $id)
-                     ->with('success', 'Status updated successfully.');
+    $activeSemester = Semester::where('is_current', true)->first();
+
+    // ✅ If this is the original and being completed outside current semester
+    if (
+        $counseling->status === 'In Progress' &&
+        $status === 'Completed' &&
+        !$counseling->original_counseling_id &&
+        $counseling->semester_id !== optional($activeSemester)->id
+    ) {
+        if ($counseling->carriedOver) {
+            return back()->with('info', 'Counseling already carried over.');
+        }
+
+        // Clone and link it as a carried over
+        $carried = $counseling->replicate();
+        $carried->semester_id = $activeSemester->id;
+        $carried->status = 'Completed';
+        $carried->original_counseling_id = $counseling->id;
+        $carried->save();
+
+        foreach ($counseling->images as $img) {
+            $carried->images()->create([
+                'image_path' => $img->image_path,
+                'type' => $img->type,
+            ]);
+        }
+
+        return redirect()->route('counseling.view', $carried->id)
+            ->with('success', 'Carried over and marked as Completed.');
+    }
+
+    // ✅ Regular update
+    $counseling->status = $status;
+    $counseling->save();
+
+    return redirect()->route('counseling.view', $counseling->id)
+        ->with('success', 'Status updated.');
 }
+
+
 
 public function updateRemarks(Request $request, $id)
 {

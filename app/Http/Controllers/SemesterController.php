@@ -402,6 +402,35 @@ foreach ($inProgressContracts as $contract) {
         }
     }
 }
+// Carry over IN PROGRESS COUNSELING records
+$inProgressCounselings = \App\Models\Counseling::where('student_id', $studentId)
+    ->whereIn('semester_id', $previousSemesterIds)
+    ->where('status', 'In Progress')
+    ->get();
+
+foreach ($inProgressCounselings as $counseling) {
+    // Check if already carried over
+    $existing = \App\Models\Counseling::where('student_id', $studentId)
+        ->where('original_counseling_id', $counseling->id)
+        ->where('semester_id', $semester->id)
+        ->first();
+
+    if (!$existing) {
+        $newCounseling = $counseling->replicate();
+        $newCounseling->semester_id = $semester->id;
+        $newCounseling->status = 'In Progress';
+        $newCounseling->original_counseling_id = $counseling->id; // Make sure this column exists
+        $newCounseling->save();
+
+        // Copy attached images (if any)
+        foreach ($counseling->images as $image) {
+            $newCounseling->images()->create([
+                'image_path' => $image->image_path,
+            ]);
+        }
+    }
+}
+
 
     }
 

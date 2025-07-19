@@ -296,7 +296,6 @@ public function updateStatus(Request $request, $id)
 
     $activeSemester = Semester::where('is_current', true)->first();
 
-    // 🚨 Carry over logic: If contract is from a previous semester & being marked as Completed
     if (
         $contract->status === 'In Progress' &&
         $status === 'Completed' &&
