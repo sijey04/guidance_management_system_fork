@@ -263,13 +263,11 @@ $originalContracts = Contract::with(['semester', 'images'])
 
 $allContracts = $currentContracts->merge($carriedOverContracts)->merge($originalContracts);
 
-// Filter out old versions if there's a completed version in current semester
 $contracts = $allContracts->filter(function ($contract) use ($semesterIds, $allContracts) {
     if ($contract->status === 'Completed' && in_array($contract->semester_id, $semesterIds->toArray())) {
-        return true; // always include completed from current semester
+        return true; 
     }
 
-    // If this is an original or older version, exclude if a newer completed version exists
     $originalId = $contract->original_contract_id ?? $contract->id;
 
     $hasCompletedCopyInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
