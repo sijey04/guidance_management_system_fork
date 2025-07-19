@@ -43,5 +43,15 @@ public function contractType()
 }
 
 
+// Contract.php
+public function original()
+{
+    return $this->belongsTo(Contract::class, 'original_contract_id');
+}
+
+public function carriedOver()
+{
+    return $this->hasOne(Contract::class, 'original_contract_id');
+}
 
 }

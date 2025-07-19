@@ -35,5 +35,17 @@ public function semester()
     return $this->belongsTo(Semester::class, 'semester_id');
 }
 
+public function original()
+{
+    return $this->belongsTo(Counseling::class, 'original_counseling_id');
+}
+
+public function carriedOver()
+{
+    return $this->hasOne(Counseling::class, 'original_counseling_id');
+}
+
+
+
 
 }

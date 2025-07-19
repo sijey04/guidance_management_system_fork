@@ -15,55 +15,79 @@ class ContractController extends Controller
     /**
      * Display a listing of the resource.
      */
-  public function index(Request $request)
+ public function index(Request $request)
 {
     $query = Contract::with('student', 'semester.schoolYear');
 
-    // 🔍 Search
-    if ($request->filled('search')) {
-        $query->whereHas('student', function ($q) use ($request) {
-            $q->where('student_id', 'like', '%' . $request->search . '%')
-              ->orWhere('first_name', 'like', '%' . $request->search . '%')
-              ->orWhere('last_name', 'like', '%' . $request->search . '%');
+    // Fetch all with eager loaded relations
+    $allContracts = $query->get();
+
+    // STEP 1: Remove original contracts that were already carried over
+    $latestContracts = $allContracts->filter(function ($contract) use ($allContracts) {
+        if ($contract->original_contract_id) {
+            return true; // Keep carried-over copy
+        }
+
+        $hasCarriedOver = $allContracts->contains(function ($c) use ($contract) {
+            return $c->original_contract_id === $contract->id;
         });
-    }
 
-    // 📋 Filter: Contract Type
-    if ($request->filled('contract_type')) {
-        $query->where('contract_type', $request->contract_type);
-    }
-
-    // 🟡 Filter: Status
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
-    }
-
-    if ($request->filled('semester_label')) {
-    $query->whereHas('semester', function ($q) use ($request) {
-        $q->where('semester', $request->semester_label);
+        return !$hasCarriedOver;
     });
-}
 
+    // STEP 2: Apply filters on the cleaned collection
+    $filteredContracts = $latestContracts->filter(function ($contract) use ($request) {
+        $match = true;
 
-    if ($request->filled('school_year_id')) {
-        $query->whereHas('semester', function ($q) use ($request) {
-            $q->where('school_year_id', $request->school_year_id);
-        });
-    }
+        if ($request->filled('search')) {
+            $search = strtolower($request->search);
+            $student = $contract->student;
 
+            $match = $student &&
+                     (str_contains(strtolower($student->student_id), $search) ||
+                      str_contains(strtolower($student->first_name), $search) ||
+                      str_contains(strtolower($student->last_name), $search));
+        }
+
+        if ($match && $request->filled('contract_type')) {
+            $match = $contract->contract_type === $request->contract_type;
+        }
+
+        if ($match && $request->filled('status')) {
+            $match = $contract->status === $request->status;
+        }
+
+        if ($match && $request->filled('semester_label')) {
+            $match = optional($contract->semester)->semester === $request->semester_label;
+        }
+
+        if ($match && $request->filled('school_year_id')) {
+            $match = optional($contract->semester)->school_year_id == $request->school_year_id;
+        }
+
+        return $match;
+    });
+
+    // STEP 3: Sort the filtered collection
     if ($request->filled('sort_by')) {
         $sortField = $request->sort_by;
         $sortDirection = $request->get('sort_direction', 'asc');
 
         if (in_array($sortField, ['contract_date', 'status', 'total_days'])) {
-            $query->orderBy($sortField, $sortDirection);
+            $filteredContracts = $filteredContracts->sortBy($sortField, SORT_REGULAR, $sortDirection === 'desc');
         }
     }
 
-    
-
-    
-    $contracts = $query->paginate(10)->appends($request->query());
+    // STEP 4: Manual pagination
+    $page = $request->input('page', 1);
+    $perPage = 10;
+    $contracts = new \Illuminate\Pagination\LengthAwarePaginator(
+        $filteredContracts->forPage($page, $perPage)->values(),
+        $filteredContracts->count(),
+        $perPage,
+        $page,
+        ['path' => $request->url(), 'query' => $request->query()]
+    );
 
     $semesters = Semester::with('schoolYear')->get();
     $contractTypes = ContractType::all();
@@ -77,6 +101,7 @@ class ContractController extends Controller
 
     return view('contracts.contract', compact('contracts', 'students', 'semesters', 'contractTypes'));
 }
+
 
 
 
@@ -227,7 +252,32 @@ public function allContracts(Request $request)
         }
     }
 
-    $contracts = $query->paginate(10);
+    $allContracts = $query->get();
+
+// Filter duplicates, keeping carried over if exists
+$filteredContracts = $allContracts->filter(function ($contract) use ($allContracts) {
+    if ($contract->original_contract_id) {
+        return true;
+    }
+
+    $hasCarriedOver = $allContracts->contains(function ($c) use ($contract) {
+        return $c->original_contract_id === $contract->id;
+    });
+
+    return !$hasCarriedOver;
+});
+
+// Manual pagination
+$page = request()->input('page', 1);
+$perPage = 10;
+$contracts = new \Illuminate\Pagination\LengthAwarePaginator(
+    $filteredContracts->forPage($page, $perPage),
+    $filteredContracts->count(),
+    $perPage,
+    $page,
+    ['path' => request()->url(), 'query' => request()->query()]
+);
+
    
     $semesters = Semester::all();
     $contractTypes = ContractType::all(); 
@@ -289,13 +339,46 @@ public function updateStatus(Request $request, $id)
     $contract = Contract::findOrFail($id);
     $status = $request->input('status');
 
-    if (in_array($status, ['In Progress', 'Completed'])) {
-        $contract->status = $status;
-        $contract->save();
+    // Only allow 'In Progress' or 'Completed'
+    if (!in_array($status, ['In Progress', 'Completed'])) {
+        return redirect()->back()->with('error', 'Invalid status.');
     }
 
-    return redirect()->route('contracts.view', $id)
-                     ->with('success', 'Status updated successfully.');
+    $activeSemester = Semester::where('is_current', true)->first();
+
+    if (
+        $contract->status === 'In Progress' &&
+        $status === 'Completed' &&
+        $contract->semester_id !== optional($activeSemester)->id
+    ) {
+        // Check if it was already carried over
+        if ($contract->carriedOver) {
+            return redirect()->back()->with('info', 'This contract has already been carried over.');
+        }
+
+        // Duplicate contract for the active semester
+        $newContract = $contract->replicate(); // copy all fields
+        $newContract->semester_id = $activeSemester->id;
+        $newContract->status = 'Completed';
+        $newContract->original_contract_id = $contract->id;
+        $newContract->save();
+
+        // Optionally also duplicate images if needed:
+        foreach ($contract->images as $image) {
+            $newContract->images()->create([
+                'image_path' => $image->image_path,
+                'type' => $image->type,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Contract carried over and marked as Completed.');
+    }
+
+    // ✅ For current semester or direct update
+    $contract->status = $status;
+    $contract->save();
+
+    return redirect()->back()->with('success', 'Status updated successfully.');
 }
 
 public function uploadImages(Request $request, $id, $type)

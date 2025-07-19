@@ -456,7 +456,11 @@
                                         @forelse ($contracts as $contract)
                                             <tr class="hover:bg-gray-50">
                                                 <td class="px-4 py-3 font-medium">{{ $contract->student->first_name }} {{ $contract->student->last_name }}</td>
-                                                <td class="px-4 py-3">{{ $contract->contract_type }}</td>
+                                                <td class="px-4 py-3">{{ $contract->contract_type }}
+                                                    @if($contract->original_contract_id)
+                                                        <span class="text-xs text-yellow-600 italic">(Carried from previous sem)</span>
+                                                    @endif
+                                                    </td>
                                                 <td class="px-4 py-3">
                                                     <span class="px-2 py-1 text-xs rounded-full {{ $contract->status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                                                         {{ $contract->status }}
@@ -557,7 +561,13 @@
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         @forelse ($counselings as $counseling)
                                             <tr class="hover:bg-gray-50">
-                                                <td class="px-4 py-3 font-medium">{{ $counseling->student->first_name }} {{ $counseling->student->last_name }}</td>
+                                                <td class="px-4 py-3 font-medium">{{ $counseling->student->first_name }} {{ $counseling->student->last_name }}
+                                                    @if ($counseling->original_counseling_id)
+    <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Carried Over</span>
+@endif
+
+
+                                                </td>
                                                 <td class="px-4 py-3">{{ $counseling->counseling_date }}</td>
                                                 <td class="px-4 py-3">
                                                     <span class="px-2 py-1 text-xs rounded-full {{ $counseling->status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
