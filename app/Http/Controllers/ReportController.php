@@ -190,8 +190,9 @@ $currentContracts = Contract::with(['semester', 'images', 'original'])
 
 $carriedOverContracts = Contract::with(['semester', 'images', 'original'])
     ->where('student_id', $student_id)
-    ->whereNotIn('semester_id', $semesterIds) 
-    ->whereNotNull('original_contract_id')    
+    ->whereNotIn('semester_id', $semesterIds)
+    ->whereNotNull('original_contract_id')
+    ->where('status', '!=', 'Completed') // exclude completed carried over contracts
     ->get();
 
 $originalContracts = Contract::with(['semester', 'images'])
