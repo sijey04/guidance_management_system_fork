@@ -179,6 +179,7 @@
                     <th>Type</th>
                     <th>Status</th>
                     <th>Start</th>
+                    <th>Days</th>
                     <th>End</th>
                 </tr>
             </thead>
@@ -189,6 +190,7 @@
                         <td>{{ $contract->contract_type }}</td>
                         <td>{{ $contract->status }}</td>
                         <td>{{ $contract->start_date }}</td>
+                         <td>{{ $contract->total_days }}</td>
                         <td>{{ $contract->end_date }}</td>
                     </tr>
                 @endforeach

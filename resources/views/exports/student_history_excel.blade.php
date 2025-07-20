@@ -4,7 +4,7 @@
             <th colspan="6">Student History Report</th>
         </tr>
         <tr>
-            <td colspan="6"><strong>Name:</strong> {{ $student->full_name ?? 'N/A' }}</td>
+            <td colspan="6"><strong>Name:</strong> {{ $student->last_name ?? 'N/A' }}, {{ $student->first_name ?? 'N/A' }}{{ $student->middle_name  }}. {{ $student->suffix }}</td>
         </tr>
         <tr>
             <td colspan="6"><strong>Student ID:</strong> {{ $student->student_id }}</td>
@@ -29,7 +29,10 @@
             <tr>
                 <th>Type</th>
                 <th>Status</th>
-                <th>Date Created</th>
+                <th>Contract Date</th>
+                <th>Start Date</th>
+                <th>Total Days</th>
+                <th>End Date</th>
                 <th>Remarks</th>
                 <th>Semester</th>
             </tr>
@@ -39,7 +42,10 @@
                 <tr>
                     <td>{{ $contract->contract_type }}</td>
                     <td>{{ $contract->status }}</td>
-                    <td>{{ $contract->created_at->format('Y-m-d') }}</td>
+                    <td>{{ $contract->contract_date->format('Y-m-d') }}</td>
+                     <td>{{ $contract->start_date->format('Y-m-d') }}</td>
+                     <td>{{ $contract->total_days }}</td>
+                      <td>{{ $contract->end_date->format('Y-m-d') }}</td>
                     <td>{{ $contract->remarks }}</td>
                     <td>{{ $contract->semester->semester ?? '' }}</td>
                 </tr>
@@ -66,7 +72,7 @@
             @foreach ($referrals as $referral)
                 <tr>
                     <td>{{ $referral->reason }}</td>
-                    <td>{{ $referral->created_at->format('Y-m-d') }}</td>
+                    <td>{{ $referral->referral_date->format('Y-m-d') }}</td>
                     <td>{{ $referral->remarks }}</td>
                     <td>{{ $referral->semester->semester ?? '' }}</td>
                 </tr>
@@ -93,7 +99,7 @@
             @foreach ($counselings as $counseling)
                 <tr>
                     <td>{{ $counseling->status }}</td>
-                    <td>{{ $counseling->created_at->format('Y-m-d') }}</td>
+                    <td>{{ $counseling->counseling_date->format('Y-m-d') }}</td>
                     <td>{{ $counseling->remarks }}</td>
                     <td>{{ $counseling->semester->semester ?? '' }}</td>
                 </tr>

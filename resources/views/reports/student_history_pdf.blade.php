@@ -81,19 +81,27 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Date</th>
                         <th>Type</th>
                         <th>Status</th>
+                        <th>Contract Date</th>
+                        <th>Start Date</th>
+                        <th>Total Days</th>
+                        <th>End Date</th>
                         <th>Remarks</th>
+                        <th>Semester</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($contracts as $contract)
                         <tr>
-                            <td>{{ \Carbon\Carbon::parse($contract->created_at)->format('M d, Y') }}</td>
                             <td>{{ $contract->contract_type }}</td>
-                            <td>{{ $contract->status }}</td>
-                            <td>{{ $contract->remarks }}</td>
+                    <td>{{ $contract->status }}</td>
+                    <td>{{ $contract->contract_date->format('Y-m-d') }}</td>
+                     <td>{{ $contract->start_date->format('Y-m-d') }}</td>
+                     <td>{{ $contract->total_days }}</td>
+                      <td>{{ $contract->end_date->format('Y-m-d') }}</td>
+                    <td>{{ $contract->remarks }}</td>
+                    <td>{{ $contract->semester->semester ?? '' }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -110,7 +118,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Date</th>
+                        <th>Referral Date</th>
                         <th>Reason</th>
                         <th>Remarks</th>
                     </tr>
@@ -118,7 +126,7 @@
                 <tbody>
                     @foreach($referrals as $referral)
                         <tr>
-                            <td>{{ \Carbon\Carbon::parse($referral->created_at)->format('M d, Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($referral->referral_date)->format('M d, Y') }}</td>
                             <td>{{ $referral->reason }}</td>
                             <td>{{ $referral->remarks }}</td>
                         </tr>
@@ -137,7 +145,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Date</th>
+                        <th>Counseling Date</th>
                         <th>Status</th>
                         <th>Remarks</th>
                     </tr>
@@ -145,7 +153,7 @@
                 <tbody>
                     @foreach($counselings as $counseling)
                         <tr>
-                            <td>{{ \Carbon\Carbon::parse($counseling->created_at)->format('M d, Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($counseling->counseling_date)->format('M d, Y') }}</td>
                             <td>{{ $counseling->status }}</td>
                             <td>{{ $counseling->remarks }}</td>
                         </tr>
