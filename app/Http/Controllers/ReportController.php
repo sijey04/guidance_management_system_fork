@@ -642,24 +642,27 @@ public function exportStudentPdf(Request $request)
         ->where('semester', $request->semester_name)
         ->pluck('id');
 
-    $includes = $request->input('include', []);
+    $include = $request->input('include', 'all');
 
-    $contracts = in_array('contracts', $includes) ? Contract::with('images')
-        ->where('student_id', $student->id)
-        ->whereIn('semester_id', $semesterIds)
-        ->when($request->filter_contract_type, fn($q) => $q->where('contract_type', $request->filter_contract_type))
-        ->when($request->filter_contract_status, fn($q) => $q->where('status', $request->filter_contract_status))
-        ->get() : collect();
 
-    $referrals = in_array('referrals', $includes) ? Referral::with('images')
-        ->where('student_id', $student->id)
-        ->whereIn('semester_id', $semesterIds)
-        ->when($request->filter_reason, fn($q) => $q->where('reason', $request->filter_reason))
-        ->get() : collect();
+    $contracts = ($include === 'all' || $include === 'contracts') ? Contract::with('images')
+    ->where('student_id', $student->id)
+    ->whereIn('semester_id', $semesterIds)
+    ->when($request->filter_contract_type, fn($q) => $q->where('contract_type', $request->filter_contract_type))
+    ->when($request->filter_contract_status, fn($q) => $q->where('status', $request->filter_contract_status))
+    ->get() : collect();
+
+
+    $referrals = ($include === 'all' || $include === 'referrals') ? Referral::with('images')
+    ->where('student_id', $student->id)
+    ->whereIn('semester_id', $semesterIds)
+    ->when($request->filter_reason, fn($q) => $q->where('reason', $request->filter_reason))
+    ->get() : collect();
+
 
     // ✅ Enhanced logic for counseling records (align with view() and index())
     $counselings = collect();
-    if (in_array('counselings', $includes)) {
+if ($include === 'all' || $include === 'counselings') {
         $allStudentCounselings = Counseling::with(['semester', 'images', 'original'])
             ->where('student_id', $student->id)
             ->get();

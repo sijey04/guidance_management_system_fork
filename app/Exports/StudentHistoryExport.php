@@ -24,32 +24,43 @@ class StudentHistoryExport implements FromView
     public function view(): View
     {
         $request = $this->request;
+
         $student = Student::findOrFail($request->student_id);
         $schoolYear = SchoolYear::find($request->school_year_id);
         $semesterName = $request->semester_name;
+        $selectedTab = $request->tab ?? 'all'; // contracts, referrals, counselings, or all
 
         $semesterIds = Semester::where('school_year_id', $schoolYear?->id)
             ->where('semester', $semesterName)
             ->pluck('id');
 
-        $includes = $request->input('include', []);
-
-        $contracts = in_array('contracts', $includes) ? Contract::with('semester')
-            ->where('student_id', $student->id)
-            ->whereIn('semester_id', $semesterIds)
-            ->when($request->filter_contract_type, fn($q) => $q->where('contract_type', $request->filter_contract_type))
-            ->when($request->filter_contract_status, fn($q) => $q->where('status', $request->filter_contract_status))
-            ->get() : collect();
-
-        $referrals = in_array('referrals', $includes) ? Referral::with('semester')
-            ->where('student_id', $student->id)
-            ->whereIn('semester_id', $semesterIds)
-            ->when($request->filter_reason, fn($q) => $q->where('reason', $request->filter_reason))
-            ->get() : collect();
-
+        // Initialize empty collections
+        $contracts = collect();
+        $referrals = collect();
         $counselings = collect();
-        if (in_array('counselings', $includes)) {
-            $allStudentCounselings = Counseling::with('semester', 'original')
+
+        // Load CONTRACTS if selected tab is 'contracts' or 'all'
+        if ($selectedTab === 'contracts' || $selectedTab === 'all') {
+            $contracts = Contract::with('semester')
+                ->where('student_id', $student->id)
+                ->whereIn('semester_id', $semesterIds)
+                ->when($request->filter_contract_type, fn($q) => $q->where('contract_type', $request->filter_contract_type))
+                ->when($request->filter_contract_status, fn($q) => $q->where('status', $request->filter_contract_status))
+                ->get();
+        }
+
+        // Load REFERRALS if selected tab is 'referrals' or 'all'
+        if ($selectedTab === 'referrals' || $selectedTab === 'all') {
+            $referrals = Referral::with('semester')
+                ->where('student_id', $student->id)
+                ->whereIn('semester_id', $semesterIds)
+                ->when($request->filter_reason, fn($q) => $q->where('reason', $request->filter_reason))
+                ->get();
+        }
+
+        // Load COUNSELINGS if selected tab is 'counselings' or 'all'
+        if ($selectedTab === 'counselings' || $selectedTab === 'all') {
+            $allStudentCounselings = Counseling::with(['semester', 'original'])
                 ->where('student_id', $student->id)
                 ->get();
 
@@ -58,22 +69,25 @@ class StudentHistoryExport implements FromView
                     return false;
                 }
 
+                // Show completed counseling within the selected semester(s)
                 if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
                     return true;
                 }
 
+                // Otherwise, check for incomplete but not duplicated if completed exists
                 $originalId = $counseling->original_counseling_id ?? $counseling->id;
 
                 $hasCompletedInCurrent = $allStudentCounselings->contains(function ($c) use ($originalId, $semesterIds) {
-                    return $c->status === 'Completed' &&
-                           $semesterIds->contains($c->semester_id) &&
-                           ($c->original_counseling_id == $originalId || $c->id == $originalId);
+                    return $c->status === 'Completed'
+                        && $semesterIds->contains($c->semester_id)
+                        && ($c->original_counseling_id == $originalId || $c->id == $originalId);
                 });
 
                 return !$hasCompletedInCurrent;
             });
         }
 
+        // Get latest profile within the selected semester(s)
         $profile = StudentProfile::where('student_id', $student->id)
             ->whereIn('semester_id', $semesterIds)
             ->latest()
@@ -87,6 +101,7 @@ class StudentHistoryExport implements FromView
             'profile' => $profile,
             'schoolYear' => $schoolYear,
             'semesterName' => $semesterName,
+            'selectedTab' => $selectedTab,
         ]);
     }
 }

@@ -20,7 +20,7 @@
 
 <br><br>
 
-@if ($contracts->isNotEmpty())
+@if (($selectedTab === 'contracts' || $selectedTab === 'all') && $contracts->isNotEmpty())
     <table>
         <thead>
             <tr>
@@ -49,7 +49,7 @@
     <br><br>
 @endif
 
-@if ($referrals->isNotEmpty())
+@if (($selectedTab === 'referrals' || $selectedTab === 'all') && $referrals->isNotEmpty())
     <table>
         <thead>
             <tr>
@@ -76,7 +76,7 @@
     <br><br>
 @endif
 
-@if ($counselings->isNotEmpty())
+@if (($selectedTab === 'counselings' || $selectedTab === 'all') && $counselings->isNotEmpty())
     <table>
         <thead>
             <tr>
