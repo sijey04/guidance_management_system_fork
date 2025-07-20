@@ -92,27 +92,21 @@ $allContracts = $currentContracts->merge($pastContracts);
 
 $contracts = $isCurrentSem
     ? $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request) {
-        if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) {
-            return false;
-        }
-
-        if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) {
-            return false;
-        }
-
-        if ($contract->status === 'Completed' && $semesterIds->contains($contract->semester_id)) {
-            return true;
-        }
+        if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
+        if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) return false;
 
         $originalId = $contract->original_contract_id ?? $contract->id;
 
-        $hasCompletedInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
-            return $c->status === 'Completed' &&
-                   $semesterIds->contains($c->semester_id) &&
-                   ($c->original_contract_id == $originalId || $c->id == $originalId);
+        // Skip original if a carried-over exists in current semester
+        if (!is_null($contract->original_contract_id)) {
+            return $semesterIds->contains($contract->semester_id); // keep carried-over
+        }
+
+        $hasCopyInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
         });
 
-        return !$hasCompletedInCurrent;
+        return !$hasCopyInCurrent && $semesterIds->contains($contract->semester_id);
     })
     : $allContracts->filter(function ($contract) use ($semesterIds, $request) {
         return $semesterIds->contains($contract->semester_id) &&
@@ -142,23 +136,20 @@ $allCounselings = $currentCounselings->merge($pastCounselings);
 
 $counselings = $isCurrentSem
     ? $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request) {
-        if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) {
-            return false;
-        }
-
-        if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
-            return true;
-        }
+        if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) return false;
 
         $originalId = $counseling->original_counseling_id ?? $counseling->id;
 
-        $hasCompletedInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
-            return $c->status === 'Completed' &&
-                   $semesterIds->contains($c->semester_id) &&
-                   ($c->original_counseling_id == $originalId || $c->id == $originalId);
+        // Skip original if a carried-over exists
+        if (!is_null($counseling->original_counseling_id)) {
+            return $semesterIds->contains($counseling->semester_id);
+        }
+
+        $hasCopyInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->original_counseling_id == $originalId && $semesterIds->contains($c->semester_id);
         });
 
-        return !$hasCompletedInCurrent;
+        return !$hasCopyInCurrent && $semesterIds->contains($counseling->semester_id);
     })
     : $allCounselings->filter(function ($counseling) use ($semesterIds, $request) {
         return $semesterIds->contains($counseling->semester_id) &&
@@ -260,28 +251,24 @@ $allStudentContracts = Contract::with(['semester', 'images', 'original'])
     ->get();
 
 $contracts = $allStudentContracts->filter(function ($contract) use ($semesterIds, $allStudentContracts, $request) {
-    if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) {
-        return false;
-    }
-
-    if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) {
-        return false;
-    }
-
-    if ($contract->status === 'Completed' && $semesterIds->contains($contract->semester_id)) {
-        return true;
-    }
+    if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) return false;
+    if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
 
     $originalId = $contract->original_contract_id ?? $contract->id;
 
-    $hasCompletedInCurrent = $allStudentContracts->contains(function ($c) use ($originalId, $semesterIds) {
-        return $c->status === 'Completed' &&
-               $semesterIds->contains($c->semester_id) &&
-               ($c->original_contract_id == $originalId || $c->id == $originalId);
+    // Show carried-over copy in current sem
+    if (!is_null($contract->original_contract_id)) {
+        return $semesterIds->contains($contract->semester_id);
+    }
+
+    // If a carried-over copy exists in this semester, hide the original
+    $hasCarriedOver = $allStudentContracts->contains(function ($c) use ($originalId, $semesterIds) {
+        return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
     });
 
-    return !$hasCompletedInCurrent;
+    return !$hasCarriedOver && $semesterIds->contains($contract->semester_id);
 });
+
 
 
 
@@ -297,24 +284,21 @@ $allStudentCounselings = Counseling::with(['semester', 'images', 'original'])
     ->get();
 
 $counselings = $allStudentCounselings->filter(function ($counseling) use ($semesterIds, $allStudentCounselings, $request) {
-    if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) {
-        return false;
-    }
-
-    if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
-        return true;
-    }
+    if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) return false;
 
     $originalId = $counseling->original_counseling_id ?? $counseling->id;
 
-    $hasCompletedInCurrent = $allStudentCounselings->contains(function ($c) use ($originalId, $semesterIds) {
-        return $c->status === 'Completed' &&
-               $semesterIds->contains($c->semester_id) &&
-               ($c->original_counseling_id == $originalId || $c->id == $originalId);
+    if (!is_null($counseling->original_counseling_id)) {
+        return $semesterIds->contains($counseling->semester_id);
+    }
+
+    $hasCarriedOver = $allStudentCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+        return $c->original_counseling_id == $originalId && $semesterIds->contains($c->semester_id);
     });
 
-    return !$hasCompletedInCurrent;
+    return !$hasCarriedOver && $semesterIds->contains($counseling->semester_id);
 });
+
 
 
         $profile = StudentProfile::where('student_id', $student_id)
@@ -375,28 +359,28 @@ public function export(Request $request)
     $allContracts = $currentContracts->merge($pastContracts);
 
     $contracts = $isCurrentSem
-        ? $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request) {
-            if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
-            if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) return false;
+    ? $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request) {
+        if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
+        if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) return false;
 
-            if ($contract->status === 'Completed' && $semesterIds->contains($contract->semester_id)) {
-                return true;
-            }
+        $originalId = $contract->original_contract_id ?? $contract->id;
 
-            $originalId = $contract->original_contract_id ?? $contract->id;
-            $hasCompletedInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
-                return $c->status === 'Completed' &&
-                       $semesterIds->contains($c->semester_id) &&
-                       ($c->original_contract_id == $originalId || $c->id == $originalId);
-            });
+        if (!is_null($contract->original_contract_id)) {
+            return $semesterIds->contains($contract->semester_id); // keep carried-over
+        }
 
-            return !$hasCompletedInCurrent;
-        })
-        : $allContracts->filter(function ($contract) use ($semesterIds, $request) {
-            return $semesterIds->contains($contract->semester_id) &&
-                (!$request->filled('filter_contract_status') || $contract->status === $request->filter_contract_status) &&
-                (!$request->filled('filter_contract_type') || $contract->contract_type === $request->filter_contract_type);
+        $hasCarriedOver = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
         });
+
+        return !$hasCarriedOver && $semesterIds->contains($contract->semester_id);
+    })
+    : $allContracts->filter(function ($contract) use ($semesterIds, $request) {
+        return $semesterIds->contains($contract->semester_id) &&
+               (!$request->filled('filter_contract_status') || $contract->status === $request->filter_contract_status) &&
+               (!$request->filled('filter_contract_type') || $contract->contract_type === $request->filter_contract_type);
+    });
+
 
     // REFERRALS
     $referrals = Referral::with('student')
@@ -420,18 +404,18 @@ public function export(Request $request)
         ? $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request) {
             if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) return false;
 
-            if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
-                return true;
-            }
-
             $originalId = $counseling->original_counseling_id ?? $counseling->id;
-            $hasCompletedInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
-                return $c->status === 'Completed' &&
-                       $semesterIds->contains($c->semester_id) &&
-                       ($c->original_counseling_id == $originalId || $c->id == $originalId);
-            });
 
-            return !$hasCompletedInCurrent;
+if (!is_null($counseling->original_counseling_id)) {
+    return $semesterIds->contains($counseling->semester_id); // show carried-over only
+}
+
+$hasCopyInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+    return $c->original_counseling_id == $originalId && $semesterIds->contains($c->semester_id);
+});
+
+return !$hasCopyInCurrent && $semesterIds->contains($counseling->semester_id);
+
         })
         : $allCounselings->filter(function ($counseling) use ($semesterIds, $request) {
             return $semesterIds->contains($counseling->semester_id) &&
@@ -527,19 +511,19 @@ public function exportExcel(Request $request)
                 return false;
             }
 
-            if ($contract->status === 'Completed' && $semesterIds->contains($contract->semester_id)) {
-                return true;
-            }
-
             $originalId = $contract->original_contract_id ?? $contract->id;
+           if (!is_null($contract->original_contract_id)) {
+    return $semesterIds->contains($contract->semester_id);
+}
 
-            $hasCompletedInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
-                return $c->status === 'Completed' &&
-                       $semesterIds->contains($c->semester_id) &&
-                       ($c->original_contract_id == $originalId || $c->id == $originalId);
-            });
+$hasCarriedOver = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+    return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
+});
 
-            return !$hasCompletedInCurrent;
+return !$hasCarriedOver && $semesterIds->contains($contract->semester_id);
+
+
+
         })
         : $allContracts->filter(function ($contract) use ($semesterIds, $request) {
             return $semesterIds->contains($contract->semester_id) &&
@@ -565,19 +549,19 @@ public function exportExcel(Request $request)
                 return false;
             }
 
-            if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
-                return true;
-            }
 
             $originalId = $counseling->original_counseling_id ?? $counseling->id;
 
-            $hasCompletedInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
-                return $c->status === 'Completed' &&
-                       $semesterIds->contains($c->semester_id) &&
-                       ($c->original_counseling_id == $originalId || $c->id == $originalId);
-            });
+            if (!is_null($counseling->original_counseling_id)) {
+    return $semesterIds->contains($counseling->semester_id);
+}
 
-            return !$hasCompletedInCurrent;
+$hasCarriedOver = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+    return $c->original_counseling_id == $originalId && $semesterIds->contains($c->semester_id);
+});
+
+return !$hasCarriedOver && $semesterIds->contains($counseling->semester_id);
+
         })
         : $allCounselings->filter(function ($counseling) use ($semesterIds, $request) {
             return $semesterIds->contains($counseling->semester_id) &&
@@ -645,12 +629,27 @@ public function exportStudentPdf(Request $request)
     $include = $request->input('include', 'all');
 
 
-    $contracts = ($include === 'all' || $include === 'contracts') ? Contract::with('images')
+   $allContracts = Contract::with('images')
     ->where('student_id', $student->id)
-    ->whereIn('semester_id', $semesterIds)
-    ->when($request->filter_contract_type, fn($q) => $q->where('contract_type', $request->filter_contract_type))
-    ->when($request->filter_contract_status, fn($q) => $q->where('status', $request->filter_contract_status))
-    ->get() : collect();
+    ->get();
+
+$contracts = $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request) {
+    if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
+    if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) return false;
+
+    $originalId = $contract->original_contract_id ?? $contract->id;
+
+    if (!is_null($contract->original_contract_id)) {
+        return $semesterIds->contains($contract->semester_id);
+    }
+
+    $hasCarriedOver = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+        return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
+    });
+
+    return !$hasCarriedOver && $semesterIds->contains($contract->semester_id);
+});
+
 
 
     $referrals = ($include === 'all' || $include === 'referrals') ? Referral::with('images')
@@ -668,24 +667,25 @@ if ($include === 'all' || $include === 'counselings') {
             ->get();
 
         $counselings = $allStudentCounselings->filter(function ($counseling) use ($semesterIds, $allStudentCounselings, $request) {
-            if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) {
-                return false;
-            }
+    if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) {
+        return false;
+    }
 
-            if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
-                return true;
-            }
+    $originalId = $counseling->original_counseling_id ?? $counseling->id;
 
-            $originalId = $counseling->original_counseling_id ?? $counseling->id;
+    // If this is a carried-over copy, keep it only if it's in the selected semester
+    if (!is_null($counseling->original_counseling_id)) {
+        return $semesterIds->contains($counseling->semester_id);
+    }
 
-            $hasCompletedInCurrent = $allStudentCounselings->contains(function ($c) use ($originalId, $semesterIds) {
-                return $c->status === 'Completed' &&
-                       $semesterIds->contains($c->semester_id) &&
-                       ($c->original_counseling_id == $originalId || $c->id == $originalId);
-            });
+    // If this is the original, exclude it if a carried-over copy exists in current sem
+    $hasCopyInCurrent = $allStudentCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+        return $c->original_counseling_id == $originalId && $semesterIds->contains($c->semester_id);
+    });
 
-            return !$hasCompletedInCurrent;
-        });
+    return !$hasCopyInCurrent && $semesterIds->contains($counseling->semester_id);
+});
+
     }
 
     $profile = StudentProfile::where('student_id', $student->id)

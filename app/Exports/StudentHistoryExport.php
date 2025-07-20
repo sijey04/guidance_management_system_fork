@@ -69,21 +69,19 @@ class StudentHistoryExport implements FromView
                     return false;
                 }
 
-                // Show completed counseling within the selected semester(s)
-                if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
-                    return true;
-                }
-
-                // Otherwise, check for incomplete but not duplicated if completed exists
                 $originalId = $counseling->original_counseling_id ?? $counseling->id;
 
-                $hasCompletedInCurrent = $allStudentCounselings->contains(function ($c) use ($originalId, $semesterIds) {
-                    return $c->status === 'Completed'
-                        && $semesterIds->contains($c->semester_id)
-                        && ($c->original_counseling_id == $originalId || $c->id == $originalId);
+                // If this is a carried-over copy, show it only if it's in the selected semester
+                if (!is_null($counseling->original_counseling_id)) {
+                    return $semesterIds->contains($counseling->semester_id);
+                }
+
+                // If this is the original, exclude it if a carried-over copy exists in selected semesters
+                $hasCopyInCurrent = $allStudentCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+                    return $c->original_counseling_id == $originalId && $semesterIds->contains($c->semester_id);
                 });
 
-                return !$hasCompletedInCurrent;
+                return !$hasCopyInCurrent && $semesterIds->contains($counseling->semester_id);
             });
         }
 
