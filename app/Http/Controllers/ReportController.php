@@ -67,7 +67,11 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
             ->when($request->filled('filter_section'), fn($q) => $q->where('section', $request->filter_section))
             ->get()
             ->unique('student_id')
+            ->sortBy(function ($profile) {
+                return strtolower(optional($profile->student)->last_name . optional($profile->student)->first_name);
+            })
             ->values();
+
 
        $currentContracts = Contract::with('student')
     ->whereIn('semester_id', $semesterIds)
@@ -245,46 +249,42 @@ $schoolYearName = $schoolYear?->school_year ?? 'N/A';
 
         $semesterIds = $semesters->pluck('id');
 
-$currentContracts = Contract::with(['semester', 'images', 'original'])
+$allStudentContracts = Contract::with(['semester', 'images', 'original'])
     ->where('student_id', $student_id)
-    ->whereIn('semester_id', $semesterIds)
     ->get();
 
-$carriedOverContracts = Contract::with(['semester', 'images', 'original'])
-    ->where('student_id', $student_id)
-    ->whereNotIn('semester_id', $semesterIds)
-    ->whereNotNull('original_contract_id')
-    ->where('status', '!=', 'Completed') // exclude completed carried over contracts
-    ->get();
+$contracts = $allStudentContracts->filter(function ($contract) use ($semesterIds, $allStudentContracts, $request) {
+    if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) {
+        return false;
+    }
 
-$originalContracts = Contract::with(['semester', 'images'])
-    ->whereIn('id', $carriedOverContracts->pluck('original_contract_id'))
-    ->get();
+    if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) {
+        return false;
+    }
 
-$allContracts = $currentContracts->merge($carriedOverContracts)->merge($originalContracts);
-
-$contracts = $allContracts->filter(function ($contract) use ($semesterIds, $allContracts) {
-    if ($contract->status === 'Completed' && in_array($contract->semester_id, $semesterIds->toArray())) {
-        return true; 
+    if ($contract->status === 'Completed' && $semesterIds->contains($contract->semester_id)) {
+        return true;
     }
 
     $originalId = $contract->original_contract_id ?? $contract->id;
 
-    $hasCompletedCopyInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+    $hasCompletedInCurrent = $allStudentContracts->contains(function ($c) use ($originalId, $semesterIds) {
         return $c->status === 'Completed' &&
-               in_array($c->semester_id, $semesterIds->toArray()) &&
+               $semesterIds->contains($c->semester_id) &&
                ($c->original_contract_id == $originalId || $c->id == $originalId);
     });
 
-    return !$hasCompletedCopyInCurrent;
+    return !$hasCompletedInCurrent;
 });
 
 
 
         $referrals = Referral::with('semester', 'images')
-            ->where('student_id', $student_id)
-            ->whereIn('semester_id', $semesterIds)
-            ->get();
+    ->where('student_id', $student_id)
+    ->whereIn('semester_id', $semesterIds)
+    ->when($request->filled('filter_reason'), fn($q) => $q->where('reason', $request->filter_reason))
+    ->get();
+
 
       $carriedOverCounselings = Counseling::with('semester', 'images')
     ->where('student_id', $student_id)
@@ -302,38 +302,51 @@ $originalCounselings = Counseling::with('semester', 'images')
 $currentCounselings = Counseling::with('semester', 'images')
     ->where('student_id', $student_id)
     ->whereIn('semester_id', $semesterIds)
+    ->when($request->filled('filter_counseling_status'), fn($q) => $q->where('status', $request->filter_counseling_status))
     ->get();
 
-$allCounselings = $currentCounselings
-    ->merge($carriedOverCounselings)
-    ->merge($originalCounselings);
 
-$counselings = $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings) {
-    if ($counseling->status === 'Completed' && in_array($counseling->semester_id, $semesterIds->toArray())) {
-        return true; // keep completed from current
-    }
+$allCounselings = $currentCounselings->merge($carriedOverCounselings)->merge($originalCounselings);
+$isCurrentSem = optional($schoolYear)->id === $schoolYearId && $semesterIds->contains(optional($student->latestSemester)->id);
 
-    $originalId = $counseling->original_counseling_id ?? $counseling->id;
+$counselings = $isCurrentSem
+    ? $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request) {
+        if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) {
+            return false;
+        }
 
-    $hasCompletedCopyInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
-        return $c->status === 'Completed' &&
-               in_array($c->semester_id, $semesterIds->toArray()) &&
-               ($c->original_counseling_id == $originalId || $c->id == $originalId);
+        if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
+            return true;
+        }
+
+        $originalId = $counseling->original_counseling_id ?? $counseling->id;
+
+        $hasCompletedInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->status === 'Completed' &&
+                   $semesterIds->contains($c->semester_id) &&
+                   ($c->original_counseling_id == $originalId || $c->id == $originalId);
+        });
+
+        return !$hasCompletedInCurrent;
+    })
+    : $allCounselings->filter(function ($counseling) use ($semesterIds, $request) {
+        return $semesterIds->contains($counseling->semester_id) &&
+               (!$request->filled('filter_counseling_status') || $counseling->status === $request->filter_counseling_status);
     });
-
-    return !$hasCompletedCopyInCurrent;
-});
-
 
         $profile = StudentProfile::where('student_id', $student_id)
             ->whereIn('semester_id', $semesterIds)
             ->latest()
             ->first(); 
 
+            $contractTypesList = ContractType::all();
+$referralReasons = ReferralReason::all();
+
 
         return view('reports.view_student_records', compact(
     'student', 'contracts', 'referrals', 'counselings',
-    'schoolYearName', 'semesterName', 'profile'
+    'schoolYearName', 'semesterName', 'profile' ,'contractTypesList',
+    'referralReasons'
 ));
 
 

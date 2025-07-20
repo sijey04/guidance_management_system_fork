@@ -563,8 +563,8 @@
                                             <tr class="hover:bg-gray-50">
                                                 <td class="px-4 py-3 font-medium">{{ $counseling->student->first_name }} {{ $counseling->student->last_name }}
                                                     @if ($counseling->original_counseling_id)
-    <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Carried Over</span>
-@endif
+                                                        <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Carried Over</span>
+                                                    @endif
 
 
                                                 </td>
