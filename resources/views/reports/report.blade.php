@@ -493,7 +493,7 @@
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-4 py-3">{{ $profile->student->student_id }}</td>
                                             <td class="px-4 py-3 font-medium">
-                                            {{ $profile->student->last_name }}, {{ $profile->student->first_name }} {{ $profile->student->middle_name }} {{ $profile->student->suffix }}
+                                            {{ $profile->student->last_name }}, {{ $profile->student->first_name }} {{ $profile->student->middle_name }}. {{ $profile->student->suffix }}
 
                                             @php
                                                 $transition = $transitions->first(function ($t) use ($profile) {
@@ -570,6 +570,7 @@
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Type</th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
+                                            <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Days</th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">End Date</th>
                                             <th class="px-4 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                         </tr>
@@ -577,7 +578,7 @@
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         @forelse ($contracts as $contract)
                                             <tr class="hover:bg-gray-50">
-                                                <td class="px-4 py-3 font-medium">{{ $contract->student->first_name }} {{ $contract->student->last_name }}</td>
+                                                <td class="px-4 py-3 font-medium"> {{ $contract->student->last_name }},{{ $contract->student->first_name }} {{ $contract->student->middle_name }}.  {{ $contract->student->suffix }}</td>
                                                 <td class="px-4 py-3">{{ $contract->contract_type }}
                                                     @if($contract->original_contract_id)
                                                         <span class="text-xs text-yellow-600 italic">(Carried from previous sem)</span>
@@ -589,6 +590,7 @@
                                                     </span>
                                                 </td>
                                                 <td class="px-4 py-3">{{ $contract->start_date }}</td>
+                                                <td class="px-4 py-3">{{ $contract->total_days }}</td>
                                                 <td class="px-4 py-3">{{ $contract->end_date }}</td>
                                                 <td class="px-4 py-3 text-right">
                                                     <a href="{{ route('contracts.view', ['id' => $contract->id, 'source' => 'report']) }}" class="text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1">

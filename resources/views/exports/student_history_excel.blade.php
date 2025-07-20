@@ -42,10 +42,10 @@
                 <tr>
                     <td>{{ $contract->contract_type }}</td>
                     <td>{{ $contract->status }}</td>
-                    <td>{{ $contract->contract_date->format('Y-m-d') }}</td>
-                     <td>{{ $contract->start_date->format('Y-m-d') }}</td>
-                     <td>{{ $contract->total_days }}</td>
-                      <td>{{ $contract->end_date->format('Y-m-d') }}</td>
+                    <td>{{ $contract->contract_date }}</td>
+                    <td>{{ $contract->start_date }}</td>
+                    <td>{{ $contract->total_days }}</td>
+                    <td>{{ $contract->end_date}}</td>
                     <td>{{ $contract->remarks }}</td>
                     <td>{{ $contract->semester->semester ?? '' }}</td>
                 </tr>
@@ -72,7 +72,7 @@
             @foreach ($referrals as $referral)
                 <tr>
                     <td>{{ $referral->reason }}</td>
-                    <td>{{ $referral->referral_date->format('Y-m-d') }}</td>
+                    <td>{{ $referral->referral_date}}</td>
                     <td>{{ $referral->remarks }}</td>
                     <td>{{ $referral->semester->semester ?? '' }}</td>
                 </tr>
@@ -99,7 +99,7 @@
             @foreach ($counselings as $counseling)
                 <tr>
                     <td>{{ $counseling->status }}</td>
-                    <td>{{ $counseling->counseling_date->format('Y-m-d') }}</td>
+                    <td>{{ $counseling->referral_date }}</td>
                     <td>{{ $counseling->remarks }}</td>
                     <td>{{ $counseling->semester->semester ?? '' }}</td>
                 </tr>
