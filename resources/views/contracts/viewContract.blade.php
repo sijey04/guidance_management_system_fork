@@ -90,7 +90,8 @@
                     </div>
                     <x-student-info label="Status" :value="$contract->status" />
                     <x-student-info label="Contract Date" :value="\Carbon\Carbon::parse($contract->contract_date)->format('F j, Y')" />
-                    <x-student-info label="Total Days" :value="$contract->total_days ?? 'N/A'" />
+                    
+                    <x-student-info label="Contract Type" :value="$contract->contract_type ?? 'N/A'" />
                 </div>
 
                 <div class="flex flex-col gap-3">
@@ -104,8 +105,9 @@
                             {{ $profile?->course }} {{ $profile?->year_level }} {{ $profile?->section }}
                         </span>
                     </div>
+                    <x-student-info label="Start Date" :value="$contract->start_date ?? 'N/A'" />
+                    <x-student-info label="Total Days" :value="$contract->total_days ?? 'N/A'" />
                     <x-student-info label="End Date" :value="$contract->end_date ?? 'N/A'" />
-                    <x-student-info label="Contract Type" :value="$contract->contract_type ?? 'N/A'" />
                 </div>
             </div>
         </div>

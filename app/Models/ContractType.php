@@ -9,7 +9,8 @@ class ContractType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['type'];
+    protected $fillable = ['type','requires_total_days',
+    'requires_start_date',];
 
     public function semester()
 {

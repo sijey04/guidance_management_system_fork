@@ -74,7 +74,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/contract-types', [ContractTypeController::class, 'index'])->name('contract-types.index');
     Route::post('/contract-types', [ContractTypeController::class, 'store'])->name('contract-types.store');
     Route::delete('/contract-types/{id}', [ContractTypeController::class, 'destroy'])->name('contract-types.destroy');
-    
+    Route::put('/contract-types/{id}', [ContractTypeController::class, 'update'])->name('contract-types.update');
+
     // Counseling routes
     Route::resource('counselings', CounselingController::class);
     Route::post('/counseling/store', [CounselingController::class, 'store'])->name('counseling.store');
