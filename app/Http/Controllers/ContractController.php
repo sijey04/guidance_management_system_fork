@@ -131,17 +131,38 @@ public function create()
 
 public function store(Request $request)
 {
-    $validated = $request->validate([
+    $contractType = ContractType::where('type', $request->contract_type)->first();
+
+    $rules = [
         'student_id' => 'required|exists:students,id',
         'contract_date' => 'required|date',
         'contract_type' => 'required|exists:contract_types,type',
-        'total_days' => 'nullable|integer|min:1',
-        'start_date' => 'nullable|date',
-        'end_date' => 'nullable|date',
         'remarks' => 'nullable|string|max:1000',
-        'contract_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // note the '.*'
+        'contract_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'status' => 'nullable|string',
-    ]);
+    ];
+
+    if ($contractType) {
+        if ($contractType->requires_start_date) {
+            $rules['start_date'] = 'required|date';
+        } else {
+            $rules['start_date'] = 'nullable|date';
+        }
+
+        if ($contractType->requires_total_days) {
+            $rules['total_days'] = 'required|integer|min:1';
+        } else {
+            $rules['total_days'] = 'nullable|integer|min:1';
+        }
+    }
+
+    $validated = $request->validate($rules);
+
+    if (!empty($validated['start_date']) && !empty($validated['total_days'])) {
+    $endDate = \Carbon\Carbon::parse($validated['start_date'])->addDays((int) $validated['total_days']);
+    $validated['end_date'] = $endDate->format('Y-m-d');
+}
+
 
     $activeSemester = Semester::where('is_current', true)->first();
     if (!$activeSemester) {
@@ -149,7 +170,6 @@ public function store(Request $request)
     }
 
     $validated['semester_id'] = $activeSemester->id;
-
     $contract = Contract::create($validated);
 
     if ($request->hasFile('contract_images')) {
@@ -164,6 +184,7 @@ public function store(Request $request)
 
     return redirect()->back()->with('success', 'Contract created successfully.');
 }
+
 
 
 

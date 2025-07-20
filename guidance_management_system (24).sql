@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 19, 2025 at 07:26 PM
+-- Generation Time: Jul 20, 2025 at 01:37 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -83,9 +83,18 @@ INSERT INTO `contracts` (`id`, `student_id`, `original_contract_id`, `carried_ov
 (6, 10, NULL, NULL, 3, '2025-07-03', NULL, NULL, NULL, 'In Progress', '2025-07-07 21:53:40', '2025-07-07 21:53:40', 'Community Service', '2025-07-03', NULL, NULL),
 (7, 5, NULL, NULL, 3, '2025-07-01', NULL, NULL, NULL, 'In Progress', '2025-07-07 21:55:01', '2025-07-07 21:55:01', 'Community Service', '2025-07-01', NULL, NULL),
 (8, 10, NULL, NULL, 4, '2025-07-03', NULL, 20, NULL, 'In Progress', '2025-07-08 02:25:01', '2025-07-08 02:25:01', 'deloading', '2025-07-03', '2025-07-23', 'fnvjfd'),
-(9, 3, NULL, NULL, 5, '2025-07-03', NULL, NULL, NULL, 'Completed', '2025-07-12 01:15:12', '2025-07-19 05:52:40', 'cheating', '2025-07-03', NULL, NULL),
+(9, 3, NULL, NULL, 5, '2025-07-03', NULL, NULL, NULL, 'In Progress', '2025-07-12 01:15:12', '2025-07-19 23:08:25', 'cheating', '2025-07-03', NULL, NULL),
 (10, 7, 5, NULL, 5, '2025-07-03', NULL, NULL, NULL, 'Completed', '2025-07-19 05:56:25', '2025-07-19 05:56:25', 'deloading', '2025-07-03', NULL, NULL),
-(11, 8, 4, NULL, 5, '2025-07-08', NULL, NULL, NULL, 'Completed', '2025-07-19 07:05:15', '2025-07-19 07:05:15', 'cheating', '2025-07-08', NULL, NULL);
+(11, 8, 4, NULL, 5, '2025-07-08', NULL, NULL, NULL, 'Completed', '2025-07-19 07:05:15', '2025-07-19 07:05:15', 'cheating', '2025-07-08', NULL, NULL),
+(12, 32, NULL, NULL, 5, '2025-07-20', NULL, 30, NULL, 'In Progress', '2025-07-19 19:53:28', '2025-07-19 19:53:28', 'Community Service', '2025-07-20', NULL, NULL),
+(13, 26, NULL, NULL, 5, '2025-07-20', NULL, 30, NULL, 'In Progress', '2025-07-19 20:24:08', '2025-07-19 20:30:23', 'Community Service', '2025-07-25', '2025-08-24', 'vjdmvkl'),
+(14, 6, NULL, NULL, 5, '2025-07-20', NULL, NULL, NULL, 'In Progress', '2025-07-19 20:25:29', '2025-07-19 20:25:29', 'Misconduct', NULL, NULL, 'gfg'),
+(15, 26, NULL, NULL, 5, '2025-07-20', NULL, NULL, NULL, 'In Progress', '2025-07-19 22:17:04', '2025-07-19 22:17:04', 'Cheating', NULL, NULL, NULL),
+(16, 3, 3, NULL, 5, '2025-07-04', NULL, 80, NULL, 'Completed', '2025-07-19 23:08:34', '2025-07-19 23:08:34', 'Community Service', '2025-07-04', '2025-09-22', 'njnjn'),
+(17, 23, NULL, NULL, 5, '2025-07-15', NULL, NULL, NULL, 'In Progress', '2025-07-20 02:21:11', '2025-07-20 02:21:11', 'Cheating', '2025-07-21', NULL, 'xcx'),
+(18, 28, NULL, NULL, 5, '2025-07-20', NULL, NULL, NULL, 'In Progress', '2025-07-20 02:21:48', '2025-07-20 02:21:48', 'Misconduct', '2025-07-20', NULL, NULL),
+(19, 28, 18, NULL, 6, '2025-07-20', NULL, NULL, NULL, 'Completed', '2025-07-20 02:24:05', '2025-07-20 02:34:43', 'Misconduct', '2025-07-20', NULL, NULL),
+(20, 32, 12, NULL, 6, '2025-07-20', NULL, 30, NULL, 'In Progress', '2025-07-20 02:56:42', '2025-07-20 02:56:42', 'Community Service', '2025-07-20', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -126,7 +135,12 @@ INSERT INTO `contract_images` (`id`, `contract_id`, `image_path`, `created_at`, 
 (21, 8, 'contract_images/X1cztTRQZUfrrhJfc4GcdeJQRUx8KfQEGcNpo401.png', '2025-07-08 02:25:01', '2025-07-08 02:25:01'),
 (22, 10, 'contract_images/g1BA29KOhifyFQEZpu8iZGKFeWLGmdVrWmI72UPf.png', '2025-07-19 05:56:25', '2025-07-19 05:56:25'),
 (23, 11, 'contract_images/vI07i974Hi47RVN2MFei6bbT4gY0ekXtFGJVHCsM.png', '2025-07-19 07:05:15', '2025-07-19 07:05:15'),
-(24, 11, 'contract_images/7iou83kzUI6M5CVTKzeYNd3JRuMVqzwvQWq0DOdr.jpg', '2025-07-19 07:05:15', '2025-07-19 07:05:15');
+(24, 11, 'contract_images/7iou83kzUI6M5CVTKzeYNd3JRuMVqzwvQWq0DOdr.jpg', '2025-07-19 07:05:15', '2025-07-19 07:05:15'),
+(25, 13, 'contract_images/nkktnDFa1IMddioPSiueymhqufXlqM9GvkbwIATM.png', '2025-07-19 20:24:37', '2025-07-19 20:24:37'),
+(26, 14, 'contract_images/CBHthevpslpl91tSK5loM2i5fDrXj7IVWvHj9KhL.png', '2025-07-19 20:25:29', '2025-07-19 20:25:29'),
+(27, 16, 'contract_images/QYVVHhf751YcGStFC43opDN79Jh1gMeH8p8msVsb.png', '2025-07-19 23:08:34', '2025-07-19 23:08:34'),
+(28, 16, 'contract_images/YUMSszTEd4I8XLOXv9DJiee1A04vwPzfspJ3N3Ko.png', '2025-07-19 23:08:34', '2025-07-19 23:08:34'),
+(29, 16, 'contract_images/wTHMJPoxjNJRBkgNlrNRRbJbosmkpczCODcyZKE5.png', '2025-07-19 23:08:34', '2025-07-19 23:08:34');
 
 -- --------------------------------------------------------
 
@@ -138,18 +152,20 @@ CREATE TABLE `contract_types` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `type` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `requires_total_days` tinyint(1) NOT NULL DEFAULT 0,
+  `requires_start_date` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `contract_types`
 --
 
-INSERT INTO `contract_types` (`id`, `type`, `created_at`, `updated_at`) VALUES
-(3, 'Community Service', '2025-06-21 21:39:11', '2025-06-21 21:39:11'),
-(5, 'cheating', '2025-06-24 20:02:25', '2025-06-24 20:02:25'),
-(6, 'deloading', '2025-06-24 20:03:27', '2025-06-24 20:03:27'),
-(7, 'Misconduct', '2025-07-07 20:10:11', '2025-07-07 20:10:11');
+INSERT INTO `contract_types` (`id`, `type`, `created_at`, `updated_at`, `requires_total_days`, `requires_start_date`) VALUES
+(6, 'deloading', '2025-06-24 20:03:27', '2025-06-24 20:03:27', 0, 0),
+(7, 'Misconduct', '2025-07-07 20:10:11', '2025-07-07 20:10:11', 0, 0),
+(8, 'Community Service', '2025-07-19 19:35:20', '2025-07-19 19:38:00', 1, 1),
+(9, 'Cheating', '2025-07-19 19:38:53', '2025-07-19 19:42:28', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -179,7 +195,12 @@ INSERT INTO `counselings` (`id`, `original_counseling_id`, `student_id`, `semest
 (2, NULL, 10, 3, '2025-07-02', 'In Progress', NULL, '2025-07-07 20:18:38', '2025-07-19 07:53:15', 'dkocd;'),
 (3, NULL, 1, 3, '2025-07-08', 'Completed', NULL, '2025-07-07 22:25:24', '2025-07-13 06:51:38', 'cxkm'),
 (5, NULL, 7, 3, '2025-07-02', 'In Progress', NULL, '2025-07-07 22:29:46', '2025-07-07 22:29:46', NULL),
-(8, 2, 10, 5, '2025-07-02', 'Completed', NULL, '2025-07-19 08:47:38', '2025-07-19 08:47:38', 'dkocd;');
+(8, 2, 10, 5, '2025-07-02', 'Completed', NULL, '2025-07-19 08:47:38', '2025-07-19 08:47:38', 'dkocd;'),
+(9, NULL, 26, 5, '2025-07-20', 'In Progress', NULL, '2025-07-20 02:22:20', '2025-07-20 02:22:20', NULL),
+(10, NULL, 32, 5, '2025-07-20', 'In Progress', NULL, '2025-07-20 02:22:50', '2025-07-20 02:22:50', NULL),
+(11, NULL, 28, 5, '2025-07-20', 'In Progress', NULL, '2025-07-20 02:23:21', '2025-07-20 02:23:21', 'c,c'),
+(12, 11, 28, 6, '2025-07-20', 'In Progress', NULL, '2025-07-20 02:24:05', '2025-07-20 02:24:05', 'c,c'),
+(13, 10, 32, 6, '2025-07-20', 'In Progress', NULL, '2025-07-20 02:56:42', '2025-07-20 02:56:42', NULL);
 
 -- --------------------------------------------------------
 
@@ -544,7 +565,8 @@ INSERT INTO `semesters` (`id`, `semester`, `is_current`, `created_at`, `updated_
 (2, '2nd', 0, '2025-07-06 07:28:18', '2025-07-06 07:38:54', 0, 1),
 (3, '1st', 0, '2025-07-06 07:38:54', '2025-07-11 23:50:13', 0, 2),
 (4, '2nd', 0, '2025-07-07 22:58:12', '2025-07-11 23:50:13', 0, 2),
-(5, '1st', 1, '2025-07-11 23:50:13', '2025-07-11 23:50:13', 0, 3);
+(5, '1st', 0, '2025-07-11 23:50:13', '2025-07-20 02:23:36', 0, 3),
+(6, '2nd', 1, '2025-07-20 02:23:36', '2025-07-20 02:23:36', 0, 3);
 
 -- --------------------------------------------------------
 
@@ -566,7 +588,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('fldM2FWL6cFB24aF3WLKqnR3kVmpuCygnQfmAcKU', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoibTAwWkRnYjFwMVNrZVlDOTdhSzBUTldtQmVEaUxWOTZYbWNTcGRYZSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjg6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9yZXBvcnQiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO30=', 1752945400);
+('pFwZCA6SizJMsTBRTM6qXXN55E6xz3W8DlBDIZys', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiRENIMkJrMTk3TENkVmxkUm5oS0J4OEE1SFVqdTlnNG1YTGJpMm5LdyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9zZW1lc3Rlci82L3ZhbGlkYXRlIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mjt9', 1753011396);
 
 -- --------------------------------------------------------
 
@@ -843,7 +865,9 @@ INSERT INTO `student_profiles` (`id`, `student_id`, `semester_id`, `course`, `se
 (113, 87, 5, 'BS Information Technology', 'A', '2025-07-15 14:57:16', '2025-07-15 14:57:16', 'vnfkkn', NULL, NULL, 'na', 'na', NULL, NULL, NULL, NULL, NULL, '1', NULL),
 (114, 12, 5, 'BS Computer Science', 'B', '2025-07-18 19:39:29', '2025-07-18 19:39:29', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
 (115, 11, 5, 'Associate in Computer Technology', 'B', '2025-07-18 19:47:41', '2025-07-18 19:47:41', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2', NULL),
-(116, 18, 5, 'BS Computer Science', 'B', '2025-07-19 04:02:18', '2025-07-19 04:02:18', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2', NULL);
+(116, 18, 5, 'BS Computer Science', 'B', '2025-07-19 04:02:18', '2025-07-19 04:02:18', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2', NULL),
+(117, 28, 6, 'ACT-AD', 'A', '2025-07-20 02:24:05', '2025-07-20 02:24:05', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL),
+(118, 32, 6, 'ACT-AD', 'A', '2025-07-20 02:56:42', '2025-07-20 02:56:42', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL);
 
 -- --------------------------------------------------------
 
@@ -1244,25 +1268,25 @@ ALTER TABLE `years`
 -- AUTO_INCREMENT for table `contracts`
 --
 ALTER TABLE `contracts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `contract_images`
 --
 ALTER TABLE `contract_images`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `contract_types`
 --
 ALTER TABLE `contract_types`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `counselings`
 --
 ALTER TABLE `counselings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `counseling_images`
@@ -1328,7 +1352,7 @@ ALTER TABLE `sections`
 -- AUTO_INCREMENT for table `semesters`
 --
 ALTER TABLE `semesters`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `students`
@@ -1340,7 +1364,7 @@ ALTER TABLE `students`
 -- AUTO_INCREMENT for table `student_profiles`
 --
 ALTER TABLE `student_profiles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
 
 --
 -- AUTO_INCREMENT for table `student_semester_enrollments`

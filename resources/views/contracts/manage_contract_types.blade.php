@@ -38,20 +38,31 @@
                         type="text" 
                         id="type" 
                         name="type" 
-                        placeholder="e.g., Academic Probation Contract" 
                         required
-                        class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#a82323]"
+                        class="w-full border border-gray-300 rounded-md px-4 py-2"
+                        placeholder="e.g. Academic Probation"
                     >
                 </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="requires_total_days" class="mr-2 text-[#a82323]">
+                        Requires Total Days
+                    </label>
+
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="requires_start_date" class="mr-2 text-[#a82323]">
+                        Requires Start Date
+                    </label>
+                </div>
+
                 <div>
-                    <button 
-                        type="submit"
-                        class="bg-[#a82323] text-white px-5 py-2 rounded-md font-semibold text-sm hover:bg-red-700 transition w-full sm:w-auto"
-                    >
+                    <button type="submit" class="bg-[#a82323] text-white px-5 py-2 rounded-md hover:bg-red-700">
                         Add Type
                     </button>
                 </div>
             </form>
+
             <p class="text-sm text-gray-500 mt-2">
                 Be specific and concise when naming contract types to maintain clarity across all student records.
             </p>
@@ -63,30 +74,51 @@
                 <thead class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                     <tr>
                         <th class="px-4 py-3">Contract Type</th>
-                        <th class="px-4 py-3">Actions</th>
+                        <th class="px-4 py-3 text-center">Requires Total Days</th>
+                        <th class="px-4 py-3 text-center">Requires Start Date</th>
+                        <th class="px-4 py-3 text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                     @forelse($contractTypes as $type)
                         <tr class="hover:bg-[#fef2f2] dark:hover:bg-gray-700 transition">
                             <td class="px-4 py-3">{{ $type->type }}</td>
-                            <td class="px-4 py-3">
-                                <form method="POST" action="{{ route('contract-types.destroy', $type->id) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button 
-                                        type="submit"
-                                        onclick="return confirm('Are you sure you want to delete this contract type?')"
-                                        class="text-red-600 hover:underline text-sm font-medium"
-                                    >
-                                        Delete
+
+                            <!-- Update Form for Checkboxes -->
+                            <form method="POST" action="{{ route('contract-types.update', $type->id) }}">
+                                @csrf
+                                @method('PUT')
+
+                                <td class="px-4 py-3 text-center">
+                                    <input type="checkbox" name="requires_total_days" {{ $type->requires_total_days ? 'checked' : '' }}>
+                                </td>
+
+                                <td class="px-4 py-3 text-center">
+                                    <input type="checkbox" name="requires_start_date" {{ $type->requires_start_date ? 'checked' : '' }}>
+                                </td>
+
+                                <td class="px-4 py-3 text-center flex gap-3 justify-center">
+                                    <button type="submit" class="text-green-600 hover:underline text-sm font-medium">
+                                        Save
                                     </button>
-                                </form>
-                            </td>
+                            </form>
+
+                                    <form method="POST" action="{{ route('contract-types.destroy', $type->id) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button 
+                                            type="submit"
+                                            onclick="return confirm('Are you sure you want to delete this contract type?')"
+                                            class="text-red-600 hover:underline text-sm font-medium"
+                                        >
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="2" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                            <td colspan="4" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
                                 No contract types added yet.
                             </td>
                         </tr>
@@ -94,6 +126,5 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 </x-app-layout>

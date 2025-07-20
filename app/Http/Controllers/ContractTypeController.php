@@ -14,16 +14,35 @@ class ContractTypeController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate(['type' => 'required|unique:contract_types,type']);
-        ContractType::create(['type' => $request->type]);
-        return back()->with('success', 'Contract Type added successfully.');
-    }
+{
+    $validated = $request->validate([
+        'type' => 'required|unique:contract_types,type',
+    ]);
 
+    ContractType::create([
+        'type' => $validated['type'],
+        'requires_total_days' => $request->has('requires_total_days'),
+        'requires_start_date' => $request->has('requires_start_date'),
+    ]);
+
+    return back()->with('success', 'Contract Type added successfully.');
+}
     public function destroy($id)
     {
         ContractType::destroy($id);
         return back()->with('success', 'Contract Type deleted.');
     }
+
+    public function update(Request $request, $id)
+{
+    $contractType = ContractType::findOrFail($id);
+
+    $contractType->update([
+        'requires_total_days' => $request->has('requires_total_days'),
+        'requires_start_date' => $request->has('requires_start_date'),
+    ]);
+
+    return back()->with('success', 'Contract type updated.');
 }
 
+}

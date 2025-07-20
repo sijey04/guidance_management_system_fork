@@ -68,51 +68,173 @@
                             </p>
                         </div>
 
-                        @if($selectedSY && $selectedSem)
-                        <div class="flex justify-end items-center">
-                            <a href="{{ route('reports.export', [
-                                    'school_year_id' => $selectedSY,
-                                    'semester_name' => $selectedSem,
-                                    'tab' => $activeTab,
-                                    'filter_course' => request('filter_course'),
-                                    'filter_year' => request('filter_year'),
-                                    'filter_section' => request('filter_section'),
-                                    'filter_contract_type' => request('filter_contract_type'),
-                                    'filter_contract_status' => request('filter_contract_status'),
-                                    'filter_reason' => request('filter_reason'),
-                                    'filter_counseling_status' => request('filter_counseling_status'),
-                                    'filter_transition_type' => request('filter_transition_type'),
-                                ]) }}"
-                                class="bg-[#a82323] hover:bg-red-700 text-white px-4 py-2 rounded text-sm shadow flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    Export PDF
-                            </a>
+                       <div x-data="{ open: false, selected: 'all' }">
+                        <button 
+    @click="open = true" 
+    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm shadow flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+    Export
+</button>
 
-                            <form method="GET" action="{{ route('report.exportExcel') }}" target="_blank">
-    <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
-    <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
-    <input type="hidden" name="tab" value="{{ request()->tab ?? 'all' }}">
+    <!-- Modal -->
+    <div x-show="open" class="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
+        <div @click.away="open = false" class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
+            <h2 class="text-xl font-bold mb-4">Export Report</h2>
 
-    <!-- Add other filters as hidden inputs -->
-    <input type="hidden" name="filter_course" value="{{ request()->filter_course }}">
-    <input type="hidden" name="filter_year" value="{{ request()->filter_year }}">
-    <input type="hidden" name="filter_section" value="{{ request()->filter_section }}">
-    <input type="hidden" name="filter_contract_type" value="{{ request()->filter_contract_type }}">
-    <input type="hidden" name="filter_contract_status" value="{{ request()->filter_contract_status }}">
-    <input type="hidden" name="filter_reason" value="{{ request()->filter_reason }}">
-    <input type="hidden" name="filter_counseling_status" value="{{ request()->filter_counseling_status }}">
-    <input type="hidden" name="filter_transition_type" value="{{ request()->filter_transition_type }}">
+            <form method="GET" action="" x-ref="form">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- School Year -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">School Year</label>
+                        <select name="school_year_id" class="form-select w-full rounded border-gray-300">
+                            @foreach ($schoolYears as $sy)
+                                <option value="{{ $sy->id }}">{{ $sy->school_year }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-    <button type="submit"
-        class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition">
-        Export to Excel
-    </button>
-</form>
+                    <!-- Semester -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Semester</label>
+                        <select name="semester_name" class="form-select w-full rounded border-gray-300">
+                            <option value="1st">1st Semester</option>
+                            <option value="2nd">2nd Semester</option>
+                            <option value="Summer">Summer</option>
+                        </select>
+                    </div>
 
+                    <!-- Export Type -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">Export Data</label>
+                        <select name="tab" x-model="selected" class="form-select w-full rounded border-gray-300">
+                            <option value="all">All</option>
+                            <option value="student_profiles">Student Profiles</option>
+                            <option value="contracts">Contracts</option>
+                            <option value="referrals">Referrals</option>
+                            <option value="counseling">Counseling</option>
+                            <option value="transitions">Student Transition Records</option>
+                        </select>
+                    </div>
+
+                    <!-- Conditional Filters -->
+                    <!-- Student Profile Filters -->
+                    <template x-if="selected === 'student_profiles'">
+                        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label>Course</label>
+                                <select name="filter_course" class="form-select w-full rounded border-gray-300">
+                                    <option value="">All</option>
+                                    @foreach($courses as $course)
+                                        <option value="{{ $course->course }}">{{ $course->course }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label>Year</label>
+                                <select name="filter_year" class="form-select w-full rounded border-gray-300">
+                                    <option value="">All</option>
+                                    @foreach($years as $year)
+                                        <option value="{{ $year->year_level }}">{{ $year->year_level }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label>Section</label>
+                                <select name="filter_section" class="form-select w-full rounded border-gray-300">
+                                    <option value="">All</option>
+                                    @foreach($sections as $section)
+                                        <option value="{{ $section->section }}">{{ $section->section }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                    @endif
+                    </template>
+
+                    <!-- Contract Filters -->
+                    <template x-if="selected === 'contracts'">
+                        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label>Contract Type</label>
+                                <select name="filter_contract_type" class="form-select w-full rounded border-gray-300">
+                                    <option value="">All</option>
+                                    @foreach($contractTypesList as $type)
+                                        <option value="{{ $type->type }}">{{ $type->type }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label>Status</label>
+                                <select name="filter_contract_status" class="form-select w-full rounded border-gray-300">
+                                    <option value="">All</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Referral Filters -->
+                    <template x-if="selected === 'referrals'">
+                        <div class="md:col-span-2">
+                            <label>Reason</label>
+                            <select name="filter_reason" class="form-select w-full rounded border-gray-300">
+                                <option value="">All</option>
+                                @foreach($referralReasons as $reason)
+                                    <option value="{{ $reason->reason }}">{{ $reason->reason }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </template>
+
+                    <!-- Counseling Filters -->
+                    <template x-if="selected === 'counseling'">
+                        <div class="md:col-span-2">
+                            <label>Status</label>
+                            <select name="filter_counseling_status" class="form-select w-full rounded border-gray-300">
+                                <option value="">All</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                    </template>
+
+                    <!-- Transition Filters -->
+                    <template x-if="selected === 'transitions'">
+                        <div class="md:col-span-2">
+                            <label>Transition Type</label>
+                             <select name="filter_transition_type" class="form-select w-full rounded border-gray-300">
+                            <option value="">All Types</option>
+                            @foreach(['Shifting In', 'Shifting Out', 'Transferring In', 'Transferring Out', 'Dropped', 'Returning Student'] as $type)
+                                <option value="{{ $type }}" {{ request('filter_transition_type') == $type ? 'selected' : '' }}>
+                                    {{ $type }}
+                                </option>
+                            @endforeach
+                        </select>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Export Buttons -->
+                <div class="flex justify-end mt-6 gap-3">
+                    <button @click="open = false" type="button" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                    
+                    <button type="submit" formaction="{{ route('reports.export') }}"
+                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                        Export PDF
+                    </button>
+
+                    <button type="submit" formaction="{{ route('report.exportExcel') }}"
+                            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                        Export Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
                     
                         <form method="GET" class="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
                             <select name="school_year_id" class="border border-gray-300 rounded px-3 py-2 w-full sm:w-auto focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50">
@@ -371,7 +493,7 @@
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-4 py-3">{{ $profile->student->student_id }}</td>
                                             <td class="px-4 py-3 font-medium">
-                                            {{ $profile->student->last_name }}, {{ $profile->student->first_name }} {{ $profile->student->middle_name }} {{ $profile->student->suffix }}
+                                            {{ $profile->student->last_name }}, {{ $profile->student->first_name }} {{ $profile->student->middle_name }}. {{ $profile->student->suffix }}
 
                                             @php
                                                 $transition = $transitions->first(function ($t) use ($profile) {
@@ -448,6 +570,7 @@
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Type</th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
+                                            <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Days</th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">End Date</th>
                                             <th class="px-4 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                         </tr>
@@ -455,7 +578,7 @@
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         @forelse ($contracts as $contract)
                                             <tr class="hover:bg-gray-50">
-                                                <td class="px-4 py-3 font-medium">{{ $contract->student->first_name }} {{ $contract->student->last_name }}</td>
+                                                <td class="px-4 py-3 font-medium"> {{ $contract->student->last_name }},{{ $contract->student->first_name }} {{ $contract->student->middle_name }}.  {{ $contract->student->suffix }}</td>
                                                 <td class="px-4 py-3">{{ $contract->contract_type }}
                                                     @if($contract->original_contract_id)
                                                         <span class="text-xs text-yellow-600 italic">(Carried from previous sem)</span>
@@ -467,6 +590,7 @@
                                                     </span>
                                                 </td>
                                                 <td class="px-4 py-3">{{ $contract->start_date }}</td>
+                                                <td class="px-4 py-3">{{ $contract->total_days }}</td>
                                                 <td class="px-4 py-3">{{ $contract->end_date }}</td>
                                                 <td class="px-4 py-3 text-right">
                                                     <a href="{{ route('contracts.view', ['id' => $contract->id, 'source' => 'report']) }}" class="text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1">
@@ -563,8 +687,8 @@
                                             <tr class="hover:bg-gray-50">
                                                 <td class="px-4 py-3 font-medium">{{ $counseling->student->first_name }} {{ $counseling->student->last_name }}
                                                     @if ($counseling->original_counseling_id)
-    <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Carried Over</span>
-@endif
+                                                        <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Carried Over</span>
+                                                    @endif
 
 
                                                 </td>
