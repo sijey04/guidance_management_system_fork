@@ -22,90 +22,92 @@
             <!-- Student Info Card -->
             <div class="bg-white border rounded-lg shadow p-6 space-y-6 hover:shadow-lg transition">
                 <!-- Header -->
-                <h1 class="text-2xl font-extrabold text-[#a82323]">
+                <div class="flex justify-between">
+                    <h1 class="text-2xl font-extrabold text-[#a82323]">
                     {{ $student->last_name }}, {{ $student->first_name }} {{ $student->middle_name }}. {{ $student->suffix }}
                 </h1>
+                <div x-data="{ open: false }">
 
-<div x-data="{ open: false }">
+                    <!-- Export Button -->
+                    <button @click="open = true"
+                        class="bg-[#a82323] text-white px-4 py-2 rounded shadow hover:bg-red-700 transition text-sm">
+                        Export Student History
+                    </button>
+                        <!-- Modal Overlay -->
+                        <div x-show="open" class="fixed inset-0 bg-black bg-opacity-40 z-40" @click="open = false"></div>
 
-    <!-- Export Button -->
-<button @click="open = true"
-    class="bg-[#a82323] text-white px-4 py-2 rounded shadow hover:bg-red-700 transition text-sm">
-    Export Student History
-</button>
-    <!-- Modal Overlay -->
-    <div x-show="open" class="fixed inset-0 bg-black bg-opacity-40 z-40" @click="open = false"></div>
+                        <!-- Modal Content -->
+                        <div x-show="open" class="fixed z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+                                    bg-white p-6 rounded-lg shadow-lg w-full max-w-xl space-y-4">
 
-    <!-- Modal Content -->
-    <div x-show="open" class="fixed z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-                bg-white p-6 rounded-lg shadow-lg w-full max-w-xl space-y-4">
+                            <h2 class="text-lg font-bold text-[#a82323]">Export Student History</h2>
 
-        <h2 class="text-lg font-bold text-[#a82323]">Export Student History</h2>
+                            <form method="GET" target="_blank" class="space-y-4">
 
-        <form method="GET" target="_blank" class="space-y-4">
+                                <input type="hidden" name="student_id" value="{{ $student->id }}">
+                                <input type="hidden" name="school_year_id" value="{{ request('school_year_id') }}">
+                                <input type="hidden" name="semester_name" value="{{ request('semester_name') }}">
 
-            <input type="hidden" name="student_id" value="{{ $student->id }}">
-            <input type="hidden" name="school_year_id" value="{{ request('school_year_id') }}">
-            <input type="hidden" name="semester_name" value="{{ request('semester_name') }}">
+                                <!-- Export Type -->
+                                <div>
+                                    <label class="font-semibold text-sm text-gray-700">Export Type</label>
+                                    <div class="flex flex-wrap gap-3 mt-2">
+                                        <label><input type="checkbox" name="include[]" value="contracts" class="mr-1"> Contracts</label>
+                                        <label><input type="checkbox" name="include[]" value="referrals" class="mr-1"> Referrals</label>
+                                        <label><input type="checkbox" name="include[]" value="counselings" class="mr-1"> Counseling</label>
+                                    </div>
+                                </div>
 
-            <!-- Export Type -->
-            <div>
-                <label class="font-semibold text-sm text-gray-700">Export Type</label>
-                <div class="flex flex-wrap gap-3 mt-2">
-                    <label><input type="checkbox" name="include[]" value="contracts" class="mr-1"> Contracts</label>
-                    <label><input type="checkbox" name="include[]" value="referrals" class="mr-1"> Referrals</label>
-                    <label><input type="checkbox" name="include[]" value="counselings" class="mr-1"> Counseling</label>
+                                <!-- Contract Filters -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    <select name="filter_contract_type" class="border rounded px-3 py-1 text-sm">
+                                        <option value="">All Contract Types</option>
+                                        @foreach ($contractTypesList as $type)
+                                            <option value="{{ $type->type }}">{{ $type->type }}</option>
+                                        @endforeach
+                                    </select>
+
+                                    <select name="filter_contract_status" class="border rounded px-3 py-1 text-sm">
+                                        <option value="">All Contract Status</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                </div>
+
+                                <!-- Referral Reason Filter -->
+                                <select name="filter_reason" class="w-full border rounded px-3 py-1 text-sm">
+                                    <option value="">All Referral Reasons</option>
+                                    @foreach ($referralReasons as $reason)
+                                        <option value="{{ $reason->reason }}">{{ $reason->reason }}</option>
+                                    @endforeach
+                                </select>
+
+                                <!-- Counseling Status Filter -->
+                                <select name="filter_counseling_status" class="w-full border rounded px-3 py-1 text-sm">
+                                    <option value="">All Counseling Status</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+
+                                <!-- Export Format -->
+                                <div class="flex items-center gap-4 mt-2">
+                                    <button type="submit" formaction="{{ route('export.student.pdf') }}" class="bg-[#a82323] text-white px-3 py-1 rounded text-sm">
+                                        Export as PDF
+                                    </button>
+
+                                    <button type="submit" formaction="{{ route('export.student.excel') }}" class="bg-green-600 text-white px-3 py-1 rounded text-sm">
+                                        Export as Excel
+                                    </button>
+                                </div>
+
+                                <div class="text-right">
+                                    <button type="button" @click="open = false" class="text-sm text-gray-600 hover:underline">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
                 </div>
-            </div>
 
-            <!-- Contract Filters -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <select name="filter_contract_type" class="border rounded px-3 py-1 text-sm">
-                    <option value="">All Contract Types</option>
-                    @foreach ($contractTypesList as $type)
-                        <option value="{{ $type->type }}">{{ $type->type }}</option>
-                    @endforeach
-                </select>
-
-                <select name="filter_contract_status" class="border rounded px-3 py-1 text-sm">
-                    <option value="">All Contract Status</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                </select>
-            </div>
-
-            <!-- Referral Reason Filter -->
-            <select name="filter_reason" class="w-full border rounded px-3 py-1 text-sm">
-                <option value="">All Referral Reasons</option>
-                @foreach ($referralReasons as $reason)
-                    <option value="{{ $reason->reason }}">{{ $reason->reason }}</option>
-                @endforeach
-            </select>
-
-            <!-- Counseling Status Filter -->
-            <select name="filter_counseling_status" class="w-full border rounded px-3 py-1 text-sm">
-                <option value="">All Counseling Status</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-            </select>
-
-            <!-- Export Format -->
-            <div class="flex items-center gap-4 mt-2">
-                <button type="submit" formaction="{{ route('export.student.pdf') }}" class="bg-[#a82323] text-white px-3 py-1 rounded text-sm">
-                    Export as PDF
-                </button>
-
-                <button type="submit" formaction="{{ route('export.student.excel') }}" class="bg-green-600 text-white px-3 py-1 rounded text-sm">
-                    Export as Excel
-                </button>
-            </div>
-
-            <div class="text-right">
-                <button type="button" @click="open = false" class="text-sm text-gray-600 hover:underline">Cancel</button>
-            </div>
-        </form>
-    </div>
-</div>
+                </div>
 
                 <!-- Section: Basic Info -->
                 <section>

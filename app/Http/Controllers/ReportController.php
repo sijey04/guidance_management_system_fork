@@ -96,6 +96,10 @@ $contracts = $isCurrentSem
             return false;
         }
 
+        if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) {
+            return false;
+        }
+
         if ($contract->status === 'Completed' && $semesterIds->contains($contract->semester_id)) {
             return true;
         }
@@ -112,8 +116,10 @@ $contracts = $isCurrentSem
     })
     : $allContracts->filter(function ($contract) use ($semesterIds, $request) {
         return $semesterIds->contains($contract->semester_id) &&
-               (!$request->filled('filter_contract_status') || $contract->status === $request->filter_contract_status);
+               (!$request->filled('filter_contract_status') || $contract->status === $request->filter_contract_status) &&
+               (!$request->filled('filter_contract_type') || $contract->contract_type === $request->filter_contract_type);
     });
+
 
 
 
@@ -338,48 +344,111 @@ public function export(Request $request)
     $tab = $request->tab ?? 'all';
 
     $schoolYear = SchoolYear::find($schoolYearId);
-
     $semesterIds = Semester::where('school_year_id', $schoolYearId)
         ->where('semester', $semesterName)
         ->pluck('id');
 
-    // STUDENT PROFILES with filters
+    $isCurrentSem = optional($schoolYear)->is_active &&
+                    optional(Semester::whereIn('id', $semesterIds)->where('is_current', true)->first())->semester === $semesterName;
+
+    // STUDENTS
     $students = StudentProfile::with('student')
         ->whereIn('semester_id', $semesterIds)
         ->when($request->filled('filter_course'), fn($q) => $q->where('course', $request->filter_course))
         ->when($request->filled('filter_year'), fn($q) => $q->where('year_level', $request->filter_year))
         ->when($request->filled('filter_section'), fn($q) => $q->where('section', $request->filter_section))
-        ->get();
+        ->get()
+        ->unique('student_id');
 
-    // CONTRACTS with filters
-    $contracts = Contract::with('student')
+    $studentIds = $students->pluck('student_id');
+
+    // CONTRACTS
+    $currentContracts = Contract::with('student')
         ->whereIn('semester_id', $semesterIds)
-        ->when($request->filled('filter_contract_type'), fn($q) => $q->where('contract_type', $request->filter_contract_type))
-        ->when($request->filled('filter_contract_status'), fn($q) => $q->where('status', $request->filter_contract_status))
         ->get();
 
-    // REFERRALS with filters
+    $pastContracts = Contract::with('student')
+        ->whereNotIn('semester_id', $semesterIds)
+        ->whereIn('student_id', $studentIds)
+        ->get();
+
+    $allContracts = $currentContracts->merge($pastContracts);
+
+    $contracts = $isCurrentSem
+        ? $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request) {
+            if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
+            if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) return false;
+
+            if ($contract->status === 'Completed' && $semesterIds->contains($contract->semester_id)) {
+                return true;
+            }
+
+            $originalId = $contract->original_contract_id ?? $contract->id;
+            $hasCompletedInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+                return $c->status === 'Completed' &&
+                       $semesterIds->contains($c->semester_id) &&
+                       ($c->original_contract_id == $originalId || $c->id == $originalId);
+            });
+
+            return !$hasCompletedInCurrent;
+        })
+        : $allContracts->filter(function ($contract) use ($semesterIds, $request) {
+            return $semesterIds->contains($contract->semester_id) &&
+                (!$request->filled('filter_contract_status') || $contract->status === $request->filter_contract_status) &&
+                (!$request->filled('filter_contract_type') || $contract->contract_type === $request->filter_contract_type);
+        });
+
+    // REFERRALS
     $referrals = Referral::with('student')
         ->whereIn('semester_id', $semesterIds)
         ->when($request->filled('filter_reason'), fn($q) => $q->where('reason', $request->filter_reason))
         ->get();
 
-    // COUNSELINGS with filters
-    $counselings = Counseling::with('student')
+    // COUNSELINGS (mirroring view logic)
+    $currentCounselings = Counseling::with('student')
         ->whereIn('semester_id', $semesterIds)
-        ->when($request->filled('filter_counseling_status'), fn($q) => $q->where('status', $request->filter_counseling_status))
         ->get();
 
-    // TRANSITIONS with filters
+    $pastCounselings = Counseling::with('student')
+        ->whereNotIn('semester_id', $semesterIds)
+        ->whereIn('student_id', $studentIds)
+        ->get();
+
+    $allCounselings = $currentCounselings->merge($pastCounselings);
+
+    $counselings = $isCurrentSem
+        ? $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request) {
+            if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) return false;
+
+            if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
+                return true;
+            }
+
+            $originalId = $counseling->original_counseling_id ?? $counseling->id;
+            $hasCompletedInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+                return $c->status === 'Completed' &&
+                       $semesterIds->contains($c->semester_id) &&
+                       ($c->original_counseling_id == $originalId || $c->id == $originalId);
+            });
+
+            return !$hasCompletedInCurrent;
+        })
+        : $allCounselings->filter(function ($counseling) use ($semesterIds, $request) {
+            return $semesterIds->contains($counseling->semester_id) &&
+                (!$request->filled('filter_counseling_status') || $counseling->status === $request->filter_counseling_status);
+        });
+
+    // TRANSITIONS
     $transitions = StudentTransition::with('semester.schoolYear')
         ->whereIn('semester_id', $semesterIds)
         ->when($request->filled('filter_transition_type'), fn($q) => $q->where('transition_type', $request->filter_transition_type))
         ->get();
 
+    // COUNTS
     $contractCounts = Contract::selectRaw('student_id, COUNT(*) as count')
-    ->whereIn('semester_id', $semesterIds)
-    ->groupBy('student_id')
-    ->pluck('count', 'student_id');
+        ->whereIn('semester_id', $semesterIds)
+        ->groupBy('student_id')
+        ->pluck('count', 'student_id');
 
     $referralCounts = Referral::selectRaw('student_id, COUNT(*) as count')
         ->whereIn('semester_id', $semesterIds)
@@ -390,7 +459,6 @@ public function export(Request $request)
         ->whereIn('semester_id', $semesterIds)
         ->groupBy('student_id')
         ->pluck('count', 'student_id');
-
 
     $pdf = Pdf::loadView('reports.export_pdf', compact(
         'schoolYear',
@@ -410,6 +478,7 @@ public function export(Request $request)
 }
 
 
+
 public function exportExcel(Request $request)
 {
     $schoolYearId = $request->school_year_id;
@@ -421,36 +490,113 @@ public function exportExcel(Request $request)
         ->where('semester', $semesterName)
         ->pluck('id');
 
-    // Load data based on filters
+    // Get student profiles with filters
     $students = StudentProfile::with('student')
         ->whereIn('semester_id', $semesterIds)
         ->when($request->filled('filter_course'), fn($q) => $q->where('course', $request->filter_course))
         ->when($request->filled('filter_year'), fn($q) => $q->where('year_level', $request->filter_year))
         ->when($request->filled('filter_section'), fn($q) => $q->where('section', $request->filter_section))
-        ->get();
+        ->get()
+        ->unique('student_id')
+        ->values();
 
-    $contracts = Contract::with('student')
+    $studentIds = $students->pluck('student_id');
+
+    $isCurrentSem = optional($schoolYear)->is_active && Semester::where('school_year_id', $schoolYearId)->where('semester', $semesterName)->where('is_current', true)->exists();
+
+    // CONTRACTS
+    $currentContracts = Contract::with('student')
         ->whereIn('semester_id', $semesterIds)
         ->when($request->filled('filter_contract_type'), fn($q) => $q->where('contract_type', $request->filter_contract_type))
-        ->when($request->filled('filter_contract_status'), fn($q) => $q->where('status', $request->filter_contract_status))
         ->get();
 
+    $pastContracts = Contract::with('student')
+        ->whereNotIn('semester_id', $semesterIds)
+        ->whereIn('student_id', $studentIds)
+        ->get();
+
+    $allContracts = $currentContracts->merge($pastContracts);
+
+    $contracts = $isCurrentSem
+        ? $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request) {
+            if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) {
+                return false;
+            }
+
+            if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) {
+                return false;
+            }
+
+            if ($contract->status === 'Completed' && $semesterIds->contains($contract->semester_id)) {
+                return true;
+            }
+
+            $originalId = $contract->original_contract_id ?? $contract->id;
+
+            $hasCompletedInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+                return $c->status === 'Completed' &&
+                       $semesterIds->contains($c->semester_id) &&
+                       ($c->original_contract_id == $originalId || $c->id == $originalId);
+            });
+
+            return !$hasCompletedInCurrent;
+        })
+        : $allContracts->filter(function ($contract) use ($semesterIds, $request) {
+            return $semesterIds->contains($contract->semester_id) &&
+                   (!$request->filled('filter_contract_status') || $contract->status === $request->filter_contract_status) &&
+                   (!$request->filled('filter_contract_type') || $contract->contract_type === $request->filter_contract_type);
+        });
+
+    // COUNSELINGS
+    $currentCounselings = Counseling::with('student')
+        ->whereIn('semester_id', $semesterIds)
+        ->get();
+
+    $pastCounselings = Counseling::with('student')
+        ->whereNotIn('semester_id', $semesterIds)
+        ->whereIn('student_id', $studentIds)
+        ->get();
+
+    $allCounselings = $currentCounselings->merge($pastCounselings);
+
+    $counselings = $isCurrentSem
+        ? $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request) {
+            if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) {
+                return false;
+            }
+
+            if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
+                return true;
+            }
+
+            $originalId = $counseling->original_counseling_id ?? $counseling->id;
+
+            $hasCompletedInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+                return $c->status === 'Completed' &&
+                       $semesterIds->contains($c->semester_id) &&
+                       ($c->original_counseling_id == $originalId || $c->id == $originalId);
+            });
+
+            return !$hasCompletedInCurrent;
+        })
+        : $allCounselings->filter(function ($counseling) use ($semesterIds, $request) {
+            return $semesterIds->contains($counseling->semester_id) &&
+                   (!$request->filled('filter_counseling_status') || $counseling->status === $request->filter_counseling_status);
+        });
+
+    // REFERRALS
     $referrals = Referral::with('student')
         ->whereIn('semester_id', $semesterIds)
         ->when($request->filled('filter_reason'), fn($q) => $q->where('reason', $request->filter_reason))
         ->get();
 
-    $counselings = Counseling::with('student')
-        ->whereIn('semester_id', $semesterIds)
-        ->when($request->filled('filter_counseling_status'), fn($q) => $q->where('status', $request->filter_counseling_status))
-        ->get();
-
+    // TRANSITIONS
     $transitions = StudentTransition::with('semester.schoolYear')
         ->whereIn('semester_id', $semesterIds)
         ->when($request->filled('filter_transition_type'), fn($q) => $q->where('transition_type', $request->filter_transition_type))
         ->get();
 
-    // Load counts for student sheet
+    // COUNT METRICS
     $contractCounts = Contract::selectRaw('student_id, COUNT(*) as count')
         ->whereIn('semester_id', $semesterIds)
         ->groupBy('student_id')
@@ -466,7 +612,7 @@ public function exportExcel(Request $request)
         ->groupBy('student_id')
         ->pluck('count', 'student_id');
 
-    // Choose only the tab/sheet requested
+    // SHEETS
     $sheets = match ($tab) {
         'student_profiles' => [new StudentsSheet($students, $contractCounts, $referralCounts, $counselingCounts)],
         'contracts'        => [new ContractsSheet($contracts)],
@@ -486,6 +632,7 @@ public function exportExcel(Request $request)
 
     return Excel::download(new ReportExcelExport($sheets), $filename);
 }
+
 
 public function exportStudentPdf(Request $request)
 {

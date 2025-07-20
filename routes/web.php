@@ -120,13 +120,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/reports/student-list', [ReportController::class, 'studentList'])->name('reports.studentList');
     Route::get('/reports/view-profile/{studentId}/{semesterId}', [ReportController::class, 'viewProfile'])->name('reports.viewProfile');
     Route::get('/reports/student/{student_id}', [ReportController::class, 'view'])->name('reports.student.view');
-    Route::get('/reports/export/pdf', [ReportController::class, 'export'])->name('reports.export');
+   // Route::get('/reports/export/pdf', [ReportController::class, 'export'])->name('reports.export');
     Route::get('/reports/student/export', [ReportController::class, 'exportStudentHistory'])->name('reports.student.export');
     Route::get('/reports/view-records/{studentId}', [ReportController::class, 'viewRecords'])->name('reports.view-records');
     Route::get('/transitions/{transition}', [StudentTransitionController::class, 'show'])->name('transitions.show');
-Route::get('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('report.exportExcel');
+//Route::get('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('report.exportExcel');
 Route::get('/report/student/export/pdf', [ReportController::class, 'exportStudentPdf'])->name('export.student.pdf');
 Route::get('/report/student/export/excel', [ReportController::class, 'exportStudentExcel'])->name('export.student.excel');
+Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
+Route::get('/reports/export-excel', [ReportController::class, 'exportExcel'])->name('report.exportExcel');
 
 Route::resource('users', \App\Http\Controllers\UserController::class)->middleware('auth');
 
