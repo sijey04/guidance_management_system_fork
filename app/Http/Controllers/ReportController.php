@@ -286,53 +286,30 @@ $contracts = $allStudentContracts->filter(function ($contract) use ($semesterIds
     ->get();
 
 
-      $carriedOverCounselings = Counseling::with('semester', 'images')
+$allStudentCounselings = Counseling::with(['semester', 'images', 'original'])
     ->where('student_id', $student_id)
-    ->whereNotIn('semester_id', $semesterIds)
-    ->whereNotNull('original_counseling_id')
     ->get();
 
-$originalCounselings = Counseling::with('semester', 'images')
-    ->where('student_id', $student_id)
-    ->whereNotIn('semester_id', $semesterIds)
-    ->whereNull('original_counseling_id')
-    ->whereDoesntHave('carriedOver') // show only if not carried over
-    ->get();
+$counselings = $allStudentCounselings->filter(function ($counseling) use ($semesterIds, $allStudentCounselings, $request) {
+    if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) {
+        return false;
+    }
 
-$currentCounselings = Counseling::with('semester', 'images')
-    ->where('student_id', $student_id)
-    ->whereIn('semester_id', $semesterIds)
-    ->when($request->filled('filter_counseling_status'), fn($q) => $q->where('status', $request->filter_counseling_status))
-    ->get();
+    if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
+        return true;
+    }
 
+    $originalId = $counseling->original_counseling_id ?? $counseling->id;
 
-$allCounselings = $currentCounselings->merge($carriedOverCounselings)->merge($originalCounselings);
-$isCurrentSem = optional($schoolYear)->id === $schoolYearId && $semesterIds->contains(optional($student->latestSemester)->id);
-
-$counselings = $isCurrentSem
-    ? $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request) {
-        if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) {
-            return false;
-        }
-
-        if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
-            return true;
-        }
-
-        $originalId = $counseling->original_counseling_id ?? $counseling->id;
-
-        $hasCompletedInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
-            return $c->status === 'Completed' &&
-                   $semesterIds->contains($c->semester_id) &&
-                   ($c->original_counseling_id == $originalId || $c->id == $originalId);
-        });
-
-        return !$hasCompletedInCurrent;
-    })
-    : $allCounselings->filter(function ($counseling) use ($semesterIds, $request) {
-        return $semesterIds->contains($counseling->semester_id) &&
-               (!$request->filled('filter_counseling_status') || $counseling->status === $request->filter_counseling_status);
+    $hasCompletedInCurrent = $allStudentCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+        return $c->status === 'Completed' &&
+               $semesterIds->contains($c->semester_id) &&
+               ($c->original_counseling_id == $originalId || $c->id == $originalId);
     });
+
+    return !$hasCompletedInCurrent;
+});
+
 
         $profile = StudentProfile::where('student_id', $student_id)
             ->whereIn('semester_id', $semesterIds)
@@ -510,6 +487,80 @@ public function exportExcel(Request $request)
     return Excel::download(new ReportExcelExport($sheets), $filename);
 }
 
+public function exportStudentPdf(Request $request)
+{
+    $student = Student::findOrFail($request->student_id);
+    $schoolYear = SchoolYear::findOrFail($request->school_year_id);
+    $semesterIds = Semester::where('school_year_id', $schoolYear->id)
+        ->where('semester', $request->semester_name)
+        ->pluck('id');
+
+    $includes = $request->input('include', []);
+
+    $contracts = in_array('contracts', $includes) ? Contract::with('images')
+        ->where('student_id', $student->id)
+        ->whereIn('semester_id', $semesterIds)
+        ->when($request->filter_contract_type, fn($q) => $q->where('contract_type', $request->filter_contract_type))
+        ->when($request->filter_contract_status, fn($q) => $q->where('status', $request->filter_contract_status))
+        ->get() : collect();
+
+    $referrals = in_array('referrals', $includes) ? Referral::with('images')
+        ->where('student_id', $student->id)
+        ->whereIn('semester_id', $semesterIds)
+        ->when($request->filter_reason, fn($q) => $q->where('reason', $request->filter_reason))
+        ->get() : collect();
+
+    // ✅ Enhanced logic for counseling records (align with view() and index())
+    $counselings = collect();
+    if (in_array('counselings', $includes)) {
+        $allStudentCounselings = Counseling::with(['semester', 'images', 'original'])
+            ->where('student_id', $student->id)
+            ->get();
+
+        $counselings = $allStudentCounselings->filter(function ($counseling) use ($semesterIds, $allStudentCounselings, $request) {
+            if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) {
+                return false;
+            }
+
+            if ($counseling->status === 'Completed' && $semesterIds->contains($counseling->semester_id)) {
+                return true;
+            }
+
+            $originalId = $counseling->original_counseling_id ?? $counseling->id;
+
+            $hasCompletedInCurrent = $allStudentCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+                return $c->status === 'Completed' &&
+                       $semesterIds->contains($c->semester_id) &&
+                       ($c->original_counseling_id == $originalId || $c->id == $originalId);
+            });
+
+            return !$hasCompletedInCurrent;
+        });
+    }
+
+    $profile = StudentProfile::where('student_id', $student->id)
+        ->whereIn('semester_id', $semesterIds)
+        ->latest()
+        ->first();
+
+    $tab = $request->input('tab', 'all');
+    $semesterName = $request->semester_name; 
+
+    $pdf = Pdf::loadView('reports.student_history_pdf', compact(
+        'student', 'contracts', 'referrals', 'counselings', 'profile', 'schoolYear', 'semesterName', 'tab'
+    ))->setPaper('a4', 'portrait');
+
+    return $pdf->download("StudentHistory_{$student->student_id}.pdf");
+}
+
+
+public function exportStudentExcel(Request $request)
+{
+    return Excel::download(
+        new \App\Exports\StudentHistoryExport($request),
+        "StudentHistory_{$request->student_id}.xlsx"
+    );
+}
 
 
 // public function exportExcel(Request $request)

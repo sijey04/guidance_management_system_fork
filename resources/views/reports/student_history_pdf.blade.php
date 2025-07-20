@@ -1,92 +1,161 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Student History Export</title>
+    <title>Student History Report</title>
     <style>
-        body { font-family: sans-serif; font-size: 12px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 5px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        h1, h2, h3 { margin-bottom: 5px; }
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            margin: 20px;
+        }
+
+        h1, h2, h3 {
+            color: #a82323;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .section-header {
+            background-color: #a82323;
+            color: white;
+            padding: 6px 10px;
+            margin-top: 30px;
+            font-size: 16px;
+        }
+
+        .no-records {
+            color: #666;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
-    <h1>Student History</h1>
-    <h2>{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }} {{ $student->suffix }}</h2>
-    <p><strong>Student ID:</strong> {{ $student->student_id }}</p>
-    <p><strong>School Year:</strong> {{ $schoolYear->school_year }}</p>
-    <p><strong>Semester:</strong> {{ $semesterName }}</p>
 
-    <h3>Profile</h3>
-    <p><strong>Course/Year/Section:</strong> {{ $profile?->course }} - {{ $profile?->year_level }}{{ $profile?->section }}</p>
-    <p><strong>Birthday:</strong> {{ $student->birthday?->format('F j, Y') }}</p>
-    <p><strong>Gender:</strong> {{ $student->gender }}</p>
+    <h2>Student History Report</h2>
 
-    <h3>Contracts</h3>
     <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Start</th>
-                <th>End</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($contracts as $contract)
-                <tr>
-                    <td>{{ \Carbon\Carbon::parse($contract->contract_date)->format('F j, Y') }}</td>
-                    <td>{{ $contract->contract_type }}</td>
-                    <td>{{ $contract->status }}</td>
-                    <td>{{ $contract->start_date }}</td>
-                    <td>{{ $contract->end_date }}</td>
-                </tr>
-            @empty
-                <tr><td colspan="5">No contracts found.</td></tr>
-            @endforelse
-        </tbody>
+        <tr>
+            <th>Student ID</th>
+            <td>{{ $student->student_id }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ $student->last_name }}, {{ $student->first_name }} {{ $student->middle_name }}</td>
+        </tr>
+        <tr>
+            <th>School Year</th>
+            <td>{{ $schoolYear->school_year ?? 'N/A' }}</td>
+        </tr>
+        <tr>
+            <th>Semester</th>
+            <td>{{ $semesterName }}</td>
+        </tr>
+        @if($profile)
+        <tr>
+            <th>Course / Year / Section</th>
+            <td>{{ $profile->course }} / {{ $profile->year_level }} / {{ $profile->section }}</td>
+        </tr>
+        @endif
     </table>
 
-    <h3>Referrals</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Reason</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($referrals as $referral)
-                <tr>
-                    <td>{{ $referral->referral_date }}</td>
-                    <td>{{ $referral->reason }}</td>
-                </tr>
-            @empty
-                <tr><td colspan="2">No referrals found.</td></tr>
-            @endforelse
-        </tbody>
-    </table>
+    {{-- Contracts --}}
+    @if($tab === 'all' || $tab === 'contracts')
+        <div class="section-header">Contracts</div>
+        @if($contracts->isNotEmpty())
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($contracts as $contract)
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($contract->created_at)->format('M d, Y') }}</td>
+                            <td>{{ $contract->contract_type }}</td>
+                            <td>{{ $contract->status }}</td>
+                            <td>{{ $contract->remarks }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <p class="no-records">No contract records available.</p>
+        @endif
+    @endif
 
-    <h3>Counseling</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($counselings as $counseling)
-                <tr>
-                    <td>{{ $counseling->counseling_date }}</td>
-                    <td>{{ $counseling->status }}</td>
-                </tr>
-            @empty
-                <tr><td colspan="2">No counseling records found.</td></tr>
-            @endforelse
-        </tbody>
-    </table>
+    {{-- Referrals --}}
+    @if($tab === 'all' || $tab === 'referrals')
+        <div class="section-header">Referrals</div>
+        @if($referrals->isNotEmpty())
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Reason</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($referrals as $referral)
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($referral->created_at)->format('M d, Y') }}</td>
+                            <td>{{ $referral->reason }}</td>
+                            <td>{{ $referral->remarks }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <p class="no-records">No referral records available.</p>
+        @endif
+    @endif
+
+    {{-- Counseling --}}
+    @if($tab === 'all' || $tab === 'counseling')
+        <div class="section-header">Counseling Sessions</div>
+        @if($counselings->isNotEmpty())
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($counselings as $counseling)
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($counseling->created_at)->format('M d, Y') }}</td>
+                            <td>{{ $counseling->status }}</td>
+                            <td>{{ $counseling->remarks }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <p class="no-records">No counseling records available.</p>
+        @endif
+    @endif
+
 </body>
 </html>
