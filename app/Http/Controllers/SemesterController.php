@@ -217,16 +217,18 @@ $users = User::all();
 
 
 
-        // Paginate
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = 10;
-        $paginated = new LengthAwarePaginator(
-            $students->forPage($currentPage, $perPage),
-            $students->count(),
-            $perPage,
-            $currentPage,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
+        $paginated = $students; 
+
+        // $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        // $perPage = 10;
+        // $paginated = new LengthAwarePaginator(
+        //     $students->forPage($currentPage, $perPage),
+        //     $students->count(),
+        //     $perPage,
+        //     $currentPage,
+        //     ['path' => request()->url(), 'query' => request()->query()]
+        // );
+$selectedStudents = collect(request('selected_students', []))->map(fn($id) => (string) $id);
 
         $courses = Course::all();
         $years = Year::all();
@@ -239,6 +241,7 @@ $users = User::all();
             'courses' => $courses,
             'years' => $years,
             'sections' => $sections,
+            'selectedStudents' => $selectedStudents,
         ]);
     }
 
@@ -370,8 +373,6 @@ public function processValidateStudents(Request $request, $semesterId)
             'year_level' => $data['year_level'],
             'section' => $data['section'],
         ]);
-
-        // After StudentProfile::create(...);
 
 $previousSemesterIds = Semester::where('id', '<', $semester->id)->pluck('id');
 

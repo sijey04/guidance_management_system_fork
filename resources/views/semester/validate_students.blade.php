@@ -9,7 +9,7 @@
 
     <div class="max-w-7xl mx-auto  sm:px-6 lg:px-8"
          x-data="{
-             selected: {{ json_encode(request('selected_students', [])) }},
+             selected: {{ $selectedStudents->toJson() }},
              allOnPage: {{ json_encode($students->pluck('id')->map(fn($id) => (string) $id)) }},
              studentData: JSON.parse(localStorage.getItem('studentData') || '{}'),
 
@@ -177,7 +177,7 @@
                     </button>
                 </div>
 
-                {{ $students->links() }}
+                {{-- {{ $students->links() }} --}}
 
                 @if($students->count() > 0)
                     <div class="overflow-x-auto mt-4">
@@ -523,18 +523,27 @@
                                                                             class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
                                                                         Cancel
                                                                     </button>
-                                                                    <button type="button"
-        @click="
-            if (transitionType === 'Shifting In') {
-                studentData['{{ $id }}'].course = $refs.newCourse.value;
-                studentData['{{ $id }}'].year_level = $refs.newYear.value;
-                studentData['{{ $id }}'].section = $refs.newSection.value;
-            }
-            openModal{{ $id }} = false
-        "
-        class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">
+                                                                   <button
+    type="button"
+    @click="
+        if (!studentData['{{ $id }}']) {
+            studentData['{{ $id }}'] = {};
+        }
+
+        if (transitionType === 'Shifting In') {
+            studentData['{{ $id }}'].course = $refs.newCourse.value;
+            studentData['{{ $id }}'].year_level = $refs.newYear.value;
+            studentData['{{ $id }}'].section = $refs.newSection.value;
+        }
+
+        localStorage.setItem('studentData', JSON.stringify(studentData));
+        openModal{{ $id }} = false
+    "
+    class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
+>
     Save Transition
 </button>
+
 
                                                                 </div>
                                                             </div>
