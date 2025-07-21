@@ -1,5 +1,3 @@
-
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -179,7 +177,7 @@
             </form>
 
             <!-- VALIDATION FORM -->
-            <form method="POST" enctype="multipart/form-data" action="{{ route('semester.processValidate', $newSemester->id) }}" @submit="injectHiddenInputs($el)">
+            <form id="validateForm" method="POST" enctype="multipart/form-data" action="{{ route('semester.processValidate', $newSemester->id) }}" @submit="injectHiddenInputs($el)">
                 @csrf
                 <div id="selected-hidden"></div>
 
@@ -423,7 +421,8 @@
                                                                     <!-- Course Dropdown -->
                                                                     <div>
                                                                         <label class="block text-sm font-medium text-gray-700">New Course</label>
-                                                                        <select x-ref="newCourse" name="transitions[{{ $id }}][new_course]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
+                                                                        <select x-model="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
+ x-ref="newCourse" name="transitions[{{ $id }}][new_course]"  class="block w-full mt-1 rounded-md border-gray-300 text-sm">
                                                                             <option value="">Select Course</option>
                                                                             @foreach($courses as $course)
                                                                                 <option value="{{ $course->course }}">{{ $course->course }}</option>
@@ -547,19 +546,30 @@
             studentData['{{ $id }}'] = {};
         }
 
-        if (transitionType === 'Shifting In') {
+        if (['Shifting In', 'Returning Student', 'Dropped'].includes(transitionType)) {
             studentData['{{ $id }}'].course = $refs.newCourse.value;
             studentData['{{ $id }}'].year_level = $refs.newYear.value;
             studentData['{{ $id }}'].section = $refs.newSection.value;
         }
 
+        // Mark this student as selected for validation
+        if (!selected.includes('{{ $id }}')) {
+            selected.push('{{ $id }}');
+        }
+
         localStorage.setItem('studentData', JSON.stringify(studentData));
-        openModal{{ $id }} = false
+
+        // Close modal
+        openModal{{ $id }} = false;
+
+        // Submit form immediately to validate
+        $nextTick(() => document.getElementById('validateForm').submit());
     "
     class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
 >
-    Save Transition
+    Save Transition & Validate
 </button>
+
 
 
                                                                 </div>
