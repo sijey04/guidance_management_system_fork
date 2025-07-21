@@ -81,24 +81,29 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
         ->whereIn('student_id', $studentIds)
         ->get();
 
-    $contracts = $isCurrentSem
-        ? $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request) {
-            if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
-            if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) return false;
+  $contracts = $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request) {
+    if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
+    if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) return false;
 
-            $originalId = $contract->original_contract_id ?? $contract->id;
+    $originalId = $contract->original_contract_id ?? $contract->id;
 
-            if (!is_null($contract->original_contract_id)) {
-                return $semesterIds->contains($contract->semester_id);
-            }
+    // Always include any contract already in the selected semester
+    if ($semesterIds->contains($contract->semester_id)) {
+        return true;
+    }
 
-            $hasCarriedOver = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
-                return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
-            });
+    // If this is an original contract from previous semesters,
+    // include only if there's no carried-over copy in the selected semester
+    if (is_null($contract->original_contract_id)) {
+        $hasCopyInSelectedSemester = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
+        });
 
-            return !$hasCarriedOver && $semesterIds->contains($contract->semester_id);
-        })
-        : $allContracts->filter(fn($contract) => $semesterIds->contains($contract->semester_id));
+        return !$hasCopyInSelectedSemester;
+    }
+
+    return false; // carried-over copy but not in selected semester
+});
 
 
 
@@ -107,44 +112,49 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
         ->whereIn('student_id', $studentIds)
         ->get();
 
-    $referrals = $isCurrentSem
-        ? $allReferrals->filter(function ($referral) use ($semesterIds, $allReferrals, $request) {
-            if ($request->filled('filter_reason') && $referral->reason !== $request->filter_reason) return false;
+    $referrals = $allReferrals->filter(function ($referral) use ($semesterIds, $allReferrals, $request) {
+    if ($request->filled('filter_reason') && $referral->reason !== $request->filter_reason) return false;
 
-            $originalId = $referral->original_referral_id ?? $referral->id;
+    $originalId = $referral->original_referral_id ?? $referral->id;
 
-            if (!is_null($referral->original_referral_id)) {
-                return $semesterIds->contains($referral->semester_id);
-            }
+    if ($semesterIds->contains($referral->semester_id)) {
+        return true;
+    }
 
-            $hasCarriedOver = $allReferrals->contains(function ($r) use ($originalId, $semesterIds) {
-                return $r->original_referral_id == $originalId && $semesterIds->contains($r->semester_id);
-            });
+    if (is_null($referral->original_referral_id)) {
+        $hasCopyInSelectedSemester = $allReferrals->contains(function ($r) use ($originalId, $semesterIds) {
+            return $r->original_referral_id == $originalId && $semesterIds->contains($r->semester_id);
+        });
 
-            return !$hasCarriedOver && $semesterIds->contains($referral->semester_id);
-        })
-        : $allReferrals->filter(fn($r) => $semesterIds->contains($r->semester_id));
-$allCounselings = Counseling::with('student')
+        return !$hasCopyInSelectedSemester;
+    }
+
+    return false;
+});
+
+        $allCounselings = Counseling::with('student')
         ->whereIn('student_id', $studentIds)
         ->get();
 
-    $counselings = $isCurrentSem
-        ? $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request) {
-            if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) return false;
+    $counselings = $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request) {
+    if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) return false;
 
-            $originalId = $counseling->original_counseling_id ?? $counseling->id;
+    $originalId = $counseling->original_counseling_id ?? $counseling->id;
 
-            if (!is_null($counseling->original_counseling_id)) {
-                return $semesterIds->contains($counseling->semester_id);
-            }
+    if ($semesterIds->contains($counseling->semester_id)) {
+        return true;
+    }
 
-            $hasCarriedOver = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
-                return $c->original_counseling_id == $originalId && $semesterIds->contains($c->semester_id);
-            });
+    if (is_null($counseling->original_counseling_id)) {
+        $hasCopyInSelectedSemester = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->original_counseling_id == $originalId && $semesterIds->contains($c->semester_id);
+        });
 
-            return !$hasCarriedOver && $semesterIds->contains($counseling->semester_id);
-        })
-        : $allCounselings->filter(fn($c) => $semesterIds->contains($c->semester_id));
+        return !$hasCopyInSelectedSemester;
+    }
+
+    return false;
+});
 
         $transitions = StudentTransition::with('student')
             ->whereIn('semester_id', $semesterIds)
@@ -238,22 +248,31 @@ $allStudentContracts = Contract::with(['semester', 'images', 'original'])
     ->get();
 
 $contracts = $allStudentContracts->filter(function ($contract) use ($semesterIds, $allStudentContracts, $request) {
-    if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) return false;
-    if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
+    if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) {
+        return false;
+    }
+    if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) {
+        return false;
+    }
 
     $originalId = $contract->original_contract_id ?? $contract->id;
 
-    // Show carried-over copy in current sem
-    if (!is_null($contract->original_contract_id)) {
-        return $semesterIds->contains($contract->semester_id);
+    // Always include if this contract belongs to the selected semester
+    if ($semesterIds->contains($contract->semester_id)) {
+        return true;
     }
 
-    // If a carried-over copy exists in this semester, hide the original
-    $hasCarriedOver = $allStudentContracts->contains(function ($c) use ($originalId, $semesterIds) {
-        return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
-    });
+    // If this is the original and not carried over yet, include it
+    if (is_null($contract->original_contract_id)) {
+        $hasCopyInSelectedSemester = $allStudentContracts->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
+        });
 
-    return !$hasCarriedOver && $semesterIds->contains($contract->semester_id);
+        return !$hasCopyInSelectedSemester;
+    }
+
+    // Otherwise, it's a carried-over contract but not in selected semester → exclude
+    return false;
 });
 
 

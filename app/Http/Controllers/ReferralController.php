@@ -36,12 +36,17 @@ class ReferralController extends Controller
     $newStudents = collect();
 
     if ($lastSemester) {
-        // Validated students: from last or current semester
-        $validatedStudents = Student::whereHas('profiles', function ($query) use ($lastSemester, $currentSemester) {
-            $query->where('semester_id', $lastSemester->id)
-                  ->orWhere('semester_id', $currentSemester->id);
-        })->get();
-    }
+    $validatedStudents = Student::whereHas('profiles', function ($query) use ($lastSemester, $currentSemester) {
+        $query->where('semester_id', $lastSemester->id)
+              ->orWhere('semester_id', $currentSemester->id);
+    })->get();
+} else {
+    // Fallback if this is the first semester ever
+    $validatedStudents = Student::whereHas('profiles', function ($query) use ($currentSemester) {
+        $query->where('semester_id', $currentSemester->id);
+    })->get();
+}
+
 
     // Newly enrolled students in the current semester
     $newStudents = Student::whereHas('enrollments', function ($query) use ($currentSemester) {
@@ -82,6 +87,7 @@ $referrals = new \Illuminate\Pagination\LengthAwarePaginator(
     ['path' => $request->url(), 'query' => $request->query()]
 );
 
+
     return view('referrals.referral', compact('referrals', 'students', 'reasons', 'currentSemester'));
 }
 
@@ -91,16 +97,33 @@ public function create()
 {
     $currentSemester = Semester::where('is_current', true)->first();
 
-    $students = Student::whereHas('enrollments', function ($query) use ($currentSemester) {
-        $query->where('semester_id', $currentSemester->id)
-              ->where('is_enrolled', true);
-    })->get();
+    $validatedStudents = collect();
+    $newStudents = collect();
 
-    // 🔥 Fetch dynamic referral reasons from the database instead of hardcoded ones
+    if ($currentSemester) {
+        $lastSemester = Semester::where('id', '<>', $currentSemester->id)
+                                ->orderByDesc('id')
+                                ->first();
+
+        if ($lastSemester) {
+            $validatedStudents = Student::whereHas('profiles', function ($query) use ($lastSemester, $currentSemester) {
+                $query->where('semester_id', $lastSemester->id)
+                      ->orWhere('semester_id', $currentSemester->id);
+            })->get();
+        }
+
+        $newStudents = Student::whereHas('enrollments', function ($query) use ($currentSemester) {
+            $query->where('semester_id', $currentSemester->id)
+                  ->where('is_enrolled', true);
+        })->get();
+    }
+
+    $students = $validatedStudents->merge($newStudents)->unique('id')->values();
     $reasons = ReferralReason::all();
 
     return view('referrals.create', compact('students', 'reasons'));
 }
+
 
 
    public function store(Request $request)

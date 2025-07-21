@@ -63,9 +63,9 @@
                 
                 <!-- Filters & Actions -->
                 <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                    <div class="flex flex-col lg:items-end gap-4">
+                    <div class="flex flex-col lg:flex-row lg:items-end gap-4">
                         <!-- Filter Form -->
-                        <form method="GET" action="{{ route('referrals.index') }}" class="flex flex-wrap gap-4 flex-grow">
+                        <form method="GET" action="{{ route('referrals.index') }}" class="flex flex-wrap gap-4 items-end flex-grow">
                             <!-- Reason Filter -->
                             <div class="md:w-auto w-full">
                                 <label class="block text-sm text-gray-700 mb-1">Reason:</label>
@@ -130,8 +130,7 @@
                         </form>
 
                         <!-- Action Buttons -->
-                        <div class="flex">
-                            <div class="flex flex-col sm:flex-row gap-2 lg:flex-shrink-0">
+                        <div class="flex flex-col sm:flex-row gap-2 lg:flex-shrink-0">
                             <div x-data="{ openModal: {{ $errors->any() ? 'true' : 'false' }} }">
                                 <button @click="openModal = true"
                                     class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition shadow-sm hover:shadow-md flex items-center gap-2 w-full sm:w-auto justify-center">
@@ -151,7 +150,6 @@
                             </svg>
                             Manage Reasons
                         </a>
-                        </div>
                 </div>
             </div>
 
