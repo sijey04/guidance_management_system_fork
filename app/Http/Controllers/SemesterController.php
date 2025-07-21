@@ -217,17 +217,17 @@ $users = User::all();
 
 
 
-        $paginated = $students; 
+        //$paginated = $students; 
 
-        // $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        // $perPage = 10;
-        // $paginated = new LengthAwarePaginator(
-        //     $students->forPage($currentPage, $perPage),
-        //     $students->count(),
-        //     $perPage,
-        //     $currentPage,
-        //     ['path' => request()->url(), 'query' => request()->query()]
-        // );
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 10;
+        $paginated = new LengthAwarePaginator(
+            $students->forPage($currentPage, $perPage),
+            $students->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
 $selectedStudents = collect(request('selected_students', []))->map(fn($id) => (string) $id);
 
         $courses = Course::all();
