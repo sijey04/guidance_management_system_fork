@@ -417,12 +417,12 @@
 
                                                                 </div>
 
-                                                                <div x-show="transitionType === 'Shifting In'" x-cloak class="space-y-4">
+                                                                <div x-show="['Shifting In', 'Returning Student', 'Dropped'].includes(transitionType)" x-cloak class="space-y-4">
                                                                     <!-- Course Dropdown -->
                                                                     <div>
                                                                         <label class="block text-sm font-medium text-gray-700">New Course</label>
                                                                         <select x-model="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
- x-ref="newCourse" name="transitions[{{ $id }}][new_course]"  class="block w-full mt-1 rounded-md border-gray-300 text-sm">
+                                                                         x-ref="newCourse" name="transitions[{{ $id }}][new_course]"  class="block w-full mt-1 rounded-md border-gray-300 text-sm">
                                                                             <option value="">Select Course</option>
                                                                             @foreach($courses as $course)
                                                                                 <option value="{{ $course->course }}">{{ $course->course }}</option>
@@ -433,7 +433,7 @@
                                                                     <!-- Year Level Dropdown -->
                                                                     <div>
                                                                         <label class="block text-sm font-medium text-gray-700">New Year Level</label>
-                                                                        <select x-ref="newYear" name="transitions[{{ $id }}][new_year_level]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
+                                                                        <select  x-model="studentData['{{ $id }}']?.year_level ?? '{{ $profile->year_level }}'" x-ref="newYear" name="transitions[{{ $id }}][new_year_level]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
                                                                             <option value="">Select Year Level</option>
                                                                             @foreach($years as $year)
                                                                                 <option value="{{ $year->year_level }}">{{ $year->year_level }}</option>
@@ -444,7 +444,7 @@
                                                                     <!-- Section Dropdown -->
                                                                     <div>
                                                                         <label class="block text-sm font-medium text-gray-700">New Section</label>
-                                                                        <select x-ref="newSection" name="transitions[{{ $id }}][new_section]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
+                                                                        <select  x-model="studentData['{{ $id }}']?.section ?? '{{ $profile->section }}'" x-ref="newSection" name="transitions[{{ $id }}][new_section]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
                                                                             <option value="">Select Section</option>
                                                                             @foreach($sections as $section)
                                                                                 <option value="{{ $section->section }}">{{ $section->section }}</option>
