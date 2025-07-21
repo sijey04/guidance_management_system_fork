@@ -30,52 +30,76 @@ public function index(Request $request)
     $semesters = Semester::with('schoolYear')->orderByDesc('id')->get();
 
     $query = Counseling::with(['student.profiles', 'images', 'semester.schoolYear']);
+    $allCounselings = $query->get();
 
-    // 🔎 School Year Filter
-    if ($request->filled('school_year_id')) {
-        $query->whereHas('semester', function ($q) use ($request) {
-            $q->where('school_year_id', $request->school_year_id);
+    // Step 1: Filter out original counseling if carried-over version exists
+    $latestCounselings = $allCounselings->filter(function ($counseling) use ($allCounselings) {
+        if ($counseling->original_counseling_id) {
+            return true; // Keep carried over version
+        }
+
+        $hasCarriedOver = $allCounselings->contains(function ($c) use ($counseling) {
+            return $c->original_counseling_id === $counseling->id;
         });
-    }
 
-    // 🔎 Semester Label Filter
-    if ($request->filled('semester_label')) {
-        $query->whereHas('semester', function ($q) use ($request) {
-            $q->where('semester', $request->semester_label);
-        });
-    }
+        return !$hasCarriedOver;
+    });
 
-    // 🔎 Status Filter
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
-    }
+    // Step 2: Apply filters manually to the cleaned collection
+    $filtered = $latestCounselings->filter(function ($counseling) use ($request) {
+        $match = true;
 
-    // 🔎 Search Filter
-    if ($request->filled('search')) {
-        $search = $request->search;
-        $query->whereHas('student', function ($q) use ($search) {
-            $q->where('first_name', 'like', "%{$search}%")
-              ->orWhere('last_name', 'like', "%{$search}%")
-              ->orWhere('student_id', 'like', "%{$search}%");
-        });
-    }
+        if ($request->filled('school_year_id')) {
+            $match = optional($counseling->semester)->school_year_id == $request->school_year_id;
+        }
 
-    // 🔃 Sort Filter
+        if ($match && $request->filled('semester_label')) {
+            $match = optional($counseling->semester)->semester === $request->semester_label;
+        }
+
+        if ($match && $request->filled('status')) {
+            $match = $counseling->status === $request->status;
+        }
+
+        if ($match && $request->filled('search')) {
+            $search = strtolower($request->search);
+            $student = $counseling->student;
+
+            $match = $student &&
+                (str_contains(strtolower($student->student_id), $search) ||
+                 str_contains(strtolower($student->first_name), $search) ||
+                 str_contains(strtolower($student->last_name), $search));
+        }
+
+        return $match;
+    });
+
+    // Step 3: Sort
     if ($request->filled('sort')) {
-        $query->orderBy('counseling_date', $request->sort === 'oldest' ? 'asc' : 'desc');
+        $filtered = $filtered->sortBy('counseling_date', SORT_REGULAR, $request->sort === 'oldest' ? false : true);
     } else {
-        $query->orderByDesc('counseling_date');
+        $filtered = $filtered->sortByDesc('counseling_date');
     }
 
-    $counselings = $query->paginate(10)->appends($request->all());
+    // Step 4: Manual pagination
+    $page = $request->input('page', 1);
+    $perPage = 10;
+    $counselings = new \Illuminate\Pagination\LengthAwarePaginator(
+        $filtered->forPage($page, $perPage)->values(),
+        $filtered->count(),
+        $perPage,
+        $page,
+        ['path' => $request->url(), 'query' => $request->query()]
+    );
 
-    // 👥 Fetch students
+    // Step 5: Get all validated and newly enrolled students
     $newStudents = Student::whereHas('enrollments', fn ($q) => $q->where('semester_id', $currentSemester->id)->where('is_enrolled', true));
     $validatedStudents = Student::whereHas('profiles', fn ($q) => $q->where('semester_id', $currentSemester->id));
     $students = $newStudents->union($validatedStudents)->get();
 
     return view('counselings.counseling', compact('counselings', 'students', 'semesters', 'currentSemester'));
 }
+
 
 
 
@@ -193,17 +217,53 @@ public function store(Request $request)
 
 public function updateStatus(Request $request, $id)
 {
-    $counseling = Counseling::findOrFail($id);
+    $counseling = Counseling::with('images', 'carriedOver')->findOrFail($id);
     $status = $request->input('status');
 
-    if (in_array($status, ['In Progress', 'Completed'])) {
-        $counseling->status = $status;
-        $counseling->save();
+    if (!in_array($status, ['In Progress', 'Completed'])) {
+        return back()->with('error', 'Invalid status.');
     }
 
-    return redirect()->route('counseling.view', $id)
-                     ->with('success', 'Status updated successfully.');
+    $activeSemester = Semester::where('is_current', true)->first();
+
+    // ✅ If this is the original and being completed outside current semester
+    if (
+        $counseling->status === 'In Progress' &&
+        $status === 'Completed' &&
+        !$counseling->original_counseling_id &&
+        $counseling->semester_id !== optional($activeSemester)->id
+    ) {
+        if ($counseling->carriedOver) {
+            return back()->with('info', 'Counseling already carried over.');
+        }
+
+        // Clone and link it as a carried over
+        $carried = $counseling->replicate();
+        $carried->semester_id = $activeSemester->id;
+        $carried->status = 'Completed';
+        $carried->original_counseling_id = $counseling->id;
+        $carried->save();
+
+        foreach ($counseling->images as $img) {
+            $carried->images()->create([
+                'image_path' => $img->image_path,
+                'type' => $img->type,
+            ]);
+        }
+
+        return redirect()->route('counseling.view', $carried->id)
+            ->with('success', 'Carried over and marked as Completed.');
+    }
+
+    // ✅ Regular update
+    $counseling->status = $status;
+    $counseling->save();
+
+    return redirect()->route('counseling.view', $counseling->id)
+        ->with('success', 'Status updated.');
 }
+
+
 
 public function updateRemarks(Request $request, $id)
 {

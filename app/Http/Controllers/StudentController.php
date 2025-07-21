@@ -68,12 +68,18 @@ class StudentController extends Controller
         }
 
         if ($request->filled('sort')) {
-            $sort = $request->sort;
-            $direction = $request->input('direction', 'asc');
-            if (in_array($sort, ['student_id', 'first_name', 'last_name'])) {
-                $query->orderBy($sort, $direction);
-            }
-        }
+    $sort = $request->sort;
+    $direction = $request->input('direction', 'asc');
+    if (in_array($sort, ['student_id', 'first_name', 'last_name'])) {
+        $query->orderBy($sort, $direction);
+    } else {
+        $query->orderBy('last_name')->orderBy('first_name');
+    }
+    } else {
+        $query->orderBy('last_name')->orderBy('first_name');
+    }
+
+        
      //    $sortOrder = $request->get('sort', 'desc'); // default: latest
      //   $query->orderBy('created_at', $sortOrder);
 
@@ -570,6 +576,48 @@ public function import(Request $request)
     Excel::import(new StudentsImport, $request->file('excel_file'));
 
     return back()->with('success', 'Student data imported successfully!');
+}
+
+
+private function carryOverOngoingRecords(Student $student, Semester $fromSemester, Semester $toSemester)
+{
+    // Carry over Ongoing Contracts
+    $ongoingContracts = $student->contracts()
+        ->where('semester_id', $fromSemester->id)
+        ->where('status', 'Ongoing')
+        ->get();
+
+    foreach ($ongoingContracts as $contract) {
+        $student->contracts()->create([
+            'semester_id' => $toSemester->id,
+            'contract_type_id' => $contract->contract_type_id,
+            'status' => 'Ongoing',
+            'details' => $contract->details ?? null,
+        ]);
+    }
+
+    // Carry over Ongoing Counselings
+    $ongoingCounselings = $student->counselings()
+        ->where('semester_id', $fromSemester->id)
+        ->where('status', 'Ongoing')
+        ->get();
+
+    foreach ($ongoingCounselings as $counseling) {
+        $newCounseling = $student->counselings()->create([
+            'semester_id' => $toSemester->id,
+            'session_date' => now(), // or copy $counseling->session_date if needed
+            'status' => 'Ongoing',
+            'remarks' => $counseling->remarks,
+        ]);
+
+        // Copy images
+        foreach ($counseling->images as $image) {
+            \App\Models\CounselingImage::create([
+                'counseling_id' => $newCounseling->id,
+                'image_path' => $image->image_path,
+            ]);
+        }
+    }
 }
 
 

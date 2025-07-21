@@ -1,5 +1,5 @@
 <!-- Improved Contract Creation Modal -->
-<div x-show="openCreateContractModal"
+<div x-show="openCreateContractModal || {{ $errors->any() ? 'true' : 'false' }}" 
      x-transition:enter="transition ease-out duration-300"
      x-transition:enter-start="opacity-0"
      x-transition:enter-end="opacity-100"
@@ -44,9 +44,20 @@
             <!-- Form Content -->
             <div class="p-6 max-h-[60vh] overflow-y-auto">
                 <form method="POST" action="{{ route('contracts.store') }}" enctype="multipart/form-data"
-                      class="space-y-4"
-                      x-data="{ totalDays: '', startDate: '', endDate: '' }"
-                      @input.debounce.500ms="
+                        class="space-y-4"
+                        x-data="{
+                        contractDate: '{{ old('contract_date') }}',
+                        startDate: '{{ old('start_date') }}',
+                        endDate: '{{ old('end_date') }}',
+                        totalDays: '{{ old('total_days') }}',
+                        selectedContractType: '{{ old('contract_type') }}',
+                        contractTypes: {{ Js::from($contractTypes) }},
+                        get selectedTypeObject() {
+                            return this.contractTypes.find(t => t.type === this.selectedContractType) || {};
+                        }
+                    }"
+
+                        @input.debounce.300ms="
                             if(totalDays && startDate) {
                                 let d = new Date(startDate);
                                 d.setDate(d.getDate() + parseInt(totalDays));
@@ -54,22 +65,33 @@
                             } else {
                                 endDate = '';
                             }
-                      ">
+                        "
+                    >
+
                     @csrf
 
                     <!-- Student Selector -->
-                    <div x-data='{
-                        search: "",
-                        students: @json($students),
-                        selectedStudentId: "",
-                        get filteredStudents() {
-                            return this.students.filter(s =>
-                                (s.first_name + " " + s.last_name + " " + s.student_id)
-                                    .toLowerCase()
-                                    .includes(this.search.toLowerCase())
-                            );
-                        }
-                    }' class="relative space-y-2">
+                    @php
+                            $oldStudent = old('student_id') ? $students->firstWhere('id', old('student_id')) : null;
+                            $oldStudentName = $oldStudent ? $oldStudent->first_name . ' ' . $oldStudent->last_name . ' (ID: ' . $oldStudent->student_id . ')' : '';
+                        @endphp
+
+                        <div 
+                            x-data="{
+                                search: '{{ $oldStudentName }}',
+                                students: {{ Js::from($students) }},
+                                selectedStudentId: '{{ old('student_id') }}',
+                                get filteredStudents() {
+                                    return this.students.filter(s =>
+                                        (s.first_name + ' ' + s.last_name + ' ' + s.student_id)
+                                            .toLowerCase()
+                                            .includes(this.search.toLowerCase())
+                                    );
+                                }
+                            }"
+                            class="relative space-y-2"
+                        >
+
                         <label for="student_search" class="block text-sm font-medium text-gray-700">
                             Select Student <span class="text-red-500">*</span>
                         </label>
@@ -97,8 +119,8 @@
                             Contract Date <span class="text-red-500">*</span>
                         </label>
                         <input type="date" name="contract_date" id="contract_date" required
-                               x-model="startDate" 
-                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors">
+                        x-model="contractDate" 
+                        class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors">
                         @error('contract_date')
                             <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                         @enderror
@@ -110,31 +132,43 @@
                         <label for="contract_type" class="block text-sm font-medium text-gray-700">
                             Contract Type <span class="text-red-500">*</span>
                         </label>
-                        <select name="contract_type" id="contract_type" required 
-                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors">
+                        <select name="contract_type" id="contract_type" required x-model="selectedContractType"
+                                class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full focus:ring focus:ring-red-200 focus:border-red-500 transition">
                             <option value="">Select contract type...</option>
                             @foreach ($contractTypes as $type)
-                                <option value="{{ $type->type }}">{{ $type->type }}</option>
+                                <option value="{{ $type->type }}" {{ old('contract_type') === $type->type ? 'selected' : '' }}>
+                                    {{ $type->type }}
+                                </option>
                             @endforeach
                         </select>
+
+
+
                         @error('contract_type')
                             <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Start Date -->
+                    <div x-show="selectedTypeObject.requires_start_date && !startDate" class="text-sm text-red-500">
+                        This contract type requires a Start Date.
+                    </div>
+
                     <div class="space-y-2">
                         <label for="start_date" class="block text-sm font-medium text-gray-700">
                             Start Date <span class="text-gray-400 text-xs">(optional)</span>
                         </label>
                         <input type="date" name="start_date" id="start_date" x-model="startDate"
-                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors">
+                        class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 transition-colors">
                         @error('start_date')
                             <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Total Days -->
+                    <div x-show="selectedTypeObject.requires_total_days && !totalDays" class="text-sm text-red-500">
+                        This contract type requires Total Days.
+                    </div>
                     <div class="space-y-2">
                         <label for="total_days" class="block text-sm font-medium text-gray-700">
                             Total Days <span class="text-gray-400 text-xs">(optional)</span>

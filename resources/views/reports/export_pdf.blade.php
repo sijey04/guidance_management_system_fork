@@ -179,16 +179,18 @@
                     <th>Type</th>
                     <th>Status</th>
                     <th>Start</th>
+                    <th>Days</th>
                     <th>End</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($contracts as $contract)
                     <tr>
-                        <td>{{ $contract->student->first_name }} {{ $contract->student->last_name }}</td>
+                        <td>{{ $contract->student->last_name }}, {{ $contract->student->first_name }} {{ $contract->student->middle_name }}. {{ $contract->student->suffix }}</td>
                         <td>{{ $contract->contract_type }}</td>
                         <td>{{ $contract->status }}</td>
                         <td>{{ $contract->start_date }}</td>
+                         <td>{{ $contract->total_days }}</td>
                         <td>{{ $contract->end_date }}</td>
                     </tr>
                 @endforeach
@@ -212,7 +214,7 @@
             <tbody>
                 @foreach($referrals as $referral)
                     <tr>
-                        <td>{{ $referral->student->first_name }} {{ $referral->student->last_name }}</td>
+                        <td>{{ $referral->student->last_name }},{{ $referral->student->first_name }} {{ $referral->student->middle_name }}. {{ $referral->student->suffix }}</td>
                         <td>{{ $referral->reason }}</td>
                         <td>{{ $referral->remarks }}</td>
                         <td>{{ $referral->referral_date }}</td>
@@ -238,7 +240,7 @@
             <tbody>
                 @foreach($counselings as $counseling)
                     <tr>
-                        <td>{{ $counseling->student->first_name }} {{ $counseling->student->last_name }}</td>
+                        <td>{{ $counseling->student->last_name }}, {{ $counseling->student->first_name }} {{ $counseling->student->middle_name }}. {{ $counseling->student->suffix }}</td>
                         <td>{{ $counseling->counseling_date }}</td>
                         <td>{{ $counseling->status }}</td>
                         <td>{{ $counseling->remarks }}</td>
@@ -267,7 +269,7 @@
                     <tr>
                         <td>{{ $transition->semester->schoolYear->school_year ?? 'N/A' }}</td>
                         <td>{{ $transition->semester->semester ?? 'N/A' }}</td>
-                        <td>{{ $transition->last_name }}, {{ $transition->first_name }}</td>
+                        <td>{{ $transition->last_name }}, {{ $transition->first_name }} {{ $transition->middle_name }}. {{ $transition->suffix }}</td>
                         <td>{{ $transition->transition_type }}</td>
                         <td>{{ \Carbon\Carbon::parse($transition->transition_date)->format('F j, Y') }}</td>
                     </tr>

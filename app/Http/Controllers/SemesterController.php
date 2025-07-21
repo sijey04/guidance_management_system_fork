@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contract;
 use App\Models\Course;
 use App\Models\SchoolYear;
 use App\Models\Section;
@@ -173,6 +174,10 @@ $users = User::all();
 
         return $student;
     });
+
+    $students = $students->sortBy(function ($student) {
+    return strtolower($student->last_name . ' ' . $student->first_name);
+})->values();
 
 
         // Apply filters
@@ -365,6 +370,68 @@ public function processValidateStudents(Request $request, $semesterId)
             'year_level' => $data['year_level'],
             'section' => $data['section'],
         ]);
+
+        // After StudentProfile::create(...);
+
+$previousSemesterIds = Semester::where('id', '<', $semester->id)->pluck('id');
+
+$inProgressContracts = Contract::where('student_id', $studentId)
+    ->whereIn('semester_id', $previousSemesterIds)
+    ->where('status', 'In Progress')
+    ->get();
+
+foreach ($inProgressContracts as $contract) {
+    // Check if contract already carried over to current sem
+    $existing = Contract::where('student_id', $studentId)
+        ->where('original_contract_id', $contract->id)
+        ->where('semester_id', $semester->id)
+        ->first();
+
+    if (!$existing) {
+        $newContract = $contract->replicate(); // clone attributes
+        $newContract->semester_id = $semester->id;
+        $newContract->status = 'In Progress';
+        $newContract->original_contract_id = $contract->id; // NEW FIELD
+        $newContract->save();
+
+        // Copy related images (if applicable)
+        foreach ($contract->images as $image) {
+            $newContract->images()->create([
+                'image_path' => $image->image_path,
+            ]);
+        }
+    }
+}
+// Carry over IN PROGRESS COUNSELING records
+$inProgressCounselings = \App\Models\Counseling::where('student_id', $studentId)
+    ->whereIn('semester_id', $previousSemesterIds)
+    ->where('status', 'In Progress')
+    ->get();
+
+foreach ($inProgressCounselings as $counseling) {
+    // Check if already carried over
+    $existing = \App\Models\Counseling::where('student_id', $studentId)
+        ->where('original_counseling_id', $counseling->id)
+        ->where('semester_id', $semester->id)
+        ->first();
+
+    if (!$existing) {
+        $newCounseling = $counseling->replicate();
+        $newCounseling->semester_id = $semester->id;
+        $newCounseling->status = 'In Progress';
+        $newCounseling->original_counseling_id = $counseling->id; // Make sure this column exists
+        $newCounseling->save();
+
+        // Copy attached images (if any)
+        foreach ($counseling->images as $image) {
+            $newCounseling->images()->create([
+                'image_path' => $image->image_path,
+            ]);
+        }
+    }
+}
+
+
     }
 
     return redirect()->route('semester.validate', $semester->id)

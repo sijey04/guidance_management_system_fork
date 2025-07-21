@@ -38,7 +38,7 @@
             @foreach($students as $profile)
                 <tr>
                     <td>{{ $profile->student->student_id }}</td>
-                    <td>{{ $profile->student->first_name }} {{ $profile->student->last_name }}</td>
+                    <td> {{ $profile->student->last_name }}, {{ $profile->student->first_name }} {{ $profile->student->middle_name }}.  {{ $profile->student->suffix}}</td>
                     <td>{{ $profile->course }}</td>
                     <td>{{ $profile->year_level }} {{ $profile->section }}</td>
                     <td>{{ $contractCounts[$profile->student_id] ?? 0 }}</td>
@@ -69,7 +69,7 @@
             @foreach($contracts as $contract)
                 <tr>
                     <td>{{ $contract->student->student_id }}</td>
-                    <td>{{ $contract->student->first_name }} {{ $contract->student->last_name }}</td>
+                    <td> {{ $contract->student->last_name }}, {{ $contract->student->first_name }} {{ $contract->student->middle_name }}.  {{ $contract->student->suffix }}</td>
                     <td>{{ $contract->contract_type }}</td>
                     <td>{{ $contract->status }}</td>
                     <td>{{ $contract->remarks }}</td>
@@ -98,7 +98,7 @@
             @foreach($referrals as $referral)
                 <tr>
                     <td>{{ $referral->student->student_id }}</td>
-                    <td>{{ $referral->student->first_name }} {{ $referral->student->last_name }}</td>
+                    <td>{{ $referral->student->last_name }}, {{ $referral->student->first_name }} {{ $referral->student->middle_name }}. {{ $referral->student->suffix }}</td>
                     <td>{{ $referral->reason }}</td>
                     <td>{{ $referral->remarks }}</td>
                     <td>{{ $referral->referral_date }}</td>
@@ -124,7 +124,7 @@
             @foreach($counselings as $counseling)
                 <tr>
                     <td>{{ $counseling->student->student_id }}</td>
-                    <td>{{ $counseling->student->first_name }} {{ $counseling->student->last_name }}</td>
+                    <td>{{ $counseling->student->last_name }}, {{ $counseling->student->first_name }} {{ $counseling->student->middle_name }}. {{ $counseling->student->suffix }}</td>
                     <td>{{ $counseling->counseling_date }}</td>
                     <td>{{ $counseling->status }}</td>
                     <td>{{ $counseling->remarks }}</td>
@@ -151,7 +151,7 @@
                 <tr>
                     <td>{{ $transition->semester->schoolYear->school_year ?? 'N/A' }}</td>
                     <td>{{ $transition->semester->semester ?? 'N/A' }}</td>
-                    <td>{{ $transition->last_name }}, {{ $transition->first_name }}</td>
+                    <td>{{ $transition->last_name }}, {{ $transition->first_name }} {{ $transition->middle_name }}. {{ $transition->suffix }}</td>
                     <td>{{ $transition->transition_type }}</td>
                     <td>{{ \Carbon\Carbon::parse($transition->transition_date)->format('Y-m-d') }}</td>
                 </tr>
