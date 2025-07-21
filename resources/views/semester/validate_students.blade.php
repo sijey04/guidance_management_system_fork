@@ -82,10 +82,10 @@
             
             <div class="mb-4">
             <a href="{{ route('semester.index') }}"
-   @click.prevent="confirmIfUnsaved(() => window.location.href='{{ route('semester.index') }}')"
    class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-sm font-semibold text-[#a82323] rounded hover:bg-gray-100 transition">
    ← Back to A.y Setup List
 </a>
+
 
         </div>
 {{-- Success and Error Flash Messages --}}
