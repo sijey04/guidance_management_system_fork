@@ -1,5 +1,3 @@
-
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -9,7 +7,7 @@
 
     <div class="max-w-7xl mx-auto  sm:px-6 lg:px-8"
          x-data="{
-             selected: {{ json_encode(request('selected_students', [])) }},
+             selected: {{ $selectedStudents->toJson() }},
              allOnPage: {{ json_encode($students->pluck('id')->map(fn($id) => (string) $id)) }},
              studentData: JSON.parse(localStorage.getItem('studentData') || '{}'),
 
@@ -64,7 +62,17 @@
                  if (!this.studentData[id]) this.studentData[id] = {};
                  this.studentData[id][field] = value;
                  localStorage.setItem('studentData', JSON.stringify(this.studentData));
-             }
+             },
+
+             warnIfSelected() {
+    if (this.selected.length > 0) {
+        alert('⚠️ You have selected students. Please validate them first or your selection will be lost.');
+        return false;
+    }
+    return true;
+}
+
+
          }">
 
         <div class="bg-white p-6 shadow rounded-lg">
@@ -72,9 +80,11 @@
             
             <div class="mb-4">
             <a href="{{ route('semester.index') }}"
-            class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-sm font-semibold text-[#a82323] rounded hover:bg-gray-100 transition">
-                ← Back to A.y Setup List
-            </a>
+   class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-sm font-semibold text-[#a82323] rounded hover:bg-gray-100 transition">
+   ← Back to A.y Setup List
+</a>
+
+
         </div>
 {{-- Success and Error Flash Messages --}}
 @if (session('success'))
@@ -112,7 +122,7 @@
 
                     <div>
                         <label class="text-sm font-medium text-gray-600">Course</label>
-                        <select name="filter_course" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_course"  @change.prevent="if (warnIfSelected()) $el.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Courses</option>
                             @foreach($courses as $course)
                                 <option value="{{ $course->course }}" {{ request('filter_course') == $course->course ? 'selected' : '' }}>{{ $course->course }}</option>
@@ -121,7 +131,7 @@
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Year Level</label>
-                        <select name="filter_year_level" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_year_level"  @change.prevent="if (warnIfSelected()) $el.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Years</option>
                             @foreach($years as $year)
                                 <option value="{{ $year->year_level }}" {{ request('filter_year_level') == $year->year_level ? 'selected' : '' }}>{{ $year->year_level }}</option>
@@ -130,7 +140,7 @@
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Section</label>
-                        <select name="filter_section" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_section"  @change.prevent="if (warnIfSelected()) $el.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Sections</option>
                             @foreach($sections as $section)
                                 <option value="{{ $section->section }}" {{ request('filter_section') == $section->section ? 'selected' : '' }}>{{ $section->section }}</option>
@@ -140,7 +150,7 @@
                     <div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Transition Type</label>
-                        <select name="filter_transition_type" onchange="this.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
+                        <select name="filter_transition_type"  @change.prevent="if (warnIfSelected()) $el.form.requestSubmit()" class="w-full mt-1 border-gray-300 rounded">
                             <option value="">All Types</option>
                             <option value="Shifting In" {{ request('filter_transition_type') == 'Shifting In' ? 'selected' : '' }}>Shifting In</option>
                             <option value="Shifting Out" {{ request('filter_transition_type') == 'Shifting Out' ? 'selected' : '' }}>Shifting Out</option>
@@ -153,16 +163,21 @@
                     </div>
                     <div class="col-span-2">
                         <label class="text-sm font-medium text-gray-600">Search</label>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Student name or ID..."
-                            class="w-full mt-1 border-gray-300 rounded"
-                            @keydown.enter.prevent="injectHiddenInputs($el.form); $el.form.submit()">
+                        <input type="text"
+    name="search"
+    value="{{ request('search') }}"
+    placeholder="Search by student ID or name"
+    class="w-full mt-1 border-gray-300 rounded"
+   @keydown.enter.prevent="if (warnIfSelected()) { injectHiddenInputs($el.form); $el.form.submit() }"
+>
+
                     </div>
                 </div>
                 <div id="selected-hidden"></div>
             </form>
 
             <!-- VALIDATION FORM -->
-            <form method="POST" enctype="multipart/form-data" action="{{ route('semester.processValidate', $newSemester->id) }}" @submit="injectHiddenInputs($el)">
+            <form id="validateForm" method="POST" enctype="multipart/form-data" action="{{ route('semester.processValidate', $newSemester->id) }}" @submit="injectHiddenInputs($el)">
                 @csrf
                 <div id="selected-hidden"></div>
 
@@ -402,11 +417,12 @@
 
                                                                 </div>
 
-                                                                <div x-show="transitionType === 'Shifting In'" x-cloak class="space-y-4">
+                                                                <div x-show="['Shifting In', 'Returning Student', 'Dropped'].includes(transitionType)" x-cloak class="space-y-4">
                                                                     <!-- Course Dropdown -->
                                                                     <div>
                                                                         <label class="block text-sm font-medium text-gray-700">New Course</label>
-                                                                        <select x-ref="newCourse" name="transitions[{{ $id }}][new_course]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
+                                                                        <select x-model="studentData['{{ $id }}']?.course ?? '{{ $profile->course }}'"
+                                                                         x-ref="newCourse" name="transitions[{{ $id }}][new_course]"  class="block w-full mt-1 rounded-md border-gray-300 text-sm">
                                                                             <option value="">Select Course</option>
                                                                             @foreach($courses as $course)
                                                                                 <option value="{{ $course->course }}">{{ $course->course }}</option>
@@ -417,7 +433,7 @@
                                                                     <!-- Year Level Dropdown -->
                                                                     <div>
                                                                         <label class="block text-sm font-medium text-gray-700">New Year Level</label>
-                                                                        <select x-ref="newYear" name="transitions[{{ $id }}][new_year_level]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
+                                                                        <select  x-model="studentData['{{ $id }}']?.year_level ?? '{{ $profile->year_level }}'" x-ref="newYear" name="transitions[{{ $id }}][new_year_level]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
                                                                             <option value="">Select Year Level</option>
                                                                             @foreach($years as $year)
                                                                                 <option value="{{ $year->year_level }}">{{ $year->year_level }}</option>
@@ -428,7 +444,7 @@
                                                                     <!-- Section Dropdown -->
                                                                     <div>
                                                                         <label class="block text-sm font-medium text-gray-700">New Section</label>
-                                                                        <select x-ref="newSection" name="transitions[{{ $id }}][new_section]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
+                                                                        <select  x-model="studentData['{{ $id }}']?.section ?? '{{ $profile->section }}'" x-ref="newSection" name="transitions[{{ $id }}][new_section]" class="block w-full mt-1 rounded-md border-gray-300 text-sm">
                                                                             <option value="">Select Section</option>
                                                                             @foreach($sections as $section)
                                                                                 <option value="{{ $section->section }}">{{ $section->section }}</option>
@@ -523,18 +539,38 @@
                                                                             class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
                                                                         Cancel
                                                                     </button>
-                                                                    <button type="button"
-        @click="
-            if (transitionType === 'Shifting In') {
-                studentData['{{ $id }}'].course = $refs.newCourse.value;
-                studentData['{{ $id }}'].year_level = $refs.newYear.value;
-                studentData['{{ $id }}'].section = $refs.newSection.value;
-            }
-            openModal{{ $id }} = false
-        "
-        class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">
-    Save Transition
+                                                                   <button
+    type="button"
+    @click="
+        if (!studentData['{{ $id }}']) {
+            studentData['{{ $id }}'] = {};
+        }
+
+        if (['Shifting In', 'Returning Student', 'Dropped'].includes(transitionType)) {
+            studentData['{{ $id }}'].course = $refs.newCourse.value;
+            studentData['{{ $id }}'].year_level = $refs.newYear.value;
+            studentData['{{ $id }}'].section = $refs.newSection.value;
+        }
+
+        // Mark this student as selected for validation
+        if (!selected.includes('{{ $id }}')) {
+            selected.push('{{ $id }}');
+        }
+
+        localStorage.setItem('studentData', JSON.stringify(studentData));
+
+        // Close modal
+        openModal{{ $id }} = false;
+
+        // Submit form immediately to validate
+        $nextTick(() => document.getElementById('validateForm').submit());
+    "
+    class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
+>
+    Save Transition & Validate
 </button>
+
+
 
                                                                 </div>
                                                             </div>
