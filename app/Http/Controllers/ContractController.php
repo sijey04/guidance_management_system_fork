@@ -20,9 +20,8 @@ class ContractController extends Controller
     $query = Contract::with('student', 'semester.schoolYear');
 
     // Fetch all with eager loaded relations
-    $allContracts = $query->get();
-
-   $latestContracts = $this->getLatestUniqueContracts($allContracts);
+   $allContracts = $query->get();
+$latestContracts = $this->getLatestUniqueContracts($allContracts);
 
 
     // STEP 2: Apply filters on the cleaned collection
@@ -418,9 +417,17 @@ public function deleteImage($contractId, $imageId)
 private function getLatestUniqueContracts($contracts)
 {
     return $contracts
-        ->groupBy(fn($contract) => $contract->original_contract_id ?? $contract->id)
-        ->map(fn($group) => $group->sortByDesc(fn($c) => optional($c->semester)->id)->first())
+        ->groupBy(function ($contract) {
+            return $contract->original_contract_id ?? $contract->id;
+        })
+        ->map(function ($group) {
+            // Return the one with the highest semester id (latest copy)
+            return $group->sortByDesc(function ($c) {
+                return optional($c->semester)->id;
+            })->first();
+        })
         ->values();
 }
+
 
 }

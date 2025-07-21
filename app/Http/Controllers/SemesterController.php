@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contract;
+use App\Models\Counseling;
 use App\Models\Course;
+use App\Models\Referral;
 use App\Models\SchoolYear;
 use App\Models\Section;
 use App\Models\Semester;
@@ -378,70 +380,107 @@ $previousSemesterIds = Semester::where('id', '<', $semester->id)->pluck('id');
 
 $latestContract = Contract::where('student_id', $studentId)
     ->whereIn('semester_id', $previousSemesterIds)
+    ->whereNull('original_contract_id') // only original (not previously carried-over)
     ->latest('semester_id')
     ->first();
 
-if ($latestContract && !Contract::where('student_id', $studentId)
-    ->where('original_contract_id', $latestContract->id)
-    ->where('semester_id', $semester->id)
-    ->exists()) {
+// Then fetch the latest copy of that original contract
+if ($latestContract) {
+    $latestCopy = Contract::where(function ($q) use ($latestContract) {
+            $q->where('id', $latestContract->id)
+              ->orWhere('original_contract_id', $latestContract->id);
+        })
+        ->whereIn('semester_id', $previousSemesterIds)
+        ->orderByDesc('semester_id')
+        ->first();
 
-    $newContract = $latestContract->replicate();
-    $newContract->semester_id = $semester->id;
-    $newContract->status = $latestContract->status;
-    $newContract->original_contract_id = $latestContract->id;
-    $newContract->save();
+    if ($latestCopy && !Contract::where('student_id', $studentId)
+        ->where('original_contract_id', $latestContract->id)
+        ->where('semester_id', $semester->id)
+        ->exists()) {
 
-    foreach ($latestContract->images as $image) {
-        $newContract->images()->create([
-            'image_path' => $image->image_path,
-        ]);
+        $newContract = $latestCopy->replicate();
+        $newContract->semester_id = $semester->id;
+        $newContract->status = $latestCopy->status;
+        $newContract->original_contract_id = $latestContract->id;
+        $newContract->save();
+
+        foreach ($latestCopy->images as $image) {
+            $newContract->images()->create([
+                'image_path' => $image->image_path,
+            ]);
+        }
     }
 }
 
 
-$latestReferral = \App\Models\Referral::where('student_id', $studentId)
+$latestReferral = Referral::where('student_id', $studentId)
     ->whereIn('semester_id', $previousSemesterIds)
+    ->whereNull('original_referral_id') // only original referrals
     ->latest('semester_id')
     ->first();
 
-if ($latestReferral && !\App\Models\Referral::where('student_id', $studentId)
-    ->where('original_referral_id', $latestReferral->id)
-    ->where('semester_id', $semester->id)
-    ->exists()) {
+if ($latestReferral) {
+    $latestCopy = Referral::where(function ($q) use ($latestReferral) {
+        $q->where('id', $latestReferral->id)
+          ->orWhere('original_referral_id', $latestReferral->id);
+    })->whereIn('semester_id', $previousSemesterIds)
+      ->orderByDesc('semester_id')
+      ->first();
 
-    $newReferral = $latestReferral->replicate();
-    $newReferral->semester_id = $semester->id;
-    $newReferral->original_referral_id = $latestReferral->id;
-    $newReferral->save();
+    if ($latestCopy && !Referral::where('student_id', $studentId)
+        ->where('original_referral_id', $latestReferral->id)
+        ->where('semester_id', $semester->id)
+        ->exists()) {
 
-    foreach ($latestReferral->images as $image) {
-        $newReferral->images()->create([
-            'image_path' => $image->image_path,
-        ]);
+        $newReferral = $latestCopy->replicate();
+        $newReferral->semester_id = $semester->id;
+        $newReferral->original_referral_id = $latestReferral->id;
+        $newReferral->save();
+
+        foreach ($latestCopy->images as $image) {
+            $newReferral->images()->create([
+                'image_path' => $image->image_path,
+            ]);
+        }
     }
 }
 
-
-$latestCounseling = \App\Models\Counseling::where('student_id', $studentId)
+// Get the latest *original* counseling record (not a carried-over one)
+$latestCounseling = Counseling::where('student_id', $studentId)
     ->whereIn('semester_id', $previousSemesterIds)
+    ->whereNull('original_counseling_id') // Only original records
     ->latest('semester_id')
     ->first();
 
-if ($latestCounseling && !\App\Models\Counseling::where('student_id', $studentId)
-    ->where('original_counseling_id', $latestCounseling->id)
-    ->where('semester_id', $semester->id)
-    ->exists()) {
+if ($latestCounseling) {
+    // Find the latest version (original or its latest carried-over copy)
+    $latestCopy = Counseling::where(function ($q) use ($latestCounseling) {
+            $q->where('id', $latestCounseling->id)
+              ->orWhere('original_counseling_id', $latestCounseling->id);
+        })
+        ->whereIn('semester_id', $previousSemesterIds)
+        ->orderByDesc('semester_id')
+        ->first();
 
-    $newCounseling = $latestCounseling->replicate();
-    $newCounseling->semester_id = $semester->id;
-    $newCounseling->original_counseling_id = $latestCounseling->id;
-    $newCounseling->save();
+    // Make sure it hasn't already been carried over into the current semester
+    $alreadyExists = Counseling::where('student_id', $studentId)
+        ->where('original_counseling_id', $latestCounseling->id)
+        ->where('semester_id', $semester->id)
+        ->exists();
 
-    foreach ($latestCounseling->images as $image) {
-        $newCounseling->images()->create([
-            'image_path' => $image->image_path,
-        ]);
+    if ($latestCopy && !$alreadyExists) {
+        $newCounseling = $latestCopy->replicate();
+        $newCounseling->semester_id = $semester->id;
+        $newCounseling->original_counseling_id = $latestCounseling->id;
+        $newCounseling->save();
+
+        // Also copy the images
+        foreach ($latestCopy->images as $image) {
+            $newCounseling->images()->create([
+                'image_path' => $image->image_path,
+            ]);
+        }
     }
 }
 
