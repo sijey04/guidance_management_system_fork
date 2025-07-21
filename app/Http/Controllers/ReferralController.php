@@ -68,7 +68,19 @@ class ReferralController extends Controller
         });
     }
 
-    $referrals = $query->paginate(10);
+    $allReferrals = $query->get();
+$latestReferrals = $this->getLatestUniqueReferrals($allReferrals);
+
+// Manual pagination
+$page = $request->input('page', 1);
+$perPage = 10;
+$referrals = new \Illuminate\Pagination\LengthAwarePaginator(
+    $latestReferrals->forPage($page, $perPage),
+    $latestReferrals->count(),
+    $perPage,
+    $page,
+    ['path' => $request->url(), 'query' => $request->query()]
+);
 
     return view('referrals.referral', compact('referrals', 'students', 'reasons', 'currentSemester'));
 }
@@ -235,5 +247,16 @@ public function deleteImage($referralId, $imageId)
 }
 
 
+private function getLatestUniqueReferrals($referrals)
+{
+    return $referrals
+        ->groupBy(function ($referral) {
+            return $referral->original_referral_id ?? $referral->id;
+        })
+        ->map(function ($group) {
+            return $group->sortByDesc('semester_id')->first(); // Keep the most recent
+        })
+        ->values();
+}
 
 }

@@ -30,20 +30,9 @@ public function index(Request $request)
     $semesters = Semester::with('schoolYear')->orderByDesc('id')->get();
 
     $query = Counseling::with(['student.profiles', 'images', 'semester.schoolYear']);
-    $allCounselings = $query->get();
+  $allCounselings = $query->get();
+$latestCounselings = $this->getLatestUniqueCounselings($allCounselings);
 
-    // Step 1: Filter out original counseling if carried-over version exists
-    $latestCounselings = $allCounselings->filter(function ($counseling) use ($allCounselings) {
-        if ($counseling->original_counseling_id) {
-            return true; // Keep carried over version
-        }
-
-        $hasCarriedOver = $allCounselings->contains(function ($c) use ($counseling) {
-            return $c->original_counseling_id === $counseling->id;
-        });
-
-        return !$hasCarriedOver;
-    });
 
     // Step 2: Apply filters manually to the cleaned collection
     $filtered = $latestCounselings->filter(function ($counseling) use ($request) {
@@ -319,5 +308,12 @@ public function deleteImage($counselingId, $imageId)
 //     return view('counselings.view', compact('counseling', 'readonly'));
 // }
 
+private function getLatestUniqueCounselings($counselings)
+{
+    return $counselings
+        ->groupBy(fn($c) => $c->original_counseling_id ?? $c->id)
+        ->map(fn($group) => $group->sortByDesc('semester_id')->first())
+        ->values();
+}
 
 }
