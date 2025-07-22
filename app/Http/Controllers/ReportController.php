@@ -73,90 +73,83 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
             ->values();
 
 
-       $currentContracts = Contract::with('student')
-    ->whereIn('semester_id', $semesterIds)
-    ->when($request->filled('filter_contract_type'), fn($q) => $q->where('contract_type', $request->filter_contract_type))
-    ->get();
+    $studentIds = $studentProfiles->pluck('student_id');
+    $isCurrentSem = optional($activeSchoolYear)->id == $selectedSY &&
+                    optional($activeSemester)->semester == $selectedSemName;
 
+        $currentSemesterId = optional($activeSemester)->id ?? null;
+$isViewingPastSem = !$isCurrentSem;
 
-$pastContracts = Contract::with('student')
-    ->whereNotIn('semester_id', $semesterIds)
-    ->whereIn('student_id', $studentProfiles->pluck('student_id'))
-    ->get();
+    $allContracts = Contract::with('student')
+        ->whereIn('student_id', $studentIds)
+        ->get();
 
-    $isCurrentSem = optional($activeSemester)->semester === $selectedSemName
-    && optional($activeSchoolYear)->id == $selectedSY;
+        
+$contracts = $studentIds->flatMap(function ($studentId) use ($allContracts, $semesterIds, $isCurrentSem) {
+    $studentContracts = $allContracts->where('student_id', $studentId);
 
+    return $studentContracts
+        ->groupBy(fn($c) => $c->original_contract_id ?? $c->id)
+        ->flatMap(function ($group) use ($semesterIds, $isCurrentSem) {
+            $group = $group->sortByDesc('semester_id');
 
-$allContracts = $currentContracts->merge($pastContracts);
-
-$contracts = $isCurrentSem
-    ? $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request) {
-        if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
-        if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) return false;
-
-        $originalId = $contract->original_contract_id ?? $contract->id;
-
-        // Skip original if a carried-over exists in current semester
-        if (!is_null($contract->original_contract_id)) {
-            return $semesterIds->contains($contract->semester_id); // keep carried-over
-        }
-
-        $hasCopyInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
-            return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
-        });
-
-        return !$hasCopyInCurrent && $semesterIds->contains($contract->semester_id);
-    })
-    : $allContracts->filter(function ($contract) use ($semesterIds, $request) {
-        return $semesterIds->contains($contract->semester_id) &&
-               (!$request->filled('filter_contract_status') || $contract->status === $request->filter_contract_status) &&
-               (!$request->filled('filter_contract_type') || $contract->contract_type === $request->filter_contract_type);
-    });
+            if ($isCurrentSem) {
+                $match = $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id)) ?? $group->first();
+                return $match ? collect([$match]) : collect();
+            } else {
+                return $group->filter(fn($c) => $semesterIds->contains($c->semester_id));
+            }
+        })->filter();
+});
 
 
 
 
-        $referrals = Referral::with('student')
-            ->whereIn('semester_id', $semesterIds)
-            ->when($request->filled('filter_reason'), fn($q) => $q->where('reason', $request->filter_reason))
-            ->get();
 
-     $currentCounselings = Counseling::with('student')
-    ->whereIn('semester_id', $semesterIds)
-    ->get();
+    $allReferrals = Referral::with('student')
+        ->whereIn('student_id', $studentIds)
+        ->get();
 
+   $referrals = $studentIds->flatMap(function ($studentId) use ($allReferrals, $semesterIds, $isCurrentSem) {
+    $studentReferrals = $allReferrals->where('student_id', $studentId);
 
-$pastCounselings = Counseling::with('student')
-    ->whereNotIn('semester_id', $semesterIds)
-    ->whereIn('student_id', $studentProfiles->pluck('student_id'))
-    ->get();
-
-$allCounselings = $currentCounselings->merge($pastCounselings);
-
-$counselings = $isCurrentSem
-    ? $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request) {
-        if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) return false;
-
-        $originalId = $counseling->original_counseling_id ?? $counseling->id;
-
-        // Skip original if a carried-over exists
-        if (!is_null($counseling->original_counseling_id)) {
-            return $semesterIds->contains($counseling->semester_id);
-        }
-
-        $hasCopyInCurrent = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
-            return $c->original_counseling_id == $originalId && $semesterIds->contains($c->semester_id);
-        });
-
-        return !$hasCopyInCurrent && $semesterIds->contains($counseling->semester_id);
-    })
-    : $allCounselings->filter(function ($counseling) use ($semesterIds, $request) {
-        return $semesterIds->contains($counseling->semester_id) &&
-               (!$request->filled('filter_counseling_status') || $counseling->status === $request->filter_counseling_status);
-    });
+    return $studentReferrals
+        ->groupBy(fn($r) => $r->original_referral_id ?? $r->id)
+        ->map(function ($group) use ($semesterIds, $isCurrentSem) {
+            if ($isCurrentSem) {
+                return $group
+                    ->filter(fn($r) => $semesterIds->contains($r->semester_id))
+                    ->sortByDesc('updated_at')
+                    ->first() ?? $group->sortByDesc('updated_at')->first();
+            } else {
+                return $group->firstWhere(fn($r) => $semesterIds->contains($r->semester_id));
+            }
+        })->filter();
+});
 
 
+
+
+        $allCounselings = Counseling::with('student')
+        ->whereIn('student_id', $studentIds)
+        ->get();
+
+    $counselings = $studentIds->flatMap(function ($studentId) use ($allCounselings, $semesterIds, $isCurrentSem) {
+    $studentCounselings = $allCounselings->where('student_id', $studentId);
+
+    return $studentCounselings
+        ->groupBy(fn($c) => $c->original_counseling_id ?? $c->id)
+        ->map(function ($group) use ($semesterIds, $isCurrentSem) {
+            if ($isCurrentSem) {
+                return $group
+                    ->filter(fn($c) => $semesterIds->contains($c->semester_id))
+                    ->sortByDesc('updated_at')
+                    ->first() ?? $group->sortByDesc('updated_at')->first();
+            } else {
+                return $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id));
+            }
+        })->filter();
+});
 
 
         $transitions = StudentTransition::with('student')
@@ -229,6 +222,29 @@ $totalTransitions = $transitions->count();// count of transition records
     ]);
 }
 
+private function getLatestCarriedOverRecords($records, $semesterIds)
+{
+    $latestRecords = collect();
+
+    $records->groupBy('student_id')->each(function ($studentGroup) use (&$latestRecords, $semesterIds) {
+        $grouped = $studentGroup->groupBy(function ($item) {
+            return $item->original_contract_id ?? $item->original_referral_id ?? $item->original_counseling_id ?? $item->id;
+        });
+
+        foreach ($grouped as $group) {
+            $latest = $group->sortByDesc('semester_id')->firstWhere(function ($item) use ($semesterIds) {
+                return $semesterIds->contains($item->semester_id);
+            });
+
+            if ($latest) {
+                $latestRecords->push($latest);
+            }
+        }
+    });
+
+    return $latestRecords;
+}
+
     public function view(Request $request, $student_id)
     {
         $schoolYearId = $request->input('school_year_id');
@@ -251,22 +267,31 @@ $allStudentContracts = Contract::with(['semester', 'images', 'original'])
     ->get();
 
 $contracts = $allStudentContracts->filter(function ($contract) use ($semesterIds, $allStudentContracts, $request) {
-    if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) return false;
-    if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
+    if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) {
+        return false;
+    }
+    if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) {
+        return false;
+    }
 
     $originalId = $contract->original_contract_id ?? $contract->id;
 
-    // Show carried-over copy in current sem
-    if (!is_null($contract->original_contract_id)) {
-        return $semesterIds->contains($contract->semester_id);
+    // Always include if this contract belongs to the selected semester
+    if ($semesterIds->contains($contract->semester_id)) {
+        return true;
     }
 
-    // If a carried-over copy exists in this semester, hide the original
-    $hasCarriedOver = $allStudentContracts->contains(function ($c) use ($originalId, $semesterIds) {
-        return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
-    });
+    // If this is the original and not carried over yet, include it
+    if (is_null($contract->original_contract_id)) {
+        $hasCopyInSelectedSemester = $allStudentContracts->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
+        });
 
-    return !$hasCarriedOver && $semesterIds->contains($contract->semester_id);
+        return !$hasCopyInSelectedSemester;
+    }
+
+    // Otherwise, it's a carried-over contract but not in selected semester → exclude
+    return false;
 });
 
 

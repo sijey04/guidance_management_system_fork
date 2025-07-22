@@ -20,20 +20,9 @@ class ContractController extends Controller
     $query = Contract::with('student', 'semester.schoolYear');
 
     // Fetch all with eager loaded relations
-    $allContracts = $query->get();
+   $allContracts = $query->get();
+$latestContracts = $this->getLatestUniqueContracts($allContracts);
 
-    // STEP 1: Remove original contracts that were already carried over
-    $latestContracts = $allContracts->filter(function ($contract) use ($allContracts) {
-        if ($contract->original_contract_id) {
-            return true; // Keep carried-over copy
-        }
-
-        $hasCarriedOver = $allContracts->contains(function ($c) use ($contract) {
-            return $c->original_contract_id === $contract->id;
-        });
-
-        return !$hasCarriedOver;
-    });
 
     // STEP 2: Apply filters on the cleaned collection
     $filteredContracts = $latestContracts->filter(function ($contract) use ($request) {
@@ -275,18 +264,8 @@ public function allContracts(Request $request)
 
     $allContracts = $query->get();
 
-// Filter duplicates, keeping carried over if exists
-$filteredContracts = $allContracts->filter(function ($contract) use ($allContracts) {
-    if ($contract->original_contract_id) {
-        return true;
-    }
+$filteredContracts = $this->getLatestUniqueContracts($allContracts);
 
-    $hasCarriedOver = $allContracts->contains(function ($c) use ($contract) {
-        return $c->original_contract_id === $contract->id;
-    });
-
-    return !$hasCarriedOver;
-});
 
 // Manual pagination
 $page = request()->input('page', 1);
@@ -433,6 +412,21 @@ public function deleteImage($contractId, $imageId)
     $image->delete();
 
     return back()->with('success', 'Image deleted successfully.');
+}
+
+private function getLatestUniqueContracts($contracts)
+{
+    return $contracts
+        ->groupBy(function ($contract) {
+            return $contract->original_contract_id ?? $contract->id;
+        })
+        ->map(function ($group) {
+            // Return the one with the highest semester id (latest copy)
+            return $group->sortByDesc(function ($c) {
+                return optional($c->semester)->id;
+            })->first();
+        })
+        ->values();
 }
 
 
