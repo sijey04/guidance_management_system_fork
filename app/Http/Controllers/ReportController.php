@@ -90,20 +90,20 @@ $contracts = $studentIds->flatMap(function ($studentId) use ($allContracts, $sem
 
     return $studentContracts
         ->groupBy(fn($c) => $c->original_contract_id ?? $c->id)
-        ->map(function ($group) use ($semesterIds, $isCurrentSem) {
-            $group = $group->sortByDesc('semester_id'); // Ensure latest semester comes first
+        ->flatMap(function ($group) use ($semesterIds, $isCurrentSem) {
+            $group = $group->sortByDesc('semester_id');
 
             if ($isCurrentSem) {
-                // Return carried-over or newly created record in current semester
-                return $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id))
-                    ?? $group->first(); // fallback to latest
+                $match = $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id)) ?? $group->first();
+                return $match ? collect([$match]) : collect();
             } else {
-                // Viewing old semester: return exact match in that sem
-                return $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id));
+                return $group->filter(fn($c) => $semesterIds->contains($c->semester_id));
             }
-        })
-        ->filter();
+        })->filter();
 });
+
+
+
 
 
     $allReferrals = Referral::with('student')
