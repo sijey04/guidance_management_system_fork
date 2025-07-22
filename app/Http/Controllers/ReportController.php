@@ -87,18 +87,7 @@ $isViewingPastSem = !$isCurrentSem;
         ->get();
 
         
-$lastSemOfPreviousSY = $this->getLastActiveSemesterOfPreviousSY($selectedSY);
-$lastPrevSemesterId = optional($lastSemOfPreviousSY)->id;
-
-$contracts = $allContracts->filter(function ($contract) use (
-    $semesterIds,
-    $allContracts,
-    $request,
-    $currentSemesterId,
-    $isViewingPastSem,
-    $lastPrevSemesterId,
-    $isCurrentSem
-) {
+$contracts = $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request, $currentSemesterId, $isViewingPastSem) {
     if ($isViewingPastSem && $contract->semester_id == $currentSemesterId) return false;
 
     if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
@@ -106,22 +95,24 @@ $contracts = $allContracts->filter(function ($contract) use (
 
     $originalId = $contract->original_contract_id ?? $contract->id;
 
-    // ✅ Show contract if it belongs to the current filter semester(s)
-    if ($semesterIds->contains($contract->semester_id)) return true;
+    // ✅ Show carried-over version if it exists in selected sem
+    if ($semesterIds->contains($contract->semester_id)) {
+        return true;
+    }
 
-    // ✅ Show carried-over contract: if original was from last semester of previous S.Y.
-    if ($isCurrentSem && $contract->semester_id == $lastPrevSemesterId) {
-        $hasCopyInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+    // ✅ If this is the original contract (no `original_contract_id`)
+    if (is_null($contract->original_contract_id)) {
+        // If it already has a copy in this semester, skip showing the original
+        $hasCopyInSelectedSemester = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
             return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
         });
 
-        return !$hasCopyInCurrent;
+        return !$hasCopyInSelectedSemester;
     }
 
-    // ❌ Don't show original or carried-over contracts from other semesters
+    // ❌ Contract is carried over but not for this selected semester
     return false;
 });
-
 
 
 
@@ -356,7 +347,7 @@ $referralReasons = ReferralReason::all();
 
     }
 
- private function getLastActiveSemesterOfPreviousSY($currentSYId)
+   private function getLastActiveSemesterOfPreviousSY($currentSYId)
 {
     $previousSY = SchoolYear::where('id', '<', $currentSYId)
         ->orderByDesc('id')
@@ -368,7 +359,6 @@ $referralReasons = ReferralReason::all();
         ->orderByDesc('id') // assumes higher ID = more recent
         ->first();
 }
-
 
 
 public function export(Request $request)
