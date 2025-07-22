@@ -85,26 +85,25 @@ $isViewingPastSem = !$isCurrentSem;
         ->get();
 
         
- $contracts = $studentIds->flatMap(function ($studentId) use ($allContracts, $semesterIds, $isCurrentSem) {
+$contracts = $studentIds->flatMap(function ($studentId) use ($allContracts, $semesterIds, $isCurrentSem) {
     $studentContracts = $allContracts->where('student_id', $studentId);
-    
-    // Group by original ID or self ID
-    return $studentContracts
-        ->groupBy(fn($contract) => $contract->original_contract_id ?? $contract->id)
-        ->map(function ($groupedContracts) use ($semesterIds, $isCurrentSem) {
-            if ($isCurrentSem) {
-                // Get the latest carried-over or fallback
-                return $groupedContracts
-                    ->filter(fn($c) => $semesterIds->contains($c->semester_id))
-                    ->sortByDesc('updated_at') // latest version
-                    ->first() ?? $groupedContracts->sortByDesc('updated_at')->first();
-            } else {
-                // For past sems: return only records in that sem
-                return $groupedContracts->firstWhere(fn($c) => $semesterIds->contains($c->semester_id));
-            }
-        })->filter();
-});
 
+    return $studentContracts
+        ->groupBy(fn($c) => $c->original_contract_id ?? $c->id)
+        ->map(function ($group) use ($semesterIds, $isCurrentSem) {
+            $group = $group->sortByDesc('semester_id'); // Ensure latest semester comes first
+
+            if ($isCurrentSem) {
+                // Return carried-over or newly created record in current semester
+                return $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id))
+                    ?? $group->first(); // fallback to latest
+            } else {
+                // Viewing old semester: return exact match in that sem
+                return $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id));
+            }
+        })
+        ->filter();
+});
 
 
     $allReferrals = Referral::with('student')
