@@ -87,7 +87,18 @@ $isViewingPastSem = !$isCurrentSem;
         ->get();
 
         
-$contracts = $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request, $currentSemesterId, $isViewingPastSem, $lastSemOfPreviousSY) {
+$lastSemOfPreviousSY = $this->getLastActiveSemesterOfPreviousSY($selectedSY);
+$lastPrevSemesterId = optional($lastSemOfPreviousSY)->id;
+
+$contracts = $allContracts->filter(function ($contract) use (
+    $semesterIds,
+    $allContracts,
+    $request,
+    $currentSemesterId,
+    $isViewingPastSem,
+    $lastPrevSemesterId,
+    $isCurrentSem
+) {
     if ($isViewingPastSem && $contract->semester_id == $currentSemesterId) return false;
 
     if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
@@ -95,20 +106,20 @@ $contracts = $allContracts->filter(function ($contract) use ($semesterIds, $allC
 
     $originalId = $contract->original_contract_id ?? $contract->id;
 
-    // ✅ Show anything that belongs to the selected semester (new or carried-over)
+    // ✅ Show contract if it belongs to the current filter semester(s)
     if ($semesterIds->contains($contract->semester_id)) return true;
 
-    // ✅ Show only carried-over version from last sem of previous SY
-    if (!is_null($contract->original_contract_id)) {
-        return $contract->semester_id == optional($lastSemOfPreviousSY)->id;
+    // ✅ Show carried-over contract: if original was from last semester of previous S.Y.
+    if ($isCurrentSem && $contract->semester_id == $lastPrevSemesterId) {
+        $hasCopyInCurrent = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
+        });
+
+        return !$hasCopyInCurrent;
     }
 
-    // ❌ Don't show original contracts from older semesters if a carried-over copy exists
-    $hasCopyInSelected = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
-        return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
-    });
-
-    return !$hasCopyInSelected && $contract->semester_id == optional($lastSemOfPreviousSY)->id;
+    // ❌ Don't show original or carried-over contracts from other semesters
+    return false;
 });
 
 
@@ -118,27 +129,30 @@ $contracts = $allContracts->filter(function ($contract) use ($semesterIds, $allC
         ->whereIn('student_id', $studentIds)
         ->get();
 
-$referrals = $allReferrals->filter(function ($referral) use ($semesterIds, $allReferrals, $request, $lastSemOfPreviousSY) {
+$referrals = $allReferrals->filter(function ($referral) use ($semesterIds, $allReferrals, $request, $currentSemesterId, $isViewingPastSem) {
+    if ($isViewingPastSem && $referral->semester_id == $currentSemesterId) return false;
+
     if ($request->filled('filter_reason') && $referral->reason !== $request->filter_reason) return false;
 
     $originalId = $referral->original_referral_id ?? $referral->id;
 
-    // ✅ Show new or carried-over records in the selected semester
-    if ($semesterIds->contains($referral->semester_id)) return true;
-
-    // ✅ If carried-over from previous SY’s last semester
-    if (!is_null($referral->original_referral_id)) {
-        return $referral->semester_id == optional($lastSemOfPreviousSY)->id;
+    // ✅ Show carried-over version in selected semester
+    if ($semesterIds->contains($referral->semester_id)) {
+        return true;
     }
 
-    // ❌ Exclude originals that already have carried-over copy in current semester
-    $hasCopy = $allReferrals->contains(function ($r) use ($originalId, $semesterIds) {
-        return $r->original_referral_id == $originalId && $semesterIds->contains($r->semester_id);
-    });
+    // ✅ If this is original and not carried over into selected semester
+    if (is_null($referral->original_referral_id)) {
+        $hasCopy = $allReferrals->contains(function ($r) use ($originalId, $semesterIds) {
+            return $r->original_referral_id == $originalId && $semesterIds->contains($r->semester_id);
+        });
 
-    return !$hasCopy && $referral->semester_id == optional($lastSemOfPreviousSY)->id;
+        return !$hasCopy;
+    }
+
+    // ❌ Carried-over copy not in selected sem
+    return false;
 });
-
 
 
 
@@ -146,27 +160,30 @@ $referrals = $allReferrals->filter(function ($referral) use ($semesterIds, $allR
         ->whereIn('student_id', $studentIds)
         ->get();
 
-$counselings = $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request, $lastSemOfPreviousSY) {
+$counselings = $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request, $currentSemesterId, $isViewingPastSem) {
+    if ($isViewingPastSem && $counseling->semester_id == $currentSemesterId) return false;
+
     if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) return false;
 
     $originalId = $counseling->original_counseling_id ?? $counseling->id;
 
-    // ✅ Show new or carried-over records in selected semester
-    if ($semesterIds->contains($counseling->semester_id)) return true;
-
-    // ✅ If carried-over from previous SY’s last semester
-    if (!is_null($counseling->original_counseling_id)) {
-        return $counseling->semester_id == optional($lastSemOfPreviousSY)->id;
+    // ✅ Show carried-over counseling if it’s in selected semester
+    if ($semesterIds->contains($counseling->semester_id)) {
+        return true;
     }
 
-    // ❌ Exclude original if it has a carried-over version
-    $hasCopy = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
-        return $c->original_counseling_id == $originalId && $semesterIds->contains($c->semester_id);
-    });
+    // ✅ Show original only if it hasn’t been carried over yet
+    if (is_null($counseling->original_counseling_id)) {
+        $hasCopy = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->original_counseling_id == $originalId && $semesterIds->contains($c->semester_id);
+        });
 
-    return !$hasCopy && $counseling->semester_id == optional($lastSemOfPreviousSY)->id;
+        return !$hasCopy;
+    }
+
+    // ❌ Don’t show carried-over that’s not for selected semester
+    return false;
 });
-
 
 
 
@@ -339,7 +356,7 @@ $referralReasons = ReferralReason::all();
 
     }
 
-   private function getLastActiveSemesterOfPreviousSY($currentSYId)
+ private function getLastActiveSemesterOfPreviousSY($currentSYId)
 {
     $previousSY = SchoolYear::where('id', '<', $currentSYId)
         ->orderByDesc('id')
@@ -351,6 +368,7 @@ $referralReasons = ReferralReason::all();
         ->orderByDesc('id') // assumes higher ID = more recent
         ->first();
 }
+
 
 
 public function export(Request $request)
