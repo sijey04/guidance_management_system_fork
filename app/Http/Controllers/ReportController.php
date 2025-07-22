@@ -85,24 +85,31 @@ $isViewingPastSem = !$isCurrentSem;
         ->get();
 
         
- $contracts = $studentIds->flatMap(function ($studentId) use ($allContracts, $semesterIds, $isCurrentSem) {
-    $studentContracts = $allContracts->where('student_id', $studentId);
-    
-    // Group by original ID or self ID
-    return $studentContracts
-        ->groupBy(fn($contract) => $contract->original_contract_id ?? $contract->id)
-        ->map(function ($groupedContracts) use ($semesterIds, $isCurrentSem) {
-            if ($isCurrentSem) {
-                // Get the latest carried-over or fallback
-                return $groupedContracts
-                    ->filter(fn($c) => $semesterIds->contains($c->semester_id))
-                    ->sortByDesc('updated_at') // latest version
-                    ->first() ?? $groupedContracts->sortByDesc('updated_at')->first();
-            } else {
-                // For past sems: return only records in that sem
-                return $groupedContracts->firstWhere(fn($c) => $semesterIds->contains($c->semester_id));
-            }
-        })->filter();
+$contracts = $allContracts->filter(function ($contract) use ($semesterIds, $allContracts, $request, $currentSemesterId, $isViewingPastSem) {
+    if ($isViewingPastSem && $contract->semester_id == $currentSemesterId) return false;
+
+    if ($request->filled('filter_contract_status') && $contract->status !== $request->filter_contract_status) return false;
+    if ($request->filled('filter_contract_type') && $contract->contract_type !== $request->filter_contract_type) return false;
+
+    $originalId = $contract->original_contract_id ?? $contract->id;
+
+    // ✅ Show carried-over version if it exists in selected sem
+    if ($semesterIds->contains($contract->semester_id)) {
+        return true;
+    }
+
+    // ✅ If this is the original contract (no `original_contract_id`)
+    if (is_null($contract->original_contract_id)) {
+        // If it already has a copy in this semester, skip showing the original
+        $hasCopyInSelectedSemester = $allContracts->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->original_contract_id == $originalId && $semesterIds->contains($c->semester_id);
+        });
+
+        return !$hasCopyInSelectedSemester;
+    }
+
+    // ❌ Contract is carried over but not for this selected semester
+    return false;
 });
 
 
@@ -111,23 +118,30 @@ $isViewingPastSem = !$isCurrentSem;
         ->whereIn('student_id', $studentIds)
         ->get();
 
-   $referrals = $studentIds->flatMap(function ($studentId) use ($allReferrals, $semesterIds, $isCurrentSem) {
-    $studentReferrals = $allReferrals->where('student_id', $studentId);
+$referrals = $allReferrals->filter(function ($referral) use ($semesterIds, $allReferrals, $request, $currentSemesterId, $isViewingPastSem) {
+    if ($isViewingPastSem && $referral->semester_id == $currentSemesterId) return false;
 
-    return $studentReferrals
-        ->groupBy(fn($r) => $r->original_referral_id ?? $r->id)
-        ->map(function ($group) use ($semesterIds, $isCurrentSem) {
-            if ($isCurrentSem) {
-                return $group
-                    ->filter(fn($r) => $semesterIds->contains($r->semester_id))
-                    ->sortByDesc('updated_at')
-                    ->first() ?? $group->sortByDesc('updated_at')->first();
-            } else {
-                return $group->firstWhere(fn($r) => $semesterIds->contains($r->semester_id));
-            }
-        })->filter();
+    if ($request->filled('filter_reason') && $referral->reason !== $request->filter_reason) return false;
+
+    $originalId = $referral->original_referral_id ?? $referral->id;
+
+    // ✅ Show carried-over version in selected semester
+    if ($semesterIds->contains($referral->semester_id)) {
+        return true;
+    }
+
+    // ✅ If this is original and not carried over into selected semester
+    if (is_null($referral->original_referral_id)) {
+        $hasCopy = $allReferrals->contains(function ($r) use ($originalId, $semesterIds) {
+            return $r->original_referral_id == $originalId && $semesterIds->contains($r->semester_id);
+        });
+
+        return !$hasCopy;
+    }
+
+    // ❌ Carried-over copy not in selected sem
+    return false;
 });
-
 
 
 
@@ -135,22 +149,31 @@ $isViewingPastSem = !$isCurrentSem;
         ->whereIn('student_id', $studentIds)
         ->get();
 
-    $counselings = $studentIds->flatMap(function ($studentId) use ($allCounselings, $semesterIds, $isCurrentSem) {
-    $studentCounselings = $allCounselings->where('student_id', $studentId);
+$counselings = $allCounselings->filter(function ($counseling) use ($semesterIds, $allCounselings, $request, $currentSemesterId, $isViewingPastSem) {
+    if ($isViewingPastSem && $counseling->semester_id == $currentSemesterId) return false;
 
-    return $studentCounselings
-        ->groupBy(fn($c) => $c->original_counseling_id ?? $c->id)
-        ->map(function ($group) use ($semesterIds, $isCurrentSem) {
-            if ($isCurrentSem) {
-                return $group
-                    ->filter(fn($c) => $semesterIds->contains($c->semester_id))
-                    ->sortByDesc('updated_at')
-                    ->first() ?? $group->sortByDesc('updated_at')->first();
-            } else {
-                return $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id));
-            }
-        })->filter();
+    if ($request->filled('filter_counseling_status') && $counseling->status !== $request->filter_counseling_status) return false;
+
+    $originalId = $counseling->original_counseling_id ?? $counseling->id;
+
+    // ✅ Show carried-over counseling if it’s in selected semester
+    if ($semesterIds->contains($counseling->semester_id)) {
+        return true;
+    }
+
+    // ✅ Show original only if it hasn’t been carried over yet
+    if (is_null($counseling->original_counseling_id)) {
+        $hasCopy = $allCounselings->contains(function ($c) use ($originalId, $semesterIds) {
+            return $c->original_counseling_id == $originalId && $semesterIds->contains($c->semester_id);
+        });
+
+        return !$hasCopy;
+    }
+
+    // ❌ Don’t show carried-over that’s not for selected semester
+    return false;
 });
+
 
 
         $transitions = StudentTransition::with('student')
@@ -221,29 +244,6 @@ $totalTransitions = $transitions->count();// count of transition records
         'totalTransitions' => $totalTransitions,
 
     ]);
-}
-
-private function getLatestCarriedOverRecords($records, $semesterIds)
-{
-    $latestRecords = collect();
-
-    $records->groupBy('student_id')->each(function ($studentGroup) use (&$latestRecords, $semesterIds) {
-        $grouped = $studentGroup->groupBy(function ($item) {
-            return $item->original_contract_id ?? $item->original_referral_id ?? $item->original_counseling_id ?? $item->id;
-        });
-
-        foreach ($grouped as $group) {
-            $latest = $group->sortByDesc('semester_id')->firstWhere(function ($item) use ($semesterIds) {
-                return $semesterIds->contains($item->semester_id);
-            });
-
-            if ($latest) {
-                $latestRecords->push($latest);
-            }
-        }
-    });
-
-    return $latestRecords;
 }
 
     public function view(Request $request, $student_id)
