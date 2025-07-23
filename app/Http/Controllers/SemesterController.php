@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contract;
+use App\Models\Counseling;
 use App\Models\Course;
+use App\Models\Referral;
 use App\Models\SchoolYear;
 use App\Models\Section;
 use App\Models\Semester;
@@ -376,55 +378,105 @@ public function processValidateStudents(Request $request, $semesterId)
 
 $previousSemesterIds = Semester::where('id', '<', $semester->id)->pluck('id');
 
-$inProgressContracts = Contract::where('student_id', $studentId)
+$latestContract = Contract::where('student_id', $studentId)
     ->whereIn('semester_id', $previousSemesterIds)
-    ->where('status', 'In Progress')
-    ->get();
+    ->whereNull('original_contract_id') // only original (not previously carried-over)
+    ->latest('semester_id')
+    ->first();
 
-foreach ($inProgressContracts as $contract) {
-    // Check if contract already carried over to current sem
-    $existing = Contract::where('student_id', $studentId)
-        ->where('original_contract_id', $contract->id)
-        ->where('semester_id', $semester->id)
+// Then fetch the latest copy of that original contract
+if ($latestContract) {
+    $latestCopy = Contract::where(function ($q) use ($latestContract) {
+            $q->where('id', $latestContract->id)
+              ->orWhere('original_contract_id', $latestContract->id);
+        })
+        ->whereIn('semester_id', $previousSemesterIds)
+        ->orderByDesc('semester_id')
         ->first();
 
-    if (!$existing) {
-        $newContract = $contract->replicate(); // clone attributes
+    if ($latestCopy && !Contract::where('student_id', $studentId)
+        ->where('original_contract_id', $latestContract->id)
+        ->where('semester_id', $semester->id)
+        ->exists()) {
+
+        $newContract = $latestCopy->replicate();
         $newContract->semester_id = $semester->id;
-        $newContract->status = 'In Progress';
-        $newContract->original_contract_id = $contract->id; // NEW FIELD
+        $newContract->status = $latestCopy->status;
+        $newContract->original_contract_id = $latestContract->id;
         $newContract->save();
 
-        // Copy related images (if applicable)
-        foreach ($contract->images as $image) {
+        foreach ($latestCopy->images as $image) {
             $newContract->images()->create([
                 'image_path' => $image->image_path,
             ]);
         }
     }
 }
-// Carry over IN PROGRESS COUNSELING records
-$inProgressCounselings = \App\Models\Counseling::where('student_id', $studentId)
-    ->whereIn('semester_id', $previousSemesterIds)
-    ->where('status', 'In Progress')
-    ->get();
 
-foreach ($inProgressCounselings as $counseling) {
-    // Check if already carried over
-    $existing = \App\Models\Counseling::where('student_id', $studentId)
-        ->where('original_counseling_id', $counseling->id)
+
+$latestReferral = Referral::where('student_id', $studentId)
+    ->whereIn('semester_id', $previousSemesterIds)
+    ->whereNull('original_referral_id') // only original referrals
+    ->latest('semester_id')
+    ->first();
+
+if ($latestReferral) {
+    $latestCopy = Referral::where(function ($q) use ($latestReferral) {
+        $q->where('id', $latestReferral->id)
+          ->orWhere('original_referral_id', $latestReferral->id);
+    })->whereIn('semester_id', $previousSemesterIds)
+      ->orderByDesc('semester_id')
+      ->first();
+
+    if ($latestCopy && !Referral::where('student_id', $studentId)
+        ->where('original_referral_id', $latestReferral->id)
         ->where('semester_id', $semester->id)
+        ->exists()) {
+
+        $newReferral = $latestCopy->replicate();
+        $newReferral->semester_id = $semester->id;
+        $newReferral->original_referral_id = $latestReferral->id;
+        $newReferral->save();
+
+        foreach ($latestCopy->images as $image) {
+            $newReferral->images()->create([
+                'image_path' => $image->image_path,
+            ]);
+        }
+    }
+}
+
+// Get the latest *original* counseling record (not a carried-over one)
+$latestCounseling = Counseling::where('student_id', $studentId)
+    ->whereIn('semester_id', $previousSemesterIds)
+    ->whereNull('original_counseling_id') // Only original records
+    ->latest('semester_id')
+    ->first();
+
+if ($latestCounseling) {
+    // Find the latest version (original or its latest carried-over copy)
+    $latestCopy = Counseling::where(function ($q) use ($latestCounseling) {
+            $q->where('id', $latestCounseling->id)
+              ->orWhere('original_counseling_id', $latestCounseling->id);
+        })
+        ->whereIn('semester_id', $previousSemesterIds)
+        ->orderByDesc('semester_id')
         ->first();
 
-    if (!$existing) {
-        $newCounseling = $counseling->replicate();
+    // Make sure it hasn't already been carried over into the current semester
+    $alreadyExists = Counseling::where('student_id', $studentId)
+        ->where('original_counseling_id', $latestCounseling->id)
+        ->where('semester_id', $semester->id)
+        ->exists();
+
+    if ($latestCopy && !$alreadyExists) {
+        $newCounseling = $latestCopy->replicate();
         $newCounseling->semester_id = $semester->id;
-        $newCounseling->status = 'In Progress';
-        $newCounseling->original_counseling_id = $counseling->id; // Make sure this column exists
+        $newCounseling->original_counseling_id = $latestCounseling->id;
         $newCounseling->save();
 
-        // Copy attached images (if any)
-        foreach ($counseling->images as $image) {
+        // Also copy the images
+        foreach ($latestCopy->images as $image) {
             $newCounseling->images()->create([
                 'image_path' => $image->image_path,
             ]);

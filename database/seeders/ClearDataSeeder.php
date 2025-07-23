@@ -30,7 +30,7 @@ class ClearDataSeeder extends Seeder
        //  DB::table('section')->truncate();
       //  DB::table('contract_types')->truncate();
          DB::table('contract_images')->truncate();
-       DB::table('referral_reasons')->truncate();
+      // DB::table('referral_reasons')->truncate();
         DB::table('referral_images')->truncate();
        DB::table('counseling_images')->truncate();
        DB::table('student_transition_images')->truncate();
