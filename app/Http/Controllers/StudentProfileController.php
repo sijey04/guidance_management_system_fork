@@ -93,4 +93,6 @@ public function showProfile(Student $student, StudentProfile $profile)
     {
         //
     }
+
+    
 }

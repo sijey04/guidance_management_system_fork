@@ -324,6 +324,10 @@
                             <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
                             <input type="hidden" name="tab" value="student_profiles">
 
+                            <input type="text" name="search_student" value="{{ request('search_student') }}"
+    placeholder="Search by Student Name or ID"
+    class="border px-3 py-2 rounded w-full sm:w-auto focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50" />
+
                             <select name="filter_course" class="border px-3 py-2 rounded w-full sm:w-auto focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50">
                                 <option value="">All Courses</option>
                                 @foreach($courses as $course)
@@ -366,6 +370,9 @@
                         <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
                         <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
                         <input type="hidden" name="tab" value="contracts">
+<input type="text" name="search_contract" value="{{ request('search_contract') }}"
+    placeholder="Search by Student Name or ID"
+    class="border px-3 py-2 rounded w-full sm:w-auto focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50" />
 
                         <select name="filter_contract_type" class="border px-3 py-2 rounded w-full sm:w-auto focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50">
                             <option value="">All Types</option>
@@ -398,6 +405,10 @@
                         <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
                         <input type="hidden" name="tab" value="referrals">
 
+                        <input type="text" name="search_referral" value="{{ request('search_referral') }}"
+    placeholder="Search by Student Name or ID"
+    class="border px-3 py-2 rounded w-full sm:w-auto focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50" />
+
                         <select name="filter_reason" class="border px-3 py-2 rounded w-full sm:w-auto focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50">
                             <option value="">All Reasons</option>
                             @foreach($referralReasons as $reason)
@@ -423,6 +434,10 @@
                         <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
                         <input type="hidden" name="tab" value="counseling">
 
+                        <input type="text" name="search_counseling" value="{{ request('search_counseling') }}"
+    placeholder="Search by Student Name or ID"
+    class="border px-3 py-2 rounded w-full sm:w-auto focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50" />
+
                         <select name="filter_counseling_status" class="border px-3 py-2 rounded w-full sm:w-auto focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50">
                             <option value="">All Status</option>
                             <option value="In Progress" {{ request('filter_counseling_status') == 'In Progress' ? 'selected' : '' }}>In Progress</option>
@@ -444,6 +459,10 @@
                         <input type="hidden" name="school_year_id" value="{{ $selectedSY }}">
                         <input type="hidden" name="semester_name" value="{{ $selectedSem }}">
                         <input type="hidden" name="tab" value="transitions">
+
+                        <input type="text" name="search_transition" value="{{ request('search_transition') }}"
+    placeholder="Search by Student Name or ID"
+    class="border px-3 py-2 rounded w-full sm:w-auto focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50" />
 
                         <select name="filter_transition_type" class="border px-3 py-2 rounded w-full sm:w-auto focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50">
                             <option value="">All Types</option>
@@ -578,12 +597,15 @@
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         @forelse ($contracts as $contract)
                                             <tr class="hover:bg-gray-50">
-                                                <td class="px-4 py-3 font-medium"> {{ $contract->student->last_name }},{{ $contract->student->first_name }} {{ $contract->student->middle_name }}.  {{ $contract->student->suffix }}</td>
-                                                <td class="px-4 py-3">{{ $contract->contract_type }}
-                                                    @if($contract->original_contract_id)
-                                                        <span class="text-xs text-yellow-600 italic">(Carried from previous sem)</span>
+                                                <td class="px-4 py-3 font-medium"> {{ $contract->student->last_name }},{{ $contract->student->first_name }} {{ $contract->student->middle_name }}.  {{ $contract->student->suffix }}
+                                                     @if ($contract->original_contract_id)
+                                                       <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Carried Over</span>
+                                                    @else
+                                                        <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Original</span>
                                                     @endif
-                                                    </td>
+                                                </td>
+                                                <td class="px-4 py-3">{{ $contract->contract_type }}
+                                                </td>
                                                 <td class="px-4 py-3">
                                                     <span class="px-2 py-1 text-xs rounded-full {{ $contract->status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                                                         {{ $contract->status }}

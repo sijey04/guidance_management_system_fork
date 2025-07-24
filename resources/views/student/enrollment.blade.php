@@ -42,7 +42,7 @@
                                     <th class="px-4 py-3 text-left">Semester</th>
                                     <th class="px-4 py-3 text-left">Course & Year</th>
                                     <th class="px-4 py-3 text-left">Section</th>
-                                    <th class="px-4 py-3 text-left">Transition</th>
+                                    {{-- <th class="px-4 py-3 text-left">Transition</th> --}}
                                     <th class="px-4 py-3 text-left">Status</th>
                                 </tr>
                             </thead>
@@ -57,23 +57,19 @@
                                             {{ $record->course ?? 'N/A' }} - {{ $record->year_level ?? 'N/A' }}
                                         </td>
                                         <td class="px-4 py-3">{{ $record->section ?? 'N/A' }}</td>
-                                        <td class="px-4 py-3">
-                                            @php
-                                                $transition = $student->transitions()
-                                                    ->where('semester_id', $record->semester_id)
-                                                    ->first();
-                                            @endphp
-                                            @if($transition)
-                                                <span class="text-xs font-medium px-2.5 py-0.5 rounded-full
-                                                    {{ $transition->transition_type === 'Dropped' ? 'bg-red-100 text-red-800' :
-                                                       ($transition->transition_type === 'Shifting In' ? 'bg-yellow-100 text-yellow-800' :
-                                                       'bg-gray-100 text-gray-700') }}">
-                                                    {{ $transition->transition_type }}
-                                                </span>
-                                            @else
-                                                <span class="text-xs text-gray-400">None</span>
-                                            @endif
-                                        </td>
+                                        {{-- <td class="px-4 py-3">
+                                           @if($record->transition)
+    <span class="text-xs font-medium px-2.5 py-0.5 rounded-full
+        {{ $record->transition->transition_type === 'Dropped' ? 'bg-red-100 text-red-800' :
+           ($record->transition->transition_type === 'Shifting In' ? 'bg-yellow-100 text-yellow-800' :
+           'bg-gray-100 text-gray-700') }}">
+        {{ $record->transition->transition_type }}
+    </span>
+@else
+    <span class="text-xs text-gray-400">None</span>
+@endif
+
+                                        </td> --}}
                                         <td class="px-4 py-3">
                                             @if($record->semester?->is_current)
                                                 <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
