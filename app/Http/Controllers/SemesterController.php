@@ -449,6 +449,39 @@ public function processValidateStudents(Request $request, $semesterId)
                 $newCounseling->save();
             }
         }
+        // --- TRANSITIONS ---
+            $allPastTransitions = StudentTransition::where('student_id', $studentId)
+                ->where('semester_id', '<', $semester->id)
+                ->orderBy('semester_id', 'desc')
+                ->get()
+                ->groupBy(function ($transition) {
+                    return $transition->original_transition_id ?? $transition->id;
+                });
+
+            foreach ($allPastTransitions as $originId => $transitionGroup) {
+                $latestTransition = $transitionGroup->first();
+
+                $alreadyExists = StudentTransition::where('student_id', $studentId)
+                    ->where('original_transition_id', $originId)
+                    ->where('semester_id', $semester->id)
+                    ->exists();
+
+                if (!$alreadyExists) {
+                    $newTransition = $latestTransition->replicate();
+                    $newTransition->semester_id = $semester->id;
+                    $newTransition->original_transition_id = $originId;
+                    $newTransition->save();
+
+                    $transitionImages = StudentTransitionImage::where('student_transition_id', $latestTransition->id)->get();
+                    foreach ($transitionImages as $image) {
+                        StudentTransitionImage::create([
+                            'student_transition_id' => $newTransition->id,
+                            'image_path' => $image->image_path,
+                        ]);
+                    }
+                }
+            }
+
 
 
     }
