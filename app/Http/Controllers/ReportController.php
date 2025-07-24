@@ -80,27 +80,29 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
         $currentSemesterId = optional($activeSemester)->id ?? null;
 $isViewingPastSem = !$isCurrentSem;
 
-    $allContracts = Contract::with('student')
-        ->whereIn('student_id', $studentIds)
-        ->get();
+   $allContracts = Contract::with('student')
+    ->whereIn('student_id', $studentIds)
+    ->whereIn('semester_id', $semesterIds) // scope to current semester only
+    ->get();
+
 
         
 $contracts = $studentIds->flatMap(function ($studentId) use ($allContracts, $semesterIds, $isCurrentSem) {
     $studentContracts = $allContracts->where('student_id', $studentId);
 
     return $studentContracts
-        ->groupBy(fn($c) => $c->original_contract_id ?? $c->id)
-        ->flatMap(function ($group) use ($semesterIds, $isCurrentSem) {
-            $group = $group->sortByDesc('semester_id');
-
+        ->groupBy(fn($c) => $c->origin_contract_id ?? $c->id)
+        ->map(function ($group) use ($semesterIds, $isCurrentSem) {
             if ($isCurrentSem) {
-                $match = $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id)) ?? $group->first();
-                return $match ? collect([$match]) : collect();
+                return $group->sortByDesc('updated_at')->first();
             } else {
-                return $group->filter(fn($c) => $semesterIds->contains($c->semester_id));
+                return $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id));
             }
-        })->filter();
-});
+        })->filter()->values(); // 🔥 this prevents weird collection behavior
+})->unique('id'); // ✅ ensure uniqueness by contract ID
+
+
+
 
 
 
