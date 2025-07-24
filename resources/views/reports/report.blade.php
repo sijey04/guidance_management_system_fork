@@ -578,14 +578,14 @@
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         @forelse ($contracts as $contract)
                                             <tr class="hover:bg-gray-50">
-                                                <td class="px-4 py-3 font-medium"> {{ $contract->student->last_name }},{{ $contract->student->first_name }} {{ $contract->student->middle_name }}.  {{ $contract->student->suffix }}</td>
-                                                <td class="px-4 py-3">{{ $contract->contract_type }}</td>
-                                                 <td>
-                                                    @if ($contract->original_contract_id)
-                                                        <span class="badge bg-warning">Carried Over</span>
+                                                <td class="px-4 py-3 font-medium"> {{ $contract->student->last_name }},{{ $contract->student->first_name }} {{ $contract->student->middle_name }}.  {{ $contract->student->suffix }}
+                                                     @if ($contract->original_contract_id)
+                                                       <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Carried Over</span>
                                                     @else
-                                                        <span class="badge bg-primary">Original</span>
+                                                        <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Carried Over</span>
                                                     @endif
+                                                </td>
+                                                <td class="px-4 py-3">{{ $contract->contract_type }}
                                                 </td>
                                                 <td class="px-4 py-3">
                                                     <span class="px-2 py-1 text-xs rounded-full {{ $contract->status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
