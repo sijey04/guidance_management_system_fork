@@ -582,7 +582,7 @@
                                                      @if ($contract->original_contract_id)
                                                        <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Carried Over</span>
                                                     @else
-                                                        <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Carried Over</span>
+                                                        <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Original</span>
                                                     @endif
                                                 </td>
                                                 <td class="px-4 py-3">{{ $contract->contract_type }}
