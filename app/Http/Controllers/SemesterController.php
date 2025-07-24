@@ -378,16 +378,15 @@ public function processValidateStudents(Request $request, $semesterId)
 
         $allPastContracts = Contract::where('student_id', $studentId)
             ->where('semester_id', '<', $semester->id)
-            ->orderBy('semester_id', 'desc') // So the latest comes first
+            ->orderBy('semester_id', 'desc') 
             ->get()
             ->groupBy(function ($contract) {
                 return $contract->original_contract_id ?? $contract->id;
             });
 
         foreach ($allPastContracts as $originId => $contractGroup) {
-            $latestContract = $contractGroup->first(); // Because it's ordered by semester_id desc
+            $latestContract = $contractGroup->first(); 
 
-            // Avoid re-carrying this chain
             $alreadyExists = Contract::where('student_id', $studentId)
                 ->where('original_contract_id', $originId)
                 ->where('semester_id', $semester->id)
@@ -401,81 +400,56 @@ public function processValidateStudents(Request $request, $semesterId)
             }
         }
 
+        // --- REFERRALS ---
         $allPastReferrals = Referral::where('student_id', $studentId)
             ->where('semester_id', '<', $semester->id)
-            ->orderBy('semester_id', 'desc') // So the latest comes first
+            ->orderBy('semester_id', 'desc')
             ->get()
             ->groupBy(function ($referral) {
-                return $contract->original_referral_id ?? $referral->id;
+                return $referral->original_referral_id ?? $referral->id;
             });
 
         foreach ($allPastReferrals as $originId => $referralGroup) {
-            $latestreferral = $referralGroup->first(); // Because it's ordered by semester_id desc
+            $latestReferral = $referralGroup->first();
 
-            // Avoid re-carrying this chain
             $alreadyExists = Referral::where('student_id', $studentId)
                 ->where('original_referral_id', $originId)
                 ->where('semester_id', $semester->id)
                 ->exists();
 
             if (!$alreadyExists) {
-                $newReferral = $latestreferral->replicate();
+                $newReferral = $latestReferral->replicate();
                 $newReferral->semester_id = $semester->id;
-                $newReferral->save();
                 $newReferral->original_referral_id = $originId;
+                $newReferral->save();
             }
         }
 
-        $allPastReferrals = Referral::where('student_id', $studentId)
-            ->where('semester_id', '<', $semester->id)
-            ->orderBy('semester_id', 'desc') // So the latest comes first
-            ->get()
-            ->groupBy(function ($referral) {
-                return $contract->original_referral_id ?? $referral->id;
-            });
-
-        foreach ($allPastReferrals as $originId => $referralGroup) {
-            $latestreferral = $referralGroup->first(); // Because it's ordered by semester_id desc
-
-            // Avoid re-carrying this chain
-            $alreadyExists = Referral::where('student_id', $studentId)
-                ->where('original_referral_id', $originId)
-                ->where('semester_id', $semester->id)
-                ->exists();
-
-            if (!$alreadyExists) {
-                $newReferral = $latestreferral->replicate();
-                $newReferral->semester_id = $semester->id;
-                $newReferral->save();
-                $newReferral->original_referral_id = $originId;
-            }
-        }
-
+        // --- COUNSELINGS ---
         $allPastCounselings = Counseling::where('student_id', $studentId)
             ->where('semester_id', '<', $semester->id)
-            ->orderBy('semester_id', 'desc') // So the latest comes first
+            ->orderBy('semester_id', 'desc')
             ->get()
             ->groupBy(function ($counseling) {
-                return $contract->original_counseling_id ?? $counseling->id;
+                return $counseling->original_counseling_id ?? $counseling->id;
             });
 
         foreach ($allPastCounselings as $originId => $counselingGroup) {
-            $latestcounseling = $counselingGroup->first(); // Because it's ordered by semester_id desc
+            $latestCounseling = $counselingGroup->first();
 
-            // Avoid re-carrying this chain
             $alreadyExists = Counseling::where('student_id', $studentId)
                 ->where('original_counseling_id', $originId)
                 ->where('semester_id', $semester->id)
                 ->exists();
 
             if (!$alreadyExists) {
-                $newCounseling = $latestcounseling->replicate();
+                $newCounseling = $latestCounseling->replicate();
                 $newCounseling->semester_id = $semester->id;
-                $newCounseling->save();
                 $newCounseling->original_counseling_id = $originId;
+                $newCounseling->save();
             }
         }
-        
+
 
     }
 

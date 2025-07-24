@@ -77,81 +77,68 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
     $isCurrentSem = optional($activeSchoolYear)->id == $selectedSY &&
                     optional($activeSemester)->semester == $selectedSemName;
 
-        $currentSemesterId = optional($activeSemester)->id ?? null;
-$isViewingPastSem = !$isCurrentSem;
-
+ 
    $allContracts = Contract::with('student')
     ->whereIn('student_id', $studentIds)
     ->whereIn('semester_id', $semesterIds) // scope to current semester only
     ->get();
+     
+    $contracts = $studentIds->flatMap(function ($studentId) use ($allContracts, $semesterIds, $isCurrentSem) {
+        $studentContracts = $allContracts->where('student_id', $studentId);
+
+        return $studentContracts
+            ->groupBy(fn($c) => $c->original_contract_id ?? $c->id)
+            ->map(function ($group) use ($semesterIds, $isCurrentSem) {
+                if ($isCurrentSem) {
+                    return $group->sortByDesc('updated_at')->first();
+                } else {
+                    return $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id));
+                }
+            })->filter()->values(); // prevents weird collection behavior
+    })->unique('id'); // ensure uniqueness by contract ID
 
 
-        
-$contracts = $studentIds->flatMap(function ($studentId) use ($allContracts, $semesterIds, $isCurrentSem) {
-    $studentContracts = $allContracts->where('student_id', $studentId);
+   $allReferrals = Referral::with('student')
+    ->whereIn('student_id', $studentIds)
+    ->whereIn('semester_id', $semesterIds) // scope to current semester only
+    ->get();
 
-    return $studentContracts
-        ->groupBy(fn($c) => $c->origin_contract_id ?? $c->id)
-        ->map(function ($group) use ($semesterIds, $isCurrentSem) {
-            if ($isCurrentSem) {
-                return $group->sortByDesc('updated_at')->first();
-            } else {
-                return $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id));
-            }
-        })->filter()->values(); // 🔥 this prevents weird collection behavior
-})->unique('id'); // ✅ ensure uniqueness by contract ID
-
-
-
-
-
-
-
-
-    $allReferrals = Referral::with('student')
-        ->whereIn('student_id', $studentIds)
-        ->get();
-
-   $referrals = $studentIds->flatMap(function ($studentId) use ($allReferrals, $semesterIds, $isCurrentSem) {
+$referrals = $studentIds->flatMap(function ($studentId) use ($allReferrals, $semesterIds, $isCurrentSem) {
     $studentReferrals = $allReferrals->where('student_id', $studentId);
 
     return $studentReferrals
         ->groupBy(fn($r) => $r->original_referral_id ?? $r->id)
         ->map(function ($group) use ($semesterIds, $isCurrentSem) {
             if ($isCurrentSem) {
-                return $group
-                    ->filter(fn($r) => $semesterIds->contains($r->semester_id))
-                    ->sortByDesc('updated_at')
-                    ->first() ?? $group->sortByDesc('updated_at')->first();
+                return $group->sortByDesc('updated_at')->first();
             } else {
                 return $group->firstWhere(fn($r) => $semesterIds->contains($r->semester_id));
             }
-        })->filter();
-});
+        })->filter()->values(); // prevents collection issues
+})->unique('id'); // remove duplicates
 
 
+$allCounselings = Counseling::with('student')
+    ->whereIn('student_id', $studentIds)
+    ->whereIn('semester_id', $semesterIds) // ⬅️ added to match behavior
+    ->get();
 
-
-        $allCounselings = Counseling::with('student')
-        ->whereIn('student_id', $studentIds)
-        ->get();
-
-    $counselings = $studentIds->flatMap(function ($studentId) use ($allCounselings, $semesterIds, $isCurrentSem) {
+$counselings = $studentIds->flatMap(function ($studentId) use ($allCounselings, $semesterIds, $isCurrentSem) {
     $studentCounselings = $allCounselings->where('student_id', $studentId);
 
     return $studentCounselings
         ->groupBy(fn($c) => $c->original_counseling_id ?? $c->id)
         ->map(function ($group) use ($semesterIds, $isCurrentSem) {
             if ($isCurrentSem) {
-                return $group
-                    ->filter(fn($c) => $semesterIds->contains($c->semester_id))
-                    ->sortByDesc('updated_at')
-                    ->first() ?? $group->sortByDesc('updated_at')->first();
+                return $group->sortByDesc('updated_at')->first();
             } else {
                 return $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id));
             }
-        })->filter();
-});
+        })->filter()->values(); // normalize result
+})->unique('id');
+
+
+
 
 
         $transitions = StudentTransition::with('student')
