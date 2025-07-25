@@ -64,16 +64,27 @@
                  localStorage.setItem('studentData', JSON.stringify(this.studentData));
              },
 
-             warnIfSelected() {
+            warnIfSelected() {
     if (this.selected.length > 0) {
         alert('⚠️ You have selected students. Please validate them first or your selection will be lost.');
         return false;
     }
     return true;
 }
+}"
 
-
-         }">
+x-init="
+    $nextTick(() => {
+        document.querySelectorAll('.pagination a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                if (!warnIfSelected()) {
+                    event.preventDefault();
+                }
+            });
+        });
+    })
+"
+>
 
         <div class="bg-white p-6 shadow rounded-lg">
 
@@ -181,21 +192,29 @@
                 @csrf
                 <div id="selected-hidden"></div>
 
-                <div class="flex flex-col md:flex-row justify-between gap-4 mt-6 mb-3">
-                    <button type="button" @click="toggleAllOnPage"
-                           class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-semibold w-full md:w-auto">
-                        <span x-text="allSelectedOnPage() ? 'Unselect All on Page' : 'Select All on Page'"></span>
-                    </button>
-                    <button type="submit"
-                            class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-red-700 transition">
-                        Validate Selected Students
-                    </button>
+                <div class="flex justify-between items-center px-4 py-3 sticky bottom-0 bg-white border-t border-gray-200 z-10">
+                    <div  class="flex gap-3 items-center">
+                        <button type="button" @click="toggleAllOnPage"
+                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-semibold">
+                            <span x-text="allSelectedOnPage() ? 'Unselect All on Page' : 'Select All on Page'"></span>
+                        </button>
+                         <button type="submit"
+                                class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-red-700 transition">
+                            Validate Selected Students
+                        </button>
+                    </div>
+                       
+                        <div class="pagination">
+                            {{ $students->links() }}
+                        </div>
                 </div>
 
-                {{ $students->links() }}
-
                 @if($students->count() > 0)
+
+                  <div class="relative max-h-[70vh] overflow-y-auto border rounded shadow">
+                    
                     <div class="overflow-x-auto mt-4">
+                        
                         <table class="min-w-full border text-sm text-gray-700">
                             <thead class="bg-gray-100">
                                 <tr>
@@ -584,6 +603,7 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        </div>
                     </div>
                 @else
                     <p class="text-center text-gray-500 py-6">No students found based on filters.</p>

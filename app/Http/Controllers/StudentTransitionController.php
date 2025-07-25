@@ -9,14 +9,16 @@ use App\Models\Student;
 use App\Models\StudentTransition;
 use App\Models\StudentTransitionImage;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class StudentTransitionController extends Controller
 {
-    public function index(Request $request)
+
+public function index(Request $request)
 {
     $query = StudentTransition::with(['semester.schoolYear']);
 
-    // Search by name or ID
+    // Filters
     if ($request->filled('search')) {
         $search = $request->search;
         $query->where(function ($q) use ($search) {
@@ -26,17 +28,28 @@ class StudentTransitionController extends Controller
         });
     }
 
-    // Filter by transition type
     if ($request->filled('transition_type')) {
         $query->where('transition_type', $request->transition_type);
     }
 
-    // Sort by date
-    $sortOrder = $request->get('sort', 'desc'); // default: latest
+    $sortOrder = $request->get('sort', 'desc');
     $query->orderBy('created_at', $sortOrder);
 
+    // Get all and filter latest unique transitions
+    $allTransitions = $query->get();
+    $latestTransitions = $this->getLatestUniqueTransitions($allTransitions);
 
-    $transitions = $query->paginate(10)->appends($request->all());
+    // Manual pagination
+    $page = $request->get('page', 1);
+    $perPage = 10;
+    $offset = ($page - 1) * $perPage;
+    $paginatedTransitions = new LengthAwarePaginator(
+        $latestTransitions->slice($offset, $perPage)->values(),
+        $latestTransitions->count(),
+        $perPage,
+        $page,
+        ['path' => $request->url(), 'query' => $request->query()]
+    );
 
     $semesters = Semester::all();
     $transitionTypes = [
@@ -50,8 +63,14 @@ class StudentTransitionController extends Controller
             ->with('profiles')->get()
         : collect();
 
-    return view('transitions.index', compact('transitions', 'students', 'semesters', 'transitionTypes'));
+    return view('transitions.index', [
+        'transitions' => $paginatedTransitions,
+        'students' => $students,
+        'semesters' => $semesters,
+        'transitionTypes' => $transitionTypes,
+    ]);
 }
+
 
 
     public function create()
@@ -218,4 +237,14 @@ public function deleteImage($contractId, $imageId)
 
     return back()->with('success', 'Image deleted successfully.');
 }
+
+private function getLatestUniqueTransitions($transitions)
+{
+    return $transitions
+        ->groupBy(fn($t) => $t->original_transition_id ?? $t->id)
+        ->map(fn($group) => $group->sortByDesc(fn($t) => optional($t->semester)->id)->first())
+        ->values();
+}
+
+
 }

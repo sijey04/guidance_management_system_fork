@@ -376,113 +376,112 @@ public function processValidateStudents(Request $request, $semesterId)
             'section' => $data['section'],
         ]);
 
-$previousSemesterIds = Semester::where('id', '<', $semester->id)->pluck('id');
+        $allPastContracts = Contract::where('student_id', $studentId)
+            ->where('semester_id', '<', $semester->id)
+            ->orderBy('semester_id', 'desc') 
+            ->get()
+            ->groupBy(function ($contract) {
+                return $contract->original_contract_id ?? $contract->id;
+            });
 
-$latestContract = Contract::where('student_id', $studentId)
-    ->whereIn('semester_id', $previousSemesterIds)
-    ->whereNull('original_contract_id') // only original (not previously carried-over)
-    ->latest('semester_id')
-    ->first();
+        foreach ($allPastContracts as $originId => $contractGroup) {
+            $latestContract = $contractGroup->first(); 
 
-// Then fetch the latest copy of that original contract
-if ($latestContract) {
-    $latestCopy = Contract::where(function ($q) use ($latestContract) {
-            $q->where('id', $latestContract->id)
-              ->orWhere('original_contract_id', $latestContract->id);
-        })
-        ->whereIn('semester_id', $previousSemesterIds)
-        ->orderByDesc('semester_id')
-        ->first();
+            $alreadyExists = Contract::where('student_id', $studentId)
+                ->where('original_contract_id', $originId)
+                ->where('semester_id', $semester->id)
+                ->exists();
 
-    if ($latestCopy && !Contract::where('student_id', $studentId)
-        ->where('original_contract_id', $latestContract->id)
-        ->where('semester_id', $semester->id)
-        ->exists()) {
-
-        $newContract = $latestCopy->replicate();
-        $newContract->semester_id = $semester->id;
-        $newContract->status = $latestCopy->status;
-        $newContract->original_contract_id = $latestContract->id;
-        $newContract->save();
-
-        foreach ($latestCopy->images as $image) {
-            $newContract->images()->create([
-                'image_path' => $image->image_path,
-            ]);
+            if (!$alreadyExists) {
+                $newContract = $latestContract->replicate();
+                $newContract->semester_id = $semester->id;
+                $newContract->original_contract_id = $originId;
+                $newContract->save();
+            }
         }
-    }
-}
 
+        // --- REFERRALS ---
+        $allPastReferrals = Referral::where('student_id', $studentId)
+            ->where('semester_id', '<', $semester->id)
+            ->orderBy('semester_id', 'desc')
+            ->get()
+            ->groupBy(function ($referral) {
+                return $referral->original_referral_id ?? $referral->id;
+            });
 
-$latestReferral = Referral::where('student_id', $studentId)
-    ->whereIn('semester_id', $previousSemesterIds)
-    ->whereNull('original_referral_id') // only original referrals
-    ->latest('semester_id')
-    ->first();
+        foreach ($allPastReferrals as $originId => $referralGroup) {
+            $latestReferral = $referralGroup->first();
 
-if ($latestReferral) {
-    $latestCopy = Referral::where(function ($q) use ($latestReferral) {
-        $q->where('id', $latestReferral->id)
-          ->orWhere('original_referral_id', $latestReferral->id);
-    })->whereIn('semester_id', $previousSemesterIds)
-      ->orderByDesc('semester_id')
-      ->first();
+            $alreadyExists = Referral::where('student_id', $studentId)
+                ->where('original_referral_id', $originId)
+                ->where('semester_id', $semester->id)
+                ->exists();
 
-    if ($latestCopy && !Referral::where('student_id', $studentId)
-        ->where('original_referral_id', $latestReferral->id)
-        ->where('semester_id', $semester->id)
-        ->exists()) {
-
-        $newReferral = $latestCopy->replicate();
-        $newReferral->semester_id = $semester->id;
-        $newReferral->original_referral_id = $latestReferral->id;
-        $newReferral->save();
-
-        foreach ($latestCopy->images as $image) {
-            $newReferral->images()->create([
-                'image_path' => $image->image_path,
-            ]);
+            if (!$alreadyExists) {
+                $newReferral = $latestReferral->replicate();
+                $newReferral->semester_id = $semester->id;
+                $newReferral->original_referral_id = $originId;
+                $newReferral->save();
+            }
         }
-    }
-}
 
-// Get the latest *original* counseling record (not a carried-over one)
-$latestCounseling = Counseling::where('student_id', $studentId)
-    ->whereIn('semester_id', $previousSemesterIds)
-    ->whereNull('original_counseling_id') // Only original records
-    ->latest('semester_id')
-    ->first();
+        // --- COUNSELINGS ---
+        $allPastCounselings = Counseling::where('student_id', $studentId)
+            ->where('semester_id', '<', $semester->id)
+            ->orderBy('semester_id', 'desc')
+            ->get()
+            ->groupBy(function ($counseling) {
+                return $counseling->original_counseling_id ?? $counseling->id;
+            });
 
-if ($latestCounseling) {
-    // Find the latest version (original or its latest carried-over copy)
-    $latestCopy = Counseling::where(function ($q) use ($latestCounseling) {
-            $q->where('id', $latestCounseling->id)
-              ->orWhere('original_counseling_id', $latestCounseling->id);
-        })
-        ->whereIn('semester_id', $previousSemesterIds)
-        ->orderByDesc('semester_id')
-        ->first();
+        foreach ($allPastCounselings as $originId => $counselingGroup) {
+            $latestCounseling = $counselingGroup->first();
 
-    // Make sure it hasn't already been carried over into the current semester
-    $alreadyExists = Counseling::where('student_id', $studentId)
-        ->where('original_counseling_id', $latestCounseling->id)
-        ->where('semester_id', $semester->id)
-        ->exists();
+            $alreadyExists = Counseling::where('student_id', $studentId)
+                ->where('original_counseling_id', $originId)
+                ->where('semester_id', $semester->id)
+                ->exists();
 
-    if ($latestCopy && !$alreadyExists) {
-        $newCounseling = $latestCopy->replicate();
-        $newCounseling->semester_id = $semester->id;
-        $newCounseling->original_counseling_id = $latestCounseling->id;
-        $newCounseling->save();
-
-        // Also copy the images
-        foreach ($latestCopy->images as $image) {
-            $newCounseling->images()->create([
-                'image_path' => $image->image_path,
-            ]);
+            if (!$alreadyExists) {
+                $newCounseling = $latestCounseling->replicate();
+                $newCounseling->semester_id = $semester->id;
+                $newCounseling->original_counseling_id = $originId;
+                $newCounseling->save();
+            }
         }
-    }
-}
+        // --- TRANSITIONS ---
+            $allPastTransitions = StudentTransition::where('student_id', $studentId)
+                ->where('semester_id', '<', $semester->id)
+                ->orderBy('semester_id', 'desc')
+                ->get()
+                ->groupBy(function ($transition) {
+                    return $transition->original_transition_id ?? $transition->id;
+                });
+
+            foreach ($allPastTransitions as $originId => $transitionGroup) {
+                $latestTransition = $transitionGroup->first();
+
+                $alreadyExists = StudentTransition::where('student_id', $studentId)
+                    ->where('original_transition_id', $originId)
+                    ->where('semester_id', $semester->id)
+                    ->exists();
+
+                if (!$alreadyExists) {
+                    $newTransition = $latestTransition->replicate();
+                    $newTransition->semester_id = $semester->id;
+                    $newTransition->original_transition_id = $originId;
+                    $newTransition->save();
+
+                    $transitionImages = StudentTransitionImage::where('student_transition_id', $latestTransition->id)->get();
+                    foreach ($transitionImages as $image) {
+                        StudentTransitionImage::create([
+                            'student_transition_id' => $newTransition->id,
+                            'image_path' => $image->image_path,
+                        ]);
+                    }
+                }
+            }
+
 
 
     }

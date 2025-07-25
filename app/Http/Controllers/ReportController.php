@@ -71,93 +71,216 @@ $selectedSemName = $request->input('semester_name', optional($activeSemester)->s
                 return strtolower(optional($profile->student)->last_name . optional($profile->student)->first_name);
             })
             ->values();
+if ($request->tab === 'student_profiles') {
+    if ($request->filled('filter_course')) {
+        $studentProfiles = $studentProfiles->filter(function ($profile) use ($request) {
+            return $profile->course == $request->filter_course;
+        });
+    }
+
+    if ($request->filled('filter_year')) {
+        $studentProfiles = $studentProfiles->filter(function ($profile) use ($request) {
+            return $profile->year_level == $request->filter_year;
+        });
+    }
+
+    if ($request->filled('filter_section')) {
+        $studentProfiles = $studentProfiles->filter(function ($profile) use ($request) {
+            return $profile->section == $request->filter_section;
+        });
+    }
+
+    if ($request->filled('search_student')) {
+        $search = strtolower($request->search_student);
+        $studentProfiles = $studentProfiles->filter(function ($profile) use ($search) {
+            $student = $profile->student;
+            return str_contains(strtolower(optional($student)->last_name), $search)
+                || str_contains(strtolower(optional($student)->first_name), $search)
+                || str_contains(strtolower(optional($student)->middle_name), $search)
+                || str_contains((string) optional($student)->student_number, $search);
+        });
+    }
+
+    $studentProfiles = $studentProfiles->values();
+}
+
 
 
     $studentIds = $studentProfiles->pluck('student_id');
     $isCurrentSem = optional($activeSchoolYear)->id == $selectedSY &&
                     optional($activeSemester)->semester == $selectedSemName;
 
-        $currentSemesterId = optional($activeSemester)->id ?? null;
-$isViewingPastSem = !$isCurrentSem;
+ 
+   $allContracts = Contract::with('student')
+    ->whereIn('student_id', $studentIds)
+    ->whereIn('semester_id', $semesterIds) // scope to current semester only
+    ->get();
+     
+    $contracts = $studentIds->flatMap(function ($studentId) use ($allContracts, $semesterIds, $isCurrentSem) {
+        $studentContracts = $allContracts->where('student_id', $studentId);
 
-    $allContracts = Contract::with('student')
-        ->whereIn('student_id', $studentIds)
-        ->get();
+        return $studentContracts
+            ->groupBy(fn($c) => $c->original_contract_id ?? $c->id)
+            ->map(function ($group) use ($semesterIds, $isCurrentSem) {
+                if ($isCurrentSem) {
+                    return $group->sortByDesc('updated_at')->first();
+                } else {
+                    return $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id));
+                }
+            })->filter()->values(); // prevents weird collection behavior
+    })->unique('id'); // ensure uniqueness by contract ID
+if ($request->tab === 'contracts') {
+    // Always apply filters (search and others)
+    if ($request->filled('filter_contract_type')) {
+        $contracts = $contracts->filter(function ($contract) use ($request) {
+            return $contract->contract_type === $request->filter_contract_type;
+        });
+    }
 
-        
-$contracts = $studentIds->flatMap(function ($studentId) use ($allContracts, $semesterIds, $isCurrentSem) {
-    $studentContracts = $allContracts->where('student_id', $studentId);
+    if ($request->filled('filter_contract_status')) {
+        $contracts = $contracts->filter(function ($contract) use ($request) {
+            return $contract->status === $request->filter_contract_status;
+        });
+    }
 
-    return $studentContracts
-        ->groupBy(fn($c) => $c->original_contract_id ?? $c->id)
-        ->flatMap(function ($group) use ($semesterIds, $isCurrentSem) {
-            $group = $group->sortByDesc('semester_id');
+    if ($request->filled('search_contract')) {
+        $search = strtolower($request->search_contract);
+        $contracts = $contracts->filter(function ($contract) use ($search) {
+            $student = $contract->student;
+            return str_contains(strtolower(optional($student)->last_name), $search)
+                || str_contains(strtolower(optional($student)->first_name), $search)
+                || str_contains(strtolower(optional($student)->middle_name), $search)
+                || str_contains((string) optional($student)->student_number, $search);
+        });
+    }
 
-            if ($isCurrentSem) {
-                $match = $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id)) ?? $group->first();
-                return $match ? collect([$match]) : collect();
-            } else {
-                return $group->filter(fn($c) => $semesterIds->contains($c->semester_id));
-            }
-        })->filter();
-});
-
-
+    $contracts = $contracts->values();
+}
 
 
 
-    $allReferrals = Referral::with('student')
-        ->whereIn('student_id', $studentIds)
-        ->get();
 
-   $referrals = $studentIds->flatMap(function ($studentId) use ($allReferrals, $semesterIds, $isCurrentSem) {
+   $allReferrals = Referral::with('student')
+    ->whereIn('student_id', $studentIds)
+    ->whereIn('semester_id', $semesterIds) // scope to current semester only
+    ->get();
+
+$referrals = $studentIds->flatMap(function ($studentId) use ($allReferrals, $semesterIds, $isCurrentSem) {
     $studentReferrals = $allReferrals->where('student_id', $studentId);
 
     return $studentReferrals
         ->groupBy(fn($r) => $r->original_referral_id ?? $r->id)
         ->map(function ($group) use ($semesterIds, $isCurrentSem) {
             if ($isCurrentSem) {
-                return $group
-                    ->filter(fn($r) => $semesterIds->contains($r->semester_id))
-                    ->sortByDesc('updated_at')
-                    ->first() ?? $group->sortByDesc('updated_at')->first();
+                return $group->sortByDesc('updated_at')->first();
             } else {
                 return $group->firstWhere(fn($r) => $semesterIds->contains($r->semester_id));
             }
-        })->filter();
-});
+        })->filter()->values(); // prevents collection issues
+})->unique('id'); // remove duplicates
+if ($request->tab === 'referrals') {
+    if ($request->filled('filter_reason')) {
+        $referrals = $referrals->filter(function ($referral) use ($request) {
+            return $referral->reason === $request->filter_reason;
+        });
+    }
+
+    if ($request->filled('search_referral')) {
+        $search = strtolower($request->search_referral);
+        $referrals = $referrals->filter(function ($referral) use ($search) {
+            $student = $referral->student;
+            return str_contains(strtolower(optional($student)->last_name), $search)
+                || str_contains(strtolower(optional($student)->first_name), $search)
+                || str_contains(strtolower(optional($student)->middle_name), $search)
+                || str_contains((string) optional($student)->student_number, $search);
+        });
+    }
+
+    $referrals = $referrals->values();
+}
 
 
 
+$allCounselings = Counseling::with('student')
+    ->whereIn('student_id', $studentIds)
+    ->whereIn('semester_id', $semesterIds) // ⬅️ added to match behavior
+    ->get();
 
-        $allCounselings = Counseling::with('student')
-        ->whereIn('student_id', $studentIds)
-        ->get();
-
-    $counselings = $studentIds->flatMap(function ($studentId) use ($allCounselings, $semesterIds, $isCurrentSem) {
+$counselings = $studentIds->flatMap(function ($studentId) use ($allCounselings, $semesterIds, $isCurrentSem) {
     $studentCounselings = $allCounselings->where('student_id', $studentId);
 
     return $studentCounselings
         ->groupBy(fn($c) => $c->original_counseling_id ?? $c->id)
         ->map(function ($group) use ($semesterIds, $isCurrentSem) {
             if ($isCurrentSem) {
-                return $group
-                    ->filter(fn($c) => $semesterIds->contains($c->semester_id))
-                    ->sortByDesc('updated_at')
-                    ->first() ?? $group->sortByDesc('updated_at')->first();
+                return $group->sortByDesc('updated_at')->first();
             } else {
                 return $group->firstWhere(fn($c) => $semesterIds->contains($c->semester_id));
             }
-        })->filter();
-});
+        })->filter()->values(); // normalize result
+})->unique('id');
+if ($request->tab === 'counseling') {
+    if ($request->filled('filter_counseling_status')) {
+        $counselings = $counselings->filter(function ($counseling) use ($request) {
+            return $counseling->status === $request->filter_counseling_status;
+        });
+    }
+
+    if ($request->filled('search_counseling')) {
+        $search = strtolower($request->search_counseling);
+        $counselings = $counselings->filter(function ($counseling) use ($search) {
+            $student = $counseling->student;
+            return str_contains(strtolower(optional($student)->last_name), $search)
+                || str_contains(strtolower(optional($student)->first_name), $search)
+                || str_contains(strtolower(optional($student)->middle_name), $search)
+                || str_contains((string) optional($student)->student_number, $search);
+        });
+    }
+
+    $counselings = $counselings->values();
+}
 
 
-        $transitions = StudentTransition::with('student')
-            ->whereIn('semester_id', $semesterIds)
-            ->when($request->filled('filter_transition_type'), function ($q) use ($request) {
-                $q->where('transition_type', $request->filter_transition_type);
-            })
-            ->get();
+ $allTransitions = StudentTransition::with('student')
+    ->whereIn('student_id', $studentIds)
+    ->whereIn('semester_id', $semesterIds)
+    ->get();
+
+$transitions = $studentIds->flatMap(function ($studentId) use ($allTransitions, $semesterIds, $isCurrentSem) {
+    $studentTransitions = $allTransitions->where('student_id', $studentId);
+
+    return $studentTransitions
+        ->groupBy(fn($t) => $t->original_transition_id ?? $t->id)
+        ->map(function ($group) use ($semesterIds, $isCurrentSem) {
+            return $isCurrentSem
+                ? $group->sortByDesc('updated_at')->first()
+                : $group->firstWhere(fn($t) => $semesterIds->contains($t->semester_id));
+        })
+        ->filter()
+        ->values();
+})->unique('id');
+
+if ($request->tab === 'transitions') {
+    if ($request->filled('filter_transition_type')) {
+        $transitions = $transitions->filter(function ($transition) use ($request) {
+            return $transition->transition_type === $request->filter_transition_type;
+        });
+    }
+
+    if ($request->filled('search_transition')) {
+        $search = strtolower($request->search_transition);
+        $transitions = $transitions->filter(function ($transition) use ($search) {
+            $student = $transition->student;
+            return str_contains(strtolower(optional($student)->last_name), $search)
+                || str_contains(strtolower(optional($student)->first_name), $search)
+                || str_contains(strtolower(optional($student)->middle_name), $search)
+                || str_contains((string) optional($student)->student_number, $search);
+        });
+    }
+
+    $transitions = $transitions->values();
+}
+
 
     
         } else {

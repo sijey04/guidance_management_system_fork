@@ -46,7 +46,8 @@
                                 <tr>
                                     <th class="px-4 py-3">School Year</th>
                                     <th class="px-4 py-3">Semester</th>
-                                    <th class="px-4 py-3">Contract Date</th>
+                                    <th class="px-4 py-3">Contract Type</th>
+                                     <th class="px-4 py-3">Contract Date</th>
                                     <th class="px-4 py-3 text-center">Total Days</th>
                                     <th class="px-4 py-3 text-center">Status</th>
                                     <th class="px-4 py-3 text-center">Actions</th>
@@ -57,6 +58,7 @@
                                     <tr class="hover:bg-[#fef2f2] transition">
                                         <td class="px-4 py-3">{{ $contract->semester->schoolYear->school_year ?? 'N/A' }}</td>
                                         <td class="px-4 py-3">{{ $contract->semester->semester ?? 'N/A' }}</td>
+                                        <td class="px-4 py-3">{{ $contract->contract_type ?? 'N/A' }}</td>
                                         <td class="px-4 py-3">{{ \Carbon\Carbon::parse($contract->contract_date)->format('M d, Y') }}</td>
                                         <td class="px-4 py-3 text-center">{{ $contract->total_days ?? 'N/A' }}</td>
                                         <td class="px-4 py-3 text-center">

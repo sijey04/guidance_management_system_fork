@@ -367,15 +367,26 @@ public function profile($id){
 
 public function counseling($studentId)
 {
-    $student = Student::with('counselings')->findOrFail($studentId);
+    $activeSemester = Semester::where('is_current', true)->first();
+
+    $student = Student::with(['counselings' => function ($query) use ($activeSemester) {
+        $query->where('semester_id', $activeSemester->id);
+    }])->findOrFail($studentId);
+
     $counselings = $student->counselings;
 
     return view('student.counseling', compact('student', 'counselings'));
 }
 
+
 public function referral($studentId)
 {
-    $student = Student::with('referrals')->findOrFail($studentId);
+    $activeSemester = Semester::where('is_current', true)->first();
+
+    $student = Student::with(['referrals' => function ($query) use ($activeSemester) {
+        $query->where('semester_id', $activeSemester->id);
+    }])->findOrFail($studentId);
+
     $referrals = $student->referrals;
 
     return view('student.referral', compact('student', 'referrals'));
@@ -387,30 +398,41 @@ public function referral($studentId)
 
 
 
-  public function showEnrollmentHistory($studentId)
+
+public function showEnrollmentHistory($studentId)
 {
-    $student = Student::with(['enrollments.semester'])->findOrFail($studentId);
-
-   $semesters = Semester::with('schoolYear')
-    ->join('school_years', 'semesters.school_year_id', '=', 'school_years.id')
-    ->orderBy('school_years.school_year', 'asc')
-    ->orderBy('semesters.semester', 'asc')
-    ->select('semesters.*')
-    ->get();
-
+    $student = Student::with(['profiles.semester.schoolYear', 'transitions'])->findOrFail($studentId);
 
     $activeSemester = Semester::where('is_current', true)->first();
 
-    $allProfiles = $student->profiles()
-    ->with('semester')
-    ->get()
-    ->sortByDesc(function ($profile) {
-        return $profile->semester?->id ?? 0; // or use semester.created_at if available
-    });
+    $semesters = Semester::with('schoolYear')
+        ->join('school_years', 'semesters.school_year_id', '=', 'school_years.id')
+        ->orderBy('school_years.school_year', 'asc')
+        ->orderBy('semesters.semester', 'asc')
+        ->select('semesters.*')
+        ->get();
 
+    // Group profiles by semester, pick the latest profile per semester
+    $allProfiles = $student->profiles
+        ->sortByDesc('created_at')
+        ->groupBy('semester_id')
+        ->map(function ($groupedProfiles) use ($student) {
+            $latestProfile = $groupedProfiles->first();
+
+            // Attach the transition for this semester directly to the profile
+            $transition = $student->transitions
+                ->where('semester_id', $latestProfile->semester_id)
+                ->first();
+
+            // Append it so the Blade doesn't need to do another DB query
+            $latestProfile->transition = $transition;
+
+            return $latestProfile;
+        });
 
     return view('student.enrollment', compact('student', 'semesters', 'activeSemester', 'allProfiles'));
 }
+
 
 
 
@@ -447,12 +469,18 @@ public function unenroll($studentId, $semesterId)
 
 public function contract($id)
 {
-     $contractTypes = ContractType::all();
-    $contracts = Contract::with('student', 'semester')->paginate(5);
-    $student = Student::with('contracts.semester')->findOrFail($id);
+    $activeSemester = Semester::where('is_current', true)->first();
+    $student = Student::with(['contracts' => function ($query) use ($activeSemester) {
+        $query->where('semester_id', $activeSemester->id);
+    }, 'contracts.semester'])->findOrFail($id);
+
+    $contractTypes = ContractType::all();
     $semesters = Semester::all(); 
-    return view('student.contract', compact('student', 'semesters','contracts','contractTypes'));
+
+    return view('student.contract', compact('student', 'semesters', 'contractTypes'));
 }
+
+
 
 public function enrollAll()
 {
