@@ -1,7 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-                        <!-- Filter Form -->
-                        <form method="GET" action="{{ route('referrals.index') }}" class="flex flex-wrap gap-4 items-end">mibold text-2xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Referral Records') }}
         </h2>
     </x-slot>
@@ -66,7 +65,7 @@
                 <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
                     <div class="flex flex-col gap-4">
                         <!-- Filter Form -->
-                        <form method="GET" action="{{ route('referrals.index') }}" class="flex flex-wrap gap-4 items-end">>
+                        <form method="GET" action="{{ route('referrals.index') }}" class="flex flex-wrap gap-4 items-end">
                             <!-- Reason Filter -->
                             <div class="md:w-auto w-full">
                                 <label class="block text-sm text-gray-700 mb-1">Reason:</label>
