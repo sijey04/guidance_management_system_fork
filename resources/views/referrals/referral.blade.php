@@ -129,6 +129,14 @@
                             </div>
                         </form>
 
+                        <!-- MANAGE REASONS BUTTON IN FILTER SECTION -->
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <a href="{{ route('referral-reasons.index') }}" 
+                               style="background-color: #1d4ed8; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: inline-block; font-weight: 600;">
+                                ⚙️ Manage Referral Reasons
+                            </a>
+                        </div>
+
                         <!-- Action Buttons -->
                         <div class="flex flex-col sm:flex-row gap-2">
                             <!-- Create Referral Button with Modal -->
