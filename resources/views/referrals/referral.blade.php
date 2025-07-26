@@ -1,6 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-                        <!-- Filter Form -->
+                        <form method="GET" action="{{ route('referrals.index') }}" class="flex flex-wrap gap-4 items-end">mibold text-2xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Referral Records') }}
         </h2>
     </x-slot>
@@ -50,7 +51,7 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             
-            <!-- TOP SECTION: Page Title, Filters & Actions -->
+            <!-- FILTERS AND BUTTONS SECTION -->
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <!-- Page Title & Description -->
                 <div class="border-b border-gray-200 pb-4 mb-6">
@@ -63,9 +64,9 @@
                 
                 <!-- Filters & Actions -->
                 <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                    <div class="flex flex-col lg:flex-row lg:items-end gap-4">
+                    <div class="flex flex-col gap-4">
                         <!-- Filter Form -->
-                        <form method="GET" action="{{ route('referrals.index') }}" class="flex flex-wrap gap-4 items-end flex-grow">
+                        <form method="GET" action="{{ route('referrals.index') }}" class="flex flex-wrap gap-4 items-end">>
                             <!-- Reason Filter -->
                             <div class="md:w-auto w-full">
                                 <label class="block text-sm text-gray-700 mb-1">Reason:</label>
@@ -130,7 +131,7 @@
                         </form>
 
                         <!-- Action Buttons -->
-                        <div class="flex flex-col sm:flex-row gap-2 lg:flex-shrink-0">
+                        <div class="flex flex-col sm:flex-row gap-2">
                             <div x-data="{ openModal: {{ $errors->any() ? 'true' : 'false' }} }">
                                 <button @click="openModal = true"
                                     class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition shadow-sm hover:shadow-md flex items-center gap-2 w-full sm:w-auto justify-center">
@@ -141,19 +142,20 @@
                                 </button>
                                 @include('referrals.create', ['students' => $students, 'reasons' => $reasons])
                             </div>
+                            <a href="{{ route('referral-reasons.index') }}"
+                                class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition shadow-sm hover:shadow-md flex items-center gap-2 w-full sm:w-auto justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Manage Reasons
+                            </a>
                         </div>
-                        <a href="{{ route('referral-reasons.index') }}"
-                            class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition shadow-sm hover:shadow-md flex items-center gap-2 w-full sm:w-auto justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            Manage Reasons
-                        </a>
+                    </div>
                 </div>
             </div>
 
-            <!-- BOTTOM SECTION: Status Banners & Table -->
+            <!-- TABLE SECTION -->
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <!-- Status Banners -->
                 @if(session('success'))
