@@ -1,2 +1,9 @@
 RewriteEngine On
+
+# Custom storage routing
 RewriteRule ^storage/(.*)$ /storage-files.php?file=$1 [QSA,L]
+
+# Laravel rewrite rules
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]
