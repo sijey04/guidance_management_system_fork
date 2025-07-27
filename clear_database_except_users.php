@@ -2,12 +2,16 @@
 
 require_once 'vendor/autoload.php';
 
-// Load environment variables from Railway
-$host = getenv('MYSQLHOST') ?: 'localhost';
-$port = getenv('MYSQLPORT') ?: '3306';
-$database = getenv('MYSQLDATABASE') ?: 'railway';
-$username = getenv('MYSQLUSER') ?: 'root';
-$password = getenv('MYSQLPASSWORD') ?: '';
+// Load Laravel environment
+$app = require_once 'bootstrap/app.php';
+$app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
+
+// Load environment variables from Railway (Laravel way)
+$host = config('database.connections.mysql.host');
+$port = config('database.connections.mysql.port');
+$database = config('database.connections.mysql.database');
+$username = config('database.connections.mysql.username');
+$password = config('database.connections.mysql.password');
 
 echo "🚀 Starting Railway Database Clear (Preserving Users Table)\n";
 echo "Database: {$database}\n";
