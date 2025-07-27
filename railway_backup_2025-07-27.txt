@@ -1,0 +1,58 @@
+Railway Database Backup - Created: 2025-07-27
+
+CURRENT MIGRATION STATUS BEFORE RESET:
+=====================================
+
+Migration name ......................................................... Batch / Status  
+0001_01_01_000000_create_users_table ........................................... [1] Ran  
+0001_01_01_000001_create_cache_table ........................................... [1] Ran  
+0001_01_01_000002_create_jobs_table ............................................ [1] Ran  
+0001_01_01_000003_create_sessions_table ........................................ [1] Ran  
+2025_01_01_000001_create_courses_table ......................................... [1] Ran  
+2025_01_01_000002_create_sections_table ........................................ [1] Ran  
+2025_01_01_000003_create_school_years_table .................................... [1] Ran  
+2025_01_01_000004_create_semesters_table ....................................... [1] Ran  
+2025_01_01_000005_create_students_table ........................................ [1] Ran  
+2025_01_01_000006_create_student_semester_enrollments_table .................... [1] Ran  
+2025_01_01_000007_create_student_profiles_table ................................ [1] Ran  
+2025_01_01_000008_create_contract_types_table .................................. [1] Ran  
+2025_01_01_000009_create_contracts_table ....................................... [1] Ran  
+2025_01_01_000010_create_contract_images_table ................................. [1] Ran  
+2025_01_01_000011_create_counselings_table ..................................... [1] Ran  
+2025_01_01_000012_create_counseling_images_table ............................... [1] Ran  
+2025_01_01_000013_create_referral_reasons_table ................................ [1] Ran  
+2025_01_01_000014_create_referrals_table ....................................... [1] Ran  
+2025_01_01_000015_create_referral_images_table ................................. [1] Ran  
+2025_01_01_000016_create_student_transition_table .............................. [1] Ran  
+2025_01_01_000017_create_student_transition_images_table ....................... [1] Ran  
+2025_07_07_115043_create_years_table ........................................... [1] Ran  
+2025_07_12_081547_add_role_to_users_table ...................................... [1] Ran  
+2025_07_19_134024_add_original_contract_id_to_contracts_table .................. [2] Ran  
+2025_07_19_145331_add_original_counseling_id_to_counselings_table .............. [2] Ran  
+2025_07_20_032410_add_require_fields_to_contract_types_table ................... [2] Ran  
+2025_07_21_121912_add_original_ids_to_records .................................. [3] Ran  
+2025_07_24_121559_add_original_transition_id_to_student_transitions_table ...... [4] Ran  
+2025_07_27_000001_add_carried_over_from_id_to_contracts_table .................. [4] Ran  
+2025_07_27_000002_fix_users_role_default_value ................................. [5] Ran  
+2025_07_27_000003_add_unique_constraint_to_school_years ........................ [6] Ran  
+
+RECENT MIGRATIONS TO BE ROLLED BACK:
+===================================
+- 2025_07_27_000003_add_unique_constraint_to_school_years (unique constraint)
+- 2025_07_27_000002_fix_users_role_default_value (users role default)
+- 2025_07_27_000001_add_carried_over_from_id_to_contracts_table (contracts field)
+- 2025_07_24_121559_add_original_transition_id_to_student_transitions_table (transition field)
+
+DATABASE FEATURES THAT WILL BE LOST:
+===================================
+1. Unique constraint on school_years.school_year column
+2. carried_over_from_id field in contracts table
+3. Fixed default value for users.role field
+4. Proper original_transition_id setup in student_transitions table
+
+RESTORATION COMMANDS (if needed):
+================================
+railway run php artisan migrate --path=/database/migrations/2025_07_24_121559_add_original_transition_id_to_student_transitions_table.php --force
+railway run php artisan migrate --path=/database/migrations/2025_07_27_000001_add_carried_over_from_id_to_contracts_table.php --force
+railway run php artisan migrate --path=/database/migrations/2025_07_27_000002_fix_users_role_default_value.php --force
+railway run php artisan migrate --path=/database/migrations/2025_07_27_000003_add_unique_constraint_to_school_years.php --force
