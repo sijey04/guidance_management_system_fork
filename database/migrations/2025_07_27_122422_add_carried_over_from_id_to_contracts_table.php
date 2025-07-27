@@ -13,10 +13,7 @@ return new class extends Migration
     {
         Schema::table('contracts', function (Blueprint $table) {
             $table->unsignedBigInteger('carried_over_from_id')->nullable()->after('original_contract_id');
-
-            $table->foreign('carried_over_from_id')
-                ->references('id')->on('contracts')
-                ->onDelete('set null');
+            $table->foreign('carried_over_from_id')->references('id')->on('contracts')->onDelete('set null');
         });
     }
 
