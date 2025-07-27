@@ -3,6 +3,10 @@
 // Storage file handler for Railway deployment
 // This file serves images from storage/app/public when accessed via /storage URL
 
+// Bootstrap Laravel to access helper functions
+require_once __DIR__ . '/../vendor/autoload.php';
+$app = require_once __DIR__ . '/../bootstrap/app.php';
+
 $requestedFile = $_GET['file'] ?? '';
 
 if (empty($requestedFile)) {
@@ -14,7 +18,7 @@ if (empty($requestedFile)) {
 $requestedFile = str_replace('..', '', $requestedFile);
 $requestedFile = ltrim($requestedFile, '/');
 
-// Build the actual file path
+// Build the actual file path using Laravel's storage_path helper
 $filePath = storage_path('app/public/' . $requestedFile);
 
 // Check if file exists
