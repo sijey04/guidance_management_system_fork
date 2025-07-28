@@ -604,7 +604,7 @@ return !$hasCopyInCurrent && $semesterIds->contains($counseling->semester_id);
         'contractCounts',
         'referralCounts',
         'counselingCounts'
-    ))->setPaper('a4', 'landscape');
+    ))->setPaper('a4', 'portrait');
 
     return $pdf->download("Report_{$schoolYear->school_year}_{$semesterName}.pdf");
 }
