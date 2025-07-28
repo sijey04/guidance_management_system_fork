@@ -17,9 +17,7 @@ class ContractController extends Controller
      */
  public function index(Request $request)
 {
-    $query = Contract::with('student', 'semester.schoolYear')
-                 ->where('is_hidden', false);
-
+    $query = Contract::with('student', 'semester.schoolYear');
 
     // Fetch all with eager loaded relations
    $allContracts = $query->get();
@@ -218,51 +216,21 @@ public function store(Request $request)
     /**
      * Remove the specified resource from storage.
      */
-    //    public function destroy($id)
-    //     {
-    //         $contract = Contract::findOrFail($id);
+       public function destroy($id)
+        {
+            $contract = Contract::findOrFail($id);
 
-    //         foreach ($contract->images as $image) {
-    //             if (Storage::exists($image->image_path)) {
-    //                 Storage::delete($image->image_path);
-    //             }
-    //             $image->delete();
-    //         }
-
-    //         $contract->delete();
-
-    //         return redirect()->route('contracts.index')->with('success', 'Counseling record deleted.');
-    //     }
-
-    public function destroy($id)
-{
-    $contract = Contract::findOrFail($id);
-
-    // Determine group: original and all carried-over copies
-    $groupId = $contract->original_contract_id ?? $contract->id;
-
-    // Get all related contracts in this group
-    $relatedContracts = Contract::where(function ($query) use ($groupId) {
-        $query->where('id', $groupId)
-              ->orWhere('original_contract_id', $groupId);
-    })->get();
-
-    // Hide each and delete associated images
-    foreach ($relatedContracts as $c) {
-        foreach ($c->images as $image) {
-            if (Storage::exists($image->image_path)) {
-                Storage::delete($image->image_path);
+            foreach ($contract->images as $image) {
+                if (Storage::exists($image->image_path)) {
+                    Storage::delete($image->image_path);
+                }
+                $image->delete();
             }
-            $image->delete();
+
+            $contract->delete();
+
+            return redirect()->route('contracts.index')->with('success', 'Counseling record deleted.');
         }
-
-        $c->is_hidden = true;
-        $c->save();
-    }
-
-    return redirect()->route('contracts.index')->with('success', 'Contract and its copies hidden successfully.');
-}
-
 
     public function createForStudent(Student $student)
 {
@@ -273,9 +241,7 @@ public function store(Request $request)
 
 public function allContracts(Request $request)
 {
-    $query = Contract::with('student', 'semester.schoolYear')
-                 ->where('is_hidden', false);
-
+    $query = Contract::with(['student', 'semester']);
 
     // Search by student name
     if ($request->has('search') && $request->search != '') {
@@ -451,18 +417,17 @@ public function deleteImage($contractId, $imageId)
 private function getLatestUniqueContracts($contracts)
 {
     return $contracts
-        ->filter(fn($c) => !$c->is_hidden) // ← Exclude hidden contracts
         ->groupBy(function ($contract) {
             return $contract->original_contract_id ?? $contract->id;
         })
         ->map(function ($group) {
+            // Return the one with the highest semester id (latest copy)
             return $group->sortByDesc(function ($c) {
                 return optional($c->semester)->id;
             })->first();
         })
         ->values();
 }
-
 
 
 }

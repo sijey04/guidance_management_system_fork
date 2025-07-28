@@ -35,22 +35,24 @@ class StudentController extends Controller
     if (!$activeSemester) {
         $students = collect();
     } else {
-        $query = Student::withCount('contracts')
-            ->whereHas('profiles', function ($q) use ($activeSemester, $request) {
-                $q->where('semester_id', $activeSemester->id);
+        $query = Student::withCount(['contracts as contracts_count' => function ($q) use ($activeSemester) {
+            $q->where('semester_id', $activeSemester->id);
+        }])
+        ->whereHas('profiles', function ($q) use ($activeSemester, $request) {
+            $q->where('semester_id', $activeSemester->id);
 
-                if ($request->filled('filter_course')) {
-                    $q->where('course', $request->filter_course);
-                }
+            if ($request->filled('filter_course')) {
+                $q->where('course', $request->filter_course);
+            }
 
-                if ($request->filled('filter_year_level')) {
-                    $q->where('year_level', $request->filter_year_level);
-                }
+            if ($request->filled('filter_year_level')) {
+                $q->where('year_level', $request->filter_year_level);
+            }
 
-                if ($request->filled('filter_section')) {
-                    $q->where('section', $request->filter_section);
-                }
-            });
+            if ($request->filled('filter_section')) {
+                $q->where('section', $request->filter_section);
+            }
+        });
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {

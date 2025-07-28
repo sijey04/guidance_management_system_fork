@@ -376,64 +376,29 @@ public function processValidateStudents(Request $request, $semesterId)
             'section' => $data['section'],
         ]);
 
-        // $allPastContracts = Contract::where('student_id', $studentId)
-        //     ->where('semester_id', '<', $semester->id)
-        //     ->orderBy('semester_id', 'desc') 
-        //     ->get()
-        //     ->groupBy(function ($contract) {
-        //         return $contract->original_contract_id ?? $contract->id;
-        //     });
-
-        // foreach ($allPastContracts as $originId => $contractGroup) {
-        //     $latestContract = $contractGroup->first(); 
-
-        //     $alreadyExists = Contract::where('student_id', $studentId)
-        //         ->where('original_contract_id', $originId)
-        //         ->where('semester_id', $semester->id)
-        //         ->exists();
-
-        //     if (!$alreadyExists) {
-        //         $newContract = $latestContract->replicate();
-        //         $newContract->semester_id = $semester->id;
-        //         $newContract->original_contract_id = $originId;
-        //         $newContract->save();
-        //     }
-        // }
-
         $allPastContracts = Contract::where('student_id', $studentId)
-    ->where('semester_id', '<', $semester->id)
-    ->orderBy('semester_id', 'desc') 
-    ->get()
-    ->groupBy(function ($contract) {
-        return $contract->original_contract_id ?? $contract->id;
-    });
+            ->where('semester_id', '<', $semester->id)
+            ->orderBy('semester_id', 'desc') 
+            ->get()
+            ->groupBy(function ($contract) {
+                return $contract->original_contract_id ?? $contract->id;
+            });
 
-foreach ($allPastContracts as $originId => $contractGroup) {
-    $latestContract = $contractGroup->first();
+        foreach ($allPastContracts as $originId => $contractGroup) {
+            $latestContract = $contractGroup->first(); 
 
-    // 🔒 Skip if latest contract or original is hidden
-    $isGroupHidden = $contractGroup->contains(function ($c) {
-        return $c->is_hidden;
-    });
+            $alreadyExists = Contract::where('student_id', $studentId)
+                ->where('original_contract_id', $originId)
+                ->where('semester_id', $semester->id)
+                ->exists();
 
-    if ($isGroupHidden) {
-        continue; // ❌ Don't carry over this group
-    }
-
-    // ✅ Continue carry over if not already in this semester
-    $alreadyExists = Contract::where('student_id', $studentId)
-        ->where('original_contract_id', $originId)
-        ->where('semester_id', $semester->id)
-        ->exists();
-
-    if (!$alreadyExists) {
-        $newContract = $latestContract->replicate();
-        $newContract->semester_id = $semester->id;
-        $newContract->original_contract_id = $originId;
-        $newContract->save();
-    }
-}
-
+            if (!$alreadyExists) {
+                $newContract = $latestContract->replicate();
+                $newContract->semester_id = $semester->id;
+                $newContract->original_contract_id = $originId;
+                $newContract->save();
+            }
+        }
 
         // --- REFERRALS ---
         $allPastReferrals = Referral::where('student_id', $studentId)
