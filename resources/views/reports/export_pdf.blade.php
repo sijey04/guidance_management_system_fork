@@ -343,12 +343,11 @@
     <!-- Counseling -->
     @if($tab === 'all' || $tab === 'counseling')
         <h3>Counseling Records</h3>
-<p class="summary">
-    Summary of 
-    {{ request('filter_counseling_status') ? ucfirst(request('filter_counseling_status')) : 'All' }} 
-    Counseling Sessions for {{ $schoolYear->school_year }} {{ $semesterName }} Semester 
-</p>
-
+        <p class="summary">
+            Summary of 
+            {{ request('filter_counseling_status') ? ucfirst(request('filter_counseling_status')) : 'All' }} 
+            Counseling Sessions for {{ $schoolYear->school_year }} {{ $semesterName }} Semester 
+        </p>
 
         <table class="counseling">
             <thead>

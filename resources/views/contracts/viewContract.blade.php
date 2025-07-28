@@ -4,7 +4,7 @@
        @php
             $backRoute = match ($source) {
                 'report' => route('report'),
-                'student' => route('students.history', ['id' => $contract->student_id ?? null]),
+                'student' => route('students.contract', ['id' => $contract->student_id ?? null]),
                 default => route('contracts.index'),
             };
         @endphp
