@@ -215,7 +215,6 @@ public function updateStatus(Request $request, $id)
 
     $activeSemester = Semester::where('is_current', true)->first();
 
-    // ✅ If this is the original and being completed outside current semester
     if (
         $counseling->status === 'In Progress' &&
         $status === 'Completed' &&
