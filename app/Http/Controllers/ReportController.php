@@ -774,7 +774,7 @@ public function exportStudentPdf(Request $request)
         ->where('semester', $request->semester_name)
         ->pluck('id');
 
-    $include = $request->input('include', 'all');
+    $include = $request->input('export_type', 'all');
 
 
    $allContracts = Contract::with('images')
@@ -841,7 +841,8 @@ if ($include === 'all' || $include === 'counselings') {
         ->latest()
         ->first();
 
-    $tab = $request->input('tab', 'all');
+    $tab = $include;
+
     $semesterName = $request->semester_name; 
 
     $pdf = Pdf::loadView('reports.student_history_pdf', compact(
