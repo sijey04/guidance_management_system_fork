@@ -223,7 +223,7 @@
                                                         </svg>
                                                         View Details
                                                     </a>
-                                                    <form method="POST" action="{{ route('counselings.destroy', $counseling->id) }}"
+                                                    {{-- <form method="POST" action="{{ route('counselings.destroy', $counseling->id) }}"
                                                           onsubmit="return confirm('Are you sure you want to delete this record?');">
                                                         @csrf
                                                         @method('DELETE')
@@ -235,7 +235,7 @@
                                                             Delete
                                                         </button>
                                                     </form>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </td>
                                     </tr>

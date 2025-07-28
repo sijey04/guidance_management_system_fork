@@ -6,50 +6,71 @@
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
-            font-size: 12px;
-            line-height: 1.4;
-            margin: 20px;
+            font-size: 11px;
+            color: #333;
+            margin: 25px;
         }
 
-        h1, h2, h3 {
-            color: #a82323;
+        h2 {
+            font-size: 18px;
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .section-title {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 13px;
+            border-radius: 4px;
+            margin: 40px 0 10px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
+            margin-top: 10px;
+            margin-bottom: 20px;
         }
 
         th, td {
             border: 1px solid #ddd;
-            padding: 6px 8px;
+            padding: 8px 10px;
             text-align: left;
+            vertical-align: top;
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #f4f6f8;
+            font-weight: bold;
+            color: #2c3e50;
         }
 
-        .section-header {
-            background-color: #a82323;
-            color: white;
-            padding: 6px 10px;
-            margin-top: 30px;
-            font-size: 16px;
+        tr:nth-child(even) {
+            background-color: #fcfcfc;
+        }
+
+        .info-table th {
+            width: 35%;
+            background-color: #f8f8f8;
         }
 
         .no-records {
-            color: #666;
             font-style: italic;
+            color: #888;
+            padding: 5px 0;
         }
+
     </style>
 </head>
 <body>
 
     <h2>Student History Report</h2>
 
-    <table>
+    <table class="info-table">
         <tr>
             <th>Student ID</th>
             <td>{{ $student->student_id }}</td>
@@ -76,7 +97,7 @@
 
     {{-- Contracts --}}
     @if($tab === 'all' || $tab === 'contracts')
-        <div class="section-header">Contracts</div>
+        <div class="section-title">Contracts</div>
         @if($contracts->isNotEmpty())
             <table>
                 <thead>
@@ -97,7 +118,7 @@
                             <td>{{ $contract->contract_type }}</td>
                             <td>{{ $contract->status }}</td>
                             <td>{{ $contract->start_date }}</td>
-                            <td>{{ $contract->total_days}}</td>
+                            <td>{{ $contract->total_days }}</td>
                             <td>{{ $contract->end_date }}</td>
                             <td>{{ $contract->remarks }}</td>
                         </tr>
@@ -111,7 +132,7 @@
 
     {{-- Referrals --}}
     @if($tab === 'all' || $tab === 'referrals')
-        <div class="section-header">Referrals</div>
+        <div class="section-title">Referrals</div>
         @if($referrals->isNotEmpty())
             <table>
                 <thead>
@@ -138,7 +159,7 @@
 
     {{-- Counseling --}}
     @if($tab === 'all' || $tab === 'counseling')
-        <div class="section-header">Counseling Sessions</div>
+        <div class="section-title">Counseling Sessions</div>
         @if($counselings->isNotEmpty())
             <table>
                 <thead>

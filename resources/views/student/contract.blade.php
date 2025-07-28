@@ -87,7 +87,7 @@
                                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                                         View
                                                     </a>
-                                                    <form method="POST" action="{{ route('contracts.destroy', $contract->id) }}"
+                                                    {{-- <form method="POST" action="{{ route('contracts.destroy', $contract->id) }}"
                                                           onsubmit="return confirm('Are you sure you want to delete this contract?');">
                                                         @csrf
                                                         @method('DELETE')
@@ -95,7 +95,7 @@
                                                                 class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
                                                             Delete
                                                         </button>
-                                                    </form>
+                                                    </form> --}}
                                                 </div>
                                             </div>
                                         </td>

@@ -25,13 +25,13 @@
 
             <div class="flex gap-2">
 
-                <form action="{{ route('transitions.destroy', $transition) }}"
+                {{-- <form action="{{ route('transitions.destroy', $transition) }}"
                       method="POST"
                       onsubmit="return confirm('Are you sure you want to delete this record?')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="text-red-600 font-medium hover:underline">Delete</button>
-                </form>
+                </form> --}}
             </div>
         </div>
 
