@@ -162,7 +162,7 @@
                                                     </svg>
                                                     View Details
                                                 </a>
-                                                <form action="{{ route('transitions.destroy', $transition) }}" method="POST"
+                                                {{-- <form action="{{ route('transitions.destroy', $transition) }}" method="POST"
                                                       onsubmit="return confirm('Are you sure you want to delete this record?')">
                                                     @csrf
                                                     @method('DELETE')
@@ -173,7 +173,7 @@
                                                         </svg>
                                                         Delete
                                                     </button>
-                                                </form>
+                                                </form> --}}
                                             </div>
                                         </div>
                                     </td>
