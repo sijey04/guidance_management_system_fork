@@ -448,6 +448,30 @@ $counselings = $allStudentCounselings->filter(function ($counseling) use ($semes
 });
 
 
+$allStudentTransitions = StudentTransition::with(['semester', 'original'])
+    ->where('student_id', $student_id)
+    ->get();
+$transitions = $allStudentTransitions->filter(function ($transition) use ($semesterIds, $allStudentTransitions, $request) {
+    if ($request->filled('filter_transition_type') && $transition->transition_type !== $request->filter_transition_type) {
+        return false;
+    }
+
+    $originalId = $transition->original_transition_id ?? $transition->id;
+
+    // If this is a carried-over record, keep only if it belongs to selected semesters
+    if (!is_null($transition->original_transition_id)) {
+        return $semesterIds->contains($transition->semester_id);
+    }
+
+    // If this is the original and hasn't been carried over yet to selected semester, include
+    $hasCarriedOver = $allStudentTransitions->contains(function ($t) use ($originalId, $semesterIds) {
+        return $t->original_transition_id == $originalId && $semesterIds->contains($t->semester_id);
+    });
+
+    return !$hasCarriedOver && $semesterIds->contains($transition->semester_id);
+});
+
+
 
         $profile = StudentProfile::where('student_id', $student_id)
             ->whereIn('semester_id', $semesterIds)
@@ -460,7 +484,7 @@ $referralReasons = ReferralReason::all();
 
         return view('reports.view_student_records', compact(
     'student', 'contracts', 'referrals', 'counselings',
-    'schoolYearName', 'semesterName', 'profile' ,'contractTypesList',
+    'schoolYearName', 'semesterName','transitions', 'profile' ,'contractTypesList',
     'referralReasons'
 ));
 

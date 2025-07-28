@@ -144,7 +144,13 @@
 
                             <button @click="tab = 'counseling'" :class="{ 'border-[#a82323] text-[#a82323]': tab === 'counseling', 'border-transparent text-gray-500 hover:text-gray-700': tab !== 'counseling' }"
                                 class="whitespace-nowrap border-b-2 py-2 px-1">Counseling</button>
-                        </nav>
+                            <button @click="tab = 'transitions'"
+                                :class="{ 'border-[#a82323] text-[#a82323]': tab === 'transitions', 'border-transparent text-gray-500 hover:text-gray-700': tab !== 'transitions' }"
+                                class="whitespace-nowrap border-b-2 py-2 px-1">
+                                Transitions
+                            </button>
+
+                            </nav>
                     </div>
 
                     <!-- Contracts Tab -->
@@ -311,6 +317,60 @@
                             </table>
                         </div>
                     </div>
+
+                    <!-- Transitions Tab -->
+<div x-show="tab === 'transitions'" x-cloak>
+    <h3 class="text-xl font-semibold text-[#a82323] mb-2">Transition Records</h3>
+    <p class="text-sm text-gray-500 mb-3">Track student transitions such as transfers, shifting courses, etc.</p>
+
+    <!-- Optional: Filters -->
+    
+    <form method="GET" class="mb-4 flex flex-wrap gap-2">
+        <select name="filter_transition_type" class="border px-3 py-2 rounded w-full sm:w-auto focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50">
+                            <option value="">All Types</option>
+                            @foreach(['Shifting In', 'Shifting Out', 'Transferring In', 'Transferring Out', 'Dropped', 'Returning Student'] as $type)
+                                <option value="{{ $type }}" {{ request('filter_transition_type') == $type ? 'selected' : '' }}>
+                                    {{ $type }}
+                                </option>
+                            @endforeach
+                        </select>
+        <button type="submit" class="bg-[#a82323] text-white px-3 py-1 rounded text-sm">Filter</button>
+    </form>
+   
+
+    <div class="overflow-auto">
+        <table class="min-w-full text-sm border rounded">
+            <thead class="bg-gray-100 text-left">
+                <tr>
+                    <th class="px-4 py-2">Date</th>
+                    <th class="px-4 py-2">Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($transitions as $transition)
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-4 py-2">{{ \Carbon\Carbon::parse($transition->transition_date)->format('F j, Y') }}</td>
+                        <td class="px-4 py-2">{{ $transition->transition_type }}</td>
+                        <td class="px-4 py-3 text-right">
+                                                    <a href="{{ route('transitions.show', ['transition' => $transition->id, 'source' => 'report']) }}"  class="text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        </svg>
+                                                        View
+                                                    </a>
+                                                </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="text-center py-3 text-gray-500">No transitions found.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
                 </div>
 
             </div>

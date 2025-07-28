@@ -49,5 +49,10 @@ public function images()
     return $this->hasMany(StudentTransitionImage::class, 'student_transition_id');
 }
 
+public function original()
+{
+    return $this->belongsTo(StudentProfile::class, 'original_profile_id'); // or use the correct foreign key
+}
+
 
 }
