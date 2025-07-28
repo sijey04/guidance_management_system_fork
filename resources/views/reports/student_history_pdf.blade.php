@@ -68,6 +68,23 @@
 </head>
 <body>
 
+    <!-- Header -->
+    <div class="header" style="width:100%;border-bottom:2px solid #a82323;padding-bottom:15px;margin-bottom:20px;position:relative;min-height:80px;">
+        <div class="header-content" style="display:table;width:100%;table-layout:fixed;">
+            <div class="logo-left" style="display:table-cell;width:80px;vertical-align:middle;text-align:left;">
+                <img src="{{ public_path('/logo.png') }}" alt="Logo Left" style="height:65px;width:auto;max-width:65px;">
+            </div>
+            <div class="school-details" style="display:table-cell;vertical-align:middle;text-align:center;padding:0 20px;">
+                <h2 style="margin:0 0 5px 0;font-size:16px;color:#006400;font-weight:bold;letter-spacing:0.5px;">COLLEGE OF COMPUTING STUDIES</h2>
+                <p style="margin:3px 0;font-size:11px;color:#333;">Western Mindanao State University</p>
+                <p class="semester-info" style="font-size:12px;font-weight:bold;color:#a82323;margin-top:5px;">{{ $schoolYear->school_year }} | {{ $semesterName }} Semester</p>
+            </div>
+            <div class="logo-right" style="display:table-cell;width:80px;vertical-align:middle;text-align:right;">
+                <img src="{{ public_path('/ccs_logo.jpg') }}" alt="Logo Right" style="height:65px;width:auto;max-width:65px;">
+            </div>
+        </div>
+    </div>
+
     <h2>Student History Report</h2>
 
     <table class="info-table">
