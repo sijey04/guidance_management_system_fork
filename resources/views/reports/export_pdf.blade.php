@@ -201,7 +201,7 @@
         GUIDANCE OFFICE RECORDS REPORT
     </div>
 
-    <div class="filter-details">
+    <div class="">
         @php
             $filters = [];
 
@@ -210,15 +210,21 @@
             if(request('filter_section')) $filters[] = 'Section: ' . request('filter_section');
             if(request('filter_contract_type')) $filters[] = 'Contract Type: ' . request('filter_contract_type');
             if(request('filter_transition')) $filters[] = 'Transition: ' . request('filter_transition');
+            if(request('filter_contract_status')) $filters[] = 'Contract Status: ' . request('filter_contract_status');
+            if(request('filter_counseling_status')) $filters[] = 'Counseling Status: ' . request('filter_counseling_status');
 
             $filterSummary = count($filters) ? implode(' | ', $filters) : 'No specific filters applied';
         @endphp
-        <strong>Filter Applied:</strong> {{ $filterSummary }}
     </div>
 
     <!-- Student Profiles -->
     @if($tab === 'all' || $tab === 'student_profiles')
         <h3>Student Profiles</h3>
+        <p class="summary">
+            Summary of Student Profiles for {{ $schoolYear->school_year }} {{ $semesterName }} Semester — 
+            Total Students: {{ $students->count() }}
+        </p>
+
         <table class="student-profiles">
             <thead>
                 <tr>
@@ -264,7 +270,16 @@
 
     <!-- Contracts -->
     @if($tab === 'all' || $tab === 'contracts')
-        <h3>Contract Records</h3>
+       <h3>Contract Records</h3>
+        <p class="summary">
+            Summary of 
+            {{ request('filter_contract_status') ? ucfirst(request('filter_contract_status')) : 'All' }} 
+            {{ request('filter_contract_type') ? ucfirst(request('filter_contract_type')) : 'Contracts' }} 
+            for {{ $schoolYear->school_year }} {{ $semesterName }} Semester
+        </p>
+
+
+
         <table class="contracts">
             <thead>
                 <tr>
@@ -274,6 +289,7 @@
                     <th>Start</th>
                     <th>Days</th>
                     <th>End</th>
+                    <th>Remarks</th>
                 </tr>
             </thead>
             <tbody>
@@ -285,6 +301,7 @@
                         <td>{{ $contract->start_date }}</td>
                         <td style="text-align: center;">{{ $contract->total_days }}</td>
                         <td>{{ $contract->end_date }}</td>
+                        <td>{{ $contract->remarks }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -295,6 +312,11 @@
     <!-- Referrals -->
     @if($tab === 'all' || $tab === 'referrals')
         <h3>Referral Records</h3>
+<p class="summary">
+    Summary of Referrals for {{ $schoolYear->school_year }} {{ $semesterName }} Semester 
+</p>
+
+
         <table class="referrals">
             <thead>
                 <tr>
@@ -321,6 +343,13 @@
     <!-- Counseling -->
     @if($tab === 'all' || $tab === 'counseling')
         <h3>Counseling Records</h3>
+<p class="summary">
+    Summary of 
+    {{ request('filter_counseling_status') ? ucfirst(request('filter_counseling_status')) : 'All' }} 
+    Counseling Sessions for {{ $schoolYear->school_year }} {{ $semesterName }} Semester 
+</p>
+
+
         <table class="counseling">
             <thead>
                 <tr>
