@@ -760,7 +760,6 @@
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Student</th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Type</th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                            <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Details</th>
                                             <th class="px-4 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                         </tr>
                                     </thead>
@@ -779,7 +778,6 @@
                                                     </span>
                                                 </td>
                                                 <td class="px-4 py-3">{{ $transition->transition_date }}</td>
-                                                <td class="px-4 py-3">{{ Str::limit($transition->notes, 30) }}</td>
                                                 <td class="px-4 py-3 text-right">
                                                     <a href="{{ route('transitions.show', ['transition' => $transition->id, 'source' => 'report']) }}"  class="text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
