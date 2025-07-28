@@ -225,6 +225,7 @@
             Total Students: {{ $students->count() }}
         </p>
 
+        <p class="summary">Total Students: {{ $students->count() }}</p>
         <table class="student-profiles">
             <thead>
                 <tr>
@@ -265,7 +266,6 @@
                 @endforeach
             </tbody>
         </table>
-        <p class="summary">Total Students: {{ $students->count() }}</p>
     @endif
 
     <!-- Contracts -->
@@ -278,6 +278,7 @@
             for {{ $schoolYear->school_year }} {{ $semesterName }} Semester
         </p>
 
+        <p class="summary">Total Contracts: {{ $contracts->count() }}</p>
 
 
         <table class="contracts">
@@ -306,7 +307,6 @@
                 @endforeach
             </tbody>
         </table>
-        <p class="summary">Total Contracts: {{ $contracts->count() }}</p>
     @endif
 
     <!-- Referrals -->
@@ -317,6 +317,7 @@
 </p>
 
 
+        <p class="summary">Total Referrals: {{ $referrals->count() }}</p>
         <table class="referrals">
             <thead>
                 <tr>
@@ -337,7 +338,6 @@
                 @endforeach
             </tbody>
         </table>
-        <p class="summary">Total Referrals: {{ $referrals->count() }}</p>
     @endif
 
     <!-- Counseling -->
