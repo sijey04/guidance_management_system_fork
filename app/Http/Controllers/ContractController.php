@@ -216,21 +216,21 @@ public function store(Request $request)
     /**
      * Remove the specified resource from storage.
      */
-       public function destroy($id)
-        {
-            $contract = Contract::findOrFail($id);
+    //    public function destroy($id)
+    //     {
+    //         $contract = Contract::findOrFail($id);
 
-            foreach ($contract->images as $image) {
-                if (Storage::exists($image->image_path)) {
-                    Storage::delete($image->image_path);
-                }
-                $image->delete();
-            }
+    //         foreach ($contract->images as $image) {
+    //             if (Storage::exists($image->image_path)) {
+    //                 Storage::delete($image->image_path);
+    //             }
+    //             $image->delete();
+    //         }
 
-            $contract->delete();
+    //         $contract->delete();
 
-            return redirect()->route('contracts.index')->with('success', 'Counseling record deleted.');
-        }
+    //         return redirect()->route('contracts.index')->with('success', 'Counseling record deleted.');
+    //     }
 
     public function createForStudent(Student $student)
 {
