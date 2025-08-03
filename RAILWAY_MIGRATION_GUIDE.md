@@ -12,7 +12,7 @@ railway login
 railway link 40809680-c540-496f-bf13-77e1924bd283
 
 # Run migrations
-railway run php artisan migrate --force
+
 ```
 
 ## Option 2: Using Railway Web Terminal
@@ -31,3 +31,4 @@ The Dockerfile already includes migration commands. To force a new deployment:
 ## Option 4: Direct Database Connection
 
 If you need to run migrations directly on the database, you would need the database connection details from Railway environment variables.
+railway run php artisan migrate --force
