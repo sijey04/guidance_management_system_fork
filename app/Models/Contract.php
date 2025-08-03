@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Contract extends Model
 {
-    // Temporarily disabled until deleted_at column migration runs
-    // use SoftDeletes;
+    use SoftDeletes;
     protected $fillable = [
     'student_id',
     'semester_id',

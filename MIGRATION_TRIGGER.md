@@ -2,7 +2,7 @@
 
 This file was created to trigger a Railway deployment that will run the pending migration to add the `deleted_at` column to the contracts table.
 
-Date: July 30, 2025 - Updated: August 4, 2025
+Date: July 30, 2025 - Updated: August 4, 2025 - Force Deploy: 2
 Issue: Missing `deleted_at` column causing UnexpectedValueException
 Solution: Deploy to trigger automatic migration execution
 
@@ -10,3 +10,7 @@ Solution: Deploy to trigger automatic migration execution
 - Trigger deployment to run: `2025_07_25_005042_add_deleted_at_to_contracts_table.php`
 - This will add the `deleted_at` column for soft deletes functionality
 - After successful migration, SoftDeletes can be re-enabled in Contract model
+
+## Connection Issues
+- Railway CLI experiencing "MySQL server has gone away" errors
+- Using deployment trigger as alternative method
