@@ -55,21 +55,26 @@ $latestContracts = $this->getLatestUniqueContracts($allContracts);
         return $match;
     });
 
-    if ($request->filled('sort')) {
-        $filtered = $filteredContracts->sortBy('contract_date', SORT_REGULAR, $request->sort === 'oldest' ? false : true);
-    } else {
-        $filtered = $filteredContracts->sortByDesc('contract_date');
-    }
-
-    $page = $request->input('page', 1);
-    $perPage = 10;
-    $contracts = new \Illuminate\Pagination\LengthAwarePaginator(
-        $filteredContracts->forPage($page, $perPage)->values(),
-        $filteredContracts->count(),
-        $perPage,
-        $page,
-        ['path' => $request->url(), 'query' => $request->query()]
+   if ($request->filled('sort')) {
+    $filteredContracts = $filteredContracts->sortBy(
+        'contract_date',
+        SORT_REGULAR,
+        $request->sort === 'oldest' ? false : true
     );
+} else {
+    $filteredContracts = $filteredContracts->sortByDesc('contract_date');
+}
+
+$page = $request->input('page', 1);
+$perPage = 10;
+$contracts = new \Illuminate\Pagination\LengthAwarePaginator(
+    $filteredContracts->forPage($page, $perPage)->values(),
+    $filteredContracts->count(),
+    $perPage,
+    $page,
+    ['path' => $request->url(), 'query' => $request->query()]
+);
+
 
     $semesters = Semester::with('schoolYear')->get();
     $contractTypes = ContractType::all();
@@ -259,22 +264,22 @@ public function allContracts(Request $request)
 
 $filteredContracts = $this->getLatestUniqueContracts($allContracts);
 if ($request->filled('sort')) {
-        $filtered = $filteredContracts->sortBy('contract_date', SORT_REGULAR, $request->sort === 'oldest' ? false : true);
-    } else {
-        $filtered = $filteredContracts->sortByDesc('contract_date');
-    }
+    $sortedContracts = $filteredContracts->sortBy('contract_date', SORT_REGULAR, $request->sort !== 'oldest');
+} else {
+    $sortedContracts = $filteredContracts->sortByDesc('contract_date');
+}
 
-
-// Manual pagination
-$page = request()->input('page', 1);
+$page = $request->input('page', 1);
 $perPage = 10;
 $contracts = new \Illuminate\Pagination\LengthAwarePaginator(
-    $filteredContracts->forPage($page, $perPage),
-    $filteredContracts->count(),
+    $sortedContracts->forPage($page, $perPage)->values(),
+    $sortedContracts->count(),
     $perPage,
     $page,
-    ['path' => request()->url(), 'query' => request()->query()]
+    ['path' => $request->url(), 'query' => $request->query()]
 );
+
+
 
    
     $semesters = Semester::all();

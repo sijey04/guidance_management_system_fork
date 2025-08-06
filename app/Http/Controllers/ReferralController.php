@@ -74,13 +74,25 @@ class ReferralController extends Controller
     }
 
     $allReferrals = $query->get();
+
 $latestReferrals = $this->getLatestUniqueReferrals($allReferrals);
 
-// Manual pagination
+// SORTING by referral_date
+if ($request->filled('sort')) {
+    $latestReferrals = $latestReferrals->sortBy(
+        'referral_date',
+        SORT_REGULAR,
+        $request->sort === 'oldest' ? false : true
+    );
+} else {
+    $latestReferrals = $latestReferrals->sortByDesc('referral_date');
+}
+
+// Pagination
 $page = $request->input('page', 1);
 $perPage = 10;
 $referrals = new \Illuminate\Pagination\LengthAwarePaginator(
-    $latestReferrals->forPage($page, $perPage),
+    $latestReferrals->forPage($page, $perPage)->values(),
     $latestReferrals->count(),
     $perPage,
     $page,

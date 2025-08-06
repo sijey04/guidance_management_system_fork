@@ -81,7 +81,7 @@
                             </div>
 
                             <!-- School Year Filter -->
-                            <div class="md:w-auto w-full">
+                            {{-- <div class="md:w-auto w-full">
                                 <label class="block text-sm text-gray-700 mb-1">School Year:</label>
                                 <select name="school_year_id" onchange="this.form.submit()" 
                                         class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full focus:ring focus:ring-red-200 focus:border-red-500 transition">
@@ -106,7 +106,7 @@
                                     <option value="2nd" {{ request('semester_label') == '2nd' ? 'selected' : '' }}>2nd</option>
                                     <option value="Summer" {{ request('semester_label') == 'Summer' ? 'selected' : '' }}>Summer</option>
                                 </select>
-                            </div>
+                            </div> --}}
 
                             <!-- Sort By -->
                             <div class="md:w-auto w-full">
