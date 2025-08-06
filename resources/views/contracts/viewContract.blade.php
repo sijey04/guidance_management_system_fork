@@ -127,8 +127,8 @@
 
                     <div class="mt-3 flex justify-end">
                         <button type="submit"
-                                class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
-                            Save Remarks
+                                 class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                          Save Remarks
                         </button>
                     </div>
                 </form>
@@ -141,11 +141,31 @@
 
 
         <!-- Contract Images -->
-        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+        <div x-data="{
+            files: [],
+            zoomedImage: null,
+            handleFiles(event, targetFormId, inputId) {
+                const selectedFiles = Array.from(event.target.files);
+                selectedFiles.forEach(file => {
+                    if (!this.files.some(f => f.name === file.name && f.size === file.size)) {
+                        this.files.push(file);
+                    }
+                });
+
+                const dataTransfer = new DataTransfer();
+                this.files.forEach(f => dataTransfer.items.add(f));
+
+                const finalInput = document.getElementById(inputId);
+                finalInput.files = dataTransfer.files;
+
+                document.getElementById(targetFormId).submit();
+            }
+        }" class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+
             <p class="font-semibold text-gray-700 mb-4 text-lg">Contract Images:</p>
 
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <!-- Existing images -->
+                <!-- Existing Images -->
                 @foreach ($contract->images as $image)
                     <div class="relative group">
                         <img src="{{ asset('storage/' . $image->image_path) }}"
@@ -164,98 +184,60 @@
                         @endif
                     </div>
                 @endforeach
-                <!-- Upload image square -->
-                @if(empty($readonly))
-                <div x-data="{
-                    files: [],
-                    handleFiles(event) {
-                        const selectedFiles = Array.from(event.target.files);
-                        selectedFiles.forEach(file => {
-                            // Avoid duplicates
-                            if (!this.files.some(f => f.name === file.name && f.size === file.size)) {
-                                this.files.push(file);
-                            }
-                        });
-                        this.submitFiles();
-                    },
-                    submitFiles() {
-                        const dataTransfer = new DataTransfer();
-                        this.files.forEach(f => dataTransfer.items.add(f));
-                        const input = document.getElementById('finalUploadInput');
-                        input.files = dataTransfer.files;
-                        input.form.submit();
-                    }
-                }" class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
 
-                    <!-- Scan / Camera -->
-                    <form action="{{ route('contracts.uploadImages', ['id' => $contract->id, 'type' => 'contract']) }}" method="POST"
-                        enctype="multipart/form-data" x-ref="uploadForm">
+                <!-- Upload Buttons (if editable) -->
+                @if(empty($readonly))
+                    <!-- Camera -->
+                    <form id="cameraForm" action="{{ route('contracts.uploadImages', ['id' => $contract->id, 'type' => 'contract']) }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="file" accept="image/*" capture="environment" class="hidden" @change="handleFiles" id="cameraInput">
+                        <input type="file" accept="image/*" capture="environment" class="hidden" id="cameraInput"
+                            @change="handleFiles($event, 'cameraForm', 'cameraFinalInput')" multiple>
                         <label for="cameraInput"
                             class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded h-36 cursor-pointer hover:bg-gray-100 transition text-sm text-center text-gray-600">
                             <br>Take Photo
                         </label>
-                        <input type="file" name="images[]" class="hidden" id="finalUploadInput" multiple>
+                        <input type="file" name="images[]" class="hidden" id="cameraFinalInput" multiple>
                     </form>
 
                     <!-- Gallery -->
-                    <form action="{{ route('contracts.uploadImages', ['id' => $contract->id, 'type' => 'contract']) }}" method="POST"
-                        enctype="multipart/form-data">
+                    <form id="galleryForm" action="{{ route('contracts.uploadImages', ['id' => $contract->id, 'type' => 'contract']) }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="file" accept="image/*" class="hidden" @change="handleFiles" id="galleryInput">
+                        <input type="file" accept="image/*" class="hidden" id="galleryInput"
+                            @change="handleFiles($event, 'galleryForm', 'galleryFinalInput')" multiple>
                         <label for="galleryInput"
                             class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded h-36 cursor-pointer hover:bg-gray-100 transition text-sm text-center text-gray-600">
                             <br>Choose from Gallery
                         </label>
+                        <input type="file" name="images[]" class="hidden" id="galleryFinalInput" multiple>
                     </form>
-                </div>
                 @endif
-
             </div>
 
-            <!-- Improved Zoom Modal -->
+            <!-- Zoom Modal -->
             <div x-show="zoomedImage"
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0"
-                 x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0"
-                 class="fixed inset-0 z-[9999] overflow-y-auto"
-                 style="z-index: 9999;"
-                 @keydown.escape.window="zoomedImage = null">
-                
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:leave="transition ease-in duration-200"
+                class="fixed inset-0 z-[9999] overflow-y-auto"
+                @keydown.escape.window="zoomedImage = null">
+
                 <!-- Backdrop -->
-                <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" 
-                     style="z-index: 9998;" 
-                     @click="zoomedImage = null"></div>
-                
+                <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" @click="zoomedImage = null"></div>
+
                 <!-- Modal Container -->
-                <div class="flex min-h-full items-center justify-center p-4 relative"
-                     style="z-index: 10000;">
-                    <div x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 scale-95"
-                         x-transition:enter-end="opacity-100 scale-100"
-                         x-transition:leave="transition ease-in duration-200"
-                         x-transition:leave-start="opacity-100 scale-100"
-                         x-transition:leave-end="opacity-0 scale-95"
-                         class="relative max-w-4xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden"
-                         style="z-index: 10001;">
-                        
+                <div class="flex min-h-full items-center justify-center p-4">
+                    <div class="relative max-w-4xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
                         <!-- Header -->
-                        <div class="border-b border-gray-100 p-4">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-semibold text-gray-900">Image Preview</h3>
-                                <button @click="zoomedImage = null" 
-                                        class="rounded-full p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                            </div>
+                        <div class="border-b border-gray-100 p-4 flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Image Preview</h3>
+                            <button @click="zoomedImage = null" 
+                                    class="rounded-full p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
                         </div>
-                        
+
                         <!-- Image Content -->
                         <div class="p-6 flex items-center justify-center bg-gray-50">
                             <img :src="zoomedImage" class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg">
@@ -263,7 +245,7 @@
                     </div>
                 </div>
             </div>
-
         </div>
+
 
 </x-app-layout>

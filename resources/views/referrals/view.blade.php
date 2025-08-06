@@ -93,77 +93,78 @@
             @endif
         </div>
 
-       <!-- Referral Images -->
-        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
-            <p class="font-semibold text-gray-700 mb-4 text-lg">Referral Images:</p>
+        <!-- Referral Images -->
+<div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+    <p class="font-semibold text-gray-700 mb-4 text-lg">Referral Images</p>
 
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <!-- Existing images -->
-                @foreach ($referral->images as $image)
-                    <div class="relative group">
-                        <img src="{{ asset('storage/' . $image->image_path) }}"
-                            @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
-                            class="w-full h-36 object-cover rounded border border-gray-300 shadow cursor-zoom-in group-hover:scale-105 transition-transform duration-200">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <!-- Existing Images -->
+        @foreach ($referral->images as $image)
+            <div class="relative group">
+                <img src="{{ asset('storage/' . $image->image_path) }}"
+                    @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
+                    class="w-full h-36 object-cover rounded border border-gray-300 shadow cursor-zoom-in group-hover:scale-105 transition-transform duration-200">
 
-                        @if(empty($readonly))
-                            <form action="{{ route('referrals.deleteImage', [$referral->id, $image->id]) }}" method="POST"
-                                class="absolute top-1 right-1 bg-white rounded-full shadow p-1 group-hover:opacity-100 opacity-0 transition-opacity">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-800 text-lg font-bold leading-none">
-                                    &times;
-                                </button>
-                            </form>
-                        @endif
-                    </div>
-                @endforeach
-
-                <!-- Upload image square -->
                 @if(empty($readonly))
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                    <!-- Take Photo -->
-                    <form action="{{ route('referrals.uploadImages', ['id' => $referral->id, 'type' => 'referral']) }}"
-                        method="POST"
-                        enctype="multipart/form-data"
-                        class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition h-36"
-                        onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
+                    <form action="{{ route('referrals.deleteImage', [$referral->id, $image->id]) }}"
+                          method="POST"
+                          class="absolute top-1 right-1 bg-white rounded-full shadow p-1 group-hover:opacity-100 opacity-0 transition-opacity">
                         @csrf
-                        <input type="file"
-                            name="images[]"
-                            accept="image/*"
-                            capture="environment"
-                            class="hidden"
-                            onchange="this.form.submit()">
-                        <div class="text-center">
-                            <div class="text-3xl text-gray-500 mb-1"></div>
-                            <p class="text-sm text-gray-700">Take Photo</p>
-                        </div>
+                        @method('DELETE')
+                        <button type="submit"
+                                class="text-red-600 hover:text-red-800 text-lg font-bold leading-none">
+                            &times;
+                        </button>
                     </form>
-
-                    <!-- Choose from Gallery -->
-                    <form action="{{ route('referrals.uploadImages', ['id' => $referral->id, 'type' => 'referral']) }}"
-                        method="POST"
-                        enctype="multipart/form-data"
-                        class="flex items-center justify-center border-2 border-dashed border-gray-400 rounded cursor-pointer hover:bg-gray-100 transition h-36"
-                        onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
-                        @csrf
-                        <input type="file"
-                            name="images[]"
-                            multiple
-                            accept="image/*"
-                            class="hidden"
-                            onchange="this.form.submit()">
-                        <div class="text-center">
-                            <div class="text-3xl text-gray-500 mb-1"></div>
-                            <p class="text-sm text-gray-700">Choose from Gallery</p>
-                        </div>
-                    </form>
-                </div>
-
                 @endif
             </div>
+        @endforeach
+
+        <!-- Upload Image Options -->
+        @if(empty($readonly))
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 col-span-full">
+            <!-- Take Photo -->
+            <form action="{{ route('referrals.uploadImages', ['id' => $referral->id, 'type' => 'referral']) }}"
+                  method="POST"
+                  enctype="multipart/form-data"
+                  class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition"
+                           onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
+                @csrf
+                <input type="file"
+                       name="images[]"
+                       accept="image/*"
+                       capture="environment"
+                       class="hidden"
+                       onchange="this.form.submit()">
+                <div class="text-center">
+                    <div class="text-3xl text-gray-500 mb-1"></div>
+                    <p class="text-sm text-gray-700">Take Photo</p>
+                </div>
+            </form>
+
+            <!-- Choose from Gallery -->
+            <form action="{{ route('referrals.uploadImages', ['id' => $referral->id, 'type' => 'referral']) }}"
+                  method="POST"
+                  enctype="multipart/form-data"
+                 class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition"
+                  onclick="this.querySelector('input[type=file]').click(); event.stopPropagation();">
+                @csrf
+                <input type="file"
+                       name="images[]"
+                       multiple
+                       accept="image/*"
+                       class="hidden"
+                       onchange="this.form.submit()">
+                <div class="text-center">
+                    <div class="text-3xl text-gray-500 mb-1"></div>
+                    <p class="text-sm text-gray-700">Choose from Gallery</p>
+                </div>
+            </form>
         </div>
+        @endif
+    </div>
+</div>
+
 
 
         <!-- Improved Zoom Modal -->

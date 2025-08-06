@@ -97,7 +97,7 @@
                                 </div>
 
                                 <!-- School Year Filter -->
-                                <div class="md:w-auto w-full">
+                                {{-- <div class="md:w-auto w-full">
                                     <label class="block text-sm text-gray-700 mb-1">School Year:</label>
                                     <select name="school_year_id" onchange="this.form.submit()" 
                                             class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full focus:ring focus:ring-red-200 focus:border-red-500 transition">
@@ -120,10 +120,10 @@
                                         <option value="2nd" {{ request('semester_label') == '2nd' ? 'selected' : '' }}>2nd</option>
                                         <option value="Summer" {{ request('semester_label') == 'Summer' ? 'selected' : '' }}>Summer</option>
                                     </select>
-                                </div>
+                                </div> --}}
 
                                 <!-- Sort By -->
-                                <div class="md:w-auto w-full">
+                                {{-- <div class="md:w-auto w-full">
                                     <label class="block text-sm text-gray-700 mb-1">Sort By:</label>
                                     <select name="sort_by" onchange="this.form.submit()" 
                                             class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full focus:ring focus:ring-red-200 focus:border-red-500 transition">
@@ -133,6 +133,16 @@
                                         <option value="total_days" {{ request('sort_by') == 'total_days' ? 'selected' : '' }}>Total Days</option>
                                         <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Newest First</option>
                                         <option value="asc" {{ request('sort') === 'asc' ? 'selected' : '' }}>Oldest First</option>
+                                    </select>
+                                </div> --}}
+
+                                <!-- Sort By -->
+                                <div class="md:w-auto w-full">
+                                    <label class="block text-sm text-gray-700 mb-1">Sort By:</label>
+                                    <select name="sort" onchange="this.form.submit()" 
+                                            class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full focus:ring focus:ring-red-200 focus:border-red-500 transition">
+                                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
+                                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
                                     </select>
                                 </div>
                                
@@ -210,8 +220,8 @@
                         <table class="min-w-full divide-y divide-gray-200 text-sm">
                             <thead style="background:#a82323;" class="text-white text-left">
                                 <tr>
-                                    <th class="px-4 py-3">A.Y</th>
-                                    <th class="px-4 py-3">Semester</th>
+                                    {{-- <th class="px-4 py-3">A.Y</th>
+                                    <th class="px-4 py-3">Semester</th> --}}
                                     <th class="px-4 py-3">Student ID</th>
                                     <th class="px-4 py-3">Student</th>
                                     <th class="px-4 py-3">Contract Type</th>
@@ -223,8 +233,8 @@
                             <tbody class="divide-y divide-gray-100">
                                 @forelse ($contracts as $contract)
                                     <tr class="hover:bg-[#f8eaea] transition">
-                                        <td class="px-4 py-3">{{ $contract->semester->schoolYear->school_year ?? 'N/A' }}</td>
-                                        <td class="px-4 py-3">{{ $contract->semester->semester ?? 'N/A' }}</td>
+                                        {{-- <td class="px-4 py-3">{{ $contract->semester->schoolYear->school_year ?? 'N/A' }}</td>
+                                        <td class="px-4 py-3">{{ $contract->semester->semester ?? 'N/A' }}</td> --}}
                                         <td class="px-4 py-3 font-medium">{{ $contract->student->student_id }}</td>
                                         <td class="px-4 py-3">{{ $contract->student->last_name }},{{ $contract->student->first_name }} {{ $contract->student->middle_name }}. {{ $contract->student->suffix }}</td>
                                         <td class="px-4 py-3">

@@ -132,143 +132,141 @@
             @endif
         </div>
 
-        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
-            <p class="font-semibold text-gray-700 mb-4 text-lg">Counseling Form Pictures</p>
-            @php $formImages = $counseling->images->where('type', 'form'); @endphp
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <!-- Existing images -->
-                @foreach($formImages as $image)
-                    <div class="relative group">
-                        <img src="{{ asset('storage/' . $image->image_path) }}"
-                            @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
-                            class="w-full h-36 object-cover rounded border cursor-zoom-in">
-                        
-                        @if(empty($readonly))
-                        <form action="{{ route('counseling.deleteImage', [$counseling->id, $image->id]) }}" method="POST"
-                            class="absolute top-1 right-1 bg-white rounded-full shadow p-1 group-hover:opacity-100 opacity-0 transition-opacity">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-800 text-lg font-bold leading-none">
-                                &times;
-                            </button>
-                        </form>
-                        @endif
-                    </div>
-                @endforeach
-
-
-                <!-- Add Images Button -->
-                @if(empty($readonly))
-                <div x-data="{
-                    openCamera() {
-                        $refs.formInput.setAttribute('capture', 'environment');
-                        $refs.formInput.click();
-                    },
-                    openGallery() {
-                        $refs.formInput.removeAttribute('capture');
-                        $refs.formInput.click();
-                    }
-                }">
-                    <form action="{{ route('counseling.uploadImages', ['id' => $counseling->id, 'type' => 'form']) }}"
-                        method="POST"
-                        enctype="multipart/form-data">
-                        @csrf
-                        <input type="file" name="images[]" multiple accept="image/*" class="hidden" x-ref="formInput" onchange="this.form.submit()">
-
-                        <div class="flex gap-4">
-                            <button type="button" @click="openCamera"
-                                    class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
-                                <div class="text-3xl text-gray-400"></div>
-                                <span class="text-xs mt-1 text-gray-600">Take Photo</span>
-                            </button>
-
-                            <button type="button" @click="openGallery"
-                                    class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
-                                <div class="text-3xl text-gray-400"></div>
-                                <span class="text-xs mt-1 text-gray-600">Choose Gallery</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                @endif
-            </div>
-        </div>
-
-
-        {{-- ID Card Images --}}
+       <!-- Counseling Form Images -->
 <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
-    <p class="font-semibold text-gray-700 mb-4 text-lg">Student ID Card Images</p>
-    @php $idImages = $counseling->images->where('type', 'id_card'); @endphp
+    <p class="font-semibold text-gray-700 mb-4 text-lg">Counseling Form Pictures</p>
+    @php $formImages = $counseling->images->where('type', 'form'); @endphp
+
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        @foreach($idImages as $image) 
+        @foreach($formImages as $image)
             <div class="relative group">
                 <img src="{{ asset('storage/' . $image->image_path) }}"
-                    @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
-                    class="w-full h-36 object-cover rounded border cursor-zoom-in">
-
+                     @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
+                     class="w-full h-36 object-cover rounded border cursor-zoom-in">
+                
                 @if(empty($readonly))
-                <form action="{{ route('counseling.deleteImage', [$counseling->id, $image->id]) }}" method="POST"
-                    class="absolute top-1 right-1 bg-white rounded-full shadow p-1 group-hover:opacity-100 opacity-0 transition-opacity">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="text-red-600 hover:text-red-800 text-lg font-bold leading-none">
-                        &times;
-                    </button>
-                </form>
+                    <form action="{{ route('counseling.deleteImage', [$counseling->id, $image->id]) }}" method="POST"
+                          class="absolute top-1 right-1 bg-white rounded-full shadow p-1 group-hover:opacity-100 opacity-0 transition-opacity">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-red-600 hover:text-red-800 text-lg font-bold leading-none">
+                            &times;
+                        </button>
+                    </form>
                 @endif
             </div>
         @endforeach
 
         @if(empty($readonly))
-        <div x-data="{
-    openCamera() {
-        $refs.idInput.setAttribute('capture', 'environment');
-        $refs.idInput.click();
-    },
-    openGallery() {
-        $refs.idInput.removeAttribute('capture');
-        $refs.idInput.click();
-    }
-}">
-    <form action="{{ route('counseling.uploadImages', ['id' => $counseling->id, 'type' => 'id_card']) }}"
-          method="POST"
-          enctype="multipart/form-data">
-        @csrf
-        <input type="file" name="images[]" multiple accept="image/*" class="hidden" x-ref="idInput" onchange="this.form.submit()">
+            <div x-data="{
+                openCamera() {
+                    $refs.formInput.setAttribute('capture', 'environment');
+                    $refs.formInput.click();
+                },
+                openGallery() {
+                    $refs.formInput.removeAttribute('capture');
+                    $refs.formInput.click();
+                }
+            }">
+                <form action="{{ route('counseling.uploadImages', ['id' => $counseling->id, 'type' => 'form']) }}"
+                      method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="file" name="images[]" multiple accept="image/*" class="hidden"
+                           x-ref="formInput" onchange="this.form.submit()">
 
-        <div class="flex gap-4">
-            <button type="button" @click="openCamera"
-                    class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
-                <div class="text-3xl text-gray-400"></div>
-                <span class="text-xs mt-1 text-gray-600">Take Photo</span>
-            </button>
+                    <div class="flex gap-4">
+                        <button type="button" @click="openCamera"
+                                class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+                            <div class="text-3xl text-gray-400"></div>
+                            <span class="text-xs mt-1 text-gray-600">Take Photo</span>
+                        </button>
 
-            <button type="button" @click="openGallery"
-                    class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
-                <div class="text-3xl text-gray-400"></div>
-                <span class="text-xs mt-1 text-gray-600">Choose Gallery</span>
-            </button>
-        </div>
-    </form>
-</div>
-
+                        <button type="button" @click="openGallery"
+                                class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+                            <div class="text-3xl text-gray-400"></div>
+                            <span class="text-xs mt-1 text-gray-600">Choose Gallery</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         @endif
     </div>
 </div>
 
+<!-- Student ID Card Images -->
+<div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+    <p class="font-semibold text-gray-700 mb-4 text-lg">Student ID Card Images</p>
+    @php $idImages = $counseling->images->where('type', 'id_card'); @endphp
 
-        {{-- Zoom Image Modal --}}
-        <div x-show="zoomedImage"
-             class="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-6"
-             x-transition>
-            <div class="relative max-w-3xl w-full">
-                <button @click="zoomedImage = null"
-                        class="absolute top-2 right-2 text-white text-3xl font-bold z-50">
-                    &times;
-                </button>
-                <img :src="zoomedImage"
-                     class="w-full max-h-[80vh] object-contain rounded-lg border-4 border-white shadow-lg">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        @foreach($idImages as $image)
+            <div class="relative group">
+                <img src="{{ asset('storage/' . $image->image_path) }}"
+                     @click="zoomedImage = '{{ asset('storage/' . $image->image_path) }}'"
+                     class="w-full h-36 object-cover rounded border cursor-zoom-in">
+
+                @if(empty($readonly))
+                    <form action="{{ route('counseling.deleteImage', [$counseling->id, $image->id]) }}" method="POST"
+                          class="absolute top-1 right-1 bg-white rounded-full shadow p-1 group-hover:opacity-100 opacity-0 transition-opacity">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-red-600 hover:text-red-800 text-lg font-bold leading-none">
+                            &times;
+                        </button>
+                    </form>
+                @endif
             </div>
-        </div>
+        @endforeach
+
+        @if(empty($readonly))
+            <div x-data="{
+                openCamera() {
+                    $refs.idInput.setAttribute('capture', 'environment');
+                    $refs.idInput.click();
+                },
+                openGallery() {
+                    $refs.idInput.removeAttribute('capture');
+                    $refs.idInput.click();
+                }
+            }">
+                <form action="{{ route('counseling.uploadImages', ['id' => $counseling->id, 'type' => 'id_card']) }}"
+                      method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="file" name="images[]" multiple accept="image/*" class="hidden"
+                           x-ref="idInput" onchange="this.form.submit()">
+
+                    <div class="flex gap-4">
+                        <button type="button" @click="openCamera"
+                                class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+                            <div class="text-3xl text-gray-400"></div>
+                            <span class="text-xs mt-1 text-gray-600">Take Photo</span>
+                        </button>
+
+                        <button type="button" @click="openGallery"
+                                class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg w-32 h-32 hover:border-red-500 hover:bg-gray-50 transition">
+                            <div class="text-3xl text-gray-400"></div>
+                            <span class="text-xs mt-1 text-gray-600">Choose Gallery</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        @endif
+    </div>
+</div>
+
+<!-- Zoom Modal -->
+<div x-show="zoomedImage"
+     class="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-6"
+     x-transition>
+    <div class="relative max-w-3xl w-full">
+        <button @click="zoomedImage = null"
+                class="absolute top-2 right-2 text-white text-3xl font-bold z-50">
+            &times;
+        </button>
+        <img :src="zoomedImage"
+             class="w-full max-h-[80vh] object-contain rounded-lg border-4 border-white shadow-lg">
+    </div>
+</div>
+
     </div>
 </x-app-layout>

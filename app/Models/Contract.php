@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Contract extends Model
 {
-    
     protected $fillable = [
     'student_id',
     'semester_id',
