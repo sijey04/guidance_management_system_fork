@@ -65,9 +65,33 @@ RUN echo '<VirtualHost *:80>\n\
 # Set proper permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Create required storage directories and set permissions
+RUN mkdir -p /var/www/html/storage/logs \
+    /var/www/html/storage/framework/cache \
+    /var/www/html/storage/framework/sessions \
+    /var/www/html/storage/framework/views \
+    /var/www/html/storage/app/public \
+    /var/www/html/bootstrap/cache
+
+# Set correct ownership and permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Create laravel.log file with proper permissions
+RUN touch /var/www/html/storage/logs/laravel.log
+RUN chown www-data:www-data /var/www/html/storage/logs/laravel.log
+RUN chmod 664 /var/www/html/storage/logs/laravel.log
+
 # Create a start script that waits for database and handles environment properly
 RUN echo '#!/bin/bash\n\
 echo "Starting Laravel application..."\n\
+echo "Setting up storage permissions..."\n\
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache\n\
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache\n\
+touch /var/www/html/storage/logs/laravel.log\n\
+chown www-data:www-data /var/www/html/storage/logs/laravel.log\n\
+chmod 664 /var/www/html/storage/logs/laravel.log\n\
+echo "Storage permissions set!"\n\
 echo "Waiting for database connection..."\n\
 until php artisan tinker --execute="try { DB::connection()->getPdo(); echo \"Database connected\"; } catch (Exception \$e) { echo \"Database not ready: \" . \$e->getMessage(); exit(1); }" 2>/dev/null; do\n\
   echo "Waiting for database..."\n\
@@ -84,6 +108,8 @@ php artisan route:cache --quiet\n\
 php artisan view:cache --quiet\n\
 echo "Running database migrations..."\n\
 php artisan migrate --force --no-interaction\n\
+echo "Checking if deleted_at column exists..."\n\
+php artisan tinker --execute="try { Schema::hasColumn(\"contracts\", \"deleted_at\") ? print(\"deleted_at column exists\") : print(\"deleted_at column missing\"); } catch (Exception \$e) { print(\"Error checking column: \" . \$e->getMessage()); }"\n\
 echo "Laravel application ready!"\n\
 apache2-foreground' > /var/www/html/start.sh
 
