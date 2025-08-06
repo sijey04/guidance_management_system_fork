@@ -19,12 +19,10 @@ class ContractController extends Controller
 {
     $query = Contract::with('student', 'semester.schoolYear');
 
-    // Fetch all with eager loaded relations
    $allContracts = $query->get();
 $latestContracts = $this->getLatestUniqueContracts($allContracts);
 
 
-    // STEP 2: Apply filters on the cleaned collection
     $filteredContracts = $latestContracts->filter(function ($contract) use ($request) {
         $match = true;
 
@@ -57,17 +55,12 @@ $latestContracts = $this->getLatestUniqueContracts($allContracts);
         return $match;
     });
 
-    // STEP 3: Sort the filtered collection
-    if ($request->filled('sort_by')) {
-        $sortField = $request->sort_by;
-        $sortDirection = $request->get('sort_direction', 'asc');
-
-        if (in_array($sortField, ['contract_date', 'status', 'total_days'])) {
-            $filteredContracts = $filteredContracts->sortBy($sortField, SORT_REGULAR, $sortDirection === 'desc');
-        }
+    if ($request->filled('sort')) {
+        $filtered = $filteredContracts->sortBy('contract_date', SORT_REGULAR, $request->sort === 'oldest' ? false : true);
+    } else {
+        $filtered = $filteredContracts->sortByDesc('contract_date');
     }
 
-    // STEP 4: Manual pagination
     $page = $request->input('page', 1);
     $perPage = 10;
     $contracts = new \Illuminate\Pagination\LengthAwarePaginator(
@@ -265,6 +258,11 @@ public function allContracts(Request $request)
     $allContracts = $query->get();
 
 $filteredContracts = $this->getLatestUniqueContracts($allContracts);
+if ($request->filled('sort')) {
+        $filtered = $filteredContracts->sortBy('contract_date', SORT_REGULAR, $request->sort === 'oldest' ? false : true);
+    } else {
+        $filtered = $filteredContracts->sortByDesc('contract_date');
+    }
 
 
 // Manual pagination

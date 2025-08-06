@@ -127,8 +127,8 @@
 
                     <div class="mt-3 flex justify-end">
                         <button type="submit"
-                                class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
-                            Save Remarks
+                                 class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                          Save Remarks
                         </button>
                     </div>
                 </form>

@@ -134,8 +134,8 @@
                             <div class="flex flex-wrap gap-2">
                                 <!-- Manage Referral Reasons Button -->
                                 <a href="{{ route('referral-reasons.index') }}" 
-                                   style="background-color: #1d4ed8; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 600;">
-                                    ⚙️ Manage Referral Reasons
+                                    style="background-color: #a82323; color: white; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: 600;">
+                                        Manage Referral Reasons
                                 </a>
                                 
                                 <!-- Create Referral Button with Modal -->

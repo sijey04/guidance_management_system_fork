@@ -123,7 +123,7 @@
                                 </div>
 
                                 <!-- Sort By -->
-                                <div class="md:w-auto w-full">
+                                {{-- <div class="md:w-auto w-full">
                                     <label class="block text-sm text-gray-700 mb-1">Sort By:</label>
                                     <select name="sort_by" onchange="this.form.submit()" 
                                             class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full focus:ring focus:ring-red-200 focus:border-red-500 transition">
@@ -133,6 +133,16 @@
                                         <option value="total_days" {{ request('sort_by') == 'total_days' ? 'selected' : '' }}>Total Days</option>
                                         <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Newest First</option>
                                         <option value="asc" {{ request('sort') === 'asc' ? 'selected' : '' }}>Oldest First</option>
+                                    </select>
+                                </div> --}}
+
+                                <!-- Sort By -->
+                                <div class="md:w-auto w-full">
+                                    <label class="block text-sm text-gray-700 mb-1">Sort By:</label>
+                                    <select name="sort" onchange="this.form.submit()" 
+                                            class="border-gray-300 rounded-lg px-3 py-2 text-sm w-full focus:ring focus:ring-red-200 focus:border-red-500 transition">
+                                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
+                                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
                                     </select>
                                 </div>
                                

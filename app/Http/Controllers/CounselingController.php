@@ -34,7 +34,6 @@ public function index(Request $request)
 $latestCounselings = $this->getLatestUniqueCounselings($allCounselings);
 
 
-    // Step 2: Apply filters manually to the cleaned collection
     $filtered = $latestCounselings->filter(function ($counseling) use ($request) {
         $match = true;
 
@@ -63,14 +62,12 @@ $latestCounselings = $this->getLatestUniqueCounselings($allCounselings);
         return $match;
     });
 
-    // Step 3: Sort
     if ($request->filled('sort')) {
         $filtered = $filtered->sortBy('counseling_date', SORT_REGULAR, $request->sort === 'oldest' ? false : true);
     } else {
         $filtered = $filtered->sortByDesc('counseling_date');
     }
 
-    // Step 4: Manual pagination
     $page = $request->input('page', 1);
     $perPage = 10;
     $counselings = new \Illuminate\Pagination\LengthAwarePaginator(
@@ -81,7 +78,6 @@ $latestCounselings = $this->getLatestUniqueCounselings($allCounselings);
         ['path' => $request->url(), 'query' => $request->query()]
     );
 
-    // Step 5: Get all validated and newly enrolled students
     $newStudents = Student::whereHas('enrollments', fn ($q) => $q->where('semester_id', $currentSemester->id)->where('is_enrolled', true));
     $validatedStudents = Student::whereHas('profiles', fn ($q) => $q->where('semester_id', $currentSemester->id));
     $students = $newStudents->union($validatedStudents)->get();

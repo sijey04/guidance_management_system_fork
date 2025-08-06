@@ -138,8 +138,6 @@
     <p class="text-xs text-gray-500 mt-2">You can add or remove images before submitting.</p>
 </div>
 
-
-
 <div x-data="{
     files: [],
     inputMode: '',
