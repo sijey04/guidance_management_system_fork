@@ -426,6 +426,7 @@ private function getLatestUniqueContracts($contracts)
                 return optional($c->semester)->id;
             })->first();
         })
+        ->sortByDesc('contract_date')
         ->values();
 }
 
