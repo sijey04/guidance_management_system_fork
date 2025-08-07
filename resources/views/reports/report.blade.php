@@ -68,7 +68,7 @@
                             </p>
                         </div>
 
-                       <div x-data="{ open: false, selected: 'all' }">
+                    <div x-data="{ open: false, selected: 'all' }">
                         <button 
                             @click="open = true" 
                             class="bg-[#a82323] text-white px-4 py-2 rounded text-sm shadow flex items-center gap-2">
@@ -78,162 +78,161 @@
                             Export
                         </button>
 
-    <!-- Modal -->
-    <div x-show="open" class="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
-        <div @click.away="open = false" class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
-            <h2 class="text-xl font-bold mb-4">Export Report</h2>
+                        <!-- Modal -->
+                        <div x-show="open" class="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
+                            <div @click.away="open = false" class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
+                                <h2 class="text-xl font-bold mb-4">Export Report</h2>
 
-            <form method="GET" action="" x-ref="form">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- School Year -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">School Year</label>
-                        <select name="school_year_id" class="form-select w-full rounded border-gray-300">
-                            @foreach ($schoolYears as $sy)
-                                <option value="{{ $sy->id }}">{{ $sy->school_year }}</option>
-                            @endforeach
-                        </select>
+                                <form method="GET" action="" x-ref="form">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <!-- School Year -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">School Year</label>
+                                            <select name="school_year_id" class="form-select w-full rounded border-gray-300">
+                                                @foreach ($schoolYears as $sy)
+                                                    <option value="{{ $sy->id }}">{{ $sy->school_year }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <!-- Semester -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Semester</label>
+                                            <select name="semester_name" class="form-select w-full rounded border-gray-300">
+                                                <option value="1st">1st Semester</option>
+                                                <option value="2nd">2nd Semester</option>
+                                                <option value="Summer">Summer</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Export Type -->
+                                        <div class="md:col-span-2">
+                                            <label class="block text-sm font-medium text-gray-700">Export Data</label>
+                                            <select name="tab" x-model="selected" class="form-select w-full rounded border-gray-300">
+                                                <option value="all">All</option>
+                                                <option value="student_profiles">Student Profiles</option>
+                                                <option value="contracts">Contracts</option>
+                                                <option value="referrals">Referrals</option>
+                                                <option value="counseling">Counseling</option>
+                                                <option value="transitions">Student Transition Records</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Conditional Filters -->
+
+                                       <!--  Course, Year, Section -->
+                                        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <label>Course</label>
+                                                <select name="filter_course" class="form-select w-full rounded border-gray-300">
+                                                    <option value="">All</option>
+                                                    @foreach($courses as $course)
+                                                        <option value="{{ $course->course }}">{{ $course->course }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label>Year</label>
+                                                <select name="filter_year" class="form-select w-full rounded border-gray-300">
+                                                    <option value="">All</option>
+                                                    @foreach($years as $year)
+                                                        <option value="{{ $year->year_level }}">{{ $year->year_level }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label>Section</label>
+                                                <select name="filter_section" class="form-select w-full rounded border-gray-300">
+                                                    <option value="">All</option>
+                                                    @foreach($sections as $section)
+                                                        <option value="{{ $section->section }}">{{ $section->section }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- Contract Filters -->
+                                        <template x-if="selected === 'contracts'">
+                                            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label>Contract Type</label>
+                                                    <select name="filter_contract_type" class="form-select w-full rounded border-gray-300">
+                                                        <option value="">All</option>
+                                                        @foreach($contractTypesList as $type)
+                                                            <option value="{{ $type->type }}">{{ $type->type }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label>Status</label>
+                                                    <select name="filter_contract_status" class="form-select w-full rounded border-gray-300">
+                                                        <option value="">All</option>
+                                                        <option value="In Progress">In Progress</option>
+                                                        <option value="Completed">Completed</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                        <!-- Referral Filters -->
+                                        <template x-if="selected === 'referrals'">
+                                            <div class="md:col-span-2">
+                                                <label>Reason</label>
+                                                <select name="filter_reason" class="form-select w-full rounded border-gray-300">
+                                                    <option value="">All</option>
+                                                    @foreach($referralReasons as $reason)
+                                                        <option value="{{ $reason->reason }}">{{ $reason->reason }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </template>
+
+                                        <!-- Counseling Filters -->
+                                        <template x-if="selected === 'counseling'">
+                                            <div class="md:col-span-2">
+                                                <label>Status</label>
+                                                <select name="filter_counseling_status" class="form-select w-full rounded border-gray-300">
+                                                    <option value="">All</option>
+                                                    <option value="In Progress">In Progress</option>
+                                                    <option value="Completed">Completed</option>
+                                                </select>
+                                            </div>
+                                        </template>
+
+                                        <!-- Transition Filters -->
+                                        <template x-if="selected === 'transitions'">
+                                            <div class="md:col-span-2">
+                                                <label>Transition Type</label>
+                                                <select name="filter_transition_type" class="form-select w-full rounded border-gray-300">
+                                                <option value="">All Types</option>
+                                                @foreach(['Shifting In', 'Shifting Out', 'Transferring In', 'Transferring Out', 'Dropped', 'Returning Student'] as $type)
+                                                    <option value="{{ $type }}" {{ request('filter_transition_type') == $type ? 'selected' : '' }}>
+                                                        {{ $type }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <!-- Export Buttons -->
+                                    <div class="flex justify-end mt-6 gap-3">
+                                        <button @click="open = false" type="button" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                                        
+                                        <button type="submit" formaction="{{ route('reports.export') }}"
+                                                class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                                            Export PDF
+                                        </button>
+
+                                        <button type="submit" formaction="{{ route('report.exportExcel') }}"
+                                                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                            Export Excel
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- Semester -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Semester</label>
-                        <select name="semester_name" class="form-select w-full rounded border-gray-300">
-                            <option value="1st">1st Semester</option>
-                            <option value="2nd">2nd Semester</option>
-                            <option value="Summer">Summer</option>
-                        </select>
-                    </div>
-
-                    <!-- Export Type -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">Export Data</label>
-                        <select name="tab" x-model="selected" class="form-select w-full rounded border-gray-300">
-                            <option value="all">All</option>
-                            <option value="student_profiles">Student Profiles</option>
-                            <option value="contracts">Contracts</option>
-                            <option value="referrals">Referrals</option>
-                            <option value="counseling">Counseling</option>
-                            <option value="transitions">Student Transition Records</option>
-                        </select>
-                    </div>
-
-                    <!-- Conditional Filters -->
-                    <!-- Student Profile Filters -->
-                    <template x-if="selected === 'student_profiles'">
-                        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label>Course</label>
-                                <select name="filter_course" class="form-select w-full rounded border-gray-300">
-                                    <option value="">All</option>
-                                    @foreach($courses as $course)
-                                        <option value="{{ $course->course }}">{{ $course->course }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label>Year</label>
-                                <select name="filter_year" class="form-select w-full rounded border-gray-300">
-                                    <option value="">All</option>
-                                    @foreach($years as $year)
-                                        <option value="{{ $year->year_level }}">{{ $year->year_level }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label>Section</label>
-                                <select name="filter_section" class="form-select w-full rounded border-gray-300">
-                                    <option value="">All</option>
-                                    @foreach($sections as $section)
-                                        <option value="{{ $section->section }}">{{ $section->section }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                    </template>
-
-                    <!-- Contract Filters -->
-                    <template x-if="selected === 'contracts'">
-                        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label>Contract Type</label>
-                                <select name="filter_contract_type" class="form-select w-full rounded border-gray-300">
-                                    <option value="">All</option>
-                                    @foreach($contractTypesList as $type)
-                                        <option value="{{ $type->type }}">{{ $type->type }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label>Status</label>
-                                <select name="filter_contract_status" class="form-select w-full rounded border-gray-300">
-                                    <option value="">All</option>
-                                    <option value="In Progress">In Progress</option>
-                                    <option value="Completed">Completed</option>
-                                </select>
-                            </div>
-                        </div>
-                    </template>
-
-                    <!-- Referral Filters -->
-                    <template x-if="selected === 'referrals'">
-                        <div class="md:col-span-2">
-                            <label>Reason</label>
-                            <select name="filter_reason" class="form-select w-full rounded border-gray-300">
-                                <option value="">All</option>
-                                @foreach($referralReasons as $reason)
-                                    <option value="{{ $reason->reason }}">{{ $reason->reason }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </template>
-
-                    <!-- Counseling Filters -->
-                    <template x-if="selected === 'counseling'">
-                        <div class="md:col-span-2">
-                            <label>Status</label>
-                            <select name="filter_counseling_status" class="form-select w-full rounded border-gray-300">
-                                <option value="">All</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Completed">Completed</option>
-                            </select>
-                        </div>
-                    </template>
-
-                    <!-- Transition Filters -->
-                    <template x-if="selected === 'transitions'">
-                        <div class="md:col-span-2">
-                            <label>Transition Type</label>
-                             <select name="filter_transition_type" class="form-select w-full rounded border-gray-300">
-                            <option value="">All Types</option>
-                            @foreach(['Shifting In', 'Shifting Out', 'Transferring In', 'Transferring Out', 'Dropped', 'Returning Student'] as $type)
-                                <option value="{{ $type }}" {{ request('filter_transition_type') == $type ? 'selected' : '' }}>
-                                    {{ $type }}
-                                </option>
-                            @endforeach
-                        </select>
-                        </div>
-                    </template>
-                </div>
-
-                <!-- Export Buttons -->
-                <div class="flex justify-end mt-6 gap-3">
-                    <button @click="open = false" type="button" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-                    
-                    <button type="submit" formaction="{{ route('reports.export') }}"
-                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                        Export PDF
-                    </button>
-
-                    <button type="submit" formaction="{{ route('report.exportExcel') }}"
-                            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                        Export Excel
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
                     
                         <form method="GET" class="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">

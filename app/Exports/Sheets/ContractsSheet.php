@@ -17,16 +17,20 @@ class ContractsSheet implements FromArray, WithTitle
     public function array(): array
     {
         $data = [
-            ['Student', 'Type', 'Status', 'Start Date', 'End Date'],
+            ['No.', 'Student ID','Student', 'Type', 'Status', 'Start Date', 'Total Days', 'End Date','Remark'],
         ];
 
-        foreach ($this->contracts as $contract) {
+        foreach ($this->contracts as $index => $contract) {
             $data[] = [
-                $contract->student->first_name . ' ' . $contract->student->last_name,
+                $index + 1, // Auto-numbering
+                $contract->student->student_id,
+                $contract->student->last_name . ', ' . $contract->student->first_name. ' ' . $contract->student->middle_name. '.',
                 $contract->contract_type,
                 $contract->status,
                 $contract->start_date,
+                $contract->total_days,
                 $contract->end_date,
+                $contract->remarks,
             ];
         }
 
@@ -38,4 +42,3 @@ class ContractsSheet implements FromArray, WithTitle
         return 'Contracts';
     }
 }
-

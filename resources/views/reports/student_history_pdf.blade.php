@@ -14,13 +14,13 @@
         h2 {
             font-size: 18px;
             text-align: center;
-            color: #2c3e50;
+            color: #a82323;
             margin-bottom: 30px;
             text-transform: uppercase;
         }
 
         .section-title {
-            background-color: #2c3e50;
+            background-color: #a82323;
             color: #fff;
             padding: 10px 15px;
             font-weight: bold;
@@ -63,6 +63,12 @@
             color: #888;
             padding: 5px 0;
         }
+        .summary {
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #a82323;
+        }
 
     </style>
 </head>
@@ -85,7 +91,24 @@
         </div>
     </div>
 
-    <h2>Student History Report</h2>
+     <div class="">
+        @php
+            $filters = [];
+
+            if(request('filter_course')) $filters[] = 'Course: ' . request('filter_course');
+            if(request('filter_year_level')) $filters[] = 'Year Level: ' . request('filter_year_level');
+            if(request('filter_section')) $filters[] = 'Section: ' . request('filter_section');
+            if(request('filter_contract_type')) $filters[] = 'Contract Type: ' . request('filter_contract_type');
+            if(request('filter_transition')) $filters[] = 'Transition: ' . request('filter_transition');
+            if(request('filter_contract_status')) $filters[] = 'Contract Status: ' . request('filter_contract_status');
+            if(request('filter_counseling_status')) $filters[] = 'Counseling Status: ' . request('filter_counseling_status');
+            if(request('filter_reason')) $filters[] = 'Referral Reason: ' . request('filter_reason');
+            if(request('filter_transition_type')) $filters[] = 'Transition: ' . request('filter_transition_type');
+
+            $filterSummary = count($filters) ? implode(' | ', $filters) : 'No specific filters applied';
+        @endphp
+    </div>
+    <h2>Student Records</h2>
 
     <table class="info-table">
         <tr>
@@ -115,30 +138,40 @@
     {{-- Contracts --}}
     @if($tab === 'all' || $tab === 'contracts')
         <div class="section-title">Contracts</div>
+         <p class="summary">
+           Contract Status :  {{ request('filter_contract_status') ? ucfirst(request('filter_contract_status')) : 'All' }} <br>
+            Contract Type : {{ request('filter_contract_type') ? ucfirst(request('filter_contract_type')) : 'Contracts' }} <br>
+        </p>
+            <p class="summary">Total Contracts: {{ $contracts->count() }}</p>
         @if($contracts->isNotEmpty())
             <table>
                 <thead>
                     <tr>
+                         <th></th>
                         <th>Date</th>
                         <th>Type</th>
                         <th>Status</th>
                         <th>Start Date</th>
                         <th>Days</th>
                         <th>End Date</th>
-                        <th>Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($contracts as $contract)
                         <tr>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ \Carbon\Carbon::parse($contract->contract_date)->format('M d, Y') }}</td>
                             <td>{{ $contract->contract_type }}</td>
                             <td>{{ $contract->status }}</td>
                             <td>{{ $contract->start_date }}</td>
                             <td>{{ $contract->total_days }}</td>
                             <td>{{ $contract->end_date }}</td>
-                            <td>{{ $contract->remarks }}</td>
                         </tr>
+                         <tr>
+                        <td colspan="8" class="text-wrap" style="padding-left: 30px;">
+                            <strong>Remarks:</strong> {{ $contract->remarks ?: 'No remarks' }}
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -150,22 +183,32 @@
     {{-- Referrals --}}
     @if($tab === 'all' || $tab === 'referrals')
         <div class="section-title">Referrals</div>
+        <p class="summary">
+    Referal Reason : {{ request('filter_reason') ? ucfirst(request('filter_reason')) : 'All' }}
+</p>
+ <p class="summary">Total Referrals: {{ $referrals->count() }}</p>
         @if($referrals->isNotEmpty())
             <table>
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Date</th>
                         <th>Reason</th>
-                        <th>Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($referrals as $referral)
                         <tr>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ \Carbon\Carbon::parse($referral->created_at)->format('M d, Y') }}</td>
                             <td>{{ $referral->reason }}</td>
                             <td>{{ $referral->remarks }}</td>
                         </tr>
+                         <tr>
+                        <td colspan="8" class="text-wrap" style="padding-left: 30px;">
+                            <strong>Remarks:</strong> {{ $referral->remarks ?: 'No remarks' }}
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -177,22 +220,33 @@
     {{-- Counseling --}}
     @if($tab === 'all' || $tab === 'counseling')
         <div class="section-title">Counseling Sessions</div>
+        <p class="summary">
+            Status :{{ request('filter_counseling_status') ? ucfirst(request('filter_counseling_status')) : 'All' }} 
+        </p>
+
+        <p class="summary">Total Counseling Sessions: {{ $counselings->count() }}</p>
         @if($counselings->isNotEmpty())
             <table>
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Date</th>
                         <th>Status</th>
-                        <th>Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($counselings as $counseling)
                         <tr>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ \Carbon\Carbon::parse($counseling->created_at)->format('M d, Y') }}</td>
                             <td>{{ $counseling->status }}</td>
                             <td>{{ $counseling->remarks }}</td>
                         </tr>
+                         <tr>
+                        <td colspan="8" class="text-wrap" style="padding-left: 30px;">
+                            <strong>Remarks:</strong> {{ $counseling->remarks ?: 'No remarks' }}
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>

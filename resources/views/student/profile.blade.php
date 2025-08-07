@@ -225,17 +225,77 @@
                             <x-student-info label="Birthday" :value="$student->birthday?->format('F j, Y')" />
                             <x-student-info label="Gender" :value="$student->gender ?? 'N/A'" />
 
-                            <div class="flex flex-col bg-gray-100 p-3 rounded shadow-sm">
-                                <span class="text-sm font-medium text-gray-500">Course, Year & Section</span>
+                            <div class="flex flex-col bg-gray-100 p-3 rounded shadow-sm relative">
+                                <div class="flex justify-between">
+
+                                    <span class="text-sm font-medium text-gray-500">Course, Year & Section</span>
+                                <!-- Edit Button -->
+                                <button
+                                      class="bg-[#a82323] hover:bg-[#8b1c1c] text-white text-sm font-semibold px-4 py-2 rounded"
+                                    onclick="document.getElementById('editCourseModal').classList.remove('hidden')" >
+                                    Update
+                                </button>
+                                </div>
                                 <span class="text-base font-bold text-gray-800">
                                     {{ $profile?->course ?? 'N/A' }} - {{ $profile?->year_level ?? 'N/A' }}{{ $profile?->section ?? '' }}
                                 </span>
+
+                                
                             </div>
+
 
                             <x-student-info label="Home Address" :value="$student->home_address ?? 'N/A'" />
                             <x-student-info label="Contact Number" :value="$student->student_contact ?? 'N/A'" />
                         </div>
                     </section>
+<!-- Modal -->
+<div id="editCourseModal" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
+        <h2 class="text-lg font-semibold mb-4">Edit Course, Year & Section</h2>
+
+        <form action="{{ route('student.updateProfile', $student->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div class="mb-3">
+                <label for="course" class="block text-sm font-medium">Course</label>
+                <select name="course" id="course" class="w-full border-gray-300 rounded">
+                    @foreach($courses as $course)
+                        <option value="{{ $course->course }}" {{ $course->course == $profile?->course ? 'selected' : '' }}>{{ $course->course }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="year_level" class="block text-sm font-medium">Year Level</label>
+                <select name="year_level" id="year_level" class="w-full border-gray-300 rounded">
+                    @foreach($years as $year)
+                        <option value="{{ $year->year_level }}" {{ $year->year_level == $profile?->year_level ? 'selected' : '' }}>{{ $year->year_level }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="section" class="block text-sm font-medium">Section</label>
+                <select name="section" id="section" class="w-full border-gray-300 rounded">
+                    @foreach($sections as $section)
+                        <option value="{{ $section->section }}" {{ $section->section == $profile?->section ? 'selected' : '' }}>{{ $section->section }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="document.getElementById('editCourseModal').classList.add('hidden')" class="text-gray-600 hover:text-gray-800">Cancel</button>
+                <button type="submit"   class="bg-[#a82323] hover:bg-[#8b1c1c] text-white text-sm font-semibold px-4 py-2 rounded">
+      Save</button>
+            </div>
+        </form>
+
+        <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="document.getElementById('editCourseModal').classList.add('hidden')">
+            &times;
+        </button>
+    </div>
+</div>
 
                     {{-- Section: Family Background --}}
                     <section class="mt-6">
