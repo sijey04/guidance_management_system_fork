@@ -20,18 +20,17 @@ class StudentsSheet implements FromArray, WithTitle
     public function array(): array
     {
         $data = [
-            ['Student ID', 'Name', 'Course', 'Year & Section', 'Contracts', 'Referrals', 'Counseling'],
+            ['No.', 'Student ID', 'Name', 'Course', 'Year','Section'],
         ];
 
-        foreach ($this->students as $student) {
+        foreach ($this->students as $index => $student) {
             $data[] = [
+                $index + 1, 
                 $student->student->student_id,
-                $student->student->first_name . ' ' . $student->student->last_name,
+                $student->student->last_name . ', ' . $student->student->first_name. ' ' .$student->student->middle_name. ',',
                 $student->course,
-                $student->year_level . ' ' . $student->section,
-                $this->contractCounts[$student->student_id] ?? 0,
-                $this->referralCounts[$student->student_id] ?? 0,
-                $this->counselingCounts[$student->student_id] ?? 0,
+                $student->year_level,
+                $student->section,
             ];
         }
 
