@@ -129,6 +129,7 @@ Route::get('/report/student/export/pdf', [ReportController::class, 'exportStuden
 Route::get('/report/student/export/excel', [ReportController::class, 'exportStudentExcel'])->name('export.student.excel');
 Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
 Route::get('/reports/export-excel', [ReportController::class, 'exportExcel'])->name('report.exportExcel');
+Route::get('/reports/export-docx', [ReportController::class, 'exportDocx'])->name('report.exportDocx');
 
 Route::resource('users', \App\Http\Controllers\UserController::class)->middleware('auth');
 

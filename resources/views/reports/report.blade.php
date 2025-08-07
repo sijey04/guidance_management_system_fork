@@ -68,7 +68,7 @@
                             </p>
                         </div>
 
-                       <div x-data="{ open: false, selected: 'all' }">
+                    <div x-data="{ open: false, selected: 'all' }">
                         <button 
                             @click="open = true" 
                             class="bg-[#a82323] text-white px-4 py-2 rounded text-sm shadow flex items-center gap-2">
@@ -78,7 +78,7 @@
                             Export
                         </button>
 
-                          <!-- Modal -->
+                        <!-- Modal -->
                         <div x-show="open" class="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
                             <div @click.away="open = false" class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
                                 <h2 class="text-xl font-bold mb-4">Export Report</h2>
@@ -119,38 +119,37 @@
                                         </div>
 
                                         <!-- Conditional Filters -->
-                                        <!-- Student Profile Filters -->
-                                        <template x-if="selected === 'student_profiles'">
-                                            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                <div>
-                                                    <label>Course</label>
-                                                    <select name="filter_course" class="form-select w-full rounded border-gray-300">
-                                                        <option value="">All</option>
-                                                        @foreach($courses as $course)
-                                                            <option value="{{ $course->course }}">{{ $course->course }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label>Year</label>
-                                                    <select name="filter_year" class="form-select w-full rounded border-gray-300">
-                                                        <option value="">All</option>
-                                                        @foreach($years as $year)
-                                                            <option value="{{ $year->year_level }}">{{ $year->year_level }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label>Section</label>
-                                                    <select name="filter_section" class="form-select w-full rounded border-gray-300">
-                                                        <option value="">All</option>
-                                                        @foreach($sections as $section)
-                                                            <option value="{{ $section->section }}">{{ $section->section }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
+
+                                       <!--  Course, Year, Section -->
+                                        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <label>Course</label>
+                                                <select name="filter_course" class="form-select w-full rounded border-gray-300">
+                                                    <option value="">All</option>
+                                                    @foreach($courses as $course)
+                                                        <option value="{{ $course->course }}">{{ $course->course }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                        </template>
+                                            <div>
+                                                <label>Year</label>
+                                                <select name="filter_year" class="form-select w-full rounded border-gray-300">
+                                                    <option value="">All</option>
+                                                    @foreach($years as $year)
+                                                        <option value="{{ $year->year_level }}">{{ $year->year_level }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label>Section</label>
+                                                <select name="filter_section" class="form-select w-full rounded border-gray-300">
+                                                    <option value="">All</option>
+                                                    @foreach($sections as $section)
+                                                        <option value="{{ $section->section }}">{{ $section->section }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
 
                                         <!-- Contract Filters -->
                                         <template x-if="selected === 'contracts'">
