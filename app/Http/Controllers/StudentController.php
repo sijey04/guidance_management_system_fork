@@ -246,8 +246,12 @@ public function show(Student $student)
 
     // Get ALL historical profiles (for enrollment history)
     $allProfiles = $student->profiles()->with('semester')->get();
+ 
+    $courses = Course::all();
+    $years = Year::all();
+    $sections = Section::all();
 
-    return view('student.profile', compact('student', 'semesters', 'activeSemester', 'profile', 'allProfiles'));
+    return view('student.profile', compact('student', 'semesters', 'activeSemester', 'profile','courses', 'years', 'sections' , 'allProfiles'));
 }
 
 
@@ -344,13 +348,22 @@ $profile = $student->profiles()->where('semester_id', $currentSemester->id)->fir
 
 public function profile($id){
     $student = Student::findOrFail($id);
-    $activeSemester = Semester::where('is_current', true)->first(); // ADD THIS LINE
+    $activeSemester = Semester::where('is_current', true)->first(); 
     $semesters = Semester::all();
     $profile = $student->profiles()->where('semester_id', $activeSemester->id ?? null)->first();
     $allProfiles = $student->profiles()->with('semester')->get();
 
-    return view('student.profile', compact('student', 'activeSemester', 'semesters', 'profile', 'allProfiles'));
+    
+    $courses = Course::all();
+    $years = Year::all();
+    $sections = Section::all();
+
+    return view('student.profile', compact(
+        'student', 'activeSemester', 'semesters', 'profile', 'allProfiles',
+        'courses', 'years', 'sections' 
+    ));
 }
+
 
 
 //    public function enrollment($id){
@@ -529,25 +542,36 @@ public function unenrollAll()
 }
 
 
-public function updateProfile(Request $request, Student $student)
+public function updateProfile(Request $request, $id)
 {
-    $request->validate([
-        'course_year' => 'required|string',
-        'section' => 'required|string',
-    ]);
-
+    $student = Student::findOrFail($id);
     $activeSemester = Semester::where('is_current', true)->first();
 
-    $student->profiles()->updateOrCreate(
-        ['semester_id' => $activeSemester->id],
-        [
-            'course_year' => $request->course_year,
-            'section' => $request->section,
-        ]
-    );
+    if (!$activeSemester) {
+        return back()->with('error', 'No active semester set.');
+    }
 
-    return redirect()->back()->with('success', 'Profile updated for current semester only.');
+    $validated = $request->validate([
+        'course' => 'required|exists:courses,course',
+        'year_level' => 'required|exists:years,year_level',
+        'section' => 'required|exists:sections,section',
+    ]);
+
+    $profile = $student->profiles()->where('semester_id', $activeSemester->id)->first();
+
+    if (!$profile) {
+        return back()->with('error', 'No profile found for active semester.');
+    }
+
+    $profile->update([
+        'course' => $validated['course'],
+        'year_level' => $validated['year_level'],
+        'section' => $validated['section'],
+    ]);
+
+    return redirect()->back()->with('success', 'Course, year level, and section updated successfully.');
 }
+
 
 
 public function viewProfile($studentId, $profileId)
