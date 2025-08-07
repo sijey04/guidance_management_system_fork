@@ -81,15 +81,7 @@
                         </div>
                     </div>
                     
-                    <form action="" method="GET" class="w-full md:w-1/3">
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-search text-gray-400"></i>
-                            </div>
-                            <input type="search" name="query" placeholder="Search students, records..." 
-                                class="w-full p-3 pl-10 pr-10 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-all">
-                        </div>
-                    </form>
+                    
                 </div>
             </div>
 
