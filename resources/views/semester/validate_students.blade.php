@@ -192,8 +192,10 @@ x-init="
                 @csrf
                 <div id="selected-hidden"></div>
 
-                <div class="flex justify-between items-center px-4 py-3 sticky bottom-0 bg-white border-t border-gray-200 z-10">
-                    <div  class="flex gap-3 items-center">
+                <div class="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-3 px-4 py-3 sticky bottom-0 bg-white border-t border-gray-200 z-10">
+
+                  <div class="flex flex-wrap gap-3 items-center">
+
                         <button type="button" @click="toggleAllOnPage"
                                 class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-semibold">
                             <span x-text="allSelectedOnPage() ? 'Unselect All on Page' : 'Select All on Page'"></span>
