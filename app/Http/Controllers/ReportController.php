@@ -521,6 +521,7 @@ public function export(Request $request)
     // CONTRACTS
     $currentContracts = Contract::with('student')
         ->whereIn('semester_id', $semesterIds)
+         ->when($studentIds->isNotEmpty(), fn($q) => $q->whereIn('student_id', $studentIds))
         ->get();
 
     $pastContracts = Contract::with('student')
@@ -557,12 +558,14 @@ public function export(Request $request)
     // REFERRALS
     $referrals = Referral::with('student')
         ->whereIn('semester_id', $semesterIds)
+        ->when($studentIds->isNotEmpty(), fn($q) => $q->whereIn('student_id', $studentIds))
         ->when($request->filled('filter_reason'), fn($q) => $q->where('reason', $request->filter_reason))
         ->get();
 
     // COUNSELINGS (mirroring view logic)
     $currentCounselings = Counseling::with('student')
         ->whereIn('semester_id', $semesterIds)
+        ->when($studentIds->isNotEmpty(), fn($q) => $q->whereIn('student_id', $studentIds))
         ->get();
 
     $pastCounselings = Counseling::with('student')
@@ -597,22 +600,26 @@ return !$hasCopyInCurrent && $semesterIds->contains($counseling->semester_id);
     // TRANSITIONS
     $transitions = StudentTransition::with('semester.schoolYear')
         ->whereIn('semester_id', $semesterIds)
+        ->when($studentIds->isNotEmpty(), fn($q) => $q->whereIn('student_id', $studentIds))
         ->when($request->filled('filter_transition_type'), fn($q) => $q->where('transition_type', $request->filter_transition_type))
         ->get();
 
     // COUNTS
     $contractCounts = Contract::selectRaw('student_id, COUNT(*) as count')
         ->whereIn('semester_id', $semesterIds)
+        ->when($studentIds->isNotEmpty(), fn($q) => $q->whereIn('student_id', $studentIds))
         ->groupBy('student_id')
         ->pluck('count', 'student_id');
 
     $referralCounts = Referral::selectRaw('student_id, COUNT(*) as count')
         ->whereIn('semester_id', $semesterIds)
+        ->when($studentIds->isNotEmpty(), fn($q) => $q->whereIn('student_id', $studentIds))
         ->groupBy('student_id')
         ->pluck('count', 'student_id');
 
     $counselingCounts = Counseling::selectRaw('student_id, COUNT(*) as count')
         ->whereIn('semester_id', $semesterIds)
+        ->when($studentIds->isNotEmpty(), fn($q) => $q->whereIn('student_id', $studentIds))
         ->groupBy('student_id')
         ->pluck('count', 'student_id');
 
@@ -873,7 +880,7 @@ if ($include === 'all' || $include === 'counselings') {
         'student', 'contracts', 'referrals', 'counselings', 'profile', 'schoolYear', 'semesterName', 'tab'
     ))->setPaper('a4', 'portrait');
 
-    return $pdf->download("StudentHistory_{$student->student_id}.pdf");
+    return $pdf->download("StudentRecord_{$student->student_id}.pdf");
 }
 
 
@@ -881,7 +888,7 @@ public function exportStudentExcel(Request $request)
 {
     return Excel::download(
         new \App\Exports\StudentHistoryExport($request),
-        "StudentHistory_{$request->student_id}.xlsx"
+        "StudentRecord_{$request->student_id}.xlsx"
     );
 }
 

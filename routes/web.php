@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/student/{student}/profile/{semester}', [StudentController::class, 'viewHistoricalProfile'])->name('student.viewHistoricalProfile');
     Route::get('/student/{student}/profile/{profile}', [StudentController::class, 'viewProfile'])->name('student.profile.view');
     Route::post('/students/import', [StudentController::class, 'import'])->name('student.import');
+Route::put('/students/{student}/profile/update', [StudentController::class, 'updateProfile'])->name('student.updateProfile');
 
     // Semester routes
     Route::resource('semester', SemesterController::class);
@@ -129,6 +130,7 @@ Route::get('/report/student/export/pdf', [ReportController::class, 'exportStuden
 Route::get('/report/student/export/excel', [ReportController::class, 'exportStudentExcel'])->name('export.student.excel');
 Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
 Route::get('/reports/export-excel', [ReportController::class, 'exportExcel'])->name('report.exportExcel');
+Route::get('/reports/export-docx', [ReportController::class, 'exportDocx'])->name('report.exportDocx');
 
 Route::resource('users', \App\Http\Controllers\UserController::class)->middleware('auth');
 

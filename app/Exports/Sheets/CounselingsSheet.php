@@ -17,12 +17,14 @@ class CounselingsSheet implements FromArray, WithTitle
     public function array(): array
     {
         $data = [
-            ['Student', 'Date', 'Status', 'Remarks'],
+            ['No.','Student ID','Student', 'Date', 'Status', 'Remarks'],
         ];
 
-        foreach ($this->counselings as $counseling) {
+        foreach ($this->counselings as $index => $counseling) {
             $data[] = [
-                $counseling->student->first_name . ' ' . $counseling->student->last_name,
+                 $index + 1, 
+                 $counseling->student->student_id,
+                $counseling->student->last_name . ', ' . $counseling->student->first_name. ' ' . $counseling->student->middle_name. '.' ,
                 $counseling->counseling_date,
                 $counseling->status,
                 $counseling->remarks,

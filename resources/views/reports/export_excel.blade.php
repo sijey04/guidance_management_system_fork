@@ -75,6 +75,7 @@
     <table class="student-profiles">
         <thead>
             <tr>
+                <th></th>
                 <th>Student ID</th>
                 <th>Name</th>
                 <th>Course</th>
@@ -87,6 +88,7 @@
         <tbody>
             @foreach($students as $profile)
                 <tr>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $profile->student->student_id }}</td>
                     <td>{{ $profile->student->last_name }}, {{ $profile->student->first_name }} {{ $profile->student->middle_name }}. {{ $profile->student->suffix}}</td>
                     <td>{{ $profile->course }}</td>
@@ -118,6 +120,7 @@
         <tbody>
             @foreach($contracts as $contract)
                 <tr>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $contract->student->student_id }}</td>
                     <td>{{ $contract->student->last_name }}, {{ $contract->student->first_name }} {{ $contract->student->middle_name }}. {{ $contract->student->suffix }}</td>
                     <td>{{ $contract->contract_type }}</td>
@@ -147,6 +150,7 @@
         <tbody>
             @foreach($referrals as $referral)
                 <tr>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $referral->student->student_id }}</td>
                     <td>{{ $referral->student->last_name }}, {{ $referral->student->first_name }} {{ $referral->student->middle_name }}. {{ $referral->student->suffix }}</td>
                     <td>{{ $referral->reason }}</td>
@@ -173,6 +177,7 @@
         <tbody>
             @foreach($counselings as $counseling)
                 <tr>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $counseling->student->student_id }}</td>
                     <td>{{ $counseling->student->last_name }}, {{ $counseling->student->first_name }} {{ $counseling->student->middle_name }}. {{ $counseling->student->suffix }}</td>
                     <td>{{ $counseling->counseling_date }}</td>
@@ -199,6 +204,7 @@
         <tbody>
             @foreach($transitions as $transition)
                 <tr>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $transition->semester->schoolYear->school_year ?? 'N/A' }}</td>
                     <td>{{ $transition->semester->semester ?? 'N/A' }}</td>
                     <td>{{ $transition->last_name }}, {{ $transition->first_name }} {{ $transition->middle_name }}. {{ $transition->suffix }}</td>

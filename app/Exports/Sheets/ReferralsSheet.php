@@ -16,15 +16,17 @@ class ReferralsSheet implements FromArray, WithTitle
     public function array(): array
     {
         $data = [
-            ['Student', 'Reason', 'Remarks', 'Date'],
+            ['No.','Student ID','Student', 'Reason', 'Date', 'Remarks'],
         ];
 
-        foreach ($this->referrals as $referral) {
+        foreach ($this->referrals as $index => $referral) {
             $data[] = [
-                $referral->student->first_name . ' ' . $referral->student->last_name,
+                $index +1,
+                $referral->student->student_id,
+                $referral->student->last_name . ', ' . $referral->student->first_name. ' ' .$referral->student->middle_name. '.',
                 $referral->reason,
-                $referral->remarks,
                 $referral->referral_date,
+                $referral->remarks,
             ];
         }
 
