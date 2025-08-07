@@ -880,7 +880,7 @@ if ($include === 'all' || $include === 'counselings') {
         'student', 'contracts', 'referrals', 'counselings', 'profile', 'schoolYear', 'semesterName', 'tab'
     ))->setPaper('a4', 'portrait');
 
-    return $pdf->download("StudentHistory_{$student->student_id}.pdf");
+    return $pdf->download("StudentRecord_{$student->student_id}.pdf");
 }
 
 
@@ -888,7 +888,7 @@ public function exportStudentExcel(Request $request)
 {
     return Excel::download(
         new \App\Exports\StudentHistoryExport($request),
-        "StudentHistory_{$request->student_id}.xlsx"
+        "StudentRecord_{$request->student_id}.xlsx"
     );
 }
 

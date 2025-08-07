@@ -288,7 +288,7 @@
        <h3>Contract Records</h3>
         <p class="summary">
            Contract Status :  {{ request('filter_contract_status') ? ucfirst(request('filter_contract_status')) : 'All' }} <br>
-            Contract Type{{ request('filter_contract_type') ? ucfirst(request('filter_contract_type')) : 'Contracts' }} <br>
+            Contract Type: {{ request('filter_contract_type') ? ucfirst(request('filter_contract_type')) : 'Contracts' }} <br>
         </p>
 
         <p class="summary">Total Contracts: {{ $contracts->count() }}</p>
@@ -374,6 +374,7 @@
             Status :{{ request('filter_counseling_status') ? ucfirst(request('filter_counseling_status')) : 'All' }} 
         </p>
 
+        <p class="summary">Total Counseling Sessions: {{ $counselings->count() }}</p>
         <table class="counseling">
             <thead>
                 <tr>
@@ -401,7 +402,6 @@
                 @endforeach
             </tbody>
         </table>
-        <p class="summary">Total Counseling Sessions: {{ $counselings->count() }}</p>
     @endif
 
     <!-- Transitions -->
