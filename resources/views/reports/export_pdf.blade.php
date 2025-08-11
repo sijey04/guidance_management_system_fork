@@ -247,9 +247,9 @@
                     <th>Name</th>
                     <th>Course</th>
                     <th>Year & Section</th>
-                    <th>Contracts</th>
+                    {{-- <th>Contracts</th>
                     <th>Referrals</th>
-                    <th>Counseling</th>
+                    <th>Counseling</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -274,9 +274,9 @@
                         </td>
                         <td>{{ $profile->course }}</td>
                         <td>{{ $profile->year_level }} {{ $profile->section }}</td>
-                        <td style="text-align: center;">{{ $contractCounts[$profile->student_id] ?? 0 }}</td>
+                        {{-- <td style="text-align: center;">{{ $contractCounts[$profile->student_id] ?? 0 }}</td>
                         <td style="text-align: center;">{{ $referralCounts[$profile->student_id] ?? 0 }}</td>
-                        <td style="text-align: center;">{{ $counselingCounts[$profile->student_id] ?? 0 }}</td>
+                        <td style="text-align: center;">{{ $counselingCounts[$profile->student_id] ?? 0 }}</td> --}}
                     </tr>
                 @endforeach
             </tbody>
