@@ -40,11 +40,11 @@
         }
     </style>
     
-    @php $activeTab = request('tab', 'all'); @endphp
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    @php $activeTab = request('tab', 'student_profiles'); @endphp
+    <div class="py-1">
+        <div class="max-w-9xl mx-auto sm:px-4 lg:px-8">
             <div class="bg-white rounded-lg shadow-sm">
-                <div class="p-6 space-y-6">
+                <div class="p-3 space-y-4">
                 
                     <!-- Title & Description -->
                     <div class="border-b border-gray-200 pb-4 mb-6">
@@ -495,6 +495,7 @@
                                 <table class="min-w-full text-sm divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
+                                            <th class="px-4 "> </th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Student ID</th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Course</th>
@@ -508,6 +509,7 @@
                                     <tbody class="bg-white divide-y divide-gray-200">
                                     @forelse ($students as $profile)
                                         <tr class="hover:bg-gray-50">
+                                            <td class="px-4 py-3">{{ $loop->iteration }}</td>
                                             <td class="px-4 py-3">{{ $profile->student->student_id }}</td>
                                             <td class="px-4 py-3 font-medium">
                                             {{ $profile->student->last_name }}, {{ $profile->student->first_name }} {{ $profile->student->middle_name }}. {{ $profile->student->suffix }}
