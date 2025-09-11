@@ -42,7 +42,7 @@
                                     <th class="px-4 py-3 text-left">Semester</th>
                                     <th class="px-4 py-3 text-left">Course & Year</th>
                                     <th class="px-4 py-3 text-left">Section</th>
-                                    {{-- <th class="px-4 py-3 text-left">Transition</th> --}}
+                                    <th class="px-4 py-3 text-left">Transition</th>
                                     <th class="px-4 py-3 text-left">Status</th>
                                 </tr>
                             </thead>
@@ -57,7 +57,7 @@
                                             {{ $record->course ?? 'N/A' }} - {{ $record->year_level ?? 'N/A' }}
                                         </td>
                                         <td class="px-4 py-3">{{ $record->section ?? 'N/A' }}</td>
-                                        {{-- <td class="px-4 py-3">
+                                        <td class="px-4 py-3">
                                            @if($record->transition)
     <span class="text-xs font-medium px-2.5 py-0.5 rounded-full
         {{ $record->transition->transition_type === 'Dropped' ? 'bg-red-100 text-red-800' :
@@ -69,7 +69,7 @@
     <span class="text-xs text-gray-400">None</span>
 @endif
 
-                                        </td> --}}
+                                        </td>
                                         <td class="px-4 py-3">
                                             @if($record->semester?->is_current)
                                                 <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
