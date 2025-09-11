@@ -185,6 +185,11 @@
             word-break: break-word;
             hyphens: auto;
         }
+
+        .page-break {
+    page-break-after: always;
+}
+
     </style>
 </head>
 <body>
@@ -239,6 +244,7 @@
             Section : {{ request('filter_section') ? ucfirst(request('filter_section')) : 'All' }}<br>
         </p>
         <p class="summary">Total Students: {{ $students->count() }}</p>
+        @foreach($students->chunk(100) as $chunk)
         <table class="student-profiles">
             <thead>
                 <tr>
@@ -253,9 +259,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($students as $profile)
+                 @foreach($chunk as $profile)
                     <tr>
-                         <td >{{ $loop->iteration }}</td>
+                         <td>{{ ($loop->parent->iteration - 1) * 100 + $loop->iteration }}</td>
                         <td>{{ $profile->student->student_id }}</td>
                        @php
                             $transition = $transitions->first(function ($t) use ($profile) {
@@ -281,7 +287,12 @@
                 @endforeach
             </tbody>
         </table>
-    @endif
+         {{-- Add page break after each chunk except the last --}}
+        @if (!$loop->last)
+            <div style="page-break-after: always;"></div>
+        @endif
+    @endforeach
+ @endif  
 
     <!-- Contracts -->
     @if($tab === 'all' || $tab === 'contracts')

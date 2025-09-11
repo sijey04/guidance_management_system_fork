@@ -261,7 +261,6 @@
                     {{-- Tabs --}}
                     <div class="flex flex-wrap gap-2 mb-4 overflow-x-auto">
                         @foreach([
-                            'all' => 'All',
                             'student_profiles' => 'Student Profiles',
                             'contracts' => 'Contracts',
                             'referrals' => 'Referrals',
@@ -279,35 +278,35 @@
 
                     {{-- Summary Cards --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        @if($activeTab === 'all' || $activeTab === 'student_profiles')
+                        @if( $activeTab === 'student_profiles')
                             <div class="bg-white border rounded shadow p-4 stat-card">
                                 <p class="text-sm text-gray-500">Total Students</p>
                                 <h3 class="text-2xl font-bold text-gray-800">{{ $totalStudents ?? 0 }}</h3>
                             </div>
                         @endif
 
-                        @if($activeTab === 'all' || $activeTab === 'contracts')
+                        @if( $activeTab === 'contracts')
                             <div class="bg-white border rounded shadow p-4 stat-card">
                                 <p class="text-sm text-gray-500">Total Contracts</p>
                                 <h3 class="text-2xl font-bold text-gray-800">{{ $totalContracts ?? 0 }}</h3>
                             </div>
                         @endif
 
-                        @if($activeTab === 'all' || $activeTab === 'referrals')
+                        @if( $activeTab === 'referrals')
                             <div class="bg-white border rounded shadow p-4 stat-card">
                                 <p class="text-sm text-gray-500">Total Referrals</p>
                                 <h3 class="text-2xl font-bold text-gray-800">{{ $totalReferrals ?? 0 }}</h3>
                             </div>
                         @endif
 
-                        @if($activeTab === 'all' || $activeTab === 'counseling')
+                        @if($activeTab === 'counseling')
                             <div class="bg-white border rounded shadow p-4 stat-card">
                                 <p class="text-sm text-gray-500">Total Counseling</p>
                                 <h3 class="text-2xl font-bold text-gray-800">{{ $totalCounselings ?? 0 }}</h3>
                             </div>
                         @endif
 
-                        @if($activeTab === 'all' || $activeTab === 'transitions')
+                        @if( $activeTab === 'transitions')
                             <div class="bg-white border rounded shadow p-4 stat-card">
                                 <p class="text-sm text-gray-500">Total Transitions</p>
                                 <h3 class="text-2xl font-bold text-gray-800">{{ $totalTransitions ?? 0 }}</h3>
@@ -482,7 +481,7 @@
                     @endif
 
                     {{-- Student Profiles Table --}}
-                    @if($activeTab === 'all' || $activeTab === 'student_profiles')
+                    @if( $activeTab === 'student_profiles')
                         <div class="bg-white border rounded shadow-sm overflow-hidden">
                             <div class="p-4 border-b bg-gray-50">
                                 <h3 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
@@ -570,7 +569,7 @@
                     @endif
 
                     {{-- Contracts Table --}}
-                    @if($activeTab === 'all' || $activeTab === 'contracts')
+                    @if( $activeTab === 'contracts')
                         <div class="bg-white border rounded shadow-sm overflow-hidden">
                             <div class="p-4 border-b bg-gray-50">
                                 <h3 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
@@ -635,7 +634,7 @@
                     @endif
 
                     {{-- Referrals Table --}}
-                    @if($activeTab === 'all' || $activeTab === 'referrals')
+                    @if( $activeTab === 'referrals')
                         <div class="bg-white border rounded shadow-sm overflow-hidden">
                             <div class="p-4 border-b bg-gray-50">
                                 <h3 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
@@ -683,7 +682,7 @@
                     @endif
 
                     {{-- Counseling Table --}}
-                    @if($activeTab === 'all' || $activeTab === 'counseling')
+                    @if( $activeTab === 'counseling')
                         <div class="bg-white border rounded shadow-sm overflow-hidden">
                             <div class="p-4 border-b bg-gray-50">
                                 <h3 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
