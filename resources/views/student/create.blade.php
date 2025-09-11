@@ -161,6 +161,11 @@ x-data="{ transitionType: '' }"
                 <option value="">None</option>
                 <option value="Shifting In">Shifting In</option>
                 <option value="Transferring In">Transferring In</option>
+                <option value="Shifting Out">Shifting Out</option>
+                <option value="Transferring Out">Transferring Out</option>
+                <option value="Returning Student">Returning Student</option>
+                <option value="Dropped">Dropped</option>
+                <option value="Graduated">Graduated</option>
             </select>
         </div>
 
@@ -171,7 +176,7 @@ x-data="{ transitionType: '' }"
             </div>
         </template> --}}
 
-        <template x-if="transitionType === 'Shifting In' || transitionType === 'Transferring In'">
+        <template x-if="['Shifting In', 'Transferring In', 'Shifting Out', 'Transferring Out', 'Returning Student', 'Dropped', 'Graduated'].includes(transitionType)">
             <div class="md:col-span-3">
                 <label class="text-sm text-gray-600">Transition Remarks</label>
                 <textarea name="transition_remark"
@@ -181,7 +186,7 @@ x-data="{ transitionType: '' }"
             </div>
         </template>
 
-        <template x-if="transitionType === 'Shifting In' || transitionType === 'Transferring In'">
+         <template x-if="['Shifting In', 'Transferring In', 'Shifting Out', 'Transferring Out', 'Returning Student', 'Dropped', 'Graduated'].includes(transitionType)">
             <!-- Transition Images -->
             <div 
                 x-data="{

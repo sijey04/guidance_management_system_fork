@@ -144,7 +144,7 @@ class StudentController extends Controller
         'year_level' => 'required|exists:years,year_level',
         'section' => 'required|exists:sections,section',
 
-         'transition_type' => 'nullable|in:Shifting In,Transferring In',
+         'transition_type' => 'nullable|in:Shifting In,Shifting Out,Transferring In,Transferring Out,Dropped,Returning Student,Graduated',
        // 'transition_date' => 'nullable|date|required_with:transition_type',
         'remark' => 'nullable|string|max:255',
         'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
