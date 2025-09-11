@@ -147,13 +147,14 @@ $users = User::all();
     }
 
     if ($request->filled('search')) {
-        $search = $request->search;
-        $query->where(function ($q) use ($search) {
-            $q->where('student_id', 'like', "%$search%")
-              ->orWhere('first_name', 'like', "%$search%")
-              ->orWhere('last_name', 'like', "%$search%");
-        });
-    }
+    $search = strtolower($request->search);
+    $query->where(function ($q) use ($search) {
+        $q->whereRaw('LOWER(student_id) LIKE ?', ["%$search%"])
+          ->orWhereRaw('LOWER(first_name) LIKE ?', ["%$search%"])
+          ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$search%"]);
+    });
+}
+
 
     if ($request->filled('filter_transition_type')) {
         $type = $request->input('filter_transition_type');

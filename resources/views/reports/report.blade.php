@@ -481,7 +481,7 @@
                     @endif
 
                     {{-- Student Profiles Table --}}
-                    @if( $activeTab === 'student_profiles')
+                    @if($activeTab === 'all' || $activeTab === 'student_profiles')
                         <div class="bg-white border rounded shadow-sm overflow-hidden">
                             <div class="p-4 border-b bg-gray-50">
                                 <h3 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
@@ -569,7 +569,7 @@
                     @endif
 
                     {{-- Contracts Table --}}
-                    @if( $activeTab === 'contracts')
+                    @if($activeTab === 'all' || $activeTab === 'contracts')
                         <div class="bg-white border rounded shadow-sm overflow-hidden">
                             <div class="p-4 border-b bg-gray-50">
                                 <h3 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
@@ -634,7 +634,7 @@
                     @endif
 
                     {{-- Referrals Table --}}
-                    @if( $activeTab === 'referrals')
+                    @if($activeTab === 'all' || $activeTab === 'referrals')
                         <div class="bg-white border rounded shadow-sm overflow-hidden">
                             <div class="p-4 border-b bg-gray-50">
                                 <h3 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
@@ -682,7 +682,7 @@
                     @endif
 
                     {{-- Counseling Table --}}
-                    @if( $activeTab === 'counseling')
+                    @if($activeTab === 'all' || $activeTab === 'counseling')
                         <div class="bg-white border rounded shadow-sm overflow-hidden">
                             <div class="p-4 border-b bg-gray-50">
                                 <h3 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
