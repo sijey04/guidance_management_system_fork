@@ -192,24 +192,25 @@ x-init="
                 @csrf
                 <div id="selected-hidden"></div>
 
-                <div class="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-3 px-4 py-3 sticky bottom-0 bg-white border-t border-gray-200 z-10">
+               <div class="px-4 py-3 sticky bottom-0 bg-white border-t border-gray-200 z-10">
 
-                  <div class="flex flex-wrap gap-3 items-center">
-
-                        <button type="button" @click="toggleAllOnPage"
-                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-semibold">
-                            <span x-text="allSelectedOnPage() ? 'Unselect All on Page' : 'Select All on Page'"></span>
-                        </button>
-                         <button type="submit"
-                                class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-red-700 transition">
-                            Validate Selected Students
-                        </button>
-                    </div>
-                       
-                        <div class="pagination">
-                            {{ $students->links() }}
-                        </div>
+                {{-- Buttons on top --}}
+                <div class="flex flex-wrap gap-3 items-center justify-end mb-3">
+                    <button type="button" @click="toggleAllOnPage"
+                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-semibold">
+                        <span x-text="allSelectedOnPage() ? 'Unselect All on Page' : 'Select All on Page'"></span>
+                    </button>
+                    <button type="submit"
+                        class="bg-[#a82323] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-red-700 transition">
+                        Validate Selected Students
+                    </button>
                 </div>
+
+                {{-- Pagination below --}}
+                <div class="pagination flex justify-end">
+                    {{ $students->onEachSide(1)->links() }}
+                </div>
+            </div>
 
                 @if($students->count() > 0)
 

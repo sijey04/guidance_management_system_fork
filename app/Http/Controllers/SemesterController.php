@@ -114,138 +114,118 @@ $users = User::all();
   
 
  public function validateStudentsForm(Request $request, $semesterId)
-    {
-        $newSemester = Semester::with('schoolYear')->findOrFail($semesterId);
+{
+    $newSemester = Semester::with('schoolYear')->findOrFail($semesterId);
 
-        $allPreviousSemesterIds = Semester::where('id', '<', $semesterId)->pluck('id')->toArray();
+    $allPreviousSemesterIds = Semester::where('id', '<', $semesterId)->pluck('id')->toArray();
+    $semesterIds = array_merge($allPreviousSemesterIds, [$semesterId]);
 
-        $students = Student::whereHas('profiles', function ($q) use ($allPreviousSemesterIds, $semesterId) {
-            $q->whereIn('semester_id', array_merge($allPreviousSemesterIds, [$semesterId]));
+    $perPage = 25;
+
+    $query = Student::whereHas('profiles', function ($q) use ($semesterIds) {
+            $q->whereIn('semester_id', $semesterIds);
         })
-        ->with(['profiles' => function ($q) use ($allPreviousSemesterIds, $semesterId) {
-            $q->whereIn('semester_id', array_merge($allPreviousSemesterIds, [$semesterId]));
-        }])
-        ->get();
+        ->with([
+            'profiles' => function ($q) use ($semesterIds) {
+                $q->whereIn('semester_id', $semesterIds);
+            },
+            'transitions' => function ($q) use ($semesterIds) {
+                $q->whereIn('semester_id', $semesterIds);
+            }
+        ]);
+
+    if ($request->filled('filter_course')) {
+        $query->whereHas('profiles', fn($q) => $q->where('course', $request->filter_course));
+    }
+
+    if ($request->filled('filter_year_level')) {
+        $query->whereHas('profiles', fn($q) => $q->where('year_level', $request->filter_year_level));
+    }
+
+    if ($request->filled('filter_section')) {
+        $query->whereHas('profiles', fn($q) => $q->where('section', $request->filter_section));
+    }
+
+    if ($request->filled('search')) {
+    $search = strtolower($request->search);
+    $query->where(function ($q) use ($search) {
+        $q->whereRaw('LOWER(student_id) LIKE ?', ["%$search%"])
+          ->orWhereRaw('LOWER(first_name) LIKE ?', ["%$search%"])
+          ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$search%"]);
+    });
+}
 
 
+    if ($request->filled('filter_transition_type')) {
+        $type = $request->input('filter_transition_type');
+        $query->whereHas('transitions', fn($q) => $q->where('transition_type', $type));
+    }
 
-        // Attach latest profile and validated flag
-        $students = $students->map(function ($student) use ($newSemester) {
-       $student->previousProfile = $student->profiles
-            ->filter(fn($p) => $p->semester_id < $newSemester->id)
+    $query->orderBy('last_name')->orderBy('first_name');
+
+    // Paginate
+    $students = $query->paginate($perPage)->withQueryString();
+
+    $students->getCollection()->transform(function ($student) use ($newSemester) {
+        $student->previousProfile = $student->profiles
+            ->where('semester_id', '<', $newSemester->id)
             ->sortByDesc('semester_id')
             ->first();
 
         $student->latestProfile = $student->profiles->sortByDesc('semester_id')->first();
 
-
         $validatedProfile = StudentProfile::where('student_id', $student->id)
             ->where('semester_id', $newSemester->id)
             ->first();
 
-       $student->latestTransition = $student->transitions()
+        $student->latestTransition = $student->transitions
             ->where('semester_id', '<=', $newSemester->id)
-            ->latest('semester_id')
+            ->sortByDesc('semester_id')
             ->first();
 
-        $shiftingInCurrentSemester = $student->transitions()
+        $student->showShiftingInPill = $student->transitions
             ->where('semester_id', $newSemester->id)
             ->where('transition_type', 'Shifting In')
-            ->exists();
+            ->isNotEmpty();
 
-            $student->currentOutTransition = $student->transitions()
-                ->where('semester_id', $newSemester->id)
-                ->whereIn('transition_type', ['Shifting Out', 'Transferring Out'])
-                ->latest()
-                ->first();
+        $student->currentOutTransition = $student->transitions
+            ->where('semester_id', $newSemester->id)
+            ->whereIn('transition_type', ['Shifting Out', 'Transferring Out'])
+            ->sortByDesc('semester_id')
+            ->first();
 
-            $student->isReturningThisSem = $student->transitions()
-                ->where('semester_id', $newSemester->id)
-                ->where('transition_type', 'Returning Student')
-                ->exists();
+        $student->isReturningThisSem = $student->transitions
+            ->where('semester_id', $newSemester->id)
+            ->where('transition_type', 'Returning Student')
+            ->isNotEmpty();
 
-            $student->wasDroppedInPreviousSem = $student->transitions()
-                ->where('semester_id', '<', $newSemester->id)
-                ->where('transition_type', 'Dropped')
-                ->exists();
+        $student->wasDroppedInPreviousSem = $student->transitions
+            ->where('semester_id', '<', $newSemester->id)
+            ->where('transition_type', 'Dropped')
+            ->isNotEmpty();
 
-
-        $student->showShiftingInPill = $shiftingInCurrentSemester;
         $student->validatedProfile = $validatedProfile;
         $student->alreadyValidated = $validatedProfile !== null;
 
         return $student;
     });
 
-    $students = $students->sortBy(function ($student) {
-    return strtolower($student->last_name . ' ' . $student->first_name);
-})->values();
+    $selectedStudents = collect($request->input('selected_students', []))->map(fn($id) => (string) $id);
 
+    $courses = Course::all();
+    $years = Year::all();
+    $sections = Section::all();
 
-        // Apply filters
-        if ($request->filled('filter_course')) {
-            $students = $students->filter(function ($student) use ($request) {
-                return $student->latestProfile && $student->latestProfile->course === $request->filter_course;
-            });
-        }
+    return view('semester.validate_students', [
+        'students' => $students,
+        'newSemester' => $newSemester,
+        'courses' => $courses,
+        'years' => $years,
+        'sections' => $sections,
+        'selectedStudents' => $selectedStudents,
+    ]);
+}
 
-        if ($request->filled('filter_year_level')) {
-            $students = $students->filter(function ($student) use ($request) {
-                return $student->latestProfile && $student->latestProfile->year_level === $request->filter_year_level;
-            });
-        }
-
-        if ($request->filled('filter_section')) {
-            $students = $students->filter(function ($student) use ($request) {
-                return $student->latestProfile && $student->latestProfile->section === $request->filter_section;
-            });
-        }
-
-        if ($request->filled('search')) {
-            $search = strtolower($request->search);
-            $students = $students->filter(function ($student) use ($search) {
-                return str_contains(strtolower($student->student_id), $search) ||
-                       str_contains(strtolower($student->first_name), $search) ||
-                       str_contains(strtolower($student->last_name), $search);
-            });
-        }
-
-        if ($request->filled('filter_transition_type')) {
-            $type = $request->input('filter_transition_type');
-            $students = $students->filter(function ($student) use ($type) {
-                return $student->latestTransition && $student->latestTransition->transition_type === $type;
-            });
-        }
-
-
-
-        //$paginated = $students; 
-
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = 10;
-        $paginated = new LengthAwarePaginator(
-            $students->forPage($currentPage, $perPage),
-            $students->count(),
-            $perPage,
-            $currentPage,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
-$selectedStudents = collect(request('selected_students', []))->map(fn($id) => (string) $id);
-
-        $courses = Course::all();
-        $years = Year::all();
-        $sections = Section::all();
-
-       
-        return view('semester.validate_students', [
-            'students' => $paginated,
-            'newSemester' => $newSemester,
-            'courses' => $courses,
-            'years' => $years,
-            'sections' => $sections,
-            'selectedStudents' => $selectedStudents,
-        ]);
-    }
 
 
 public function processValidateStudents(Request $request, $semesterId)

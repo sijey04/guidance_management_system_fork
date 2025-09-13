@@ -40,11 +40,11 @@
         }
     </style>
     
-    @php $activeTab = request('tab', 'all'); @endphp
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    @php $activeTab = request('tab', 'student_profiles'); @endphp
+    <div class="py-1">
+        <div class="max-w-9xl mx-auto sm:px-4 lg:px-8">
             <div class="bg-white rounded-lg shadow-sm">
-                <div class="p-6 space-y-6">
+                <div class="p-3 space-y-4">
                 
                     <!-- Title & Description -->
                     <div class="border-b border-gray-200 pb-4 mb-6">
@@ -68,23 +68,38 @@
                             </p>
                         </div>
 
-                    <div x-data="{ open: false, selected: 'all' }">
+                    <div x-data="{ open: false, selected: 'all' }" class="relative">
+                        <!-- Export Button -->
                         <button 
                             @click="open = true" 
                             class="bg-[#a82323] text-white px-4 py-2 rounded text-sm shadow flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                             Export
                         </button>
 
-                        <!-- Modal -->
-                        <div x-show="open" class="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
-                            <div @click.away="open = false" class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
-                                <h2 class="text-xl font-bold mb-4">Export Report</h2>
+                        <!-- Modal Overlay -->
+                        <div 
+                            x-show="open"
+                            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+                            x-transition.opacity
+                        >
+                            <!-- Modal Box -->
+                            <div 
+                                @click.away="open = false" 
+                                class="bg-white rounded-lg shadow-lg w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:max-w-3xl p-4 sm:p-6 max-h-[90vh] overflow-y-auto"
+                                x-transition
+                            >
+                                <!-- Title -->
+                                <h2 class="text-lg sm:text-xl font-bold mb-4 text-center sm:text-left">Export Report</h2>
 
-                                <form method="GET" action="" x-ref="form">
+                                <form method="GET" action="" x-ref="form" class="space-y-4">
+                                    
+                                    <!-- Grid: 1 column on small screens, 2 columns on md and up -->
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
                                         <!-- School Year -->
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700">School Year</label>
@@ -105,7 +120,7 @@
                                             </select>
                                         </div>
 
-                                        <!-- Export Type -->
+                                        <!-- Export Data Type -->
                                         <div class="md:col-span-2">
                                             <label class="block text-sm font-medium text-gray-700">Export Data</label>
                                             <select name="tab" x-model="selected" class="form-select w-full rounded border-gray-300">
@@ -118,10 +133,8 @@
                                             </select>
                                         </div>
 
-                                        <!-- Conditional Filters -->
-
-                                       <!--  Course, Year, Section -->
-                                        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <!-- Course / Year / Section -->
+                                        <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
                                             <div>
                                                 <label>Course</label>
                                                 <select name="filter_course" class="form-select w-full rounded border-gray-300">
@@ -151,9 +164,9 @@
                                             </div>
                                         </div>
 
-                                        <!-- Contract Filters -->
+                                        <!-- Conditional Filters -->
                                         <template x-if="selected === 'contracts'">
-                                            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                 <div>
                                                     <label>Contract Type</label>
                                                     <select name="filter_contract_type" class="form-select w-full rounded border-gray-300">
@@ -174,7 +187,6 @@
                                             </div>
                                         </template>
 
-                                        <!-- Referral Filters -->
                                         <template x-if="selected === 'referrals'">
                                             <div class="md:col-span-2">
                                                 <label>Reason</label>
@@ -187,7 +199,6 @@
                                             </div>
                                         </template>
 
-                                        <!-- Counseling Filters -->
                                         <template x-if="selected === 'counseling'">
                                             <div class="md:col-span-2">
                                                 <label>Status</label>
@@ -199,33 +210,32 @@
                                             </div>
                                         </template>
 
-                                        <!-- Transition Filters -->
                                         <template x-if="selected === 'transitions'">
                                             <div class="md:col-span-2">
                                                 <label>Transition Type</label>
                                                 <select name="filter_transition_type" class="form-select w-full rounded border-gray-300">
-                                                <option value="">All Types</option>
-                                                @foreach(['Shifting In', 'Shifting Out', 'Transferring In', 'Transferring Out', 'Dropped', 'Returning Student'] as $type)
-                                                    <option value="{{ $type }}" {{ request('filter_transition_type') == $type ? 'selected' : '' }}>
-                                                        {{ $type }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                                    <option value="">All Types</option>
+                                                    @foreach(['Shifting In','Shifting Out','Transferring In','Transferring Out','Dropped','Returning Student'] as $type)
+                                                        <option value="{{ $type }}">{{ $type }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </template>
                                     </div>
 
-                                    <!-- Export Buttons -->
-                                    <div class="flex justify-end mt-6 gap-3">
-                                        <button @click="open = false" type="button" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-                                        
+                                    <!-- Footer Buttons -->
+                                    <div class="flex flex-col sm:flex-row justify-end mt-6 gap-3">
+                                        <button @click="open = false" type="button" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                                            Cancel
+                                        </button>
+
                                         <button type="submit" formaction="{{ route('reports.export') }}"
-                                                class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
                                             Export PDF
                                         </button>
 
                                         <button type="submit" formaction="{{ route('report.exportExcel') }}"
-                                                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
                                             Export Excel
                                         </button>
                                     </div>
@@ -233,6 +243,7 @@
                             </div>
                         </div>
                     </div>
+
 
                     
                         <form method="GET" class="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
@@ -261,7 +272,6 @@
                     {{-- Tabs --}}
                     <div class="flex flex-wrap gap-2 mb-4 overflow-x-auto">
                         @foreach([
-                            'all' => 'All',
                             'student_profiles' => 'Student Profiles',
                             'contracts' => 'Contracts',
                             'referrals' => 'Referrals',
@@ -279,35 +289,35 @@
 
                     {{-- Summary Cards --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        @if($activeTab === 'all' || $activeTab === 'student_profiles')
+                        @if( $activeTab === 'student_profiles')
                             <div class="bg-white border rounded shadow p-4 stat-card">
                                 <p class="text-sm text-gray-500">Total Students</p>
                                 <h3 class="text-2xl font-bold text-gray-800">{{ $totalStudents ?? 0 }}</h3>
                             </div>
                         @endif
 
-                        @if($activeTab === 'all' || $activeTab === 'contracts')
+                        @if( $activeTab === 'contracts')
                             <div class="bg-white border rounded shadow p-4 stat-card">
                                 <p class="text-sm text-gray-500">Total Contracts</p>
                                 <h3 class="text-2xl font-bold text-gray-800">{{ $totalContracts ?? 0 }}</h3>
                             </div>
                         @endif
 
-                        @if($activeTab === 'all' || $activeTab === 'referrals')
+                        @if( $activeTab === 'referrals')
                             <div class="bg-white border rounded shadow p-4 stat-card">
                                 <p class="text-sm text-gray-500">Total Referrals</p>
                                 <h3 class="text-2xl font-bold text-gray-800">{{ $totalReferrals ?? 0 }}</h3>
                             </div>
                         @endif
 
-                        @if($activeTab === 'all' || $activeTab === 'counseling')
+                        @if($activeTab === 'counseling')
                             <div class="bg-white border rounded shadow p-4 stat-card">
                                 <p class="text-sm text-gray-500">Total Counseling</p>
                                 <h3 class="text-2xl font-bold text-gray-800">{{ $totalCounselings ?? 0 }}</h3>
                             </div>
                         @endif
 
-                        @if($activeTab === 'all' || $activeTab === 'transitions')
+                        @if( $activeTab === 'transitions')
                             <div class="bg-white border rounded shadow p-4 stat-card">
                                 <p class="text-sm text-gray-500">Total Transitions</p>
                                 <h3 class="text-2xl font-bold text-gray-800">{{ $totalTransitions ?? 0 }}</h3>
@@ -496,6 +506,7 @@
                                 <table class="min-w-full text-sm divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
+                                            <th class="px-4 "> </th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Student ID</th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                             <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Course</th>
@@ -509,6 +520,7 @@
                                     <tbody class="bg-white divide-y divide-gray-200">
                                     @forelse ($students as $profile)
                                         <tr class="hover:bg-gray-50">
+                                            <td class="px-4 py-3">{{ $loop->iteration }}</td>
                                             <td class="px-4 py-3">{{ $profile->student->student_id }}</td>
                                             <td class="px-4 py-3 font-medium">
                                             {{ $profile->student->last_name }}, {{ $profile->student->first_name }} {{ $profile->student->middle_name }}. {{ $profile->student->suffix }}
