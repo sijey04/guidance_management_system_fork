@@ -19,6 +19,31 @@ use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\StudentTransitionController;
 use App\Http\Controllers\YearController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+
+// Temporary seeding route (remove after seeding)
+Route::get('/manual-seed', function () {
+    try {
+        // Test database connection
+        DB::connection()->getPdo();
+        
+        // Run seeders
+        Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\UserSeeder']);
+        Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\SchoolYearSeeder']);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Database seeded successfully!',
+            'user_seeder' => Artisan::output(),
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ]);
+    }
+});
 
 // Redirect root URL to login page or dashboard based on authentication status
 Route::get('/', function () {

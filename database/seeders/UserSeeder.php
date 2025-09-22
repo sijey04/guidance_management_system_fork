@@ -13,23 +13,27 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Truncate the users table before seeding
-        DB::table('users')->truncate();
-        DB::table('users')->insert([
-            'name' => 'John Magno',
-            'email' => 'johnmagno332@gmail.com',
-            'password' => Hash::make('johnmagnoA1'),
-            'email_verified_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        DB::table('users')->insert([
-            'name' => 'Admin User',
-            'email' => 'admin123@gmail.com',
-            'password' => Hash::make('admin123'),
-            'email_verified_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // Check if users already exist to avoid truncating
+        $existingUsers = DB::table('users')->count();
+        
+        if ($existingUsers == 0) {
+            // Only seed if no users exist
+            DB::table('users')->insert([
+                'name' => 'John Magno',
+                'email' => 'johnmagno332@gmail.com',
+                'password' => Hash::make('johnmagnoA1'),
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            DB::table('users')->insert([
+                'name' => 'Admin User',
+                'email' => 'admin123@gmail.com',
+                'password' => Hash::make('admin123'),
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 } 
