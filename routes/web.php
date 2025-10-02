@@ -19,31 +19,6 @@ use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\StudentTransitionController;
 use App\Http\Controllers\YearController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
-
-// Temporary seeding route (remove after seeding)
-Route::get('/manual-seed', function () {
-    try {
-        // Test database connection
-        DB::connection()->getPdo();
-        
-        // Run seeders
-        Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\UserSeeder']);
-        Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\SchoolYearSeeder']);
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Database seeded successfully!',
-            'user_seeder' => Artisan::output(),
-        ]);
-    } catch (Exception $e) {
-        return response()->json([
-            'success' => false,
-            'error' => $e->getMessage()
-        ]);
-    }
-});
 
 // Redirect root URL to login page or dashboard based on authentication status
 Route::get('/', function () {
@@ -183,5 +158,31 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+// Database management routes (for production debugging only)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin/db-clear', function () {
+        if (!auth()->check()) {
+            abort(403, 'Unauthorized');
+        }
+        
+        return view('admin.db-clear');
+    })->name('admin.db-clear');
+    
+    Route::post('/admin/db-clear', function () {
+        if (!auth()->check()) {
+            abort(403, 'Unauthorized');
+        }
+        
+        try {
+            \Illuminate\Support\Facades\Artisan::call('db:clear', ['--force' => true]);
+            $output = \Illuminate\Support\Facades\Artisan::output();
+            
+            return back()->with('success', 'Database cleared successfully! Output: ' . $output);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to clear database: ' . $e->getMessage());
+        }
+    })->name('admin.db-clear.execute');
+});
 
 require __DIR__.'/auth.php';
